@@ -47,18 +47,17 @@ public class AndroidFieldLinguisticsActivity extends Activity {
 
 		mWebView.loadUrl("file:///android_asset/index.html");
 		
+		// TODO remove this. It's just an example to prove that the LevelDB library works
 		String mDBdir = this.getFilesDir().getAbsolutePath() + File.separator + "db";
-		LevelDB db = new LevelDB();
-		db.dbDestroy(mDBdir);
-		db.dbOpen(mDBdir);
-		db.dbPut("firstkey", "this is the value of the first key");
-		db.dbPut("secondkey", "this is the value of the first key");
-		db.dbPut("keyToDelete",
+		LevelDB.dbDestroy(mDBdir);
+		LevelDB.dbOpen(mDBdir);
+		LevelDB.dbPut("firstkey", "this is the value of the first key");
+		LevelDB.dbPut("secondkey", "this is the value of the first key");
+		LevelDB.dbPut("keyToDelete",
 				"this is the value of the key that i want to delete");
-		db.dbPut("fourthkey", "this is the value of the fourth key");
-		db.dbDelete("keyToDelete");
-		Toast.makeText(getApplicationContext(), db.dbGet("fourthkey"), Toast.LENGTH_LONG).show();
-//		Toast.makeText(getApplicationContext(), "hello", Toast.LENGTH_LONG).show();
+		LevelDB.dbPut("fourthkey", "this is the value of the fourth key");
+		LevelDB.dbDelete("keyToDelete");
+		Toast.makeText(getApplicationContext(), LevelDB.dbGet("fourthkey"), Toast.LENGTH_LONG).show();
 	}
 	
 	class MyWebChromeClient extends WebChromeClient {
