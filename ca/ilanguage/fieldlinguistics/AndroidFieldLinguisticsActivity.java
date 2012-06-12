@@ -29,8 +29,7 @@ public class AndroidFieldLinguisticsActivity extends Activity {
 		setContentView(R.layout.main);
 
 		mWebView = (WebView) findViewById(R.id.webView1);
-		mWebView.addJavascriptInterface(new JavaScriptInterface(this),
-				"Android");
+		mWebView.addJavascriptInterface(new JavaScriptInterface(this), "Android");
 		mWebView.setWebViewClient(new MyWebViewClient());
 		mWebView.setWebChromeClient(new MyWebChromeClient());
 		WebSettings webSettings = mWebView.getSettings();
@@ -46,18 +45,6 @@ public class AndroidFieldLinguisticsActivity extends Activity {
 				+ getString(R.string.app_name));
 
 		mWebView.loadUrl("file:///android_asset/index.html");
-		
-		// TODO remove this. It's just an example to prove that the LevelDB library works
-		String mDBdir = this.getFilesDir().getAbsolutePath() + File.separator + "db";
-		LevelDB.dbDestroy(mDBdir);
-		LevelDB.dbOpen(mDBdir);
-		LevelDB.dbPut("firstkey", "this is the value of the first key");
-		LevelDB.dbPut("secondkey", "this is the value of the first key");
-		LevelDB.dbPut("keyToDelete",
-				"this is the value of the key that i want to delete");
-		LevelDB.dbPut("fourthkey", "this is the value of the fourth key");
-		LevelDB.dbDelete("keyToDelete");
-		Toast.makeText(getApplicationContext(), LevelDB.dbGet("fourthkey"), Toast.LENGTH_LONG).show();
 	}
 	
 	class MyWebChromeClient extends WebChromeClient {
@@ -89,11 +76,13 @@ public class AndroidFieldLinguisticsActivity extends Activity {
 	
 	public class JavaScriptInterface {
 		private static final String TAG = "JavaScriptInterface";
-		Context mContext;
+		private Context mContext;
+		private String dbpath;
 
 		/** Instantiate the interface and set the context */
 		JavaScriptInterface(Context c) {
 			mContext = c;
+			dbpath = c.getFilesDir().getAbsolutePath() + File.separator + "db";
 		}
 
 		public void showToast(String toast) {
@@ -102,6 +91,26 @@ public class AndroidFieldLinguisticsActivity extends Activity {
 		
 		public void log(String msg) {
 			Log.d(TAG, msg);
+		}
+		
+		public String getItemJSI(String key) {
+			return LevelDB.dbGet(key);
+		}
+		
+		public String setItemJSI(String key, String value) {
+			return LevelDB.dbPut(key, value);
+		}
+		
+		public String removeItemJSI(String key) {
+			return LevelDB.dbDelete(key);
+		}
+		
+		public String clearStorageJSI() {
+			return LevelDB.dbDestroy(dbpath);
+		}
+		
+		public String openStorageJSI() {
+			return LevelDB.dbOpen(dbpath);
 		}
 	}
 }
