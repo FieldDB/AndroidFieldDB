@@ -1,5 +1,9 @@
 package ca.ilanguage.fieldlinguistics;
 
+import java.io.File;
+
+import com.google.code.p.leveldb.LevelDB;
+
 import ca.ilanguage.fieldlinguistics.R;
 import android.app.Activity;
 import android.content.Context;
@@ -10,6 +14,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class AndroidFieldLinguisticsActivity extends Activity {
@@ -41,6 +46,19 @@ public class AndroidFieldLinguisticsActivity extends Activity {
 				+ getString(R.string.app_name));
 
 		mWebView.loadUrl("file:///android_asset/index.html");
+		
+		String mDBdir = this.getFilesDir().getAbsolutePath() + File.separator + "db";
+		LevelDB db = new LevelDB();
+		db.dbDestroy(mDBdir);
+		db.dbOpen(mDBdir);
+		db.dbPut("firstkey", "this is the value of the first key");
+		db.dbPut("secondkey", "this is the value of the first key");
+		db.dbPut("keyToDelete",
+				"this is the value of the key that i want to delete");
+		db.dbPut("fourthkey", "this is the value of the fourth key");
+		db.dbDelete("keyToDelete");
+		Toast.makeText(getApplicationContext(), db.dbGet("fourthkey"), Toast.LENGTH_LONG).show();
+//		Toast.makeText(getApplicationContext(), "hello", Toast.LENGTH_LONG).show();
 	}
 	
 	class MyWebChromeClient extends WebChromeClient {
