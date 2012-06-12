@@ -1,9 +1,5 @@
 package ca.ilanguage.fieldlinguistics;
 
-import java.io.File;
-
-import com.google.code.p.leveldb.LevelDB;
-
 import ca.ilanguage.fieldlinguistics.R;
 import android.app.Activity;
 import android.content.Context;
@@ -76,12 +72,10 @@ public class AndroidFieldLinguisticsActivity extends Activity {
 	public class JavaScriptInterface {
 		private static final String TAG = "JavaScriptInterface";
 		private Context mContext;
-		private String dbpath;
 
 		/** Instantiate the interface and set the context */
 		JavaScriptInterface(Context c) {
 			mContext = c;
-			dbpath = c.getFilesDir().getAbsolutePath() + File.separator + "db";
 		}
 
 		public void showToast(String toast) {
@@ -90,26 +84,6 @@ public class AndroidFieldLinguisticsActivity extends Activity {
 		
 		public void log(String msg) {
 			Log.d(TAG, msg);
-		}
-		
-		public String getItemJSI(String key) {
-			return LevelDB.dbGet(key);
-		}
-		
-		public String setItemJSI(String key, String value) {
-			return LevelDB.dbPut(key, value);
-		}
-		
-		public String removeItemJSI(String key) {
-			return LevelDB.dbDelete(key);
-		}
-		
-		public String clearStorageJSI() {
-			return LevelDB.dbDestroy(dbpath);
-		}
-		
-		public String openStorageJSI() {
-			return LevelDB.dbOpen(dbpath);
 		}
 	}
 }
