@@ -61,7 +61,7 @@ public class AndroidFieldLinguisticsActivity extends Activity {
 		webSettings.setDomStorageEnabled(true);
 
 		webSettings.setUserAgentString(webSettings.getUserAgentString() + " "
-				+ getString(R.string.app_name));
+				+ getString(R.string.app_name) + " OfflineAndroidApp");
 
 		mWebView.loadUrl("file:///android_asset/index.html");
 	}
