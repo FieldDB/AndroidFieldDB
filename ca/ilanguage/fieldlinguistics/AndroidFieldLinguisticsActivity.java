@@ -1,10 +1,12 @@
 package ca.ilanguage.fieldlinguistics;
 
+import java.io.File;
 import java.io.IOException;
 
 import com.couchbase.touchdb.TDServer;
 import com.couchbase.touchdb.listener.TDListener;
 import com.couchbase.touchdb.router.TDURLStreamHandlerFactory;
+import com.couchbase.touchdb.support.FileDirUtils;
 
 import ca.ilanguage.fieldlinguistics.R;
 import android.app.Activity;
@@ -34,8 +36,12 @@ public class AndroidFieldLinguisticsActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		// Start an instance of TDServer listening on port 8888
-        String filesDir = getFilesDir().getAbsolutePath();
+        String filesDir = getFilesDir().getAbsolutePath() + "/datum_test";
+        // Delete and recreate the server path
+        File serverPathFile = new File(filesDir);
+        FileDirUtils.deleteRecursive(serverPathFile);
+        serverPathFile.mkdir();
+        // Start an instance of TDServer listening on port 8888
         TDServer server;
         try {
             server = new TDServer(filesDir);
