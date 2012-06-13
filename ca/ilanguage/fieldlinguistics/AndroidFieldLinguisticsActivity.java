@@ -3,6 +3,7 @@ package ca.ilanguage.fieldlinguistics;
 import java.io.IOException;
 
 import com.couchbase.touchdb.TDServer;
+import com.couchbase.touchdb.listener.TDListener;
 import com.couchbase.touchdb.router.TDURLStreamHandlerFactory;
 
 import ca.ilanguage.fieldlinguistics.R;
@@ -21,6 +22,7 @@ public class AndroidFieldLinguisticsActivity extends Activity {
 	private static final String TAG = "AndroidFieldLinguisticsActivity";
 	public static final boolean D = true;
 	private WebView mWebView;
+    private TDListener listener;
 	
 	/* Needed to initialize TouchDB */
 	static {
@@ -32,14 +34,16 @@ public class AndroidFieldLinguisticsActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		// Start an instance of TDServer
-		TDServer server = null;
-		String filesDir = getFilesDir().getAbsolutePath();
-		try {
-			server = new TDServer(filesDir);
-		} catch (IOException e) {
-			Log.e(TAG, "Error starting TDServer", e);
-		}
+		// Start an instance of TDServer listening on port 8888
+        String filesDir = getFilesDir().getAbsolutePath();
+        TDServer server;
+        try {
+            server = new TDServer(filesDir);
+            listener = new TDListener(server, 8888);
+            listener.start();
+        } catch (IOException e) {
+            Log.e(TAG, "Unable to create TDServer", e);
+        }
 		
 		setContentView(R.layout.main);
 
