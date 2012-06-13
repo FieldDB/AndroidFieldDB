@@ -2,13 +2,7 @@ package ca.ilanguage.fieldlinguistics;
 
 import java.io.IOException;
 
-import org.ektorp.CouchDbConnector;
-import org.ektorp.CouchDbInstance;
-import org.ektorp.http.HttpClient;
-import org.ektorp.impl.StdCouchDbInstance;
-
 import com.couchbase.touchdb.TDServer;
-import com.couchbase.touchdb.ektorp.TouchDBHttpClient;
 import com.couchbase.touchdb.router.TDURLStreamHandlerFactory;
 
 import ca.ilanguage.fieldlinguistics.R;
@@ -27,7 +21,6 @@ public class AndroidFieldLinguisticsActivity extends Activity {
 	private static final String TAG = "AndroidFieldLinguisticsActivity";
 	public static final boolean D = true;
 	private WebView mWebView;
-	private static final String DATABASE_NAME = "tests";
 	
 	/* Needed to initialize TouchDB */
 	static {
@@ -48,14 +41,10 @@ public class AndroidFieldLinguisticsActivity extends Activity {
 			Log.e(TAG, "Error starting TDServer", e);
 		}
 		
-		// Connect Ektorp to the TDServer instance
-		HttpClient httpClient = new TouchDBHttpClient(server);
-		CouchDbInstance dbInstance = new StdCouchDbInstance(httpClient);
-		
 		setContentView(R.layout.main);
 
 		mWebView = (WebView) findViewById(R.id.webView1);
-		mWebView.addJavascriptInterface(new JavaScriptInterface(this, dbInstance), "Android");
+		mWebView.addJavascriptInterface(new JavaScriptInterface(this), "Android");
 		mWebView.setWebViewClient(new MyWebViewClient());
 		mWebView.setWebChromeClient(new MyWebChromeClient());
 		WebSettings webSettings = mWebView.getSettings();
@@ -103,14 +92,10 @@ public class AndroidFieldLinguisticsActivity extends Activity {
 	public class JavaScriptInterface {
 		private static final String TAG = "JavaScriptInterface";
 		private Context mContext;
-		private CouchDbInstance couch;
-		private CouchDbConnector db;
 
 		/** Instantiate the interface and set the context */
-		JavaScriptInterface(Context c, CouchDbInstance couch) {
+		JavaScriptInterface(Context c) {
 			mContext = c;
-			this.couch = couch;
-			this.db = couch.createConnector(DATABASE_NAME, true);
 		}
 
 		public void showToast(String toast) {
