@@ -16,7 +16,7 @@ public class LanguageLessonsApp extends Application {
 	public void onCreate() {
 		super.onCreate();
 		
-		outputDir = "file:///sdcard"+this.getFilesDir().getAbsolutePath() + File.separator;
+//		outputDir = "file:///sdcard"+this.getFilesDir().getAbsolutePath() + File.separator;
 		
 		language = Locale.getDefault();
 

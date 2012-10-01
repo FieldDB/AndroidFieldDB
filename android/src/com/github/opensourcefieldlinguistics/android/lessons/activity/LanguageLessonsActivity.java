@@ -17,9 +17,9 @@ public class LanguageLessonsActivity extends HTML5GameActivity {
   protected void setUpVariables() {
     this.TAG = LanguageLessonsApp.getTag();
     this.D = LanguageLessonsApp.isD();
-    this.mInitialAppServerUrl = "file:///android_asset/release/index.html";
+    this.mInitialAppServerUrl = "file:///android_asset/release/lessons_corpus/index.html";
     this.mOutputDir = ((LanguageLessonsApp) getApplication()).getOutputDir();
     this.mJavaScriptInterface = new LanguageLessonsJavaScriptInterface(D, TAG,
-        mOutputDir, getApplicationContext(), this);
+        mOutputDir, getApplicationContext(), this, "release/");
   }
 }
