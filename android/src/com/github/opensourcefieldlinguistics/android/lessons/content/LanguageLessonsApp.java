@@ -7,10 +7,10 @@ import android.content.res.Configuration;
 import android.util.Log;
 
 public class LanguageLessonsApp extends Application {
-	protected static final String TAG = "DyslexDisorthGame";
+	protected static final String TAG = "FieldLessons";
 	public static final boolean D = true;
 	Locale language;
-	private String  outputDir= "/sdcard/DyslexDisorthGame/";
+	private String  outputDir= "/sdcard/FieldLessons/";
 
 	@Override
 	public void onCreate() {
@@ -21,6 +21,8 @@ public class LanguageLessonsApp extends Application {
 		language = Locale.getDefault();
 
 		new File(outputDir + "video/").mkdirs();
+		new File(outputDir + "audio/").mkdirs();
+		new File(outputDir + "images/").mkdirs();
 		new File(outputDir + "touchdata/").mkdirs();
 
 		if(D) Log.d(TAG, "Oncreate of the application");
