@@ -29,13 +29,13 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
 
-        <!-- used for testing phonegap/cordova but decided it was too basic for the audio playback we required -->
+        <!-- used for testing phonegap/cordova but decided it was too basic for the audio playback we required 
         <activity
             android:name=".activity.CordovaActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" >
-        </activity>
+        </activity>-->
         <activity
             android:name=".activity.LanguageLessonsActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
