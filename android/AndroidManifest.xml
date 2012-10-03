@@ -46,6 +46,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="ca.ilanguage.oprime.datacollection.TakePicture"
+            android:exported="false"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="ca.ilanguage.oprime.intent.action.TAKE_PICTURE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <service
             android:name="ca.ilanguage.oprime.datacollection.AudioRecorder"
