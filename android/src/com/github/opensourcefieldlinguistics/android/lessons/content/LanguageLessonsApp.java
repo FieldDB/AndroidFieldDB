@@ -8,7 +8,7 @@ import android.util.Log;
 
 public class LanguageLessonsApp extends Application {
 	protected static final String TAG = "FieldLessons";
-	public static final boolean D = true;
+	public static final boolean D = false;
 	Locale language;
 	private String  outputDir= "/sdcard/FieldLessons/";
 
