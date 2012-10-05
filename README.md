@@ -1,4 +1,4 @@
-AndroidLanguageLearningClientForFieldDB
+AndroidAnomiaTrainer
 =======================================
 
-An Android language learning app which plugs into iField corpora to create language learning apps.
+An Android language learning app which lets the user build a custom visual vocabulary, useful for guided anomia treatment.
