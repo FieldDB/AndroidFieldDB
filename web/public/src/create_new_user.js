@@ -19,7 +19,7 @@ document.getElementById("save_new_exercise").onclick = function(e) {
   });
   OPrime.debug(JSON.stringify(newuser));
   window.userHistory.userProfile = window.userHistory.userProfile || [];
-  window.userHistory.userProfile.push(newuser);
+  window.userHistory.userProfile.unshift(newuser);
   window.userHistory.userid = newuser.userid;
   alert("I saved your user to localstorage as JSON (normally I would put it in a database, but this is just a clickable prototype): "
       + JSON.stringify(newuser));

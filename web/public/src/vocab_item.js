@@ -1,72 +1,65 @@
 /*
  * on page load, populate the text areas with the user's languages
  */
-var createTextFieldsforUser = function() {
-  var languages = window.userHistory.userProfile[0].languages;
+var loadExercise = function(exerciseid) {
+  var exercise = window.userHistory.userCreatedExercises[3];
+  console.log(exercise);
+  document.getElementById("audio_stimuli_file").src = exercise.audio_stimuli;
+  document.getElementById("image_stimuli_file").src = exercise.image_stimuli;
+  var languages = exercise.text_stimuli;
   for ( var l in languages) {
     $("#users_languages")
         .append(
-            '<li class="language_item"><span class="language_name">'
-                + languages[l].name
-                + '</span>: <div class="alert alert-info "> '
-                + '<button type="button" class="close" data-dismiss="alert">×</button>'
-                + ' <textarea class="stimuli_text"></textarea> </div> </li>');
+            '<li >'
+                + languages[l].text
+                + ' </li>');
   }
 };
 
-document.getElementById("save_new_exercise").onclick = function(e) {
-  window.userHistory.userCreatedExercises = window.userHistory.userCreatedExercises
-      || [];
-  var newexercise = {};
-  newexercise.exerciseid = Date.now();
-  newexercise.userid = window.userHistory.id;
-  newexercise.dateCreated = JSON.stringify(new Date());
-  newexercise.audio_stimuli = document.getElementById("audio_response_file").src;
-  newexercise.image_stimuli = document.getElementById("image_stimuli_file").src;
-
-  newexercise.text_stimuli = [];
-  $(".language_item").each(function(e) {
-    var newlang = {};
-    newlang.name = $(this).find(".language_name").html();
-    newlang.text = $(this).find(".stimuli_text")[0].value;
-    newexercise.text_stimuli.push(newlang);
-  });
-  OPrime.debug(JSON.stringify(newexercise));
-  window.userHistory.userCreatedExercises.push(newexercise);
+document.getElementById("delete_exercise").onclick = function(e) {
+  window.userHistory.userCreatedExercises;
+  //TODO look up the id of the current exercise and move it to a trash array
   window.saveUser(function(){
     window.location.replace("index.html");
   });
 };
 
-document.getElementById("capture_image_stimuli_button").onclick = function(e) {
-  e.stopPropagation();
-  var responsefilename = document.getElementById("audio_stimuli_transcription").value
-      .replace(/\W/g, "_")
-      + "_stimuli_" + Date.now() + ".png";
-  OPrime.capturePhoto(responsefilename, /* started */null, /* completed */
-  function(imageUrl) {
-    OPrime.debug("\nPicture capture successfully completed " + imageUrl);
-    document.getElementById("image_stimuli_file").src = imageUrl;
-  });
+
+/*
+ * Handle the play/pause stimuli button
+ */
+document.getElementById("play_stimulus_button").onclick = function(e) {
+  if ($(e.target)[0].classList.toString().indexOf("icon-pause") == -1) {
+    OPrime.playAudioFile('audio_stimuli_file', function() {
+      // oncomplete change the text of the button to play
+      $($(e.target)[0]).toggleClass("icon-pause icon-play");
+    });
+    $($(e.target)[0]).toggleClass("icon-play icon-pause");
+  } else {
+    OPrime.pauseAudioFile('audio_stimuli_file');
+    $($(e.target)[0]).toggleClass("icon-pause icon-play");
+  }
 };
 
 /*
- * Hide HTML5 audio controls on Android
+ * Handle the stop stimuli button
  */
-if (!OPrime.isAndroidApp()) {
-
-  document.getElementById("audio_response_file").setAttribute("controls",
-      "controls");
-}
+document.getElementById("stop_stimulus_button").onclick = function(e) {
+  OPrime.stopAudioFile('audio_stimuli_file');
+  if (document.getElementById("play_stimulus_button").classList.toString()
+      .indexOf("icon-play") == -1) {
+    $(document.getElementById("play_stimulus_button")).toggleClass(
+        "icon-play icon-pause");
+  }
+};
 
 /*
  * Handle the record/stop response button
  */
 document.getElementById("record_vocab_response_button").onclick = function(e) {
   e.stopPropagation();
-  var responsefilename = document.getElementById("audio_stimuli_transcription").value
-      .replace(/\W/g, "_")
-      + "_stimuli_" + Date.now() + ".mp3";
+  var responsefilename = document.getElementById("audio_stimuli_file").src
+      .replace(".wav", "").replace(/\/.*\//,"").replace("ogg", "").replace(".mp3", "") + "_response_"+Date.now()+".mp3";
   if (document.getElementById("record_vocab_response_button").classList
       .toString().indexOf("icon-stop") == -1) {
     OPrime.captureAudio(responsefilename, /* started */function(audioUrl) {
@@ -92,7 +85,8 @@ document.getElementById("record_vocab_response_button").onclick = function(e) {
   } else {
     document.getElementById("record_vocab_response_button").setAttribute(
         "disabled", "disabled");
-    OPrime.stopAndSaveAudio(responsefilename, /* stopped */function(audioUrl) {
+    OPrime.stopAndSaveAudio(responsefilename, /* stopped */function(
+        audioUrl) {
       if (document.getElementById("record_vocab_response_button").classList
           .toString().indexOf("icon-stop") > -1) {
         $(document.getElementById("record_vocab_response_button")).toggleClass(
@@ -125,7 +119,7 @@ if (userHistory) {
   userHistory = {};
   userHistory.id = Date.now();
 }
-createTextFieldsforUser();
+loadExercise();
 
 OPrime.hub.subscribe("playbackCompleted", function(filename) {
   window.userHistory[filename] = window.userHistory[filename] || [];

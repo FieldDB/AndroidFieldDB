@@ -16,39 +16,39 @@
 </head>
 <body class="body_background centered_page">
 	<div class="well">
-		<a href="#" class="btn btn-mini btn-info pull-right "
-			id="save_new_exercise">Save</a> <a href="index.html"
-			class="btn btn-mini btn-primary pull-left ">Cancel</a>
+		<a href="#" class="btn btn-mini btn-danger pull-right "
+			id="delete_exercise">Delete</a> <a href="index.html"
+			class="btn btn-mini btn-primary pull-left ">Back</a>
 
-		<h1>New Exercise</h1>
+		<h1 class="text_stimuli"></h1>
 	</div>
 	<div class="well">
 
-  <input id="audio_stimuli_transcription" hidden/>
 
-
-		<div class="well">
-			Picture:
-			<button id="capture_image_stimuli_button"
-				class="btn btn-inverse icon-record">Take a picture</button>
+		<div class="">
 			<img src="" id="image_stimuli_file" />
-		</div>
-
-		<div class="well">
-			Record Spoken:
-
-			<div class="android_audio_controls ">
+			
+			
+			<div class="android_audio_controls pull-left">
+				<button id="play_stimulus_button" class="btn btn-inverse icon-play"></button>
+				<button id="stop_stimulus_button" class="btn btn-inverse icon-stop"></button>
+			</div>
+			<div class="android_audio_controls pull-right">
 				<button id="record_vocab_response_button"
 					class="btn btn-inverse icon-record">
 					<img src="mic_white.png" />
 				</button>
 				<button id="play_response_button" class="btn btn-inverse icon-play"></button>
 			</div>
-			<audio id="audio_response_file" src="" class="datum-audio-player">
+			<audio id="audio_stimuli_file" src="">
 			</audio>
-
+			<audio id="audio_response_file" src="">
+			</audio>
+			 <div class="end_tiles"></div>
+			
 		</div>
-		<div class="well">
+
+		<div class="">
 			<ul id="users_languages">
 			</ul>
 
@@ -59,6 +59,6 @@
 	<script src="../libs/ga.js"></script>
 	<script src="../libs/analytics.js"></script>
 	<script src="OPrime.js"></script>
-	<script src="create_new_vocab.js"></script>
+	<script src="vocab_item.js"></script>
 </body>
 </html>
