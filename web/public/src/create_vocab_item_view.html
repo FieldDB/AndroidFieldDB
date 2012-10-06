@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>New User</title>
+<title>New Vocab</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- Stylesheets -->
 <link rel="stylesheet" type="text/css"
@@ -16,32 +16,28 @@
 </head>
 <body class="body_background centered_page">
 	<div class="well">
-		<div class="btn-group pull-right">
-			<a href="#" class="btn btn-info pull-right " id="save_new_exercise">Save</a>
-		</div>
-		<h1>New User</h1>
+		<a href="#" class="btn btn-mini btn-info pull-right "
+			id="save_new_exercise">Save</a> <a
+			href="index.html"
+			class="btn btn-mini btn-primary pull-left ">Back</a>
+
+		<h1>New Exercise</h1>
 	</div>
 	<div class="well">
-		<div class="well">
-			What is your first name?
-			<textarea id="user_audio_name_transcription">Gina</textarea>
-		</div>
 
 		<div class="well">
-			What languages did you use?
-			<textarea id="users_langauges_textarea">English, French</textarea>
-			<ul id="users_languages">
-			</ul>
+			Text:
+			<textarea id="audio_stimuli_transcription"></textarea>
 		</div>
 
 		<div class="well">
 			Picture:
-			<button id="capture_user_image_button"
-				class="btn btn-inverse icon-record">Take your picture</button>
-			<img src="happyface.png" class="gravatar" id="user_image_file" />
+			<button id="capture_image_stimuli_button"
+				class="btn btn-inverse icon-record">Take a picture</button>
+			<img src="" id="image_stimuli_file" />
 		</div>
 		<div class="well">
-			Record your name:
+			Record Spoken:
 
 			<div class="android_audio_controls ">
 				<button id="record_vocab_response_button"
@@ -55,13 +51,10 @@
 
 		</div>
 	</div>
-
 	<script src="../libs/jquery.js"></script>
-  <script src="../libs/bootstrap/js/]bootstrap.min.js"></script>
-  <script src="../libs/bootstrap/js/bootstrap-alert.js"></script>
 	<script src="../libs/ga.js"></script>
 	<script src="../libs/analytics.js"></script>
 	<script src="OPrime.js"></script>
-	<script src="create_new_user.js"></script>
+	<script src="create_new_vocab.js"></script>
 </body>
 </html>

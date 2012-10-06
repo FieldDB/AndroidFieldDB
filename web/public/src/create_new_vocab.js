@@ -1,56 +1,35 @@
+
+
 document.getElementById("save_new_exercise").onclick = function(e) {
-  window.userHistory = window.userHistory || {};
-  var newuser = {};
-  newuser.userid = window.userHistory.id;
-  newuser.dateCreated = JSON.stringify(new Date());
-  newuser.nameAudio = document.getElementById("audio_response_file").src;
-  newuser.gravatar = document.getElementById("user_image_file").src;
-  newuser.firstName = document.getElementById("user_audio_name_transcription").value;
-  newuser.languages = [];
-  $(".language_item").each(function(e){
-    var newlang = {};
-    newlang.name  = $(this).find(".language_name").html();
-    newlang.acquisitonType = [];
-    var acqs  = $(this).find(".acquisition_type");
-    for(var t = 0; t < acqs.length; t++){
-      newlang.acquisitonType.push(acqs[t].innerHTML);
-    }
-    newuser.languages.push(newlang);
-  });
-  OPrime.debug(JSON.stringify(newuser));
-  window.userHistory.userProfile = window.userHistory.userProfile || [];
-  window.userHistory.userProfile.push(newuser);
-  window.userHistory.userid = newuser.userid;
-  alert("I saved your user to localstorage as JSON (normally I would put it in a database, but this is just a clickable prototype): "
-      + JSON.stringify(newuser));
+  window.userHistory.userCreatedExercises = window.userHistory.userCreatedExercises
+      || [];
+  var newexercise = {};
+  newexercise.userid = window.userHistory.id;
+  newexercise.dateCreated = JSON.stringify(new Date());
+  newexercise.audio_stimuli = document.getElementById("audio_response_file").src;
+  newexercise.image_stimuli = document.getElementById("image_stimuli_file").src;
+  newexercise.stimuli_transcription = document
+      .getElementById("audio_stimuli_transcription").value;
+  newexercise.stimuli_translation = document
+      .getElementById("audio_stimuli_translation").value;
+  OPrime.debug(JSON.stringify(newexercise));
+  window.userHistory.userCreatedExercises.push(newexercise);
+  alert("I saved your lesson to localstorage as JSON (normally I would put it in a database, but this is just a clickable prototype): "
+      + JSON.stringify(newexercise));
 };
 
-document.getElementById("users_langauges_textarea").onblur = function(e) {
-  var languages = e.target.value.split(",");
-  var langList = $("#users_languages");
-  langList.html("");
-  for ( var l in languages) {
-    langList.append('<li class="language_item"><span class="language_name">' + languages[l].trim()
-        + '</span>: <div class="alert alert-info "> '
-        + '<button type="button" class="close" data-dismiss="alert">×</button>'
-        + ' <span class="acquisition_type">Immersion</span> </div> <div class="alert alert-info ">'
-        + '<button type="button" class="close" data-dismiss="alert">×</button>'
-        + ' <span class="acquisition_type">Studied</span </div></li>');
-  }
-};
-
-document.getElementById("capture_user_image_button").onclick = function(e) {
+document.getElementById("capture_image_stimuli_button").onclick = function(e) {
   e.stopPropagation();
-  var responsefilename = document
-      .getElementById("user_audio_name_transcription").value
+  var responsefilename = document.getElementById("audio_stimuli_transcription").value
       .replace(/\W/g, "_")
       + "_stimuli_" + Date.now() + ".png";
   OPrime.capturePhoto(responsefilename, /* started */null, /* completed */
-  function(imageUrl) {
-    OPrime.debug("\nPicture capture successfully completed " + imageUrl);
-    document.getElementById("user_image_file").src = imageUrl;
-  });
+      function(imageUrl) {
+        OPrime.debug("\nPicture capture successfully completed " + imageUrl);
+        document.getElementById("image_stimuli_file").src = imageUrl;
+      });
 };
+
 
 /*
  * Hide HTML5 audio controls on Android
@@ -66,8 +45,7 @@ if (!OPrime.isAndroidApp()) {
  */
 document.getElementById("record_vocab_response_button").onclick = function(e) {
   e.stopPropagation();
-  var responsefilename = document
-      .getElementById("user_audio_name_transcription").value
+  var responsefilename = document.getElementById("audio_stimuli_transcription").value
       .replace(/\W/g, "_")
       + "_stimuli_" + Date.now() + ".mp3";
   if (document.getElementById("record_vocab_response_button").classList

@@ -360,7 +360,7 @@ OPrime.capturePhoto = function(resultfilename, callbackPictureCaptureStarted, ca
     this.debug("Starting picture capture via HTML5: " + resultfilename);
     alert("Taking a picture only works on Android, because it has a camera, and your computer might not.\n\n Faking that taken a picture and saved sucessfully");
     // fake publish it was sucessfully started
-    resultfilename = "happyface.jpg";
+    resultfilename = "happyface.png";
     this.hub.publish('pictureCaptureSucessfullyStarted', resultfilename);
     this.hub.publish('pictureCaptureSucessfullyCompleted', resultfilename);
   }

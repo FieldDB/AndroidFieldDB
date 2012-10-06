@@ -73,5 +73,5 @@
       hndl = window.setTimeout(function() {
         StartTracking();
       }, 1000);
-    }*/
-  }
+    }
+  }*/

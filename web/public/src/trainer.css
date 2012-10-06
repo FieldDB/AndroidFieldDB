@@ -1,40 +1,42 @@
-
-body{
+body {
 	/*  background: -webkit-linear-gradient(top, #FFFFdd, #FFFF99); */
-  background-image: url('skins/prague.jpg'); 
-  background-repeat:no-repeat;
-  background-attachment:fixed;  
-  background-position:center;
+	background-image: url('skins/prague.jpg');
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-position: center;
 }
+
 .tile {
-  margin: 0.5em;
-  float: left;
-  width: 6em;
-  height: 6em;
-  text-align: center;
+	margin: 0.5em;
+	float: left;
+	width: 6em;
+	height: 6em;
+	text-align: center;
 }
 
 .tile h1 {
-  line-height: 4em;
-  vertical-align: middle;
-  font-size: 1.5em;
-  text-align: center;
-  text-shadow: 1px 1px #000;
+	line-height: 4em;
+	vertical-align: middle;
+	font-size: 1.5em;
+	text-align: center;
+	text-shadow: 1px 1px #000;
 }
 
 .well {
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.3);
+	color: #fff;
+	background-color: rgba(0, 0, 0, 0.3);
 }
 
 .well a {
-  color: #fff;
+	color: #fff;
 }
-h1{
-  font-size: 1.25em;
+
+h1 {
+	font-size: 1.25em;
 }
+
 .centered_page {
-  text-align: center;
+	text-align: center;
 }
 
 /* .tile_container {
@@ -42,23 +44,23 @@ h1{
   margin: 0px auto;
 } */
 .end_tiles {
-  clear: both;
+	clear: both;
 }
 
 .total_progress {
-  line-height: 0em;
-  height: 0em;
-  width: 9em;
-  margin-left: -1.5em;
+	line-height: 0em;
+	height: 0em;
+	width: 9em;
+	margin-left: -1.5em;
 }
 
 .progressBar {
-  width: 100%;
-  margin: 0em;
-  padding: 0em;
-  height: 0.5em;
-  font-size: 1px !important;
-  color: rgba(0, 0, 0, 0.3);
+	width: 100%;
+	margin: 0em;
+	padding: 0em;
+	height: 0.5em;
+	font-size: 1px !important;
+	color: rgba(0, 0, 0, 0.3);
 }
 /* 
 progress {
@@ -95,18 +97,25 @@ progress::-webkit-progress-bar {
 
 /*jquery progress bars */
 #uploadprogressbar {
-  display: none;
+	display: none;
 }
 
 .dialog_screen {
-  width: 50%;
-  margin: auto;
-}
-.text_grid input{
-  width:5em;
+	width: 50%;
+	margin: auto;
 }
 
+.text_grid input {
+	width: 5em;
+}
 
-textarea{
-  width: 100%;
+textarea,.datum-audio-player {
+	width: 100%;
+}
+
+.gravatar {
+	height: 4em;
+}
+ul, li {
+    list-style-type: none;
 }

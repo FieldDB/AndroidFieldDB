@@ -5,7 +5,7 @@
 var userHistory = localStorage.getItem("userHistory");
 if (userHistory) {
   userHistory = JSON.parse(userHistory);
-  alert("Welcome back " + userHistory.userProfile[0].usersname);
+  alert("Welcome back " + userHistory.userProfile[0].firstName);
 } else {
   window.location.replace("new_user.html");
   userHistory = {};
