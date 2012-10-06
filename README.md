@@ -1,4 +1,4 @@
 AndroidAnomiaTrainer
 =======================================
 
-An Android language learning app which lets the user build a custom visual vocabulary, useful for guided anomia treatment.
+An Android app which lets the user build a custom visual and auditory vocabulary, useful for guided anomia treatment.
