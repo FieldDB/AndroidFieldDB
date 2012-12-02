@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     This file is /res/layout/video_recorder.xml based on listing 9-6 in 
+	Pro Android 2
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TableLayout
+        android:id="@+id/tableLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:stretchColumns="field" >
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <Chronometer
+                android:id="@+id/chronometer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:format="@string/chronometer_initial_format"
+                android:paddingBottom="30dip"
+                android:paddingTop="30dip"
+                android:textSize="80dip" />
+
+            <Button
+                android:id="@+id/start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/chronometer_start" >
+
+                <requestFocus />
+            </Button>
+
+            <Button
+                android:id="@+id/stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/chronometer_stop" >
+            </Button>
+
+            <Button
+                android:id="@+id/reset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/chronometer_reset" >
+            </Button>
+
+            <TextView
+                android:id="@+id/stimuli_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="#"
+                android:textColor="#ffffff"
+                android:textSize="20dip" >
+            </TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="            "
+                android:textColor="#000000"
+                android:textSize="20dip" >
+            </TextView>
+
+            <ImageButton
+                android:id="@+id/button1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onNextClick"
+                android:src="@drawable/ic_play" >
+            </ImageButton>
+
+            <VideoView
+                android:id="@+id/videoViewStopWatch"
+                android:layout_width="1dp"
+                android:layout_height="1dp" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="#ffffff" >
+
+            <ImageView
+                android:id="@+id/rightimage"
+                android:layout_width="0px"
+                android:layout_height="fill_parent"
+                android:layout_weight=".5"
+                android:gravity="center"
+                android:src="@drawable/androids_experimenter_kids" />
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>
