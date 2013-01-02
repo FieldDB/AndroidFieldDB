@@ -1,85 +1,40 @@
 package com.github.opensourcefieldlinguistics.fielddb.android.content;
 
 import java.io.File;
-import java.util.Locale;
-import android.app.Application;
-import android.content.res.Configuration;
+
 import android.util.Log;
 
-public class FieldDBApp extends Application {
-	protected static final String TAG = "FieldDB";
-	public static final boolean D = true;
-	Locale language;
-	private String  outputDir= "/sdcard/FieldDB/";
+import ca.ilanguage.oprime.content.OPrimeApp;;
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		
-//		outputDir = "file:///sdcard"+this.getFilesDir().getAbsolutePath() + File.separator;
-		
-		language = Locale.getDefault();
+public class FieldDBApp extends OPrimeApp {
 
-		new File(outputDir + "video/").mkdirs();
-		new File(outputDir + "audio/").mkdirs();
-		new File(outputDir + "images/").mkdirs();
-		new File(outputDir + "touchdata/").mkdirs();
+  public static final String PREFERENCE_PREFERENCE_NAME = "fielddbapppreferences";
+  public static final String PREFERENCE_USERS_DB_NAME = "usersdbname";
+  public static final String PREFERENCE_USERNAME = "username";
+  public static final String PREFERENCE_PASSWORD = "password";
+  public static final String PREFERENCE_COUCH_SERVER_DOMAIN = "couchServerDomain";
 
-		if(D) Log.d(TAG, "Oncreate of the application");
-	}
+  @Override
+  public void onCreate() {
+    TAG = "FieldDB";
+    D = true;
+    
+//    mOutputDir = "/sdcard/FieldDB";
+    mOutputDir = this.getFilesDir().getAbsolutePath();
+    mLocalCouchDir = mOutputDir + "/db/";
+    new File(mLocalCouchDir).mkdirs();
 
-	/**
-	 * Forces the locale for the duration of the app to the language needed for
-	 * that version of the Experiment. It accepts a variable in the form en or
-	 * en-US containing just the language code, or the language code followed by
-	 * a - and the co
-	 * 
-	 * @param lang
-	 * @return
-	 */
-	public String forceLocale(String lang) {
-		if (lang.equals(Locale.getDefault().getLanguage())) {
-			return Locale.getDefault().getDisplayLanguage();
-		}
-		Configuration config = getBaseContext().getResources()
-				.getConfiguration();
-		Locale locale;
-		if (lang.contains("-")) {
-			String[] langCountrycode = lang.split("-");
-			locale = new Locale(langCountrycode[0], langCountrycode[1]);
-		} else {
-			locale = new Locale(lang);
-		}
-		Locale.setDefault(locale);
-		config.locale = locale;
-		getBaseContext().getResources().updateConfiguration(config,
-				getBaseContext().getResources().getDisplayMetrics());
-		language = Locale.getDefault();
-		return Locale.getDefault().getDisplayLanguage();
-	}
+    super.onCreate();
+    if (D)
+      Log.d(TAG, "Oncreate of the application");
+  }
 
-	public Locale getLanguage() {
-		return language;
-	}
+  public String getLocalCouchDir() {
+    return mLocalCouchDir;
+  }
 
-	public void setLanguage(Locale language) {
-		this.language = language;
-	}
+  public void setLocalCouchDir(String mLocalCouchDir) {
+    this.mLocalCouchDir = mLocalCouchDir;
+  }
 
-	public String getOutputDir() {
-		return outputDir;
-	}
-
-	public void setOutputDir(String outputDir) {
-		this.outputDir = outputDir;
-	}
-
-	public static boolean isD() {
-		return D;
-	}
-
-	public static String getTag() {
-		return TAG;
-	}
-	
 }
