@@ -2,7 +2,6 @@ package com.github.opensourcefieldlinguistics.fielddb.android.activity;
 
 import java.io.File;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -16,20 +15,16 @@ import com.github.opensourcefieldlinguistics.fielddb.android.content.FieldDBJava
 
 public class FieldDBActivity extends HTML5ReplicatingActivity {
   private FieldDBJavaScriptInterface mJavaScriptInterface;
-  private FieldDBApp app;
 
   /** Called when the activity is first created. */
   @Override
   public void onCreate(Bundle savedInstanceState) {
-    this.setApp(getApplication());
-
     /* not using the android splash screen */
     splashScreenCanceled = true;
     setCouchInfoBasedOnUserDb(null, null, null, null);
-//    this.beginReplicating();
+    mLocalTouchDBFileDir = getApp().getLocalCouchDir();
     turnOnDatabaseListener(false);
     super.onCreate(savedInstanceState);
-
   }
 
   public void setCouchInfoBasedOnUserDb(String userdb, String username,
@@ -45,7 +40,8 @@ public class FieldDBActivity extends HTML5ReplicatingActivity {
         FieldDBApp.PREFERENCE_PREFERENCE_NAME, Context.MODE_PRIVATE).edit();
 
     if (userdb == null) {
-      userdb = prefs.getString(FieldDBApp.PREFERENCE_USERS_DB_NAME, "public-firstcorpus");
+      userdb = prefs.getString(FieldDBApp.PREFERENCE_USERS_DB_NAME,
+          "public-firstcorpus");
     } else {
       editor.putString(FieldDBApp.PREFERENCE_USERS_DB_NAME, userdb);
     }
@@ -64,8 +60,9 @@ public class FieldDBActivity extends HTML5ReplicatingActivity {
 
     if (serverdomain == null) {
       serverdomain = prefs.getString(FieldDBApp.PREFERENCE_COUCH_SERVER_DOMAIN,
-        "ifielddevs.iriscouch.com");
-//        "corpus.lingsync.org"); //TODO fix peer certificates on all startsll certs
+          "ifielddevs.iriscouch.com");
+      // "corpus.lingsync.org"); //TODO fix peer certificates on all startsll
+      // certs
 
     } else {
       editor.putString(FieldDBApp.PREFERENCE_COUCH_SERVER_DOMAIN, serverdomain);
@@ -73,18 +70,23 @@ public class FieldDBActivity extends HTML5ReplicatingActivity {
     editor.commit();
 
     this.mDatabaseName = userdb;
+    this.mRemoteCouchServerDomain = serverdomain;
     this.mRemoteCouchDBURL = "https://" + username + ":" + password + "@"
         + serverdomain + "/" + userdb;
-    if(D) Log.d(TAG, "This is the remote couch db url "+mRemoteCouchDBURL);
+    if (D)
+      Log.d(TAG, "This is the remote couch db url " + mRemoteCouchDBURL);
     this.mLocalCouchAppInitialURL = "http://localhost:8128/" + userdb
         + "/_design/pages/index.html";
     /*
      * If the user is unknown, take them to the authentication page in the
      * assets
      */
-    // if("public".equals(username)
+    if ("public".equals(username)) {
+    } else {
+      this.beginReplicating();
+    }
     this.mInitialAppServerUrl = "file:///android_asset/release/authentication.html";
-
+    this.splashScreenURL = "file:///android_asset/release/authentication.html";
   }
 
   /**
@@ -95,8 +97,8 @@ public class FieldDBActivity extends HTML5ReplicatingActivity {
     if (mRemoteCouchDBURL == "") {
       return;
     }
-    mLocalTouchDBFileDir = ((FieldDBApp) getApplication()).getLocalCouchDir();
-    new File(mLocalTouchDBFileDir).mkdirs();
+    mLocalTouchDBFileDir = getApp().getLocalCouchDir();
+    (new File(mLocalTouchDBFileDir)).mkdirs();
     startTouchDB();
     startEktorp();
   }
@@ -114,8 +116,8 @@ public class FieldDBActivity extends HTML5ReplicatingActivity {
     this.D = getApp().isD();
     Log.d(TAG, "Setting TAG " + this.TAG + " and Debug " + this.D);
 
-    this.mOutputDir = app.getOutputDir();
-    this.setJavaScriptInterface( new FieldDBJavaScriptInterface(D, TAG,
+    this.mOutputDir = getApp().getOutputDir();
+    this.setJavaScriptInterface(new FieldDBJavaScriptInterface(D, TAG,
         this.mOutputDir, getApplicationContext(), this, "release/"));
   }
 
@@ -133,14 +135,8 @@ public class FieldDBActivity extends HTML5ReplicatingActivity {
     return mDatabaseName;
   }
 
-  @Override
   public FieldDBApp getApp() {
-    return app;
-  }
-
-  @Override
-  public void setApp(Application app) {
-    this.app = (FieldDBApp) app;
+    return (FieldDBApp) this.getApplication();
   }
 
 }
