@@ -1,4 +1,4 @@
 AndroidLanguageLearningClientForFieldDB
 =======================================
 
-An Android language learning app which plugs into iField corpora to create language learning apps.
+An Android language learning app which plugs into FieldDB databases to create language learning apps.
