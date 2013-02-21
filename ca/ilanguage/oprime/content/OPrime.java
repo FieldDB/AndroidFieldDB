@@ -53,6 +53,7 @@ public class OPrime {
   public static final String EXTRA_SUB_EXPERIMENT_TITLE = "subexperimenttitle";
   public static final String EXTRA_EXPERIMENT_TRIAL_INFORMATION = "experimenttrialinfo";
   public static final String EXTRA_RESULT_FILENAME = "resultfilename";
+  public static final String EXTRA_MAX_PICTURE_SIZE = "maxpicturesize";
   public static final String EXTRA_STIMULI = "stimuli";
   public static final String EXTRA_TAKE_PICTURE_AT_END = "takepictureatend";
   public static final String EXTRA_OUTPUT_DIR = "outputdir";

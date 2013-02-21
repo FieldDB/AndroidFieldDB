@@ -14,6 +14,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -94,23 +96,70 @@ public class TakePicture extends Activity {
       try {
         File sd = Environment.getExternalStorageDirectory();
         if (sd.canWrite()) {
+          // Get the source and destination
           String sourceImagePath = getPath(myPicture);
-          String destinationImagePath = mImageFilename;
           File source = new File(sourceImagePath);
-          if (source.exists()) {
-            FileOutputStream destStream = new FileOutputStream(new File(
-                destinationImagePath));
-            FileInputStream inStream = new FileInputStream(source);
+          String destinationImagePath = mImageFilename;
 
-            FileChannel src = inStream.getChannel();
-            FileChannel dst = destStream.getChannel();
+          // Calculate the scale based on the given max picture size, if there
+          // is one
+          int maxPictureSize = getIntent().getExtras().getInt(OPrime.EXTRA_MAX_PICTURE_SIZE);
+          if (maxPictureSize > 0) {
+            // Code from: http://stackoverflow.com/questions/477572/android-strange-out-of-memory-issue-while-loading-an-image-to-a-bitmap-object/823966#answer-3549021
+            Bitmap b = null;
+            
+            // Decode the source picture size
+            BitmapFactory.Options memoryEfficientOptions = new BitmapFactory.Options();
+            memoryEfficientOptions.inJustDecodeBounds = true;
+            FileInputStream fis = new FileInputStream(source);
+            BitmapFactory.decodeStream(fis, null, memoryEfficientOptions);
+            fis.close();
 
-            dst.transferFrom(src, 0, src.size());
+            // Determine the desired scale
+            int scale = 1;
+            if (memoryEfficientOptions.outHeight > maxPictureSize
+                || memoryEfficientOptions.outWidth > maxPictureSize) {
+              scale = (int) Math.pow(
+                  2,
+                  (int) Math.round(Math.log(maxPictureSize
+                      / (double) Math.max(memoryEfficientOptions.outHeight,
+                          memoryEfficientOptions.outWidth))
+                      / Math.log(0.5)));
+            }
+            
+            // Decode the picture with the determined scale
+            BitmapFactory.Options scalingOptions = new BitmapFactory.Options();
+            scalingOptions.inSampleSize = scale;
+            fis = new FileInputStream(source);
+            b = BitmapFactory.decodeStream(fis, null, scalingOptions);
+            fis.close();
+            
+            if (b != null) {
+              // Send image to the destination
+              FileOutputStream destStream = new FileOutputStream(new File(
+                  destinationImagePath));
+              b.compress(Bitmap.CompressFormat.PNG, 100, destStream);
+              
+              destStream.flush();
+              destStream.close();
+            }
+          } else {
+            // There was no max picture size, so save to the destination as is
+            if (source.exists()) {
+              FileOutputStream destStream = new FileOutputStream(new File(
+                  destinationImagePath));
+              FileInputStream inStream = new FileInputStream(source);
 
-            src.close();
-            dst.close();
-            destStream.close();
-            inStream.close();
+              FileChannel src = inStream.getChannel();
+              FileChannel dst = destStream.getChannel();
+
+              dst.transferFrom(src, 0, src.size());
+
+              src.close();
+              dst.close();
+              destStream.close();
+              inStream.close();
+            }
           }
         }
 

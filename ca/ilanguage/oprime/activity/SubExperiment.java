@@ -278,7 +278,7 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
     /*
      * Let the user know if the language is not there.
      */
-    String availibleLanguages = "en,el,es,es-rES,fr,iu,iw,kn,ru";
+    String availibleLanguages = "en,el,es,es-ES,fr,iu,iw,kn,ru";
     if (availibleLanguages.contains(lang)) {
       // do nothing, this langauge is supported
     } else {

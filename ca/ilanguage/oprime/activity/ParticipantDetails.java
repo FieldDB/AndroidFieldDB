@@ -38,6 +38,8 @@ public class ParticipantDetails extends PreferenceActivity {
 
   @Override
   public void onBackPressed() {
+    String tag = ((OPrimeApp) this.getApplication()).getTag();
+    boolean d = ((OPrimeApp) this.getApplication()).isD();
     try {
       boolean prepareExperiment = getIntent().getExtras().getBoolean(
           OPrime.EXTRA_PLEASE_PREPARE_EXPERIMENT, false);
@@ -45,15 +47,15 @@ public class ParticipantDetails extends PreferenceActivity {
       } else {
         Intent i = new Intent(getBaseContext(), HTML5GameActivity.class);
         i.putExtra(OPrime.EXTRA_PLEASE_PREPARE_EXPERIMENT, true);
-        i.putExtra(OPrime.EXTRA_DEBUG_MODE, OPrimeApp.D);
-        i.putExtra(OPrime.EXTRA_TAG, OPrimeApp.TAG);
+        i.putExtra(OPrime.EXTRA_DEBUG_MODE, d);
+        i.putExtra(OPrime.EXTRA_TAG, tag);
         startActivity(i);
       }
     } catch (Exception e) {
       Intent i = new Intent(getBaseContext(), HTML5GameActivity.class);
       i.putExtra(OPrime.EXTRA_PLEASE_PREPARE_EXPERIMENT, true);
-      i.putExtra(OPrime.EXTRA_DEBUG_MODE, OPrimeApp.D);
-      i.putExtra(OPrime.EXTRA_TAG, OPrimeApp.TAG);
+      i.putExtra(OPrime.EXTRA_DEBUG_MODE, d);
+      i.putExtra(OPrime.EXTRA_TAG, tag);
       startActivity(i);
     }
     finish();

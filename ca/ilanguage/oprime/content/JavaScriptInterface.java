@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 import ca.ilanguage.oprime.activity.HTML5Activity;
 import ca.ilanguage.oprime.datacollection.AudioRecorder;
+import ca.ilanguage.oprime.datacollection.TakePicture;
 import ca.ilanguage.oprime.datacollection.VideoRecorder;
 
 import android.content.Context;
@@ -18,9 +19,11 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
+import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 
-public class JavaScriptInterface implements Serializable {
+public abstract class JavaScriptInterface implements Serializable,
+    NonObfuscateable {
 
   private static final long serialVersionUID = -4666851545498417224L;
   protected String TAG = OPrime.OPRIME_TAG;
@@ -36,7 +39,6 @@ public class JavaScriptInterface implements Serializable {
   protected String mAudioPlaybackFileUrl;
   protected String mAudioRecordFileUrl;
   protected String mTakeAPictureFileUrl;
-  protected HTML5Activity mUIParent;
 
   /**
    * Can pass in all or none of the parameters. Expects the caller to set the
@@ -60,6 +62,7 @@ public class JavaScriptInterface implements Serializable {
    *          the folders deep in the assets dir to get to the base where the
    *          chrome extension is.(example: release/)
    */
+
   public JavaScriptInterface(boolean d, String tag, String outputDir,
       Context context, HTML5Activity UIParent, String assetsPrefix) {
     D = d;
@@ -69,7 +72,7 @@ public class JavaScriptInterface implements Serializable {
     if (D)
       Log.d(TAG, "Initializing the Javascript Interface (JSI).");
     mAudioPlaybackFileUrl = "";
-    mUIParent = UIParent;
+    this.setUIParent(UIParent);
     mAssetsPrefix = assetsPrefix;
     mHandler = new Handler();
 
@@ -85,11 +88,16 @@ public class JavaScriptInterface implements Serializable {
 
   }
 
+  public abstract HTML5Activity getUIParent();
+
+  public abstract void setUIParent(HTML5Activity UIParent);
+
+  @JavascriptInterface
   public String getVersionJIS() {
     String versionName;
     try {
-      versionName = mUIParent.getPackageManager().getPackageInfo(
-          mUIParent.getPackageName(), 0).versionName;
+      versionName = getUIParent().getPackageManager().getPackageInfo(
+          getUIParent().getPackageName(), 0).versionName;
     } catch (NameNotFoundException e) {
       Log.d(TAG, "Exception trying to get app version");
       return "";
@@ -97,6 +105,7 @@ public class JavaScriptInterface implements Serializable {
     return versionName;
   }
 
+  @JavascriptInterface
   public void pauseAudio() {
     if (mMediaPlayer != null) {
       if (mMediaPlayer.isPlaying()) {
@@ -106,6 +115,7 @@ public class JavaScriptInterface implements Serializable {
     }
   }
 
+  @JavascriptInterface
   public void stopAudio() {
     if (mMediaPlayer != null) {
       if (mMediaPlayer.isPlaying()) {
@@ -116,6 +126,7 @@ public class JavaScriptInterface implements Serializable {
     }
   }
 
+  @JavascriptInterface
   public void playAudio(String urlstring) {
     urlstring = urlstring.trim();
     if (urlstring == null || "".equals(urlstring.trim())) {
@@ -178,6 +189,7 @@ public class JavaScriptInterface implements Serializable {
    *          The position in milliseconds to end playback. If then the audio
    *          will play completely.
    */
+  @JavascriptInterface
   protected void setAudioFile(final String urlstring, final int cueTo,
       final int endAt) {
     mMediaPlayer = new MediaPlayer();
@@ -228,7 +240,7 @@ public class JavaScriptInterface implements Serializable {
 
               mMediaPlayer.release();
               mMediaPlayer = null;
-              // mUIParent.loadUrlToWebView();
+              // getUIParent().loadUrlToWebView();
               LoadUrlToWebView v = new LoadUrlToWebView();
               v.setMessage("javascript:OPrime.hub.publish('playbackCompleted','"
                   + mAudioPlaybackFileUrl + "');");
@@ -255,6 +267,7 @@ public class JavaScriptInterface implements Serializable {
     }
   }
 
+  @JavascriptInterface
   public void playIntervalOfAudio(String urlstring, final int startTimeMS,
       final int endTimeMS) {
     if (D)
@@ -304,6 +317,7 @@ public class JavaScriptInterface implements Serializable {
     }
   }
 
+  @JavascriptInterface
   public void startAudioRecordingService(String resultfilename) {
     if ("".equals(resultfilename.trim())) {
       if (D)
@@ -327,7 +341,7 @@ public class JavaScriptInterface implements Serializable {
     Intent intent;
     intent = new Intent(mContext, AudioRecorder.class);
     intent.putExtra(OPrime.EXTRA_RESULT_FILENAME, mAudioRecordFileUrl);
-    mUIParent.startService(intent);
+    getUIParent().startService(intent);
     // Publish audio recording started
     LoadUrlToWebView v = new LoadUrlToWebView();
     v.setMessage("javascript:OPrime.hub.publish('audioRecordingSucessfullyStarted','"
@@ -335,6 +349,7 @@ public class JavaScriptInterface implements Serializable {
     v.execute();
   }
 
+  @JavascriptInterface
   public void stopAudioRecordingService(String resultfilename) {
     // TODO could do some checking to see if the same file the HTML5 wants us to
     // stop is similarly named to the one in the Java
@@ -343,7 +358,7 @@ public class JavaScriptInterface implements Serializable {
       return;
     }
     Intent audio = new Intent(mContext, AudioRecorder.class);
-    mUIParent.stopService(audio);
+    getUIParent().stopService(audio);
     // Publish stopped audio
     LoadUrlToWebView v = new LoadUrlToWebView();
     v.setMessage("javascript:OPrime.hub.publish('audioRecordingSucessfullyStopped','"
@@ -359,6 +374,7 @@ public class JavaScriptInterface implements Serializable {
     mAudioRecordFileUrl = null;
   }
 
+  @JavascriptInterface
   public String getAudioDir() {
     // if its the sdcard, or a web url send that instead
     String outputDir = mOutputDir + "audio/";
@@ -373,13 +389,15 @@ public class JavaScriptInterface implements Serializable {
     new File(outputDir).mkdirs();
 
     Intent intent;
-    intent = new Intent(OPrime.INTENT_START_VIDEO_RECORDING);
+    // intent = new Intent(OPrime.INTENT_START_VIDEO_RECORDING);
+    intent = new Intent(mContext, VideoRecorder.class);
     intent.putExtra(OPrime.EXTRA_RESULT_FILENAME, outputDir + resultsFile
         + ".3gp");
 
-    mUIParent.startActivity(intent);
+    getUIParent().startActivity(intent);
   }
 
+  @JavascriptInterface
   public void takeAPicture(String resultfilename) {
     new File(mOutputDir).mkdirs();
 
@@ -400,11 +418,13 @@ public class JavaScriptInterface implements Serializable {
     v.execute();
 
     Intent intent;
-    intent = new Intent(OPrime.INTENT_TAKE_PICTURE);
+    // intent = new Intent(OPrime.INTENT_TAKE_PICTURE);
+    intent = new Intent(mContext, TakePicture.class);
     intent.putExtra(OPrime.EXTRA_RESULT_FILENAME, mTakeAPictureFileUrl);
-    mUIParent.startActivityForResult(intent, OPrime.PICTURE_TAKEN);
+    getUIParent().startActivityForResult(intent, OPrime.PICTURE_TAKEN);
   }
 
+  @JavascriptInterface
   public void saveStringToFile(String contents, String filename, String path) {
 
     WriteStringToFile w = new WriteStringToFile();
@@ -415,12 +435,14 @@ public class JavaScriptInterface implements Serializable {
 
   }
 
+  @JavascriptInterface
   public void showToast(String toast) {
     Toast.makeText(mContext, toast, Toast.LENGTH_LONG).show();
     if (D)
       Log.d(TAG, "Showing toast " + toast);
   }
 
+  @JavascriptInterface
   public void shareIt(String message) {
     Intent share = new Intent(Intent.ACTION_SEND);
     share.setType("text/plain");
@@ -446,16 +468,17 @@ public class JavaScriptInterface implements Serializable {
     }
 
     protected void onPostExecute(String result) {
-      if (mUIParent != null && mUIParent.mWebView != null) {
+      if (getUIParent() != null && getUIParent().mWebView != null) {
         Log.d(
             TAG,
             "\tPost execute LoadUrlToWebView task. Now trying to send a pubsub message to the webview."
                 + mMessage);
-        mUIParent.mWebView.loadUrl(mMessage);
+        getUIParent().mWebView.loadUrl(mMessage);
       }
     }
   }
 
+  @JavascriptInterface
   protected void authenticate(String username, String password) {
     // TODO look in database for user, and then publish result
   }
@@ -559,71 +582,39 @@ public class JavaScriptInterface implements Serializable {
     }
   }
 
-  public Context getContext() {
-    return mContext;
-  }
-
-  public void setContext(Context mContext) {
-    this.mContext = mContext;
-  }
-
-  public String getTAG() {
-    return TAG;
-  }
-
-  public void setTAG(String tAG) {
-    TAG = tAG;
-  }
-
+  @JavascriptInterface
   public boolean isD() {
     return D;
   }
 
-  public int getDforDebuggingJIS() {
-    if (D) {
-      return 1;
-    } else {
-      return 0;
-    }
-  }
-
-  public void setD(boolean d) {
-    D = d;
-  }
-
+  @JavascriptInterface
   public String getOutputDir() {
     return mOutputDir;
   }
 
-  public void setOutputDir(String mOutputDir) {
-    this.mOutputDir = mOutputDir;
-  }
-
+  @JavascriptInterface
   public String getAudioFileUrl() {
     return mAudioPlaybackFileUrl;
   }
 
+  @JavascriptInterface
   public void setAudioFileUrl(String mAudioPlaybackFileUrl) {
     this.mAudioPlaybackFileUrl = mAudioPlaybackFileUrl;
   }
 
-  public HTML5Activity getUIParent() {
-    return mUIParent;
-  }
-
-  public void setUIParent(HTML5Activity mUIParent) {
-    this.mUIParent = mUIParent;
-  }
-
+  @JavascriptInterface
   public String getAssetsPrefix() {
     return mAssetsPrefix;
   }
 
+  @JavascriptInterface
   public void setAssetsPrefix(String mAssetsPrefix) {
     this.mAssetsPrefix = mAssetsPrefix;
   }
 
-  public void getConectivityType() {
+  @JavascriptInterface
+  public void getConnectivityType() {
+    // TODO get Connectivity status
     String connectivityType = "WiFi";
     LoadUrlToWebView v = new LoadUrlToWebView();
     v.setMessage("javascript:OPrime.hub.publish('connectivityType','"
@@ -631,11 +622,13 @@ public class JavaScriptInterface implements Serializable {
     v.execute();
   }
 
+  @JavascriptInterface
   public void getHardwareDetails() {
     String deviceType = "{name: 'Acer Nexus 7', model: 'Nexus 7', version: '4.2', identifier: 'TODOgetandroiddeviceid'}";
     LoadUrlToWebView v = new LoadUrlToWebView();
-    v.setMessage("javascript:OPrime.hub.publish('hardwareDetails',\"" + deviceType
-        + "\");");
+    v.setMessage("javascript:OPrime.hub.publish('hardwareDetails',\""
+        + deviceType + "\");");
     v.execute();
   }
+
 }

@@ -5,12 +5,14 @@ import java.io.Serializable;
 import java.util.Locale;
 
 import ca.ilanguage.oprime.content.ExperimentJavaScriptInterface;
+import ca.ilanguage.oprime.content.JavaScriptInterface;
 import ca.ilanguage.oprime.content.OPrime;
 import ca.ilanguage.oprime.content.OPrimeApp;
 import ca.ilanguage.oprime.content.Participant;
 import ca.ilanguage.oprime.content.SubExperimentBlock;
 import ca.ilanguage.oprime.datacollection.AudioRecorder;
 import ca.ilanguage.oprime.datacollection.SubExperimentToJson;
+import android.app.Application;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -20,11 +22,13 @@ import android.widget.Toast;
 public class HTML5GameActivity extends HTML5Activity {
 
   protected int mCurrentSubex = 0;
-  protected OPrimeApp app;
+  private OPrimeApp app;
   protected Boolean mAutoAdvance = false;
+  private JavaScriptInterface mJavaScriptInterface;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    this.setApp(this.getApplication());
     super.onCreate(savedInstanceState);
 
     String outputDir = mOutputDir + "video/";
@@ -33,16 +37,26 @@ public class HTML5GameActivity extends HTML5Activity {
   }
 
   @Override
+  public JavaScriptInterface getJavaScriptInterface() {
+    return mJavaScriptInterface;
+  }
+
+  @Override
+  public void setJavaScriptInterface(JavaScriptInterface javaScriptInterface) {
+    mJavaScriptInterface = javaScriptInterface;
+  }
+
+  @Override
   protected void setUpVariables() {
-    D = ((OPrimeApp) getApplication()).D;
-    mOutputDir = ((OPrimeApp) getApplication()).getOutputDir();
+    D = getApp().isD();
+    mOutputDir = getApp().getOutputDir();
     mInitialAppServerUrl = "file:///android_asset/sample_menu.html";// "http://192.168.0.180:3001/";
-    mJavaScriptInterface = new ExperimentJavaScriptInterface(D, TAG,
-        mOutputDir, getApplicationContext(), this, "");
+    this.setJavaScriptInterface(new ExperimentJavaScriptInterface(D, TAG,
+        mOutputDir, getApplicationContext(), this, ""));
     if (D)
       Log.d(TAG, "Using the OPrime experiment javascript interface.");
 
-    this.app = (OPrimeApp) getApplication();
+//    this.app = (OPrimeApp) getApplication();
   }
 
   @Override
@@ -51,7 +65,8 @@ public class HTML5GameActivity extends HTML5Activity {
     checkIfNeedToPrepareExperiment(false);
   }
 
-  protected void checkIfNeedToPrepareExperiment(boolean activtySaysToPrepareExperiment) {
+  protected void checkIfNeedToPrepareExperiment(
+      boolean activtySaysToPrepareExperiment) {
     boolean prepareExperiment = getIntent().getExtras().getBoolean(
         OPrime.EXTRA_PLEASE_PREPARE_EXPERIMENT, false);
     if (prepareExperiment || activtySaysToPrepareExperiment) {
@@ -64,8 +79,8 @@ public class HTML5GameActivity extends HTML5Activity {
           "");
       boolean autoAdvanceStimuliOnTouch = prefs.getBoolean(
           OPrimeApp.PREFERENCE_EXPERIMENT_AUTO_ADVANCE_ON_TOUCH, false);
-//      ((OPrimeApp) this.getApplication())
-//          .setAutoAdvanceStimuliOnTouch(autoAdvanceStimuliOnTouch);
+      // ((OPrimeApp) this.getApplication())
+      // .setAutoAdvanceStimuliOnTouch(autoAdvanceStimuliOnTouch);
 
       if (app.getLanguage().getLanguage().equals(lang)
           && app.getExperiment() != null) {
@@ -123,8 +138,8 @@ public class HTML5GameActivity extends HTML5Activity {
         "en");
     boolean autoAdvanceStimuliOnTouch = prefs.getBoolean(
         OPrimeApp.PREFERENCE_EXPERIMENT_AUTO_ADVANCE_ON_TOUCH, false);
-//    ((OPrimeApp) this.getApplication())
-//        .setAutoAdvanceStimuliOnTouch(autoAdvanceStimuliOnTouch);
+    // ((OPrimeApp) this.getApplication())
+    // .setAutoAdvanceStimuliOnTouch(autoAdvanceStimuliOnTouch);
     // String langs =
     // prefs.getString(OPrimeApp.PREFERENCE_PARTICIPANT_LANGUAGES,
     // "");
@@ -207,33 +222,35 @@ public class HTML5GameActivity extends HTML5Activity {
           Toast.makeText(getApplicationContext(), "Experiment completed!",
               Toast.LENGTH_LONG).show();
         } else {
-          Toast.makeText(this, "Sub-experiment complete. ", Toast.LENGTH_LONG).show();
+          Toast.makeText(this, "Sub-experiment complete. ", Toast.LENGTH_LONG)
+              .show();
           mWebView.loadUrl("javascript:getPositionAsButton(0,0,"
               + mCurrentSubex + ")");
         }
       }
       break;
     case OPrime.PREPARE_TRIAL:
-//      initExperiment();
+      // initExperiment();
       checkIfNeedToPrepareExperiment(true);
       break;
     case OPrime.SWITCH_LANGUAGE:
       checkIfNeedToPrepareExperiment(true);
-//      SharedPreferences prefs = getSharedPreferences(OPrimeApp.PREFERENCE_NAME,
-//          MODE_PRIVATE);
-//      String lang = prefs.getString(OPrimeApp.PREFERENCE_EXPERIMENT_LANGUAGE,
-//          "en");
-//      boolean autoAdvanceStimuliOnTouch = prefs.getBoolean(
-//          OPrimeApp.PREFERENCE_EXPERIMENT_AUTO_ADVANCE_ON_TOUCH, false);
-////      ((OPrimeApp) this.getApplication())
-////          .setAutoAdvanceStimuliOnTouch(autoAdvanceStimuliOnTouch);
-//
-//      if (lang.equals(app.getLanguage().getLanguage())) {
-//        // do nothing if they didn't change the language
-//      } else {
-//        app.createNewExperiment(lang, autoAdvanceStimuliOnTouch);
-//        initExperiment();
-//      }
+      // SharedPreferences prefs =
+      // getSharedPreferences(OPrimeApp.PREFERENCE_NAME,
+      // MODE_PRIVATE);
+      // String lang = prefs.getString(OPrimeApp.PREFERENCE_EXPERIMENT_LANGUAGE,
+      // "en");
+      // boolean autoAdvanceStimuliOnTouch = prefs.getBoolean(
+      // OPrimeApp.PREFERENCE_EXPERIMENT_AUTO_ADVANCE_ON_TOUCH, false);
+      // // ((OPrimeApp) this.getApplication())
+      // // .setAutoAdvanceStimuliOnTouch(autoAdvanceStimuliOnTouch);
+      //
+      // if (lang.equals(app.getLanguage().getLanguage())) {
+      // // do nothing if they didn't change the language
+      // } else {
+      // app.createNewExperiment(lang, autoAdvanceStimuliOnTouch);
+      // initExperiment();
+      // }
       break;
     case OPrime.REPLAY_RESULTS:
       break;
@@ -259,12 +276,13 @@ public class HTML5GameActivity extends HTML5Activity {
     this.mCurrentSubex = mCurrentSubex;
   }
 
+  @Override
   public OPrimeApp getApp() {
     return app;
   }
 
-  public void setApp(OPrimeApp app) {
-    this.app = app;
+  public void setApp(Application app) {
+    this.app = (OPrimeApp) app;
   }
 
   public Boolean getAutoAdvance() {

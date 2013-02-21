@@ -15,12 +15,12 @@ import android.content.res.Configuration;
 import android.util.Log;
 import android.widget.Toast;
 
-public class OPrimeApp extends Application {
-  public static final String TAG = "OPrime";
-  public static final boolean D = false;
+public abstract class OPrimeApp extends Application {
+  public String TAG = "OPrime";
+  public boolean D = false;
   public static final String DEFAULT_OUTPUT_DIRECTORY = "/sdcard/OPrime/";
 
-//  protected boolean mAutoAdvanceStimuliOnTouch = false;
+  // protected boolean mAutoAdvanceStimuliOnTouch = false;
   protected String mOutputDir = DEFAULT_OUTPUT_DIRECTORY;
 
   /*
@@ -88,13 +88,14 @@ public class OPrimeApp extends Application {
   public void onCreate() {
     super.onCreate();
 
+    /* To set output dir to be in the root area of sdcard, by defualt experiment results are in the public area of sdcard so researcher can copy them off the tablet */
     // mOutputDir = "file:///sdcard"+this.getFilesDir().getAbsolutePath() +
     // File.separator;
 
     mLanguage = Locale.getDefault();
     // new File(mOutputDir).mkdirs();
     new File(mOutputDir + "video/").mkdirs();
-    // new File(mOutputDir + "audio/").mkdirs();
+//    new File(mOutputDir + "audio/").mkdirs();
     new File(mOutputDir + "images/").mkdirs();
     new File(mOutputDir + "touchdata/").mkdirs();
 
@@ -102,7 +103,7 @@ public class OPrimeApp extends Application {
       mExperiments = new ArrayList<Experiment>();
     }
     if (D)
-      Log.d(TAG, "Oncreate of the application");
+      Log.d(TAG, "Oncreate of the OPrimeApp ");
   }
 
   @Override
@@ -321,8 +322,6 @@ public class OPrimeApp extends Application {
         getBaseContext().getResources().getDisplayMetrics());
     mLanguage = Locale.getDefault();
 
-    
-
     return Locale.getDefault().getDisplayLanguage();
   }
 
@@ -345,11 +344,11 @@ public class OPrimeApp extends Application {
     }
   }
 
-  public static boolean isD() {
+  public boolean isD() {
     return D;
   }
 
-  public static String getTag() {
+  public String getTag() {
     return TAG;
   }
 
@@ -369,13 +368,14 @@ public class OPrimeApp extends Application {
     this.mOutputDir = mOutputDir;
   }
 
-//  public boolean isAutoAdvanceStimuliOnTouch() {
-//    return mAutoAdvanceStimuliOnTouch;
-//  }
+  // public boolean isAutoAdvanceStimuliOnTouch() {
+  // return mAutoAdvanceStimuliOnTouch;
+  // }
 
-//  public void setAutoAdvanceStimuliOnTouch(boolean mAutoAdvanceStimuliOnTouch) {
-//    this.mAutoAdvanceStimuliOnTouch = mAutoAdvanceStimuliOnTouch;
-//  }
+  // public void setAutoAdvanceStimuliOnTouch(boolean
+  // mAutoAdvanceStimuliOnTouch) {
+  // this.mAutoAdvanceStimuliOnTouch = mAutoAdvanceStimuliOnTouch;
+  // }
 
   public String getLocalCouchDir() {
     return mLocalCouchDir;

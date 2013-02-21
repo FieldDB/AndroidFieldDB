@@ -1,6 +1,6 @@
 package ca.ilanguage.oprime.activity;
 
-
-public class ExperimentActivity extends HTML5Activity {
+import android.app.Activity;
+public class ExperimentActivity extends Activity {
 
 }
