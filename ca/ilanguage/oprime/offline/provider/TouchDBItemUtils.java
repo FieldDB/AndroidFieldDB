@@ -1,4 +1,4 @@
-package ca.ilanguage.oprime.provider;
+package ca.ilanguage.oprime.offline.provider;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

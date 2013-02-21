@@ -1,4 +1,4 @@
-package ca.ilanguage.oprime.service;
+package ca.ilanguage.oprime.offline.service;
 
 import java.io.File;
 
@@ -8,8 +8,8 @@ import org.ektorp.CouchDbInstance;
 import org.ektorp.UpdateConflictException;
 
 import ca.ilanguage.oprime.content.OPrimeApp;
-import ca.ilanguage.oprime.provider.OPrimeEktorpAsyncTask;
-import ca.ilanguage.oprime.provider.TouchDBItemUtils;
+import ca.ilanguage.oprime.offline.provider.OPrimeEktorpAsyncTask;
+import ca.ilanguage.oprime.offline.provider.TouchDBItemUtils;
 
 import org.ektorp.http.HttpClient;
 import org.ektorp.impl.StdCouchDbInstance;
@@ -26,7 +26,7 @@ public class AuthenticateUserOffline extends IntentService {
   protected static final String TAG = "Pivot88";
 
   // constants
-  protected String DATABASE_NAME = "_users";
+  protected String mDatabaseName = "_users";
   protected String mLocalTouchDBFileDir = "";
   protected String mRemoteCouchDBURL = "https://semisecureadmin:none@cesine.iriscouch.com/_users";
 
@@ -76,7 +76,7 @@ public class AuthenticateUserOffline extends IntentService {
 
       @Override
       protected void doInBackground() {
-        couchDbConnector = dbInstance.createConnector(DATABASE_NAME, true);
+        couchDbConnector = dbInstance.createConnector(mDatabaseName, true);
       }
 
       @Override

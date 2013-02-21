@@ -1,4 +1,4 @@
-package ca.ilanguage.oprime.provider;
+package ca.ilanguage.oprime.offline.provider;
 
 import org.ektorp.DbAccessException;
 import org.ektorp.android.util.EktorpAsyncTask;
