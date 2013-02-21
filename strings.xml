@@ -17,6 +17,8 @@
     <string name="preference_thanks_title">Special Thanks</string>
     <string name="preference_licence_title">License</string>
     <string name="preference_misc">More Information</string>
+    <string name="cancel_label">Cancel</string>
+    <string name="ok_label">OK</string>
 
     <!-- Strings which should be customized -->
     <string name="preference_about_title">About OPrime</string>
