@@ -6,7 +6,6 @@ import ca.ilanguage.oprime.offline.content.OPrimeOffineApp;
 
 public class FieldDBApp extends OPrimeOffineApp {
 
-  public static final String PREFERENCE_PREFERENCE_NAME = "fielddbapppreferences";
 
   @Override
   public void onCreate() {

@@ -2,8 +2,6 @@ package com.github.opensourcefieldlinguistics.fielddb.android.activity;
 
 import java.io.File;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -14,79 +12,41 @@ import com.github.opensourcefieldlinguistics.fielddb.android.content.FieldDBApp;
 import com.github.opensourcefieldlinguistics.fielddb.android.content.FieldDBJavaScriptInterface;
 
 public class FieldDBActivity extends HTML5ReplicatingActivity {
+  public static final String PREFERENCE_NAME = "fielddbapppreferences";
   private FieldDBJavaScriptInterface mJavaScriptInterface;
+  protected String mLoginInitialAppServerUrl = "https://corpusdev.lingsync.org/public-firstcorpus/_design/pages/corpus.html";
+  protected String mDefaultRemoteCouchURL = "https://corpusdev.lingsync.org";
+  protected String mDefaultLoginDatabase = "public-firstcorpus";
 
   /** Called when the activity is first created. */
   @Override
   public void onCreate(Bundle savedInstanceState) {
-    /* not using the android splash screen */
-    splashScreenCanceled = true;
-    setCouchInfoBasedOnUserDb(null, null, null, null);
+    // mTouchDBListenerPort = 8158;
     mLocalTouchDBFileDir = getApp().getLocalCouchDir();
     turnOnDatabaseListener(false);
     super.onCreate(savedInstanceState);
   }
 
+  @Override
+  protected void onResume() {
+    super.onResume();
+    if ("1".equals(mLocalCouchDBListener.getStatus())) {
+      Log.e(TAG, "Server status is off!");
+    } else {
+      Log.e(TAG, "Server status is on!");
+    }
+  }
+
+  @Override
   public void setCouchInfoBasedOnUserDb(String userdb, String username,
-      String password, String serverdomain) {
-    /*
-     * If details are provided, save them to the preferences. Otherwise find out
-     * the previous user, and go to their db, or go to the public db if there
-     * was no previous user
-     */
-    SharedPreferences prefs = this.getSharedPreferences(
-        FieldDBApp.PREFERENCE_PREFERENCE_NAME, Context.MODE_PRIVATE);
-    SharedPreferences.Editor editor = this.getSharedPreferences(
-        FieldDBApp.PREFERENCE_PREFERENCE_NAME, Context.MODE_PRIVATE).edit();
+      String password, String completeURLtoCouchDBServer) {
 
-    if (userdb == null) {
-      userdb = prefs.getString(FieldDBApp.PREFERENCE_USERS_DB_NAME,
-          "public-firstcorpus");
-    } else {
-      editor.putString(FieldDBApp.PREFERENCE_USERS_DB_NAME, userdb);
+    boolean credentialsSet = saveAndValidateCouchInfoDefault(userdb, username,
+        password, completeURLtoCouchDBServer);
+    Log.d(TAG, "Credentials were set: " + credentialsSet);
+    if (!credentialsSet) {
+      this.mInitialAppServerUrl = this.mLoginInitialAppServerUrl;
     }
-
-    if (username == null) {
-      username = prefs.getString(FieldDBApp.PREFERENCE_USERNAME, "public");
-    } else {
-      editor.putString(FieldDBApp.PREFERENCE_USERNAME, username);
-    }
-
-    if (password == null) {
-      password = prefs.getString(FieldDBApp.PREFERENCE_PASSWORD, "none");
-    } else {
-      editor.putString(FieldDBApp.PREFERENCE_PASSWORD, password);
-    }
-
-    if (serverdomain == null) {
-      serverdomain = prefs.getString(FieldDBApp.PREFERENCE_COUCH_SERVER_DOMAIN,
-          "ifielddevs.iriscouch.com");
-      // "corpus.lingsync.org"); //TODO fix peer certificates on all startsll
-      // certs
-
-    } else {
-      editor.putString(FieldDBApp.PREFERENCE_COUCH_SERVER_DOMAIN, serverdomain);
-    }
-    editor.commit();
-
-    this.mDatabaseName = userdb;
-    this.mRemoteCouchServerDomain = serverdomain;
-    this.mRemoteCouchDBURL = "https://" + username + ":" + password + "@"
-        + serverdomain + "/" + userdb;
-    if (D)
-      Log.d(TAG, "This is the remote couch db url " + mRemoteCouchDBURL);
-    this.mLocalCouchAppInitialURL = "http://localhost:8128/" + userdb
-        + "/_design/pages/index.html";
-    /*
-     * If the user is unknown, take them to the authentication page in the
-     * assets
-     */
-    if ("public".equals(username)) {
-    } else {
-      this.beginReplicating();
-    }
-    this.mInitialAppServerUrl = "file:///android_asset/release/authentication.html";
-    this.splashScreenURL = "file:///android_asset/release/authentication.html";
   }
 
   /**
@@ -95,6 +55,11 @@ public class FieldDBActivity extends HTML5ReplicatingActivity {
   @Override
   public void beginReplicating() {
     if (mRemoteCouchDBURL == "") {
+      return;
+    }
+    if ("public-firstcorpus".equals(mDatabaseName)) {
+      Log.d(TAG,
+          "Not replicating, the user is trying to use the login database.");
       return;
     }
     mLocalTouchDBFileDir = getApp().getLocalCouchDir();
@@ -117,8 +82,15 @@ public class FieldDBActivity extends HTML5ReplicatingActivity {
     Log.d(TAG, "Setting TAG " + this.TAG + " and Debug " + this.D);
 
     this.mOutputDir = getApp().getOutputDir();
+    mLocalTouchDBFileDir = getApp().getLocalCouchDir();
     this.setJavaScriptInterface(new FieldDBJavaScriptInterface(D, TAG,
         this.mOutputDir, getApplicationContext(), this, "release/"));
+    /*
+     * Set the previous user's credentails, if the db is not known to exist, and
+     * this is when the app first opens, take them to the online login instead
+     */
+    setCouchInfoBasedOnUserDb(null, null, null, null);
+
   }
 
   @Override
