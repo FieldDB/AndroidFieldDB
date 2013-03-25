@@ -11,7 +11,10 @@ import org.ektorp.android.util.EktorpAsyncTask;
 import org.ektorp.http.HttpClient;
 import org.ektorp.impl.StdCouchDbInstance;
 
+import android.app.AlertDialog;
 import android.app.Application;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -44,6 +47,15 @@ import com.couchbase.touchdb.router.TDURLStreamHandlerFactory;
  * 
  */
 public abstract class HTML5ReplicatingActivity extends HTML5Activity {
+  /* must be specified by child classes */
+  // public static final String PREFERENCE_NAME =
+  // "oprimeofflinepreferences";
+  protected String PREFERENCE_NAME = "oprimepreferences";
+  public static final String PREFERENCE_USERS_DB_NAME = "usersdbname";
+  public static final String PREFERENCE_USERNAME = "username";
+  public static final String PREFERENCE_PASSWORD = "password";
+  public static final String PREFERENCE_COUCH_SERVER_DOMAIN = "couchServerDomain";
+  public static final String PREFERENCE_SUCEESSFUL_OFFLINE_DATABASES = "sucessfulOfflineDatabases";
 
   // constants sample for DB views
   protected String dDocName = "orpime-local";
@@ -54,7 +66,12 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
   protected String mRemoteCouchDBURL = "";
   protected String mCompleteURLtoCouchDBServer = "";
   protected String mLocalCouchAppInitialURL = "";
+  protected String mLoginInitialAppServerUrl = "https://oprime.iriscouch.com/login/_design/pages/authentication.html";
   protected String mDatabaseName = "dboprimesample";
+  protected String mDefaultRemoteCouchURL = "https://oprime.iriscouch.com";
+  protected String mDefaultLoginDatabase = "login";
+  protected final String mOfflineInitialAppServerUrl = "http://localhost:8148/"
+      + mDefaultLoginDatabase + "/_design/pages/authentication.html";
 
   // couch internals
   protected static TDServer server;
@@ -73,6 +90,7 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
   protected String splashScreenURL = "file:///android_asset/release/splash.html";
 
   int mBackPressedCount = 0;
+  long lastExitApp = System.currentTimeMillis();
 
   /*
    * static inializer to ensure that touchdb:// URLs are handled properly This
@@ -95,7 +113,7 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
     return mLocalCouchAppInitialURL;
   }
 
-  public String getCompleteURLtoCouchDBServer () {
+  public String getCompleteURLtoCouchDBServer() {
     return mCompleteURLtoCouchDBServer;
   }
 
@@ -109,6 +127,101 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
 
   public abstract void setCouchInfoBasedOnUserDb(String userdb,
       String username, String password, String completeURLtoCouchDBServer);
+
+  /**
+   * If details are provided, save them to the preferences. Otherwise find out
+   * the previous user, and go to their db, or go to the public db if there was
+   * no previous user
+   * 
+   * @param userdb
+   * @param username
+   * @param password
+   * @param completeURLtoCouchDBServer
+   */
+  public boolean saveAndValidateCouchInfoOrUsePrevious(String userdb,
+      String username, String password, String completeURLtoCouchDBServer,
+      String preferencesname) {
+
+    SharedPreferences prefs = this.getSharedPreferences(preferencesname,
+        Context.MODE_PRIVATE);
+
+    SharedPreferences.Editor editor = this.getSharedPreferences(
+        preferencesname, Context.MODE_PRIVATE).edit();
+
+    if (userdb != null) {
+      userdb = userdb.toLowerCase();
+      editor.putString(PREFERENCE_USERS_DB_NAME, userdb);
+    } else {
+      userdb = prefs.getString(PREFERENCE_USERS_DB_NAME, mDefaultLoginDatabase);
+      if (userdb == null || mDefaultLoginDatabase.equals(userdb)) {
+        return false;
+      }
+    }
+    this.mDatabaseName = userdb;
+
+    /*
+     * IF its a real user, then take them to their offline database TODO test
+     * this, if you don't use the app, and exit immediately does it still take
+     * you to the online login?
+     */
+    if (!mDefaultLoginDatabase.equals(userdb)) {
+      this.mInitialAppServerUrl = this.mOfflineInitialAppServerUrl.replace(
+          mDefaultLoginDatabase, userdb);
+    }
+
+    if (username != null) {
+      username = username.toLowerCase();
+      editor.putString(PREFERENCE_USERNAME, username);
+    } else {
+      username = prefs.getString(PREFERENCE_USERNAME, "public");
+      if (username == null || "public".equals(username)) {
+        return false;
+      }
+    }
+    if (password != null) {
+      editor.putString(PREFERENCE_PASSWORD, password);
+    } else {
+      password = prefs.getString(PREFERENCE_PASSWORD, "none");
+      if (password == null || "none".equals(password)) {
+        return false;
+      }
+    }
+
+    if (completeURLtoCouchDBServer != null) {
+      editor.putString(PREFERENCE_COUCH_SERVER_DOMAIN,
+          completeURLtoCouchDBServer);
+    } else {
+      completeURLtoCouchDBServer = prefs.getString(
+          PREFERENCE_COUCH_SERVER_DOMAIN, mDefaultRemoteCouchURL);
+      if (completeURLtoCouchDBServer == null) {
+        return false;
+      }
+      mCompleteURLtoCouchDBServer = completeURLtoCouchDBServer;
+    }
+    if (username.contains("@")) {
+      return false;
+    }
+    if (password.contains("@")) {
+      return false;
+    }
+    editor.commit();
+
+    String protocol = "http://";
+    if (completeURLtoCouchDBServer.contains("https://")) {
+      protocol = "https://";
+    }
+    completeURLtoCouchDBServer = completeURLtoCouchDBServer.replaceAll(
+        "https://", "").replaceAll("http://", "");
+
+    mRemoteCouchDBURL = protocol + username + ":" + password + "@"
+        + completeURLtoCouchDBServer + "/" + userdb;
+
+    if (D)
+      Log.d(TAG, "This is the remote couch db url " + protocol + "---:---"
+          + "@" + completeURLtoCouchDBServer + "/" + userdb);
+
+    return true;
+  }
 
   public abstract JavaScriptInterface getJavaScriptInterface();
 
@@ -149,22 +262,58 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
     super.onDestroy();
   }
 
+  public void exitApp() {
+    /* prevent too many pop-ups */
+    if ((System.currentTimeMillis() - lastExitApp) < 1000) {
+      return;
+    }
+    lastExitApp = System.currentTimeMillis();
+    if (mBackPressedCount >= 1) {
+      finish();
+      return;
+    }
+    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        switch (which) {
+        case DialogInterface.BUTTON_POSITIVE:
+          boolean turningOffDBs = false;
+          mBackPressedCount++;
+
+          /*
+           * Turn off the databases, the webview will call exit again in a few
+           * seconds
+           */
+          turningOffDBs = stopEktorpAndTDListener();
+          if (!turningOffDBs) {
+            Log.d(TAG,
+                "There was apparently nothing to turn off before exiting.");
+          }
+          mWebView
+              .loadUrl("javascript:window.setTimeout(function(){exitApp()},1000);");
+
+          break;
+
+        case DialogInterface.BUTTON_NEGATIVE:
+          Log.d(TAG, "The user pushed back/exit by mistake.");
+          mBackPressedCount = 0;
+          lastExitApp = 0;
+          break;
+        }
+      }
+    };
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setMessage("Would you like to exit the app?")
+        .setPositiveButton("Yes", dialogClickListener)
+        .setNegativeButton("No", dialogClickListener).show();
+    return;
+
+  }
+
   @Override
   public void onBackPressed() {
-    mBackPressedCount++;
-    boolean turningOffDBs = false;
-
-    if (mBackPressedCount < 2) {
-      Toast.makeText(this, "Turning off databases, press back again to exit.",
-          Toast.LENGTH_LONG).show();
-
-      turningOffDBs = stopEktorpAndTDListener();
-    }
-
-    if (!turningOffDBs) {
-      super.onBackPressed();
-    }
-
+    exitApp();
   }
 
   protected void startTouchDB() {
@@ -206,12 +355,26 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
       if (D) {
         Log.i(TAG, "Started the local offline couchdb database listener.");
       }
-      if (loadUrl) {
-        mWebView.loadUrl(mLocalCouchAppInitialURL);
-      }
 
+      if (loadUrl) {
+        /* If the db is known to exist, take them there */
+        if (!isRequestedDBAKnownOfflineDBName(mDatabaseName)) {
+          Toast
+              .makeText(
+                  this,
+                  "Your offline app doesn't seem to be ready. Taking you to the online login.",
+                  Toast.LENGTH_LONG).show();
+          this.mInitialAppServerUrl = mLoginInitialAppServerUrl;
+          mWebView.loadUrl(mLocalCouchAppInitialURL);
+        } else {
+          if (D)
+            Log.i(TAG, "loading " + mLocalCouchAppInitialURL);
+          mWebView.loadUrl(mLocalCouchAppInitialURL);
+        }
+
+      }
     } catch (IOException e) {
-      Log.e(TAG, "Unable to create TDServer", e);
+      Log.e(TAG, "Unable to create a TDServer", e);
     }
   }
 
@@ -413,6 +576,51 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
   public void setSplashScreenCanceled(boolean splashScreenCanceled) {
     this.splashScreenCanceled = splashScreenCanceled;
     this.removeSplashScreen();
+  }
+
+  public boolean isRequestedDBAKnownOfflineDBName(String dbname) {
+
+    if (dbname == null) {
+      return false;
+    }
+    if (dbname.length() < 2) {
+      return false;
+    }
+    SharedPreferences prefs = this.getSharedPreferences(PREFERENCE_NAME,
+        Context.MODE_PRIVATE);
+    String sucessfullOfflindbs = prefs.getString(
+        PREFERENCE_SUCEESSFUL_OFFLINE_DATABASES, "");
+    if (sucessfullOfflindbs == null) {
+      return false;
+    } else {
+      String[] dbs = sucessfullOfflindbs.split(",");
+      for (int i = 0; i < dbs.length; i++) {
+        if (dbs[i].equalsIgnoreCase(dbname)) {
+          return true;
+        }
+      }
+      return false;
+    }
+  }
+
+  public void addSuccessfulOfflineDatabase(String dbname) {
+
+    SharedPreferences prefs = this.getSharedPreferences(PREFERENCE_NAME,
+        Context.MODE_PRIVATE);
+    String sucessfullOfflindbs = prefs.getString(
+        PREFERENCE_SUCEESSFUL_OFFLINE_DATABASES, "");
+    if (sucessfullOfflindbs == null) {
+      sucessfullOfflindbs = dbname;
+    } else {
+      if (!sucessfullOfflindbs.contains(dbname)) {
+        SharedPreferences.Editor editor = prefs.edit();
+        sucessfullOfflindbs = sucessfullOfflindbs + "," + dbname;
+        editor.putString(PREFERENCE_SUCEESSFUL_OFFLINE_DATABASES,
+            sucessfullOfflindbs);
+        editor.commit();
+      }
+    }
+
   }
 
 }

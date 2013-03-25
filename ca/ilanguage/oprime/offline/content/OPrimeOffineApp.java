@@ -12,14 +12,7 @@ public abstract class OPrimeOffineApp extends Application {
   protected String mOutputDir = "/sdcard/OPrime/";
   protected String[] mDevEmailAddresses = new String[] { "opensource@lingsync.org" };
 
-  /* must be specified by child classes */
-  // public static final String PREFERENCE_PREFERENCE_NAME =
-  // "oprimeofflinepreferences";
-  public static final String PREFERENCE_USERS_DB_NAME = "usersdbname";
-  public static final String PREFERENCE_USERNAME = "username";
-  public static final String PREFERENCE_PASSWORD = "password";
-  public static final String PREFERENCE_COUCH_SERVER_DOMAIN = "couchServerDomain";
-
+  
   protected String mLocalCouchDir = "db/";
 
   @Override
