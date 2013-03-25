@@ -1,9 +1,11 @@
 package ca.ilanguage.oprime.content;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 
 import ca.ilanguage.oprime.activity.HTML5Activity;
@@ -11,6 +13,7 @@ import ca.ilanguage.oprime.datacollection.AudioRecorder;
 import ca.ilanguage.oprime.datacollection.TakePicture;
 import ca.ilanguage.oprime.datacollection.VideoRecorder;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -39,6 +42,7 @@ public abstract class JavaScriptInterface implements Serializable,
   protected String mAudioPlaybackFileUrl;
   protected String mAudioRecordFileUrl;
   protected String mTakeAPictureFileUrl;
+  protected DeviceDetails mDeviceDetails;
 
   /**
    * Can pass in all or none of the parameters. Expects the caller to set the
@@ -588,6 +592,11 @@ public abstract class JavaScriptInterface implements Serializable,
   }
 
   @JavascriptInterface
+  public void setD(boolean newvalue) {
+    getUIParent().D = newvalue;
+  }
+
+  @JavascriptInterface
   public String getOutputDir() {
     return mOutputDir;
   }
@@ -624,7 +633,11 @@ public abstract class JavaScriptInterface implements Serializable,
 
   @JavascriptInterface
   public void getHardwareDetails() {
-    String deviceType = "{name: 'Acer Nexus 7', model: 'Nexus 7', version: '4.2', identifier: 'TODOgetandroiddeviceid'}";
+    if (mDeviceDetails == null) {
+      mDeviceDetails = new DeviceDetails(getUIParent(), D, TAG);
+    }
+    String deviceType = mDeviceDetails.getCurrentDeviceDetails();
+
     LoadUrlToWebView v = new LoadUrlToWebView();
     v.setMessage("javascript:OPrime.hub.publish('hardwareDetails',\""
         + deviceType + "\");");
