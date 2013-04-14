@@ -29,8 +29,10 @@ public abstract class ReplicatingJavaScriptInterface extends
   @JavascriptInterface
   public void setCredentials(String dbname, String username, String password,
       String couchDBServerDomain) {
-    if(password.contains("@")){
-      Log.d(TAG,"The users password has a @ this wont work with couchdb replication. Refusing to set their password.");
+    if (password.contains("@")) {
+      Log.d(
+          TAG,
+          "The users password has a @ this wont work with couchdb replication. Refusing to set their password.");
       return;
     }
     getUIParent().setCouchInfoBasedOnUserDb(dbname, username, password,
@@ -46,17 +48,22 @@ public abstract class ReplicatingJavaScriptInterface extends
     setCredentials(dbname, username, password, couchDBServerDomain);
     turnOnReplication();
   }
-  
+
   @JavascriptInterface
-  public void addSuccessfulOfflineDatabase(String dbname){
+  public void addSuccessfulOfflineDatabase(String dbname) {
     getUIParent().addSuccessfulOfflineDatabase(dbname);
   }
-  
+
   @JavascriptInterface
-  public int getTouchDBListenerPort(){
+  public String getOfflineDBs() {
+    return getUIParent().getOfflineDBs();
+  }
+
+  @JavascriptInterface
+  public int getTouchDBListenerPort() {
     return getUIParent().getTouchDBListenerPort();
   }
-  
+
   @JavascriptInterface
   public String getLocalCouchAppURL() {
     return getUIParent().getLocalCouchAppInitialURL();

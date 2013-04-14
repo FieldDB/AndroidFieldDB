@@ -2,6 +2,7 @@ package ca.ilanguage.oprime.offline.activity;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
@@ -19,7 +20,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import ca.ilanguage.oprime.activity.HTML5Activity;
 import ca.ilanguage.oprime.content.JavaScriptInterface;
@@ -62,22 +62,23 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
   protected String dDocId = "_design/" + dDocName;
   protected String byDateViewName = "byDate";
 
-  protected String mLocalTouchDBFileDir = "";
-  protected String mRemoteCouchDBURL = "";
-  protected String mCompleteURLtoCouchDBServer = "";
-  protected String mLocalCouchAppInitialURL = "";
-  protected String mLoginInitialAppServerUrl = "https://oprime.iriscouch.com/login/_design/pages/authentication.html";
-  protected String mDatabaseName = "dboprimesample";
-  protected String mDefaultRemoteCouchURL = "https://oprime.iriscouch.com";
-  protected String mDefaultLoginDatabase = "login";
-  protected final String mOfflineInitialAppServerUrl = "http://localhost:8148/"
-      + mDefaultLoginDatabase + "/_design/pages/authentication.html";
-
   // couch internals
   protected static TDServer server;
   protected static HttpClient httpClient;
   protected TDListener mLocalCouchDBListener;
   protected int mTouchDBListenerPort = 8138;
+
+  protected String mLocalTouchDBFileDir = "";
+  protected String mRemoteCouchDBURL = "";
+  protected String mLocalCouchAppInitialURL = "";
+  protected String mLoginInitialAppServerUrl = "https://oprime.iriscouch.com/login/_design/pages/authentication.html";
+  protected String mDatabaseName = "dboprimesample";
+  protected String mDefaultRemoteCouchURL = "https://oprime.iriscouch.com";
+  protected String mDefaultLoginDatabase = "login";
+  protected String mOfflineInitialAppServerUrl = "http://localhost:"
+      + mTouchDBListenerPort + "/" + mDefaultLoginDatabase
+      + "/_design/pages/authentication.html";
+  protected String mUsersPage = "file:///android_asset/release/user.html";
 
   // ektorp impl
   protected CouchDbInstance dbInstance;
@@ -114,7 +115,7 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
   }
 
   public String getCompleteURLtoCouchDBServer() {
-    return mCompleteURLtoCouchDBServer;
+    return mRemoteCouchDBURL;
   }
 
   public String getDatabaseName() {
@@ -152,51 +153,27 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
       userdb = userdb.toLowerCase();
       editor.putString(PREFERENCE_USERS_DB_NAME, userdb);
     } else {
-      userdb = prefs.getString(PREFERENCE_USERS_DB_NAME, mDefaultLoginDatabase);
-      if (userdb == null || mDefaultLoginDatabase.equals(userdb)) {
-        return false;
-      }
+      return false;
     }
     this.mDatabaseName = userdb;
-
-    /*
-     * IF its a real user, then take them to their offline database TODO test
-     * this, if you don't use the app, and exit immediately does it still take
-     * you to the online login?
-     */
-    if (!mDefaultLoginDatabase.equals(userdb)) {
-      this.mInitialAppServerUrl = this.mOfflineInitialAppServerUrl.replace(
-          mDefaultLoginDatabase, userdb);
-    }
 
     if (username != null) {
       username = username.toLowerCase();
       editor.putString(PREFERENCE_USERNAME, username);
     } else {
-      username = prefs.getString(PREFERENCE_USERNAME, "public");
-      if (username == null || "public".equals(username)) {
-        return false;
-      }
+      return false;
     }
     if (password != null) {
       editor.putString(PREFERENCE_PASSWORD, password);
     } else {
-      password = prefs.getString(PREFERENCE_PASSWORD, "none");
-      if (password == null || "none".equals(password)) {
-        return false;
-      }
+      return false;
     }
 
     if (completeURLtoCouchDBServer != null) {
       editor.putString(PREFERENCE_COUCH_SERVER_DOMAIN,
           completeURLtoCouchDBServer);
     } else {
-      completeURLtoCouchDBServer = prefs.getString(
-          PREFERENCE_COUCH_SERVER_DOMAIN, mDefaultRemoteCouchURL);
-      if (completeURLtoCouchDBServer == null) {
-        return false;
-      }
-      mCompleteURLtoCouchDBServer = completeURLtoCouchDBServer;
+      return false;
     }
     if (username.contains("@")) {
       return false;
@@ -355,24 +332,7 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
       if (D) {
         Log.i(TAG, "Started the local offline couchdb database listener.");
       }
-
-      if (loadUrl) {
-        /* If the db is known to exist, take them there */
-        if (!isRequestedDBAKnownOfflineDBName(mDatabaseName)) {
-          Toast
-              .makeText(
-                  this,
-                  "Your offline app doesn't seem to be ready. Taking you to the online login.",
-                  Toast.LENGTH_LONG).show();
-          this.mInitialAppServerUrl = mLoginInitialAppServerUrl;
-          mWebView.loadUrl(mLocalCouchAppInitialURL);
-        } else {
-          if (D)
-            Log.i(TAG, "loading " + mLocalCouchAppInitialURL);
-          mWebView.loadUrl(mLocalCouchAppInitialURL);
-        }
-
-      }
+      
     } catch (IOException e) {
       Log.e(TAG, "Unable to create a TDServer", e);
     }
@@ -460,76 +420,6 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
 
       /*
        * 12-21 14:41:18.976: E/AndroidRuntime(32196): FATAL EXCEPTION: main
-       * 12-21 14:41:18.976: E/AndroidRuntime(32196):
-       * android.os.NetworkOnMainThreadException 12-21 14:41:18.976:
-       * E/AndroidRuntime(32196): at
-       * android.os.StrictMode$AndroidBlockGuardPolicy
-       * .onNetwork(StrictMode.java:1117) 12-21 14:41:18.976:
-       * E/AndroidRuntime(32196): at
-       * org.apache.harmony.xnet.provider.jsse.OpenSSLSocketImpl
-       * .close(OpenSSLSocketImpl.java:908) 12-21 14:41:18.976:
-       * E/AndroidRuntime(32196): at
-       * org.apache.http.impl.SocketHttpClientConnection
-       * .shutdown(SocketHttpClientConnection.java:183) 12-21 14:41:18.976:
-       * E/AndroidRuntime(32196): at
-       * org.apache.http.impl.conn.DefaultClientConnection
-       * .shutdown(DefaultClientConnection.java:150) 12-21 14:41:18.976:
-       * E/AndroidRuntime(32196): at
-       * org.apache.http.impl.conn.AbstractPooledConnAdapter
-       * .shutdown(AbstractPooledConnAdapter.java:169) 12-21 14:41:18.976:
-       * E/AndroidRuntime(32196): at
-       * org.apache.http.impl.conn.AbstractClientConnAdapter
-       * .abortConnection(AbstractClientConnAdapter.java:378) 12-21
-       * 14:41:18.976: E/AndroidRuntime(32196): at
-       * org.apache.http.client.methods
-       * .HttpRequestBase.abort(HttpRequestBase.java:159) 12-21 14:41:18.976:
-       * E/AndroidRuntime(32196): at
-       * com.couchbase.touchdb.replicator.changetracker
-       * .TDChangeTracker.stop(TDChangeTracker.java:294) 12-21 14:41:18.976:
-       * E/AndroidRuntime(32196): at
-       * com.couchbase.touchdb.replicator.TDPuller.stop(TDPuller.java:83) 12-21
-       * 14:41:18.976: E/AndroidRuntime(32196): at
-       * com.couchbase.touchdb.replicator
-       * .TDReplicator.databaseClosing(TDReplicator.java:103) 12-21
-       * 14:41:18.976: E/AndroidRuntime(32196): at
-       * com.couchbase.touchdb.TDDatabase.close(TDDatabase.java:333) 12-21
-       * 14:41:18.976: E/AndroidRuntime(32196): at
-       * com.couchbase.touchdb.TDServer.close(TDServer.java:142) 12-21
-       * 14:41:18.976: E/AndroidRuntime(32196): at
-       * ca.ilanguage.oprime.offline.activity
-       * .HTML5ReplicatingActivity.onBackPressed
-       * (HTML5ReplicatingActivity.java:121) 12-21 14:41:18.976:
-       * E/AndroidRuntime(32196): at
-       * android.app.Activity.onKeyUp(Activity.java:2145) 12-21 14:41:18.976:
-       * E/AndroidRuntime(32196): at
-       * android.view.KeyEvent.dispatch(KeyEvent.java:2633) 12-21 14:41:18.976:
-       * E/AndroidRuntime(32196): at
-       * android.app.Activity.dispatchKeyEvent(Activity.java:2375) 12-21
-       * 14:41:18.976: E/AndroidRuntime(32196): at
-       * com.android.internal.policy.impl
-       * .PhoneWindow$DecorView.dispatchKeyEvent(PhoneWindow.java:1847) 12-21
-       * 14:41:18.976: E/AndroidRuntime(32196): at
-       * android.view.ViewRootImpl.deliverKeyEventPostIme
-       * (ViewRootImpl.java:3701) 12-21 14:41:18.976: E/AndroidRuntime(32196):
-       * at
-       * android.view.ViewRootImpl.handleImeFinishedEvent(ViewRootImpl.java:3651
-       * ) 12-21 14:41:18.976: E/AndroidRuntime(32196): at
-       * android.view.ViewRootImpl$ViewRootHandler
-       * .handleMessage(ViewRootImpl.java:2818) 12-21 14:41:18.976:
-       * E/AndroidRuntime(32196): at
-       * android.os.Handler.dispatchMessage(Handler.java:99) 12-21 14:41:18.976:
-       * E/AndroidRuntime(32196): at android.os.Looper.loop(Looper.java:137)
-       * 12-21 14:41:18.976: E/AndroidRuntime(32196): at
-       * android.app.ActivityThread.main(ActivityThread.java:5039) 12-21
-       * 14:41:18.976: E/AndroidRuntime(32196): at
-       * java.lang.reflect.Method.invokeNative(Native Method) 12-21
-       * 14:41:18.976: E/AndroidRuntime(32196): at
-       * java.lang.reflect.Method.invoke(Method.java:511) 12-21 14:41:18.976:
-       * E/AndroidRuntime(32196): at
-       * com.android.internal.os.ZygoteInit$MethodAndArgsCaller
-       * .run(ZygoteInit.java:793) 12-21 14:41:18.976: E/AndroidRuntime(32196):
-       * at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:560) 12-21
-       * 14:41:18.976: E/AndroidRuntime(32196): at
        * dalvik.system.NativeStart.main(Native Method)
        */
       turningOffDBs = true;
@@ -621,6 +511,21 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
       }
     }
 
+  }
+  
+  public String getOfflineDBs(){
+    
+    File folder = new File(mLocalTouchDBFileDir);
+    File[] listOfFiles = folder.listFiles(); 
+    String dbs = "";
+    for (File file : listOfFiles) {
+      String filename = file.getName();
+      if(filename.endsWith("touchdb")){
+        dbs = dbs+","+filename.replace(".touchdb","");
+      }
+    }
+    
+    return dbs;//dbInstance.getAllDatabases().toString();
   }
 
 }
