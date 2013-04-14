@@ -6,6 +6,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.provider.Settings.Secure;
@@ -43,6 +44,8 @@ public class DeviceDetails implements LocationListener {
 
   double longitude = 0;
   double latitude = 0;
+  long min_dis = 10;
+  long min_time = 100;
 
   @SuppressLint("NewApi")
   public DeviceDetails(Context mContext, boolean debugMode, String tag) {
@@ -102,7 +105,12 @@ public class DeviceDetails implements LocationListener {
     if (this.androidId == null) {
       this.androidId = "unknown";
     }
+    LocationManager locationManager = null;
 
+    locationManager = (LocationManager) mContext
+        .getSystemService(Context.LOCATION_SERVICE);
+    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+        min_time, min_dis, this);
     this.setDeviceDetails();
   }
 
@@ -125,6 +133,7 @@ public class DeviceDetails implements LocationListener {
         + "', currentOrientation: '" + orientation + "'}, serial: '"
         + this.serial + "', identifier: '" + this.androidId
         + "', wifiMACaddress: '" + this.wifiMacAddress
+        + "', timestamp: '" + System.currentTimeMillis()
         + "',location:{longitude: '" + this.longitude + "', latitude: '"
         + this.latitude + "'} , telephonyDeviceId:'" + this.telephonyDeviceId
         + "'}";

@@ -1,11 +1,9 @@
 package ca.ilanguage.oprime.content;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Serializable;
 
 import ca.ilanguage.oprime.activity.HTML5Activity;
@@ -13,7 +11,6 @@ import ca.ilanguage.oprime.datacollection.AudioRecorder;
 import ca.ilanguage.oprime.datacollection.TakePicture;
 import ca.ilanguage.oprime.datacollection.VideoRecorder;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -639,8 +636,8 @@ public abstract class JavaScriptInterface implements Serializable,
     String deviceType = mDeviceDetails.getCurrentDeviceDetails();
 
     LoadUrlToWebView v = new LoadUrlToWebView();
-    v.setMessage("javascript:OPrime.hub.publish('hardwareDetails',\""
-        + deviceType + "\");");
+    v.setMessage("javascript:OPrime.hub.publish('hardwareDetails',"
+        + deviceType + ");");
     v.execute();
   }
 
