@@ -273,12 +273,14 @@ public abstract class HTML5Activity extends Activity {
     String logcatArgs = "";
     int processID = android.os.Process.myPid();
     if (type == null) {
-      logcatArgs = "logcat -d TDDatabase:W " + TAG + ":W dalvikvm:W  *:S ";// | grep "
+      logcatArgs = "logcat -d TDDatabase:W " + TAG + ":W dalvikvm:W  *:S ";// |
+                                                                           // grep
+                                                                           // "
       // + processID;
     } else {
       // logcatArgs = "-v time "+TAG+" TDDatabase dalvikvm *:S";
-      logcatArgs = "logcat -d TDDatabase:I " + TAG + ":I dalvikvm:D  *:S | grep "
-          + processID;
+      logcatArgs = "logcat -d TDDatabase:I " + TAG
+          + ":I dalvikvm:D  *:S | grep " + processID;
     }
     Process mLogcatProc = null;
     BufferedReader reader = null;
@@ -301,7 +303,7 @@ public abstract class HTML5Activity extends Activity {
           break;
         }
         log.append(line);
-//        Log.d(TAG, "Log for bug report: " + line);
+        // Log.d(TAG, "Log for bug report: " + line);
         log.append(separator);
 
       }
@@ -341,9 +343,9 @@ public abstract class HTML5Activity extends Activity {
       if (cm.message() == null) {
         return true;
       }
-      if (D)
-        Log.d(TAG, cm.message() + " -- From line " + cm.lineNumber() + " of "
-            + cm.sourceId());
+      // if (D)
+      Log.d(TAG, cm.message() + " -- From line " + cm.lineNumber() + " of "
+          + cm.sourceId());
 
       /*
        * Handle CORS server refusal to connect by telling user the entire error.
@@ -395,6 +397,28 @@ public abstract class HTML5Activity extends Activity {
                   result.confirm();
                 }
               }).setCancelable(false).create().show();
+
+      return true;
+    }
+
+    @Override
+    public boolean onJsConfirm(WebView view, String url, String message,
+        final JsResult result) {
+      new AlertDialog.Builder(HTML5Activity.this)
+          .setTitle("")
+          .setMessage(message)
+          .setPositiveButton(android.R.string.ok,
+              new AlertDialog.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                  result.confirm();
+                }
+              })
+          .setNegativeButton(android.R.string.cancel,
+              new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                  result.cancel();
+                }
+              }).create().show();
 
       return true;
     }
@@ -487,7 +511,8 @@ public abstract class HTML5Activity extends Activity {
         }
 
         if (message.toLowerCase().endsWith("number")) {
-          userInput.setInputType(InputType.TYPE_CLASS_NUMBER);
+          userInput.setInputType(InputType.TYPE_CLASS_NUMBER
+              | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         }
         TextView prompt = (TextView) promptsView.findViewById(R.id.prompt);
         prompt.setText(message);
