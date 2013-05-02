@@ -327,12 +327,26 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
     TDServer server;
     try {
       server = new TDServer(mLocalTouchDBFileDir);
+
+      /*
+       * TODO can use basic auth for replication without creds in the url
+       * 
+       * Explanation:
+       * https://github.com/couchbaselabs/TouchDB-Android/wiki/Replication
+       * -Without -Credentials-in-the-URL
+       * 
+       * Example:
+       * https://github.com/couchbaselabs/TouchDB-Android/blob/master/TouchDB-
+       * Android
+       * -TestApp/src/com/couchbase/touchdb/testapp/ektorp/tests/Replicator.java
+       */
+
       mLocalCouchDBListener = new TDListener(server, mTouchDBListenerPort);
       mLocalCouchDBListener.start();
       if (D) {
         Log.i(TAG, "Started the local offline couchdb database listener.");
       }
-      
+
     } catch (IOException e) {
       Log.e(TAG, "Unable to create a TDServer", e);
     }
@@ -512,20 +526,20 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
     }
 
   }
-  
-  public String getOfflineDBs(){
-    
+
+  public String getOfflineDBs() {
+
     File folder = new File(mLocalTouchDBFileDir);
-    File[] listOfFiles = folder.listFiles(); 
+    File[] listOfFiles = folder.listFiles();
     String dbs = "";
     for (File file : listOfFiles) {
       String filename = file.getName();
-      if(filename.endsWith("touchdb")){
-        dbs = dbs+","+filename.replace(".touchdb","");
+      if (filename.endsWith("touchdb")) {
+        dbs = dbs + "," + filename.replace(".touchdb", "");
       }
     }
-    
-    return dbs;//dbInstance.getAllDatabases().toString();
+
+    return dbs;// dbInstance.getAllDatabases().toString();
   }
 
 }
