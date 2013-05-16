@@ -421,6 +421,12 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
       turningOffDBs = true;
     }
 
+    if (mLocalCouchDBListener != null) {
+      Log.d(TAG, "Turning off TDListener");
+      mLocalCouchDBListener.stop();
+      turningOffDBs = true;
+    }
+    
     if (server != null) {
       // https://groups.google.com/forum/#!msg/mobile-couchbase/IlDYfOHFH-c/mUBVxGxOW8kJ
       /*
@@ -430,7 +436,7 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
        * execution of touchdb...
        */
       // Log.d(TAG, "Turning off TDServer");
-      // server.close();
+       server.close();
 
       /*
        * 12-21 14:41:18.976: E/AndroidRuntime(32196): FATAL EXCEPTION: main
@@ -439,11 +445,6 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
       turningOffDBs = true;
     }
 
-    if (mLocalCouchDBListener != null) {
-      Log.d(TAG, "Turning off TDListener");
-      mLocalCouchDBListener.stop();
-      turningOffDBs = true;
-    }
 
     return turningOffDBs;
   }
