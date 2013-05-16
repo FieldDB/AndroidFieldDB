@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
@@ -106,6 +107,12 @@ public abstract class JavaScriptInterface implements Serializable,
     return versionName;
   }
 
+  @JavascriptInterface
+  public void openExternalLink(String url ){
+    Uri uri = Uri.parse(url);
+    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+    getUIParent().startActivity(intent);
+  }
   @JavascriptInterface
   public void pauseAudio() {
     if (mMediaPlayer != null) {
@@ -470,10 +477,11 @@ public abstract class JavaScriptInterface implements Serializable,
 
     protected void onPostExecute(String result) {
       if (getUIParent() != null && getUIParent().mWebView != null) {
-        Log.d(
-            TAG,
-            "\tPost execute LoadUrlToWebView task. Now trying to send a pubsub message to the webview."
-                + mMessage);
+        if (D)
+          Log.d(
+              TAG,
+              "\tPost execute LoadUrlToWebView task. Now trying to send a pubsub message to the webview."
+                  + mMessage);
         getUIParent().mWebView.loadUrl(mMessage);
       }
     }
