@@ -24,12 +24,12 @@ import android.util.Log;
 import ca.ilanguage.oprime.activity.HTML5Activity;
 import ca.ilanguage.oprime.content.JavaScriptInterface;
 
-import com.couchbase.touchdb.TDServer;
-import com.couchbase.touchdb.TDView;
-import com.couchbase.touchdb.ektorp.TouchDBHttpClient;
-import com.couchbase.touchdb.javascript.TDJavaScriptViewCompiler;
-import com.couchbase.touchdb.listener.TDListener;
-import com.couchbase.touchdb.router.TDURLStreamHandlerFactory;
+import com.couchbase.cblite.CBLServer;
+import com.couchbase.cblite.CBLView;
+import com.couchbase.cblite.ektorp.CBLiteHttpClient;
+import com.couchbase.cblite.javascript.CBLJavaScriptViewCompiler;
+import com.couchbase.cblite.listener.CBLListener;
+import com.couchbase.cblite.router.CBLURLStreamHandlerFactory;
 
 /**
  * 
@@ -63,9 +63,9 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
   protected String byDateViewName = "byDate";
 
   // couch internals
-  protected static TDServer server;
+  protected static CBLServer server;
   protected static HttpClient httpClient;
-  protected TDListener mLocalCouchDBListener;
+  protected CBLListener mLocalCouchDBListener;
   protected int mTouchDBListenerPort = 8138;
 
   protected String mLocalTouchDBFileDir = "";
@@ -98,7 +98,7 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
    * doent seem to have any effect.
    */
   {
-    TDURLStreamHandlerFactory.registerSelfIgnoreError();
+    CBLURLStreamHandlerFactory.registerSelfIgnoreError();
   }
 
   @Override
@@ -296,7 +296,7 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
   protected void startTouchDB() {
     (new File(mLocalTouchDBFileDir)).mkdirs();
     try {
-      server = new TDServer(mLocalTouchDBFileDir);
+      server = new CBLServer(mLocalTouchDBFileDir);
     } catch (IOException e) {
       Log.e(TAG, "Error starting TDServer", e);
     }
@@ -312,7 +312,7 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
     if (D)
       Log.d(TAG, "Setting TDView with a Javascript map reduce compiler,"
           + " this allows compiling of any views downloaded from couchapp.");
-    TDView.setCompiler(new TDJavaScriptViewCompiler());
+    CBLView.setCompiler(new CBLJavaScriptViewCompiler());
   }
 
   /**
@@ -324,9 +324,9 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
   public void turnOnDatabaseListener(boolean loadUrl) {
     (new File(mLocalTouchDBFileDir)).mkdirs();
 
-    TDServer server;
+    CBLServer server;
     try {
-      server = new TDServer(mLocalTouchDBFileDir);
+        server = new CBLServer(mLocalTouchDBFileDir);
 
       /*
        * TODO can use basic auth for replication without creds in the url
@@ -341,7 +341,7 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
        * -TestApp/src/com/couchbase/touchdb/testapp/ektorp/tests/Replicator.java
        */
 
-      mLocalCouchDBListener = new TDListener(server, mTouchDBListenerPort);
+      mLocalCouchDBListener = new CBLListener(server, mTouchDBListenerPort);
       mLocalCouchDBListener.start();
       if (D) {
         Log.i(TAG, "Started the local offline couchdb database listener.");
@@ -359,7 +359,7 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
       httpClient.shutdown();
     }
 
-    httpClient = new TouchDBHttpClient(server);
+    httpClient = new CBLiteHttpClient(server);
     dbInstance = new StdCouchDbInstance(httpClient);
 
     HTML5SyncEktorpAsyncTask startupTask = new HTML5SyncEktorpAsyncTask() {
