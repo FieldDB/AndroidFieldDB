@@ -38,6 +38,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.ConsoleMessage;
+import android.webkit.DownloadListener;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
 import android.webkit.SslErrorHandler;
@@ -88,6 +89,17 @@ public abstract class HTML5Activity extends Activity {
     mWebView.setWebChromeClient(customChromeClient);
 
     mWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+//    mWebView.setDownloadListener(new DownloadListener() {
+//      
+//      @Override
+//      public void onDownloadStart(String url, String userAgent,
+//          String contentDisposition, String mimetype, long contentLength) {
+//        // handle download, here we use brower to download, also you can try other approach.
+//        Uri uri = Uri.parse(url);
+//        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+//        startActivity(intent);
+//      }
+//    });
     WebSettings webSettings = mWebView.getSettings();
     webSettings.setBuiltInZoomControls(true);
     webSettings.setDefaultZoom(WebSettings.ZoomDensity.FAR);
@@ -109,6 +121,7 @@ public abstract class HTML5Activity extends Activity {
 
     webSettings.setUserAgentString(webSettings.getUserAgentString() + " "
         + OPrime.USER_AGENT_STRING);
+    
     // getJavaScriptInterface().setUIParent(this);
 
     /*
