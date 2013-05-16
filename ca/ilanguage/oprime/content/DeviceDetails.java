@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -44,6 +45,7 @@ public class DeviceDetails implements LocationListener {
 
   double longitude = 0;
   double latitude = 0;
+  double locationAccuracy = 0;
   long min_dis = 10;
   long min_time = 100;
 
@@ -109,8 +111,48 @@ public class DeviceDetails implements LocationListener {
 
     locationManager = (LocationManager) mContext
         .getSystemService(Context.LOCATION_SERVICE);
-    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-        min_time, min_dis, this);
+    Criteria crta = new Criteria();
+    crta.setAccuracy(Criteria.ACCURACY_FINE);
+    crta.setAltitudeRequired(false);
+    crta.setBearingRequired(false);
+    crta.setCostAllowed(true);
+    crta.setPowerRequirement(Criteria.POWER_LOW);
+
+    String provider = locationManager.getBestProvider(crta, true);
+    if ("network".equals(provider)) {
+      if (D)
+        Log.d(TAG, "Using network for location provider.");
+      if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+        locationManager.requestLocationUpdates(
+            LocationManager.NETWORK_PROVIDER, min_time, min_dis, this);
+      }
+    } else if ("gps".equals(provider)) {
+      if (D)
+        Log.d(TAG, "Using network for location provider.");
+      if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
+            0, this);
+      }
+    } else {
+      if (D)
+        Log.d(TAG,
+            "Best location provider was not specified, using both network and gps.");
+
+      if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+        if (D)
+          Log.d(TAG, "Using network for location provider.");
+
+        locationManager.requestLocationUpdates(
+            LocationManager.NETWORK_PROVIDER, min_time, min_dis, this);
+      }
+      if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        if (D)
+          Log.d(TAG, "Using gps for location provider.");
+
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
+            0, this);
+      }
+    }
     this.setDeviceDetails();
   }
 
@@ -132,11 +174,11 @@ public class DeviceDetails implements LocationListener {
         + this.screenWidth + "', ratio: '" + this.screenRatio
         + "', currentOrientation: '" + orientation + "'}, serial: '"
         + this.serial + "', identifier: '" + this.androidId
-        + "', wifiMACaddress: '" + this.wifiMacAddress
-        + "', timestamp: '" + System.currentTimeMillis()
-        + "',location:{longitude: '" + this.longitude + "', latitude: '"
-        + this.latitude + "'} , telephonyDeviceId:'" + this.telephonyDeviceId
-        + "'}";
+        + "', wifiMACaddress: '" + this.wifiMacAddress + "', timestamp: '"
+        + System.currentTimeMillis() + "',location:{longitude: '"
+        + this.longitude + "', latitude: '" + this.latitude + "', accuracy: '"
+        + this.locationAccuracy + "'} , telephonyDeviceId:'"
+        + this.telephonyDeviceId + "'}";
     return mDeviceDetails;
   }
 
@@ -144,8 +186,10 @@ public class DeviceDetails implements LocationListener {
   public void onLocationChanged(Location location) {
     this.longitude = location.getLongitude();
     this.latitude = location.getLatitude();
+    this.locationAccuracy = location.getAccuracy();
     if (D)
-      Log.d(TAG, "Location changed; " + this.longitude + ":" + this.latitude);
+      Log.d(TAG, "Location changed; " + this.longitude + ":" + this.latitude
+          + " accuracy: " + this.locationAccuracy);
   }
 
   @Override
