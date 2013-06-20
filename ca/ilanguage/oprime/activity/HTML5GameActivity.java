@@ -50,7 +50,7 @@ public class HTML5GameActivity extends HTML5Activity {
   protected void setUpVariables() {
     D = getApp().isD();
     mOutputDir = getApp().getOutputDir();
-    mInitialAppServerUrl = "file:///android_asset/sample_menu.html";// "http://192.168.0.180:3001/";
+    mInitialAppServerUrl = "file:///android_asset/index.html";// "http://192.168.0.180:3001/";
     this.setJavaScriptInterface(new ExperimentJavaScriptInterface(D, TAG,
         mOutputDir, getApplicationContext(), this, ""));
     if (D)
@@ -110,7 +110,7 @@ public class HTML5GameActivity extends HTML5Activity {
 
   protected void initExperiment() {
     getParticipantDetails(this.app);
-    mWebView.loadUrl("file:///android_asset/sample_menu.html");
+    mWebView.loadUrl("file:///android_asset/index.html");
   }
 
   protected void getParticipantDetails(OPrimeApp app) {
