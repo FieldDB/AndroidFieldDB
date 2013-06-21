@@ -314,6 +314,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 				mHandlerDelayStimuli.postDelayed(new Runnable() {
 					public void run() {
 						mBitmapProvider.playSound();
+						mBitmapProvider.playAudioStimuli();
 					}
 				}, mAnimationDurationTime);
 
@@ -387,6 +388,12 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		}
 		updateBitmaps();
 		requestRender();
+		
+		mHandlerDelayStimuli.postDelayed(new Runnable() {
+			public void run() {
+				mBitmapProvider.playAudioStimuli();
+			}
+		}, mAnimationDurationTime);
 	}
 
 	/**
@@ -787,7 +794,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		 */
 		public Bitmap getBitmap(int width, int height, int index);
 		public void playSound();
-		
+		public void playAudioStimuli();
 
 		/**
 		 * Return number of pages/bitmaps available.

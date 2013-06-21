@@ -28,6 +28,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import ca.ilanguage.oprime.tutorial.R;
 
@@ -41,6 +42,7 @@ public class StoryBookSubExperiment extends Activity {
 	private Boolean mShowTwoPageBook = false;
 	private int mBorderSize = 0;
 	private CurlView mCurlView;
+	protected int mDelayAudioMilisecondsAfterImageStimuli = 1000;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -98,14 +100,22 @@ public class StoryBookSubExperiment extends Activity {
 	 */
 	private class BitmapProvider implements CurlView.BitmapProvider {
 
-		private int[] mBitmapIds;
+		protected int[] mBitmapIds;
+		protected int[] mAudioIds;
+		int mCurrentStimuliIndex = 0;
 
-		public int[] initializeImageStimuli() {
+		public int[] initializeStimuli() {
 			TypedArray imgs = getResources().obtainTypedArray(
 					R.array.image_stimuli);
-			int[] bitmapIds = new int[imgs.length()]; 
+			int[] bitmapIds = new int[imgs.length()];
 			for (int i = 0; i < imgs.length(); i++) {
 				bitmapIds[i] = imgs.getResourceId(i, -1);
+			}
+			TypedArray audio = getResources().obtainTypedArray(
+					R.array.audio_stimuli);
+			mAudioIds = new int[audio.length()];
+			for (int i = 0; i < audio.length(); i++) {
+				mAudioIds[i] = audio.getResourceId(i, -1);
 			}
 			return bitmapIds;
 		}
@@ -127,9 +137,40 @@ public class StoryBookSubExperiment extends Activity {
 		}
 
 		@Override
+		public void playAudioStimuli() {
+			if(mCurrentStimuliIndex >= mAudioIds.length){
+				return;
+			}
+			int audioStimuliResource = mAudioIds[mCurrentStimuliIndex];
+			try {
+				Thread.sleep(mDelayAudioMilisecondsAfterImageStimuli);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			MediaPlayer mediaPlayer = MediaPlayer.create(
+					getApplicationContext(), audioStimuliResource);
+			if (mediaPlayer == null) {
+				Log.d("OPrime", "Problem opening the audio stimuli");
+				return;
+			}
+			try {
+				mediaPlayer.prepare();
+			} catch (IllegalStateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			mediaPlayer.start();
+			mCurrentStimuliIndex++;
+		}
+
+		@Override
 		public Bitmap getBitmap(int width, int height, int index) {
 			if (mBitmapIds == null) {
-				mBitmapIds = initializeImageStimuli();
+				mBitmapIds = initializeStimuli();
 			}
 			Bitmap b = Bitmap.createBitmap(width, height,
 					Bitmap.Config.ARGB_8888);
@@ -180,7 +221,7 @@ public class StoryBookSubExperiment extends Activity {
 		@Override
 		public int getBitmapCount() {
 			if (mBitmapIds == null) {
-				mBitmapIds = initializeImageStimuli();
+				mBitmapIds = initializeStimuli();
 			}
 			return mBitmapIds.length;
 		}
