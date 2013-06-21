@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -28,7 +29,6 @@ import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.KeyEvent;
-
 import ca.ilanguage.oprime.tutorial.R;
 
 /**
@@ -98,20 +98,17 @@ public class StoryBookSubExperiment extends Activity {
 	 */
 	private class BitmapProvider implements CurlView.BitmapProvider {
 
-		private int[] mBitmapIds = {
-				R.drawable.stimulus_9_nonpublic,
-				R.drawable.stimulus_12_nonpublic,
-				R.drawable.stimulus_8_nonpublic,
-				R.drawable.stimulus_25_nonpublic,
-				R.drawable.stimulus_15_nonpublic,
-				R.drawable.stimulus_26_nonpublic,
-				R.drawable.stimulus_21_nonpublic,// 4
-				R.drawable.stimulus_18_nonpublic,
-				R.drawable.stimulus_5_nonpublic,
-				R.drawable.stimulus_17_nonpublic,
-				R.drawable.stimulus_13_nonpublic,
-				R.drawable.stimulus_22_nonpublic,
-				R.drawable.stimulus_24_nonpublic };
+		private int[] mBitmapIds;
+
+		public int[] initializeImageStimuli() {
+			TypedArray imgs = getResources().obtainTypedArray(
+					R.array.image_stimuli);
+			int[] bitmapIds = new int[imgs.length()]; 
+			for (int i = 0; i < imgs.length(); i++) {
+				bitmapIds[i] = imgs.getResourceId(i, -1);
+			}
+			return bitmapIds;
+		}
 
 		@Override
 		public void playSound() {
@@ -131,7 +128,9 @@ public class StoryBookSubExperiment extends Activity {
 
 		@Override
 		public Bitmap getBitmap(int width, int height, int index) {
-
+			if (mBitmapIds == null) {
+				mBitmapIds = initializeImageStimuli();
+			}
 			Bitmap b = Bitmap.createBitmap(width, height,
 					Bitmap.Config.ARGB_8888);
 			b.eraseColor(0xFFFFFFFF);
@@ -180,6 +179,9 @@ public class StoryBookSubExperiment extends Activity {
 
 		@Override
 		public int getBitmapCount() {
+			if (mBitmapIds == null) {
+				mBitmapIds = initializeImageStimuli();
+			}
 			return mBitmapIds.length;
 		}
 	}
