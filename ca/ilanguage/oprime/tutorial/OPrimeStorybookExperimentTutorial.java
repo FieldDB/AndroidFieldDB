@@ -282,8 +282,8 @@ public class OPrimeStorybookExperimentTutorial extends Activity {
 							+ "in the background and save it to the SDCARD.",
 					Toast.LENGTH_LONG).show();
 			Intent goToMarket = new Intent(Intent.ACTION_VIEW).setData(Uri
-					.parse("market://details?id=ca.ilanguage.oprime.android"));
-			// startActivity(goToMarket);
+					.parse("market://details?id=ca.ilanguage.oprime"));
+			 startActivity(goToMarket);
 
 		} else {
 			new File(OUTPUT_DIRECTORY).mkdirs();
