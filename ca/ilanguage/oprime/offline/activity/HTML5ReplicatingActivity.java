@@ -383,34 +383,36 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
     SharedPreferences prefs = PreferenceManager
         .getDefaultSharedPreferences(getBaseContext());
 
-    pushReplicationCommand = new ReplicationCommand.Builder()
-        .source(mDatabaseName)
-        .target(prefs.getString("sync_url", mRemoteCouchDBURL))
-        .continuous(true).build();
+    if(pushReplicationCommand == null){
+      pushReplicationCommand = new ReplicationCommand.Builder()
+      .source(mDatabaseName)
+      .target(prefs.getString("sync_url", mRemoteCouchDBURL))
+      .continuous(true).build();
+      HTML5SyncEktorpAsyncTask pushReplication = new HTML5SyncEktorpAsyncTask() {
+        
+        @Override
+        protected void doInBackground() {
+          dbInstance.replicate(pushReplicationCommand);
+        }
+      };
+      pushReplication.execute();
+    }
 
-    HTML5SyncEktorpAsyncTask pushReplication = new HTML5SyncEktorpAsyncTask() {
 
-      @Override
-      protected void doInBackground() {
-        dbInstance.replicate(pushReplicationCommand);
-      }
-    };
+    if(pullReplicationCommand == null){
+      pullReplicationCommand = new ReplicationCommand.Builder()
+      .source(prefs.getString("sync_url", mRemoteCouchDBURL))
+      .target(mDatabaseName).continuous(true).build();
+      HTML5SyncEktorpAsyncTask pullReplication = new HTML5SyncEktorpAsyncTask() {
+        
+        @Override
+        protected void doInBackground() {
+          dbInstance.replicate(pullReplicationCommand);
+        }
+      };
+      pullReplication.execute();
+    }
 
-    pushReplication.execute();
-
-    pullReplicationCommand = new ReplicationCommand.Builder()
-        .source(prefs.getString("sync_url", mRemoteCouchDBURL))
-        .target(mDatabaseName).continuous(true).build();
-
-    HTML5SyncEktorpAsyncTask pullReplication = new HTML5SyncEktorpAsyncTask() {
-
-      @Override
-      protected void doInBackground() {
-        dbInstance.replicate(pullReplicationCommand);
-      }
-    };
-
-    pullReplication.execute();
   }
 
   public boolean stopEktorpAndTDListener() {
@@ -436,7 +438,12 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
        * execution of touchdb...
        */
       // Log.d(TAG, "Turning off TDServer");
-       server.close();
+      try{
+        server.close();
+      }catch(Exception e){
+        Log.e(TAG,"There was an error when closing the TDSERVER");
+        e.printStackTrace();
+      }
 
       /*
        * 12-21 14:41:18.976: E/AndroidRuntime(32196): FATAL EXCEPTION: main
