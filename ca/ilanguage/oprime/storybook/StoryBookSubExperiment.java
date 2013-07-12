@@ -54,7 +54,7 @@ public class StoryBookSubExperiment extends Activity {
 		 */
 		ArrayList<Stimulus> ids = new ArrayList<Stimulus>();
 		ids.add(new Stimulus(R.drawable.androids_experimenter_kids));
-		mStimuli = (ArrayList<Stimulus>) getIntent().getExtras().getSerializable(OPrime.EXTRA_STIMULI_IMAGE_ID); 
+		mStimuli = (ArrayList<Stimulus>) getIntent().getExtras().getSerializable(OPrime.EXTRA_STIMULI); 
 		mShowTwoPageBook =getIntent().getExtras().getBoolean(OPrime.EXTRA_TWO_PAGE_STORYBOOK, false);
 		if(mStimuli == null){
 			mStimuli = ids;
@@ -63,6 +63,9 @@ public class StoryBookSubExperiment extends Activity {
 		 * Prepare language of Stimuli
 		 */
 		String lang = getIntent().getExtras().getString(OPrime.EXTRA_LANGUAGE);
+		if(lang == null){
+		  lang = OPrime.ENGLISH;
+		}
 		forceLocale(lang);
 		
 		int index = 0;
