@@ -30,6 +30,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 
 import ca.ilanguage.oprime.R;
@@ -44,7 +45,10 @@ public class StoryBookSubExperiment extends Activity {
 	private int mBorderSize = 0;
 	private CurlView mCurlView;
 	private ArrayList<Stimulus> mStimuli;
+	protected int mDelayAudioMilisecondsAfterImageStimuli = 1000;
 	private Locale language;
+	 int mCurrentStimuliIndex = 0;
+	 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -55,7 +59,7 @@ public class StoryBookSubExperiment extends Activity {
 		ArrayList<Stimulus> ids = new ArrayList<Stimulus>();
 		ids.add(new Stimulus(R.drawable.androids_experimenter_kids));
 		mStimuli = (ArrayList<Stimulus>) getIntent().getExtras().getSerializable(OPrime.EXTRA_STIMULI); 
-		mShowTwoPageBook =getIntent().getExtras().getBoolean(OPrime.EXTRA_TWO_PAGE_STORYBOOK, false);
+		mShowTwoPageBook = getIntent().getExtras().getBoolean(OPrime.EXTRA_TWO_PAGE_STORYBOOK, false);
 		if(mStimuli == null){
 			mStimuli = ids;
 		}
@@ -181,6 +185,35 @@ public class StoryBookSubExperiment extends Activity {
 			}
 			mediaPlayer.start();
 		}
+		
+		@Override
+    public void playAudioStimuli() {
+      if(mCurrentStimuliIndex >= mStimuli.size()){
+        return;
+      }
+      int audioStimuliResource = mStimuli.get(mCurrentStimuliIndex).getImageFileId() ;
+      try {
+        Thread.sleep(mDelayAudioMilisecondsAfterImageStimuli);
+      } catch (InterruptedException e1) {
+        e1.printStackTrace();
+      }
+      MediaPlayer mediaPlayer = MediaPlayer.create(
+          getApplicationContext(), audioStimuliResource);
+      if (mediaPlayer == null) {
+        Log.d("OPrime", "Problem opening the audio stimuli");
+        return;
+      }
+      try {
+        mediaPlayer.prepare();
+      } catch (IllegalStateException e) {
+        e.printStackTrace();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      mediaPlayer.start();
+      mCurrentStimuliIndex++;
+    }
+		
 		@Override
 		public Bitmap getBitmap(int width, int height, int index) {
 			
