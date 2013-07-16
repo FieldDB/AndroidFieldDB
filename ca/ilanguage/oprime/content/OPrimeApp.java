@@ -19,9 +19,11 @@ public abstract class OPrimeApp extends Application {
   public String TAG = "OPrime";
   public boolean D = false;
   public static final String DEFAULT_OUTPUT_DIRECTORY = "/sdcard/OPrime/";
+  public static final String SHARED_OUTPUT_DIR = "/sdcard/OPrime";
 
   // protected boolean mAutoAdvanceStimuliOnTouch = false;
   protected String mOutputDir = DEFAULT_OUTPUT_DIRECTORY;
+
 
   /*
    * Customer support

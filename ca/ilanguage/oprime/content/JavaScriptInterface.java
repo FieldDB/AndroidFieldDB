@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 import ca.ilanguage.oprime.activity.HTML5Activity;
 import ca.ilanguage.oprime.datacollection.AudioRecorder;
@@ -108,11 +110,64 @@ public abstract class JavaScriptInterface implements Serializable,
   }
 
   @JavascriptInterface
-  public void openExternalLink(String url ){
+  public void openExternalLink(String url) {
     Uri uri = Uri.parse(url);
     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
     getUIParent().startActivity(intent);
   }
+
+  @JavascriptInterface
+  public void openExternalLink(String url, String filename) {
+    if (url == null) {
+      return;
+    }
+    Uri uri = Uri.parse(url);
+    String datatype = "text/plain";
+    if (url.startsWith("data:text")) {
+      url = url.replaceFirst("data:text[^,]*,", "");
+      String urlDecoded;
+      try {
+        urlDecoded = URLDecoder.decode(url, "UTF-8");
+      } catch (UnsupportedEncodingException e) {
+        e.printStackTrace();
+        urlDecoded = "Error";
+      }
+      Log.d(TAG, "Creating a temporary file with the url context");
+      String publicOutputDir = OPrimeApp.SHARED_OUTPUT_DIR;
+      String suffix = url.split(";")[0].replace("data:text/", "");
+      datatype = "text/"+suffix;
+      if (filename == null) {
+        filename = publicOutputDir + System.currentTimeMillis() + "." + suffix;
+      } else {
+        filename = publicOutputDir +"/"+ filename;
+      }
+      new File(publicOutputDir).mkdirs();
+      File outFile = new File(filename);
+
+      if (!outFile.exists()) {
+        try {
+          outFile.createNewFile();
+        } catch (IOException inte) {
+          Log.d(TAG, inte.getMessage());
+        }
+      }
+
+      try {
+        BufferedWriter buf = new BufferedWriter(new FileWriter(outFile, false));
+        buf.append(urlDecoded);
+        buf.newLine();
+        buf.close();
+      } catch (IOException inte) {
+        Log.d(TAG, inte.getMessage());
+      }
+      uri = Uri.parse("file://"+filename);
+    }
+    Intent intent = new Intent(Intent.ACTION_SEND);
+    intent.setType(datatype);
+    intent.putExtra(Intent.EXTRA_STREAM, uri);
+    getUIParent().startActivity(intent);
+  }
+
   @JavascriptInterface
   public void pauseAudio() {
     if (mMediaPlayer != null) {
