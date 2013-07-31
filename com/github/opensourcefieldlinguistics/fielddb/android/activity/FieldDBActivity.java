@@ -4,6 +4,7 @@ import java.io.File;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 
 import ca.ilanguage.oprime.content.JavaScriptInterface;
 import ca.ilanguage.oprime.offline.activity.HTML5ReplicatingActivity;
@@ -41,8 +42,8 @@ public class FieldDBActivity extends HTML5ReplicatingActivity {
   public void setCouchInfoBasedOnUserDb(String userdb, String username,
       String password, String completeURLtoCouchDBServer) {
 
-    boolean credentialsSet = saveAndValidateCouchInfoDefault(userdb, username,
-        password, completeURLtoCouchDBServer);
+    boolean credentialsSet = saveAndValidateCouchInfoOrUsePrevious(userdb, username,
+        password, completeURLtoCouchDBServer, FieldDBApp.PREFERENCE_PREFERENCE_NAME);
     Log.d(TAG, "Credentials were set: " + credentialsSet);
     if (!credentialsSet) {
       this.mInitialAppServerUrl = this.mLoginInitialAppServerUrl;
@@ -111,4 +112,11 @@ public class FieldDBActivity extends HTML5ReplicatingActivity {
     return (FieldDBApp) this.getApplication();
   }
 
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    /* dont show the menu */
+    return true;
+  }
+
+  
 }
