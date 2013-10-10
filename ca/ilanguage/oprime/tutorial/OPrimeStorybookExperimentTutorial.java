@@ -5,12 +5,9 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.ilanguage.oprime.content.OPrime;
-import ca.ilanguage.oprime.content.Stimulus;
 import ca.ilanguage.oprime.tutorial.R;
 import ca.ilanguage.oprime.preferences.PreferenceConstants;
 import ca.ilanguage.oprime.preferences.SetPreferencesActivity;
-import ca.ilanguage.oprime.storybook.StoryBookSubExperiment;
 
 import android.app.Activity;
 import android.content.Context;
@@ -29,7 +26,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 public class OPrimeStorybookExperimentTutorial extends Activity {
-  private String mParticipantId = OPrime.DEFAULT_PARTICIPANT_ID;
+  private String mParticipantId = Config.DEFAULT_PARTICIPANT_ID;
   private String mExperimentTrialHeader = "";
   private Handler mHandlerDelayStimuli = new Handler();
   private Boolean mReplayMode = false;
@@ -37,7 +34,7 @@ public class OPrimeStorybookExperimentTutorial extends Activity {
   private String mCurrentSubExperimentLanguage = "en";
   public long mExperimentLaunch;
   public long mExperimentQuit;
-  public static final String OUTPUT_DIRECTORY = "/sdcard/OPrime/MorphologicalAwarenessShort/video/";
+  public static final String OUTPUT_DIRECTORY = "/sdcard/OPrime/video/";
 
   public ArrayList<String> mSubExperimentParticipantVideos = new ArrayList<String>();
   public ArrayList<String> mParticipantsCodesCompleted = new ArrayList<String>();
@@ -49,7 +46,7 @@ public class OPrimeStorybookExperimentTutorial extends Activity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    setContentView(R.layout.video_recorder);
+    setContentView(R.layout.fragment_video_recorder);
 
     // mImage = (ImageView) findViewById(R.id.mainimage);
     // mImage.setImageResource(R.drawable.androids_experimenter_kids);
@@ -58,7 +55,7 @@ public class OPrimeStorybookExperimentTutorial extends Activity {
     if (savedInstanceState == null) {
       Intent setupIntent = new Intent(getBaseContext(),
           SetPreferencesActivity.class);
-      startActivityForResult(setupIntent, OPrime.PREPARE_TRIAL);
+      startActivityForResult(setupIntent, Config.PREPARE_TRIAL);
 
     }
 
@@ -102,12 +99,12 @@ public class OPrimeStorybookExperimentTutorial extends Activity {
 
       } else {
         Intent openResults = new Intent("org.openintents.action.PICK_FILE");
-        openResults.setData(Uri.parse("file://" + OPrime.EXTRA_OUTPUT_DIR));
+        openResults.setData(Uri.parse("file://" + Config.EXTRA_OUTPUT_DIR));
         startActivity(openResults);
       }
       // Intent intentReplay = new Intent(getBaseContext(),
       // SetPreferencesActivity.class);
-      // startActivityForResult(intentReplay, OPrime.REPLAY_RESULTS);
+      // startActivityForResult(intentReplay, Config.REPLAY_RESULTS);
       return true;
     case R.id.backup_results:
       Intent backupIntent = new Intent(getBaseContext(),
@@ -207,7 +204,7 @@ public class OPrimeStorybookExperimentTutorial extends Activity {
       return 0;
     }
     mSubExperimentParticipantVideos = new ArrayList<String>();
-    File dir = new File(OPrime.DEFAULT_OUTPUT_DIRECTORY);
+    File dir = new File(Config.DEFAULT_OUTPUT_DIRECTORY);
     FilenameFilter filter = new FilenameFilter() {
       public boolean accept(File dir, String name) {
         return (name.contains(substring) && name.endsWith("3gp"));
@@ -235,7 +232,7 @@ public class OPrimeStorybookExperimentTutorial extends Activity {
   public String findParticipantCodesWithResults() {
     mParticipantsCodesCompleted = null;
     mParticipantsCodesCompleted = new ArrayList<String>();
-    File dir = new File(OPrime.DEFAULT_OUTPUT_DIRECTORY);
+    File dir = new File(Config.DEFAULT_OUTPUT_DIRECTORY);
 
     File[] files = dir.listFiles();
     if (files == null) {
@@ -268,8 +265,8 @@ public class OPrimeStorybookExperimentTutorial extends Activity {
     intent = new Intent(getApplicationContext(), StoryBookSubExperiment.class);
 
     /* TODO add extra with the stimuli */
-    intent.putExtra(OPrime.EXTRA_STIMULI, initializeStimuli());
-    intent.putExtra(OPrime.EXTRA_LANGUAGE, OPrime.ENGLISH);
+    intent.putExtra(Config.EXTRA_STIMULI, initializeStimuli());
+    intent.putExtra(Config.EXTRA_LANGUAGE, Config.ENGLISH);
     startActivity(intent);
   }
 
@@ -307,14 +304,14 @@ public class OPrimeStorybookExperimentTutorial extends Activity {
       intent = new Intent(
           "ca.ilanguage.oprime.intent.action.START_VIDEO_RECORDING_SERVICE");
 
-      intent.putExtra(OPrime.EXTRA_USE_FRONT_FACING_CAMERA, true);
-      intent.putExtra(OPrime.EXTRA_LANGUAGE, OPrime.ENGLISH);
-      intent.putExtra(OPrime.EXTRA_PARTICIPANT_ID, mParticipantId);
-      intent.putExtra(OPrime.EXTRA_OUTPUT_DIR, OUTPUT_DIRECTORY);
-      intent.putExtra(OPrime.EXTRA_EXPERIMENT_TRIAL_INFORMATION,
+      intent.putExtra(Config.EXTRA_USE_FRONT_FACING_CAMERA, true);
+      intent.putExtra(Config.EXTRA_LANGUAGE, Config.ENGLISH);
+      intent.putExtra(Config.EXTRA_PARTICIPANT_ID, mParticipantId);
+      intent.putExtra(Config.EXTRA_OUTPUT_DIR, OUTPUT_DIRECTORY);
+      intent.putExtra(Config.EXTRA_EXPERIMENT_TRIAL_INFORMATION,
           mExperimentTrialHeader);
 
-      startActivityForResult(intent, OPrime.EXPERIMENT_COMPLETED);
+      startActivityForResult(intent, Config.EXPERIMENT_COMPLETED);
     }
   }
 
@@ -326,9 +323,9 @@ public class OPrimeStorybookExperimentTutorial extends Activity {
 
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     switch (requestCode) {
-    case OPrime.EXPERIMENT_COMPLETED:
+    case Config.EXPERIMENT_COMPLETED:
       break;
-    case OPrime.PREPARE_TRIAL:
+    case Config.PREPARE_TRIAL:
       initExperiment();
       startVideoRecorder();
 
