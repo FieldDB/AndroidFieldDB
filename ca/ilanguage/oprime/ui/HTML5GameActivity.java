@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Locale;
 
-import ca.ilanguage.oprime.content.OPrime;
-import ca.ilanguage.oprime.content.OPrimeApp;
-import ca.ilanguage.oprime.content.Participant;
-import ca.ilanguage.oprime.content.SubExperimentBlock;
+import ca.ilanguage.oprime.Config;
+import ca.ilanguage.oprime.model.OPrimeApp;
+import ca.ilanguage.oprime.model.Participant;
+import ca.ilanguage.oprime.model.SubExperimentBlock;
 import ca.ilanguage.oprime.datacollection.AudioRecorder;
 import ca.ilanguage.oprime.datacollection.SubExperimentToJson;
 import ca.ilanguage.oprime.javascript.ExperimentJavaScriptInterface;
@@ -73,12 +73,12 @@ public class HTML5GameActivity extends HTML5Activity {
       if (D) {
         Log.d(TAG, "HTML5GameActivity was asked to prepare the experiment.");
       }
-      SharedPreferences prefs = getSharedPreferences(OPrimeApp.PREFERENCE_NAME,
+      SharedPreferences prefs = getSharedPreferences(Config.PREFERENCE_NAME,
           MODE_PRIVATE);
-      String lang = prefs.getString(OPrimeApp.PREFERENCE_EXPERIMENT_LANGUAGE,
+      String lang = prefs.getString(Config.PREFERENCE_EXPERIMENT_LANGUAGE,
           "");
       boolean autoAdvanceStimuliOnTouch = prefs.getBoolean(
-          OPrimeApp.PREFERENCE_EXPERIMENT_AUTO_ADVANCE_ON_TOUCH, false);
+          Config.PREFERENCE_EXPERIMENT_AUTO_ADVANCE_ON_TOUCH, false);
       // ((OPrimeApp) this.getApplication())
       // .setAutoAdvanceStimuliOnTouch(autoAdvanceStimuliOnTouch);
 
@@ -120,33 +120,33 @@ public class HTML5GameActivity extends HTML5Activity {
     } catch (Exception e) {
       p = new Participant();
     }
-    SharedPreferences prefs = getSharedPreferences(OPrimeApp.PREFERENCE_NAME,
+    SharedPreferences prefs = getSharedPreferences(Config.PREFERENCE_NAME,
         MODE_PRIVATE);
     String firstname = prefs.getString(
-        OPrimeApp.PREFERENCE_PARTICIPANT_FIRSTNAME, "");
+        Config.PREFERENCE_PARTICIPANT_FIRSTNAME, "");
     String lastname = prefs.getString(
-        OPrimeApp.PREFERENCE_PARTICIPANT_LASTNAME, "");
+        Config.PREFERENCE_PARTICIPANT_LASTNAME, "");
     String experimenter = prefs.getString(
-        OPrimeApp.PREFERENCE_EXPERIEMENTER_CODE, "NN");
-    String details = prefs.getString(OPrimeApp.PREFERENCE_PARTICIPANT_DETAILS,
+        Config.PREFERENCE_EXPERIEMENTER_CODE, "NN");
+    String details = prefs.getString(Config.PREFERENCE_PARTICIPANT_DETAILS,
         "");
     String gender = prefs
-        .getString(OPrimeApp.PREFERENCE_PARTICIPANT_GENDER, "");
+        .getString(Config.PREFERENCE_PARTICIPANT_GENDER, "");
     String birthdate = prefs.getString(
-        OPrimeApp.PREFERENCE_PARTICIPANT_BIRTHDATE, "");
-    String lang = prefs.getString(OPrimeApp.PREFERENCE_EXPERIMENT_LANGUAGE,
+        Config.PREFERENCE_PARTICIPANT_BIRTHDATE, "");
+    String lang = prefs.getString(Config.PREFERENCE_EXPERIMENT_LANGUAGE,
         "en");
     boolean autoAdvanceStimuliOnTouch = prefs.getBoolean(
-        OPrimeApp.PREFERENCE_EXPERIMENT_AUTO_ADVANCE_ON_TOUCH, false);
+        Config.PREFERENCE_EXPERIMENT_AUTO_ADVANCE_ON_TOUCH, false);
     // ((OPrimeApp) this.getApplication())
     // .setAutoAdvanceStimuliOnTouch(autoAdvanceStimuliOnTouch);
     // String langs =
     // prefs.getString(OPrimeApp.PREFERENCE_PARTICIPANT_LANGUAGES,
     // "");
     String testDayNumber = prefs.getString(
-        OPrimeApp.PREFERENCE_TESTING_DAY_NUMBER, "1");
+        Config.PREFERENCE_TESTING_DAY_NUMBER, "1");
     String participantNumberOnDay = prefs.getString(
-        OPrimeApp.PREFERENCE_PARTICIPANT_NUMBER_IN_DAY, "1");
+        Config.PREFERENCE_PARTICIPANT_NUMBER_IN_DAY, "1");
     /*
      * Build the participant ID and save the start time to the preferences.
      */

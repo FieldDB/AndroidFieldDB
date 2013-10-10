@@ -17,13 +17,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 public abstract class OPrimeApp extends Application {
-  public String TAG = "OPrime";
+  public String TAG = Config.TAG;
   public boolean D = false;
-  public static final String DEFAULT_OUTPUT_DIRECTORY = "/sdcard/OPrime/";
-  public static final String SHARED_OUTPUT_DIR = "/sdcard/OPrime";
 
   // protected boolean mAutoAdvanceStimuliOnTouch = false;
-  protected String mOutputDir = DEFAULT_OUTPUT_DIRECTORY;
+  protected String mOutputDir = Config.DEFAULT_OUTPUT_DIRECTORY;
 
 
   /*
@@ -34,7 +32,7 @@ public abstract class OPrimeApp extends Application {
   /*
    * Variables for TouchDB - CouchDB storage if used by the application.
    */
-  protected String mLocalCouchDir = DEFAULT_OUTPUT_DIRECTORY + "db/couchdb/";
+  protected String mLocalCouchDir = Config.DEFAULT_OUTPUT_DIRECTORY + "db/couchdb/";
   protected String mLocalCouchDBname = "oprimesample";
   protected String mRemoteCouchUrl = "https://oprimesampleadmin:none@cesine.iriscouch.com/oprimesample";
 
@@ -58,29 +56,6 @@ public abstract class OPrimeApp extends Application {
   protected int mCurrentSubExperiment;
   /* This is a pointer to the experiment currently underway */
   protected int mCurrentExperiment;
-
-  /*
-   * Settings variables
-   */
-  public static final String PREFERENCE_NAME = "OPrimePrefs";
-
-  public static final String PREFERENCE_PARTICIPANT_ID = "participantId";
-  public static final String PREFERENCE_PARTICIPANT_FIRSTNAME = "participantfirstname";
-  public static final String PREFERENCE_PARTICIPANT_LASTNAME = "participantlastname";
-  public static final String PREFERENCE_PARTICIPANT_GENDER = "participantgender";
-  public static final String PREFERENCE_PARTICIPANT_BIRTHDATE = "participantbirthdate";
-  public static final String PREFERENCE_PARTICIPANT_DETAILS = "participantdetails";
-  public static final String PREFERENCE_PARTICIPANT_STARTTIME = "participantstarttime";
-  public static final String PREFERENCE_PARTICIPANT_ENDTIME = "participantendtime";
-  public static final String PREFERENCE_EXPERIEMENTER_CODE = "experimenterCode";
-  public static final String PREFERENCE_EXPERIMENT_LANGUAGE = "experimentlanguage";
-  public static final String PREFERENCE_EXPERIMENT_AUTO_ADVANCE_ON_TOUCH = "autoAdvanceStimuliOnTouch";
-  public static final String PREFERENCE_PARTICIPANT_LANGUAGES = "participantlangs";
-  public static final String PREFERENCE_TESTING_DAY_NUMBER = "testingdaynumber";
-  public static final String PREFERENCE_PARTICIPANT_NUMBER_IN_DAY = "participantnumberinday";
-
-  public static final String PREFERENCE_REPLAY_RESULTS_MODE = "replayresults";
-  public static final String PREFERENCE_REPLAY_PARTICIPANT_CODE = "replayparticipantcode";
 
   /**
    * When you override this method, consider calling your setup of directories

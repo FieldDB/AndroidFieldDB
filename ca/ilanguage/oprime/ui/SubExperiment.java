@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import ca.ilanguage.oprime.Config;
 import ca.ilanguage.oprime.R;
-import ca.ilanguage.oprime.content.OPrime;
-import ca.ilanguage.oprime.content.OPrimeApp;
-import ca.ilanguage.oprime.content.Stimulus;
-import ca.ilanguage.oprime.content.SubExperimentBlock;
-import ca.ilanguage.oprime.content.Touch;
+import ca.ilanguage.oprime.model.OPrimeApp;
+import ca.ilanguage.oprime.model.Stimulus;
+import ca.ilanguage.oprime.model.SubExperimentBlock;
+import ca.ilanguage.oprime.model.Touch;
 import ca.ilanguage.oprime.datacollection.AudioRecorder;
 import ca.ilanguage.oprime.datacollection.VideoRecorderAsyncTask;
 import android.app.Activity;
@@ -143,7 +143,7 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
   };
 
   public void initalizeLayout() {
-    setContentView(R.layout.one_image);
+    setContentView(R.layout.fragment_one_image);
 
     /*
      * Set up the video recording

@@ -8,7 +8,10 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
-import ca.ilanguage.oprime.activity.HTML5Activity;
+import ca.ilanguage.oprime.Config;
+import ca.ilanguage.oprime.model.DeviceDetails;
+import ca.ilanguage.oprime.model.NonObfuscateable;
+import ca.ilanguage.oprime.ui.HTML5Activity;
 import ca.ilanguage.oprime.datacollection.AudioRecorder;
 import ca.ilanguage.oprime.datacollection.TakePicture;
 import ca.ilanguage.oprime.datacollection.VideoRecorder;
@@ -29,7 +32,7 @@ public abstract class JavaScriptInterface implements Serializable,
     NonObfuscateable {
 
   private static final long serialVersionUID = -4666851545498417224L;
-  protected String TAG = OPrime.OPRIME_TAG;
+  protected String TAG = Config.OPRIME_TAG;
   protected boolean D = true;
   protected Context mContext;
   protected String mOutputDir;
@@ -84,7 +87,7 @@ public abstract class JavaScriptInterface implements Serializable,
 
   public JavaScriptInterface(Context context) {
     mContext = context;
-    mOutputDir = OPrimeApp.DEFAULT_OUTPUT_DIRECTORY;
+    mOutputDir = Config.DEFAULT_OUTPUT_DIRECTORY;
     mAudioPlaybackFileUrl = "";
     if (D)
       Log.d(TAG, "Initializing the Javascript Interface (JSI).");
@@ -133,7 +136,7 @@ public abstract class JavaScriptInterface implements Serializable,
         urlDecoded = "Error";
       }
       Log.d(TAG, "Creating a temporary file with the url context");
-      String publicOutputDir = OPrimeApp.SHARED_OUTPUT_DIR;
+      String publicOutputDir = Config.SHARED_OUTPUT_DIR;
       String suffix = url.split(";")[0].replace("data:text/", "");
       datatype = "text/"+suffix;
       if (filename == null) {
@@ -403,7 +406,7 @@ public abstract class JavaScriptInterface implements Serializable,
 
     Intent intent;
     intent = new Intent(mContext, AudioRecorder.class);
-    intent.putExtra(OPrime.EXTRA_RESULT_FILENAME, mAudioRecordFileUrl);
+    intent.putExtra(Config.EXTRA_RESULT_FILENAME, mAudioRecordFileUrl);
     getUIParent().startService(intent);
     // Publish audio recording started
     LoadUrlToWebView v = new LoadUrlToWebView();
@@ -454,7 +457,7 @@ public abstract class JavaScriptInterface implements Serializable,
     Intent intent;
     // intent = new Intent(OPrime.INTENT_START_VIDEO_RECORDING);
     intent = new Intent(mContext, VideoRecorder.class);
-    intent.putExtra(OPrime.EXTRA_RESULT_FILENAME, outputDir + resultsFile
+    intent.putExtra(Config.EXTRA_RESULT_FILENAME, outputDir + resultsFile
         + ".3gp");
 
     getUIParent().startActivity(intent);
@@ -483,8 +486,8 @@ public abstract class JavaScriptInterface implements Serializable,
     Intent intent;
     // intent = new Intent(OPrime.INTENT_TAKE_PICTURE);
     intent = new Intent(mContext, TakePicture.class);
-    intent.putExtra(OPrime.EXTRA_RESULT_FILENAME, mTakeAPictureFileUrl);
-    getUIParent().startActivityForResult(intent, OPrime.PICTURE_TAKEN);
+    intent.putExtra(Config.EXTRA_RESULT_FILENAME, mTakeAPictureFileUrl);
+    getUIParent().startActivityForResult(intent, Config.PICTURE_TAKEN);
   }
 
   @JavascriptInterface

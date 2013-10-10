@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
-import ca.ilanguage.oprime.activity.HTML5Activity;
-import ca.ilanguage.oprime.activity.HTML5GameActivity;
-import ca.ilanguage.oprime.content.OPrime;
+import ca.ilanguage.oprime.ui.HTML5Activity;
+import ca.ilanguage.oprime.ui.HTML5GameActivity;
+import ca.ilanguage.oprime.Config;
 import ca.ilanguage.oprime.javascript.JavaScriptInterface;
+import ca.ilanguage.oprime.model.NonObfuscateable;
+import ca.ilanguage.oprime.model.OPrimeApp;
 
 public class ExperimentJavaScriptInterface extends JavaScriptInterface
     implements NonObfuscateable {
@@ -86,12 +88,12 @@ public class ExperimentJavaScriptInterface extends JavaScriptInterface
     Intent intent = new Intent(app.getSubExperiments()
         .get(currentSubExperiment).getIntentToCallThisSubExperiment());
 
-    intent.putExtra(OPrime.EXTRA_SUB_EXPERIMENT,
+    intent.putExtra(Config.EXTRA_SUB_EXPERIMENT,
         app.getSubExperiments().get(currentSubExperiment));
-    intent.putExtra(OPrime.EXTRA_LANGUAGE, app.getLanguage().getLanguage());
-    intent.putExtra(OPrime.EXTRA_RESULT_FILENAME, mOutputDir + "video/"
+    intent.putExtra(Config.EXTRA_LANGUAGE, app.getLanguage().getLanguage());
+    intent.putExtra(Config.EXTRA_RESULT_FILENAME, mOutputDir + "video/"
         + resultsFile + ".3gp");
-    getUIParent().startActivityForResult(intent, OPrime.EXPERIMENT_COMPLETED);
+    getUIParent().startActivityForResult(intent, Config.EXPERIMENT_COMPLETED);
 
     app.getSubExperiments().get(currentSubExperiment)
         .setResultsFileWithoutSuffix(mOutputDir + "video/" + resultsFile);

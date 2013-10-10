@@ -10,8 +10,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import ca.ilanguage.oprime.R;
-import ca.ilanguage.oprime.content.AssetIncludeWorkaround;
-import ca.ilanguage.oprime.content.OPrime;
+import ca.ilanguage.oprime.model.AssetIncludeWorkaround;
+import ca.ilanguage.oprime.Config;
 import ca.ilanguage.oprime.javascript.JavaScriptInterface;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -65,7 +65,7 @@ public abstract class HTML5Activity extends Activity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.html5webview);
+    setContentView(R.layout.fragment_html5webview);
     setUpVariables();
     prepareWebView();
   }
@@ -79,7 +79,7 @@ public abstract class HTML5Activity extends Activity {
 
   protected abstract void setUpVariables();
 
-  @SuppressLint("SetJavaScriptEnabled")
+  @SuppressLint({ "SetJavaScriptEnabled", "NewApi" })
   protected void prepareWebView() {
     mWebView = (WebView) findViewById(R.id.html5WebView);
     mWebView.addJavascriptInterface(this.getJavaScriptInterface(), "Android");

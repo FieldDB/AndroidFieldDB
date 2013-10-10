@@ -2,9 +2,9 @@ package ca.ilanguage.oprime.datacollection;
 
 import java.io.IOException;
 
+import ca.ilanguage.oprime.Config;
 import ca.ilanguage.oprime.R;
-import ca.ilanguage.oprime.content.OPrime;
-import ca.ilanguage.oprime.content.OPrimeApp;
+import ca.ilanguage.oprime.model.OPrimeApp;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -137,7 +137,7 @@ public class VideoRecorder extends Activity implements SurfaceHolder.Callback {
      * Get extras from the Experiment Home screen and set up layout depending on
      * extras
      */
-    setContentView(R.layout.video_recorder);
+    setContentView(R.layout.fragment_video_recorder);
 
     mVideoView = (VideoView) this.findViewById(R.id.videoView);
     mVideoQuality = getIntent().getExtras().getInt(EXTRA_VIDEO_QUALITY,

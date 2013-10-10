@@ -3,8 +3,8 @@ package ca.ilanguage.oprime.datacollection;
 import java.io.IOException;
 
 import ca.ilanguage.oprime.R;
-import ca.ilanguage.oprime.content.OPrime;
-import ca.ilanguage.oprime.content.OPrimeApp;
+import ca.ilanguage.oprime.Config;
+import ca.ilanguage.oprime.model.OPrimeApp;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;

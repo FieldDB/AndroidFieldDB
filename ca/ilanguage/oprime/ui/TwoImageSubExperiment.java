@@ -11,7 +11,7 @@ import android.widget.TextView;
 import android.widget.VideoView;
 
 import ca.ilanguage.oprime.R;
-import ca.ilanguage.oprime.content.TwoImageStimulus;
+import ca.ilanguage.oprime.model.TwoImageStimulus;
 
 public class TwoImageSubExperiment extends SubExperiment {
 
@@ -23,7 +23,7 @@ public class TwoImageSubExperiment extends SubExperiment {
 	@Override
 	public void initalizeLayout(){
 		mStimuliIndex = -1;
-		setContentView(R.layout.two_images);
+		setContentView(R.layout.fragment_two_images);
 		
 		 /*
      * Set up the video recording

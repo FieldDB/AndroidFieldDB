@@ -5,9 +5,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.widget.Toast;
+import ca.ilanguage.oprime.Config;
 import ca.ilanguage.oprime.R;
-import ca.ilanguage.oprime.content.OPrime;
-import ca.ilanguage.oprime.content.OPrimeApp;
+import ca.ilanguage.oprime.model.OPrimeApp;
 
 public class ParticipantDetails extends PreferenceActivity {
 
@@ -17,7 +17,7 @@ public class ParticipantDetails extends PreferenceActivity {
 
     getPreferenceManager().setSharedPreferencesMode(MODE_PRIVATE);
     getPreferenceManager().setSharedPreferencesName(
-        ((OPrimeApp) getApplication()).PREFERENCE_NAME);
+        Config.PREFERENCE_NAME);
 
     // Load the preferences from an XML resource
     addPreferencesFromResource(R.xml.preferences);
@@ -26,7 +26,7 @@ public class ParticipantDetails extends PreferenceActivity {
 
   public void onDialogClosed(boolean positiveResult) {
     if (positiveResult) {
-      SharedPreferences prefs = getSharedPreferences(OPrimeApp.PREFERENCE_NAME,
+      SharedPreferences prefs = getSharedPreferences(Config.PREFERENCE_NAME,
           MODE_PRIVATE);
       SharedPreferences.Editor editor = prefs.edit();
       // editor.remove(PreferenceConstants.PREFERENCE_LEVEL_ROW);
@@ -38,7 +38,7 @@ public class ParticipantDetails extends PreferenceActivity {
 
   @Override
   public void onBackPressed() {
-    String tag = ((OPrimeApp) this.getApplication()).getTag();
+    String tag = Config.TAG;
     boolean d = ((OPrimeApp) this.getApplication()).isD();
     try {
       boolean prepareExperiment = getIntent().getExtras().getBoolean(

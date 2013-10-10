@@ -35,11 +35,11 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.VideoView;
+import ca.ilanguage.oprime.Config;
 import ca.ilanguage.oprime.R;
-import ca.ilanguage.oprime.content.OPrime;
-import ca.ilanguage.oprime.content.OPrimeApp;
-import ca.ilanguage.oprime.content.Stimulus;
-import ca.ilanguage.oprime.content.SubExperimentBlock;
+import ca.ilanguage.oprime.model.OPrimeApp;
+import ca.ilanguage.oprime.model.Stimulus;
+import ca.ilanguage.oprime.model.SubExperimentBlock;
 import ca.ilanguage.oprime.datacollection.AudioRecorder;
 import ca.ilanguage.oprime.datacollection.VideoRecorderAsyncTask;
 
@@ -63,9 +63,9 @@ public class StopWatchSubExperiment extends Activity implements
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    setContentView(R.layout.stop_watch);
+    setContentView(R.layout.fragment_stop_watch);
     D = ((OPrimeApp) this.getApplication()).D;
-    TAG = ((OPrimeApp) this.getApplication()).TAG;
+    TAG = Config.TAG;
     Button button;
 
     mChronometer = (Chronometer) findViewById(R.id.chronometer);

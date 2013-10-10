@@ -1,6 +1,8 @@
 package ca.ilanguage.oprime;
 
 public class Config {
+  public static final String TAG = "OPrime";
+
   public static final int NOTSPECIFIED = 0;
   public static final String EMPTYSTRING = "";
   public static final String DEFAULT_LANGUAGE = "en";
@@ -10,12 +12,28 @@ public class Config {
   
   public static final String OPRIME_TAG = "OPrime";
   public static final String DEFAULT_OUTPUT_DIRECTORY = "/sdcard/OPrime/";
-
+  public static final String SHARED_OUTPUT_DIR = "/sdcard/OPrime";
   /*
    * Preferences for persisting values
    */
   public static final String PREFERENCE_NAME = "OPrimePrefs";
   public static final String PREFERENCE_LAST_PICTURE_TAKEN = "lastpicturetaken";
+  public static final String PREFERENCE_PARTICIPANT_ID = "participantId";
+  public static final String PREFERENCE_PARTICIPANT_FIRSTNAME = "participantfirstname";
+  public static final String PREFERENCE_PARTICIPANT_LASTNAME = "participantlastname";
+  public static final String PREFERENCE_PARTICIPANT_GENDER = "participantgender";
+  public static final String PREFERENCE_PARTICIPANT_BIRTHDATE = "participantbirthdate";
+  public static final String PREFERENCE_PARTICIPANT_DETAILS = "participantdetails";
+  public static final String PREFERENCE_PARTICIPANT_STARTTIME = "participantstarttime";
+  public static final String PREFERENCE_PARTICIPANT_ENDTIME = "participantendtime";
+  public static final String PREFERENCE_EXPERIEMENTER_CODE = "experimenterCode";
+  public static final String PREFERENCE_EXPERIMENT_LANGUAGE = "experimentlanguage";
+  public static final String PREFERENCE_EXPERIMENT_AUTO_ADVANCE_ON_TOUCH = "autoAdvanceStimuliOnTouch";
+  public static final String PREFERENCE_PARTICIPANT_LANGUAGES = "participantlangs";
+  public static final String PREFERENCE_TESTING_DAY_NUMBER = "testingdaynumber";
+  public static final String PREFERENCE_PARTICIPANT_NUMBER_IN_DAY = "participantnumberinday";
+  public static final String PREFERENCE_REPLAY_RESULTS_MODE = "replayresults";
+  public static final String PREFERENCE_REPLAY_PARTICIPANT_CODE = "replayparticipantcode";
 
   /*
    * Control Flow constants

@@ -36,7 +36,7 @@ import android.view.KeyEvent;
 import ca.ilanguage.oprime.R;
 import ca.ilanguage.oprime.Config;
 import android.widget.Toast;
-import ca.ilanguage.oprime.content.Stimulus;
+import ca.ilanguage.oprime.model.Stimulus;
 import ca.ilanguage.oprime.model.Touch;
 
 public class StoryBookSubExperiment extends Activity {

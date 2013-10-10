@@ -5,8 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 
-import ca.ilanguage.oprime.content.OPrime;
-
 import android.app.Activity;
 import android.content.ContentValues;
 import android.support.v4.content.CursorLoader;
@@ -23,6 +21,7 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Media;
 import android.view.View;
 import android.widget.Toast;
+import ca.ilanguage.oprime.Config;
 import ca.ilanguage.oprime.R;
 
 public class TakePicture extends Activity {
@@ -33,7 +32,7 @@ public class TakePicture extends Activity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.take_picture);
+    setContentView(R.layout.fragment_take_picture);
 
     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     mImageFilename = getIntent().getExtras().getString(

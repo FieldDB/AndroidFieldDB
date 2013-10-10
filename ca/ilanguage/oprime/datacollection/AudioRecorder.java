@@ -2,8 +2,8 @@ package ca.ilanguage.oprime.datacollection;
 
 import java.io.IOException;
 
-import ca.ilanguage.oprime.activity.OPrimeLib;
-import ca.ilanguage.oprime.content.OPrime;
+import ca.ilanguage.oprime.ui.OPrimeLib;
+import ca.ilanguage.oprime.Config;
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -18,6 +18,7 @@ import android.graphics.BitmapFactory;
 import android.media.MediaRecorder;
 import android.os.IBinder;
 
+import ca.ilanguage.oprime.Config;
 import ca.ilanguage.oprime.R;
 
 @SuppressLint({ "NewApi" })

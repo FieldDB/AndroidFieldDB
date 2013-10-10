@@ -6,9 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import ca.ilanguage.oprime.content.OPrime;
-import ca.ilanguage.oprime.content.OPrimeApp;
-import ca.ilanguage.oprime.content.SubExperimentBlock;
+import ca.ilanguage.oprime.Config;
+import ca.ilanguage.oprime.model.OPrimeApp;
+import ca.ilanguage.oprime.model.SubExperimentBlock;
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
