@@ -16,7 +16,7 @@
 
 package ca.ilanguage.oprime.storybook;
 
-import ca.ilanguage.oprime.content.Touch;
+import ca.ilanguage.oprime.model.Touch;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
@@ -325,7 +325,8 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 				
 				mHandlerDelayStimuli.postDelayed(new Runnable() {
 					public void run() {
-						mBitmapProvider.playSound();
+            mBitmapProvider.playSound();
+            mBitmapProvider.playAudioStimuli();
 					}
 				}, mAnimationDurationTime);
 
@@ -817,6 +818,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		 * Return number of pages/bitmaps available.
 		 */
 		public int getBitmapCount();
+    void playAudioStimuli();
 	}
 
 	/**

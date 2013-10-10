@@ -4,7 +4,12 @@ public class Config {
   public static final int NOTSPECIFIED = 0;
   public static final String EMPTYSTRING = "";
   public static final String DEFAULT_LANGUAGE = "en";
+  public static final String ENGLISH = "en";
+  public static final String FRENCH = "fr";
+  public static final String DEFAULT_PARTICIPANT_ID = "0000";
+  
   public static final String OPRIME_TAG = "OPrime";
+  public static final String DEFAULT_OUTPUT_DIRECTORY = "/sdcard/OPrime/";
 
   /*
    * Preferences for persisting values
@@ -60,5 +65,6 @@ public class Config {
   public static final String EXTRA_STIMULI_IMAGE_ID = "stimuliimageid";
   public static final String EXTRA_TWO_PAGE_STORYBOOK = "twopagebook";
   public static final String EXTRA_PLEASE_PREPARE_EXPERIMENT = "pleaseprepareexperiment";
+  public static final String EXTRA_USE_FRONT_FACING_CAMERA = "usefrontfacingcamera";
 
 }
