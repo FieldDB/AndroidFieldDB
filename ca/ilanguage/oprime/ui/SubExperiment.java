@@ -4,14 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import ca.ilanguage.oprime.Config;
-import ca.ilanguage.oprime.R;
-import ca.ilanguage.oprime.model.OPrimeApp;
-import ca.ilanguage.oprime.model.Stimulus;
-import ca.ilanguage.oprime.model.SubExperimentBlock;
-import ca.ilanguage.oprime.model.Touch;
-import ca.ilanguage.oprime.datacollection.AudioRecorder;
-import ca.ilanguage.oprime.datacollection.VideoRecorderAsyncTask;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -31,220 +23,100 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
+import ca.ilanguage.oprime.Config;
+import ca.ilanguage.oprime.R;
+import ca.ilanguage.oprime.datacollection.AudioRecorder;
+import ca.ilanguage.oprime.datacollection.VideoRecorderAsyncTask;
+import ca.ilanguage.oprime.model.OPrimeApp;
+import ca.ilanguage.oprime.model.Stimulus;
+import ca.ilanguage.oprime.model.SubExperimentBlock;
+import ca.ilanguage.oprime.model.Touch;
 
 public class SubExperiment extends Activity implements SurfaceHolder.Callback {
-  protected boolean D = true;
+  Animation                               animationSlideInRight;
 
+  AnimationListener                       animationSlideInRightListener = new AnimationListener() {
+
+                                                                          @Override
+                                                                          public void onAnimationEnd(Animation animation) {
+                                                                            // TODO
+                                                                            // Auto-generated
+                                                                            // method
+                                                                            // stub
+                                                                          }
+
+                                                                          @Override
+                                                                          public void onAnimationRepeat(
+                                                                              Animation animation) {
+                                                                            // TODO
+                                                                            // Auto-generated
+                                                                            // method
+                                                                            // stub
+
+                                                                          }
+
+                                                                          @Override
+                                                                          public void onAnimationStart(
+                                                                              Animation animation) {
+                                                                            // TODO
+                                                                            // Auto-generated
+                                                                            // method
+                                                                            // stub
+
+                                                                          }
+                                                                        };
+  protected boolean                       D                             = true;
+  protected int                           height                        = 1;
+  protected Locale                        language;
+  MediaPlayer                             mAudioStimuli;
+  protected Boolean                       mAutoAdvanceStimuliOnTouch    = false;
+  protected long                          mLastTouchTime                = 0;
+  protected Boolean                       mRecording                    = false;
   protected ArrayList<? extends Stimulus> mStimuli;
-  protected SubExperimentBlock mSubExperiment;
-  MediaPlayer mAudioStimuli;
-  MediaPlayer mTouchAudio;
-  protected Locale language;
-  protected int mStimuliIndex = -1;
-  protected long mLastTouchTime = 0;
-  protected Boolean mAutoAdvanceStimuliOnTouch = false;
-  protected String TAG = "OPrime SubExperiment";
-  protected int width = 1;
-  protected int height = 1;
+  protected int                           mStimuliIndex                 = -1;
+  protected SubExperimentBlock            mSubExperiment;
 
-  Animation animationSlideInRight;
+  MediaPlayer                             mTouchAudio;
 
+  protected VideoView                     mVideoView                    = null;
   /*
    * Video variables
    */
-  protected VideoRecorderAsyncTask recordVideoTask;
-  protected VideoView mVideoView = null;
-  protected Boolean mRecording = false;
+  protected VideoRecorderAsyncTask        recordVideoTask;
+  protected String                        TAG                           = "OPrime SubExperiment";
 
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  protected int                           width                         = 1;
 
-    D = ((OPrimeApp) this.getApplication()).D;
-    TAG = ((OPrimeApp) this.getApplication()).TAG;
-
-    DisplayMetrics displaymetrics = new DisplayMetrics();
-    getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-    height = displaymetrics.heightPixels;
-    width = displaymetrics.widthPixels;
-    animationSlideInRight = AnimationUtils.loadAnimation(this,
-        R.anim.slide_in_right);
-    animationSlideInRight.setDuration(1000);
-    animationSlideInRight.setAnimationListener(animationSlideInRightListener);
-    /*
-     * Prepare Stimuli
-     */
-    mSubExperiment = (SubExperimentBlock) getIntent().getExtras()
-        .getSerializable(Config.EXTRA_SUB_EXPERIMENT);
-    this.setTitle(mSubExperiment.getTitle());
-    mStimuli = mSubExperiment.getStimuli();
-    mAutoAdvanceStimuliOnTouch = mSubExperiment.isAutoAdvanceStimuliOnTouch();
-    if (mStimuli == null || mStimuli.size() == 0) {
-      loadDefaults();
+  public void finishSubExperiment() {
+    this.mSubExperiment.setDisplayedStimuli(this.mStimuliIndex);
+    if (this.mStimuli.size() <= 1) {
+      this.mSubExperiment.setDisplayedStimuli(this.mStimuli.size());
     }
-    /*
-     * Prepare touch audio
-     */
-    mTouchAudio = MediaPlayer.create(getApplicationContext(), R.raw.gammatone);
+    this.mSubExperiment.setStimuli(this.mStimuli);
+    Intent video = new Intent(Config.INTENT_STOP_VIDEO_RECORDING);
+    this.sendBroadcast(video);
+    Intent audio = new Intent(this, AudioRecorder.class);
+    this.stopService(audio);
 
-    /*
-     * Prepare language of Stimuli
-     */
-    String lang = mSubExperiment.getLanguage();
-    forceLocale(lang);
+    this.mSubExperiment.setResultsFileWithoutSuffix(this.getIntent().getExtras()
+        .getString(Config.EXTRA_RESULT_FILENAME).replace(".3gp", ""));
+    Intent intent = new Intent(Config.INTENT_FINISHED_SUB_EXPERIMENT);
+    intent.putExtra(Config.EXTRA_SUB_EXPERIMENT, this.mSubExperiment);
+    this.setResult(Config.EXPERIMENT_COMPLETED, intent);
 
-    initalizeLayout();
-
-  }
-
-  public void surfaceCreated(SurfaceHolder holder) {
-    if (mRecording) {
-      return;
-    }
-    if (D)
-      Log.d(TAG, "Preparing to record. ");
-    recordVideoTask = new VideoRecorderAsyncTask();
-    recordVideoTask.setContext(this);
-    recordVideoTask.setParentUI(this);
-    recordVideoTask.setHolder(holder);
-    if (D)
-      Log.d(TAG, "Telling recorder asyc to execute. ");
-    recordVideoTask.execute();
-
-  }
-
-  public void surfaceDestroyed(SurfaceHolder holder) {
-  }
-
-  public void surfaceChanged(SurfaceHolder holder, int format, int width,
-      int height) {
-    if (D)
-      Log.v(TAG, "Width x Height = " + width + "x" + height);
-  }
-
-  AnimationListener animationSlideInRightListener = new AnimationListener() {
-
-    @Override
-    public void onAnimationEnd(Animation animation) {
-      // TODO Auto-generated method stub
+    try {
+      if (this.D)
+        Log.d(this.TAG, "Telling recorder asyc to stop. ");
+      if (this.recordVideoTask != null) {
+        this.recordVideoTask.stopRecording();
+      }
+    } catch (Exception e) {
+      if (this.D)
+        Log.d(this.TAG, "Error Telling recorder asyc to stop. ");
+      e.printStackTrace();
     }
 
-    @Override
-    public void onAnimationRepeat(Animation animation) {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void onAnimationStart(Animation animation) {
-      // TODO Auto-generated method stub
-
-    }
-  };
-
-  public void initalizeLayout() {
-    setContentView(R.layout.fragment_one_image);
-
-    /*
-     * Set up the video recording
-     */
-    mVideoView = (VideoView) findViewById(R.id.videoViewOneImage);
-    final SurfaceHolder holder = mVideoView.getHolder();
-    holder.addCallback(this);
-    int sdk = android.os.Build.VERSION.SDK_INT;
-    /*
-     * After 11 this is set by default http:stackoverflow.com/questions/9439186
-     * /surfaceholder-settype-is-deprecated-but-required
-     */
-    if (sdk < 11) {
-      holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-    }
-
-    nextStimuli();
-  }
-
-  public void loadDefaults() {
-    ArrayList<Stimulus> ids = new ArrayList<Stimulus>();
-    ids.add(new Stimulus(R.drawable.androids_experimenter_kids));
-    mStimuli = ids;
-  }
-
-  public void nextStimuli() {
-    if (mStimuliIndex < 0) {
-      mStimuliIndex = 0;
-    } else {
-      mStimuliIndex += 1;
-    }
-    if (mStimuliIndex >= mStimuli.size()) {
-      finishSubExperiment();
-      return;
-    }
-
-    TextView t = (TextView) findViewById(R.id.stimuli_number);
-    String displayStimuliLabel = mStimuli.get(mStimuliIndex).getLabel();
-    if ("".equals(displayStimuliLabel)) {
-      int stimnumber = mStimuliIndex + 1;
-      int stimtotal = mStimuli.size();
-      displayStimuliLabel = stimnumber + "/" + stimtotal;
-    }
-    t.setText(displayStimuliLabel);
-
-    ImageView image = (ImageView) findViewById(R.id.onlyimage);
-    Drawable d = getResources().getDrawable(
-        mStimuli.get(mStimuliIndex).getImageFileId());
-    image.setImageDrawable(d);
-    image.startAnimation(animationSlideInRight);
-    mStimuli.get(mStimuliIndex).setStartTime(System.currentTimeMillis());
-
-    playAudioStimuli();
-  }
-
-  public void onNextClick(View v) {
-    nextStimuli();
-  }
-
-  public void previousStimuli() {
-    mStimuliIndex -= 1;
-
-    if (mStimuliIndex < 0) {
-      mStimuliIndex = 0;
-      return;
-    }
-    TextView t = (TextView) findViewById(R.id.stimuli_number);
-    String displayStimuliLabel = mStimuli.get(mStimuliIndex).getLabel();
-    if ("".equals(displayStimuliLabel)) {
-      int stimnumber = mStimuliIndex + 1;
-      int stimtotal = mStimuli.size();
-      displayStimuliLabel = stimnumber + "/" + stimtotal;
-    }
-    t.setText(displayStimuliLabel);
-
-    ImageView image = (ImageView) findViewById(R.id.onlyimage);
-    Drawable d = getResources().getDrawable(
-        mStimuli.get(mStimuliIndex).getImageFileId());
-    image.setImageDrawable(d);
-
-    playAudioStimuli();
-
-  }
-
-  /**
-   * Requires android:configChanges="orientation|keyboardHidden|screenSize" in
-   * the manifest
-   */
-  @Override
-  public void onConfigurationChanged(Configuration newConfig) {
-    super.onConfigurationChanged(newConfig);
-    if (D)
-      Log.d(TAG,
-          "Configuration has changed (rotation). Not redrawing the screen.");
-    /*
-     * Doing nothing makes the current redraw properly
-     */
-  }
-
-  public void onPreviousClick(View v) {
-    previousStimuli();
+    this.finish();
   }
 
   /**
@@ -261,7 +133,7 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
       return Locale.getDefault().getDisplayLanguage();
     }
 
-    Configuration config = getBaseContext().getResources().getConfiguration();
+    Configuration config = this.getBaseContext().getResources().getConfiguration();
     Locale locale;
     if (lang.contains("-")) {
       String[] langCountrycode = lang.split("-");
@@ -271,9 +143,9 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
     }
     Locale.setDefault(locale);
     config.locale = locale;
-    getBaseContext().getResources().updateConfiguration(config,
-        getBaseContext().getResources().getDisplayMetrics());
-    language = Locale.getDefault();
+    this.getBaseContext().getResources()
+        .updateConfiguration(config, this.getBaseContext().getResources().getDisplayMetrics());
+    this.language = Locale.getDefault();
 
     /*
      * Let the user know if the language is not there.
@@ -282,65 +154,164 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
     if (availibleLanguages.contains(lang)) {
       // do nothing, this langauge is supported
     } else {
-      Toast
-          .makeText(
-              this,
-              language.getDisplayLanguage()
-                  + " is not supported yet, we have only put ~8 BAT languages in the app. Please contact us to request "
-                  + language.getDisplayLanguage() + " if you need it.",
-              Toast.LENGTH_LONG).show();
+      Toast.makeText(
+          this,
+          this.language.getDisplayLanguage()
+              + " is not supported yet, we have only put ~8 BAT languages in the app. Please contact us to request "
+              + this.language.getDisplayLanguage() + " if you need it.", Toast.LENGTH_LONG).show();
     }
 
     return Locale.getDefault().getDisplayLanguage();
   }
 
-  public void finishSubExperiment() {
-    mSubExperiment.setDisplayedStimuli(mStimuliIndex);
-    if (mStimuli.size() <= 1) {
-      mSubExperiment.setDisplayedStimuli(mStimuli.size());
-    }
-    mSubExperiment.setStimuli(mStimuli);
-    Intent video = new Intent(Config.INTENT_STOP_VIDEO_RECORDING);
-    sendBroadcast(video);
-    Intent audio = new Intent(this, AudioRecorder.class);
-    stopService(audio);
+  public void initalizeLayout() {
+    this.setContentView(R.layout.fragment_one_image);
 
-    mSubExperiment.setResultsFileWithoutSuffix(getIntent().getExtras()
-        .getString(Config.EXTRA_RESULT_FILENAME).replace(".3gp", ""));
-    Intent intent = new Intent(Config.INTENT_FINISHED_SUB_EXPERIMENT);
-    intent.putExtra(Config.EXTRA_SUB_EXPERIMENT, mSubExperiment);
-    setResult(Config.EXPERIMENT_COMPLETED, intent);
-
-    try {
-      if (D)
-        Log.d(TAG, "Telling recorder asyc to stop. ");
-      if (recordVideoTask != null) {
-        recordVideoTask.stopRecording();
-      }
-    } catch (Exception e) {
-      if (D)
-        Log.d(TAG, "Error Telling recorder asyc to stop. ");
-      e.printStackTrace();
+    /*
+     * Set up the video recording
+     */
+    this.mVideoView = (VideoView) this.findViewById(R.id.videoViewOneImage);
+    final SurfaceHolder holder = this.mVideoView.getHolder();
+    holder.addCallback(this);
+    int sdk = android.os.Build.VERSION.SDK_INT;
+    /*
+     * After 11 this is set by default http:stackoverflow.com/questions/9439186
+     * /surfaceholder-settype-is-deprecated-but-required
+     */
+    if (sdk < 11) {
+      holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
 
-    finish();
+    this.nextStimuli();
+  }
+
+  public void loadDefaults() {
+    ArrayList<Stimulus> ids = new ArrayList<Stimulus>();
+    ids.add(new Stimulus(R.drawable.androids_experimenter_kids));
+    this.mStimuli = ids;
+  }
+
+  public void nextStimuli() {
+    if (this.mStimuliIndex < 0) {
+      this.mStimuliIndex = 0;
+    } else {
+      this.mStimuliIndex += 1;
+    }
+    if (this.mStimuliIndex >= this.mStimuli.size()) {
+      this.finishSubExperiment();
+      return;
+    }
+
+    TextView t = (TextView) this.findViewById(R.id.stimuli_number);
+    String displayStimuliLabel = this.mStimuli.get(this.mStimuliIndex).getLabel();
+    if ("".equals(displayStimuliLabel)) {
+      int stimnumber = this.mStimuliIndex + 1;
+      int stimtotal = this.mStimuli.size();
+      displayStimuliLabel = stimnumber + "/" + stimtotal;
+    }
+    t.setText(displayStimuliLabel);
+
+    ImageView image = (ImageView) this.findViewById(R.id.onlyimage);
+    Drawable d = this.getResources().getDrawable(this.mStimuli.get(this.mStimuliIndex).getImageFileId());
+    image.setImageDrawable(d);
+    image.startAnimation(this.animationSlideInRight);
+    this.mStimuli.get(this.mStimuliIndex).setStartTime(System.currentTimeMillis());
+
+    this.playAudioStimuli();
+  }
+
+  /**
+   * Requires android:configChanges="orientation|keyboardHidden|screenSize" in
+   * the manifest
+   */
+  @Override
+  public void onConfigurationChanged(Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
+    if (this.D)
+      Log.d(this.TAG, "Configuration has changed (rotation). Not redrawing the screen.");
+    /*
+     * Doing nothing makes the current redraw properly
+     */
+  }
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    this.D = ((OPrimeApp) this.getApplication()).D;
+    this.TAG = ((OPrimeApp) this.getApplication()).TAG;
+
+    DisplayMetrics displaymetrics = new DisplayMetrics();
+    this.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+    this.height = displaymetrics.heightPixels;
+    this.width = displaymetrics.widthPixels;
+    this.animationSlideInRight = AnimationUtils.loadAnimation(this, R.anim.slide_in_right);
+    this.animationSlideInRight.setDuration(1000);
+    this.animationSlideInRight.setAnimationListener(this.animationSlideInRightListener);
+    /*
+     * Prepare Stimuli
+     */
+    this.mSubExperiment = (SubExperimentBlock) this.getIntent().getExtras()
+        .getSerializable(Config.EXTRA_SUB_EXPERIMENT);
+    this.setTitle(this.mSubExperiment.getTitle());
+    this.mStimuli = this.mSubExperiment.getStimuli();
+    this.mAutoAdvanceStimuliOnTouch = this.mSubExperiment.isAutoAdvanceStimuliOnTouch();
+    if (this.mStimuli == null || this.mStimuli.size() == 0) {
+      this.loadDefaults();
+    }
+    /*
+     * Prepare touch audio
+     */
+    this.mTouchAudio = MediaPlayer.create(this.getApplicationContext(), R.raw.gammatone);
+
+    /*
+     * Prepare language of Stimuli
+     */
+    String lang = this.mSubExperiment.getLanguage();
+    this.forceLocale(lang);
+
+    this.initalizeLayout();
+
+  }
+
+  @Override
+  protected void onDestroy() {
+    if (this.mAudioStimuli != null) {
+      this.mAudioStimuli.release();
+      this.mAudioStimuli = null;
+    }
+    if (this.mTouchAudio != null) {
+      this.mTouchAudio.release();
+      this.mTouchAudio = null;
+    }
+
+    super.onDestroy();
   }
 
   public void onExitClick(View v) {
-    finishSubExperiment();
+    this.finishSubExperiment();
   }
 
   @Override
   public boolean onKeyDown(int keyCode, KeyEvent event) {
     if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-      finishSubExperiment();
+      this.finishSubExperiment();
     }
     return super.onKeyDown(keyCode, event);
 
   }
 
+  public void onNextClick(View v) {
+    this.nextStimuli();
+  }
+
+  public void onPreviousClick(View v) {
+    this.previousStimuli();
+  }
+
+  @Override
   public boolean onTouchEvent(MotionEvent me) {
-    long timeBetweenTouches = System.currentTimeMillis() - mLastTouchTime;
+    long timeBetweenTouches = System.currentTimeMillis() - this.mLastTouchTime;
     if (timeBetweenTouches < 1000) {
       return super.onTouchEvent(me);
     }
@@ -352,53 +323,31 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
     Touch t = new Touch();
     t.x = me.getX();
     t.y = me.getY();
-    t.width = width;
-    t.height = height;
+    t.width = this.width;
+    t.height = this.height;
     t.time = System.currentTimeMillis();
-    recordTouchPoint(t, mStimuliIndex);
-    mLastTouchTime = t.time;
-    playTouch();
+    this.recordTouchPoint(t, this.mStimuliIndex);
+    this.mLastTouchTime = t.time;
+    this.playTouch();
     /*
      * Auto advance to the next stimuli after recording the touch point. the
      * user can use teh arrows if they didnt mean to auto advance.
      */
-    if (mAutoAdvanceStimuliOnTouch) {
-      nextStimuli();
+    if (this.mAutoAdvanceStimuliOnTouch) {
+      this.nextStimuli();
     }
     return super.onTouchEvent(me);
   }
 
-  public void recordStimuliReactionTime(int stimuli) {
-    if (mStimuliIndex >= mStimuli.size()) {
-      return;
-    }
-    long endtime = System.currentTimeMillis();
-    mStimuli.get(stimuli).setTotalReactionTime(
-        endtime - mStimuli.get(stimuli).getStartTime());
-    mStimuli.get(stimuli).setReactionTimePostOffset(
-        endtime - mStimuli.get(stimuli).getAudioOffset());
-
-  }
-
-  public void recordTouchPoint(Touch touch, int stimuli) {
-    if (stimuli >= mStimuli.size()) {
-      return;
-    }
-    mStimuli.get(stimuli).touches.add(touch);
-    recordStimuliReactionTime(mStimuliIndex);
-    // Toast.makeText(getApplicationContext(), touch.x + ":" + touch.y,
-    // Toast.LENGTH_LONG).show();
-  }
-
   public void playAudioStimuli() {
-    if (mAudioStimuli != null) {
-      mAudioStimuli.release();
-      mAudioStimuli = null;
+    if (this.mAudioStimuli != null) {
+      this.mAudioStimuli.release();
+      this.mAudioStimuli = null;
     }
-    mAudioStimuli = MediaPlayer.create(getApplicationContext(),
-        mStimuli.get(mStimuliIndex).getAudioFileId());
+    this.mAudioStimuli = MediaPlayer.create(this.getApplicationContext(), this.mStimuli.get(this.mStimuliIndex)
+        .getAudioFileId());
     try {
-      mAudioStimuli.prepare();
+      this.mAudioStimuli.prepare();
     } catch (IllegalStateException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -406,38 +355,93 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    mAudioStimuli
-        .setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-          @Override
-          public void onCompletion(MediaPlayer mp) {
-            if (mStimuliIndex < mStimuli.size()) {
-              mStimuli.get(mStimuliIndex).setAudioOffset(
-                  System.currentTimeMillis());
-            }
-            mp.release();
-          }
-        });
-    mAudioStimuli.start();
+    this.mAudioStimuli.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+      @Override
+      public void onCompletion(MediaPlayer mp) {
+        if (SubExperiment.this.mStimuliIndex < SubExperiment.this.mStimuli.size()) {
+          SubExperiment.this.mStimuli.get(SubExperiment.this.mStimuliIndex).setAudioOffset(System.currentTimeMillis());
+        }
+        mp.release();
+      }
+    });
+    this.mAudioStimuli.start();
 
   }
 
   public void playTouch() {
-    mTouchAudio.start();
+    this.mTouchAudio.start();
+
+  }
+
+  public void previousStimuli() {
+    this.mStimuliIndex -= 1;
+
+    if (this.mStimuliIndex < 0) {
+      this.mStimuliIndex = 0;
+      return;
+    }
+    TextView t = (TextView) this.findViewById(R.id.stimuli_number);
+    String displayStimuliLabel = this.mStimuli.get(this.mStimuliIndex).getLabel();
+    if ("".equals(displayStimuliLabel)) {
+      int stimnumber = this.mStimuliIndex + 1;
+      int stimtotal = this.mStimuli.size();
+      displayStimuliLabel = stimnumber + "/" + stimtotal;
+    }
+    t.setText(displayStimuliLabel);
+
+    ImageView image = (ImageView) this.findViewById(R.id.onlyimage);
+    Drawable d = this.getResources().getDrawable(this.mStimuli.get(this.mStimuliIndex).getImageFileId());
+    image.setImageDrawable(d);
+
+    this.playAudioStimuli();
+
+  }
+
+  public void recordStimuliReactionTime(int stimuli) {
+    if (this.mStimuliIndex >= this.mStimuli.size()) {
+      return;
+    }
+    long endtime = System.currentTimeMillis();
+    this.mStimuli.get(stimuli).setTotalReactionTime(endtime - this.mStimuli.get(stimuli).getStartTime());
+    this.mStimuli.get(stimuli).setReactionTimePostOffset(endtime - this.mStimuli.get(stimuli).getAudioOffset());
+
+  }
+
+  public void recordTouchPoint(Touch touch, int stimuli) {
+    if (stimuli >= this.mStimuli.size()) {
+      return;
+    }
+    this.mStimuli.get(stimuli).touches.add(touch);
+    this.recordStimuliReactionTime(this.mStimuliIndex);
+    // Toast.makeText(getApplicationContext(), touch.x + ":" + touch.y,
+    // Toast.LENGTH_LONG).show();
+  }
+
+  @Override
+  public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+    if (this.D)
+      Log.v(this.TAG, "Width x Height = " + width + "x" + height);
+  }
+
+  @Override
+  public void surfaceCreated(SurfaceHolder holder) {
+    if (this.mRecording) {
+      return;
+    }
+    if (this.D)
+      Log.d(this.TAG, "Preparing to record. ");
+    this.recordVideoTask = new VideoRecorderAsyncTask();
+    this.recordVideoTask.setContext(this);
+    this.recordVideoTask.setParentUI(this);
+    this.recordVideoTask.setHolder(holder);
+    if (this.D)
+      Log.d(this.TAG, "Telling recorder asyc to execute. ");
+    this.recordVideoTask.execute();
 
   }
 
   @Override
-  protected void onDestroy() {
-    if (mAudioStimuli != null) {
-      mAudioStimuli.release();
-      mAudioStimuli = null;
-    }
-    if (mTouchAudio != null) {
-      mTouchAudio.release();
-      mTouchAudio = null;
-    }
-
-    super.onDestroy();
+  public void surfaceDestroyed(SurfaceHolder holder) {
   }
 
 }

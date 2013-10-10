@@ -1,39 +1,35 @@
 package ca.ilanguage.oprime.datacollection;
 
 import java.io.File;
-
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import ca.ilanguage.oprime.Config;
-import ca.ilanguage.oprime.model.OPrimeApp;
-import ca.ilanguage.oprime.model.SubExperimentBlock;
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
+import ca.ilanguage.oprime.Config;
+import ca.ilanguage.oprime.model.OPrimeApp;
+import ca.ilanguage.oprime.model.SubExperimentBlock;
 
 public class SubExperimentToJson extends IntentService {
-  protected String TAG = "OPrime";
-  protected boolean D = true;
+  protected boolean D   = true;
+  protected String  TAG = "OPrime";
+
+  public SubExperimentToJson() {
+    super("SubExperimentToJson");
+  }
 
   public SubExperimentToJson(String name) {
     super(name);
 
   }
 
-  public SubExperimentToJson() {
-    super("SubExperimentToJson");
-  }
-
   @Override
   protected void onHandleIntent(Intent intent) {
-    D = ((OPrimeApp) getApplication()).D;
-    SubExperimentBlock subex = (SubExperimentBlock) intent.getExtras()
-        .getSerializable(Config.EXTRA_SUB_EXPERIMENT);
-    String resultsFile = subex.getResultsFileWithoutSuffix().replace("video",
-        "touchdata")
-        + ".json";
+    this.D = ((OPrimeApp) this.getApplication()).D;
+    SubExperimentBlock subex = (SubExperimentBlock) intent.getExtras().getSerializable(Config.EXTRA_SUB_EXPERIMENT);
+    String resultsFile = subex.getResultsFileWithoutSuffix().replace("video", "touchdata") + ".json";
     File outfile = new File(resultsFile);
     try {
       FileOutputStream out = new FileOutputStream(outfile, false);
@@ -41,13 +37,13 @@ public class SubExperimentToJson extends IntentService {
       out.flush();
       out.close();
     } catch (FileNotFoundException e) {
-      Log.e(TAG, "FileNotFoundException Problem opening outfile.");
+      Log.e(this.TAG, "FileNotFoundException Problem opening outfile.");
 
     } catch (IOException e) {
-      Log.e(TAG, "IOException Problem writing outfile.");
+      Log.e(this.TAG, "IOException Problem writing outfile.");
     }
-    if (D)
-      Log.d(TAG, "Done service.");
+    if (this.D)
+      Log.d(this.TAG, "Done service.");
   }
 
 }

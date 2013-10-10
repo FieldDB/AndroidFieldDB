@@ -7,7 +7,6 @@ import java.nio.channels.FileChannel;
 
 import android.app.Activity;
 import android.content.ContentValues;
-import android.support.v4.content.CursorLoader;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -18,59 +17,55 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.Images.Media;
+import android.provider.MediaStore.MediaColumns;
+import android.support.v4.content.CursorLoader;
 import android.view.View;
 import android.widget.Toast;
 import ca.ilanguage.oprime.Config;
 import ca.ilanguage.oprime.R;
 
 public class TakePicture extends Activity {
-  Uri myPicture;
-  String mImageFilename;
   boolean mAppearSeamless = true;
-
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.fragment_take_picture);
-
-    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-    mImageFilename = getIntent().getExtras().getString(
-        Config.EXTRA_RESULT_FILENAME);
-    if (mImageFilename != null && mImageFilename != "") {
-      if (mAppearSeamless) {
-        SharedPreferences prefs = getSharedPreferences(Config.PREFERENCE_NAME,
-            MODE_PRIVATE);
-        String picture = prefs.getString(Config.PREFERENCE_LAST_PICTURE_TAKEN,
-            "");
-        if (picture == "") {
-          this.captureImage(null);
-        }
-      }
-    }
-  }
+  String  mImageFilename;
+  Uri     myPicture;
 
   public void captureImage(View view) {
     ContentValues values = new ContentValues();
-    values.put(Media.TITLE, mImageFilename);
-    values.put(Media.DESCRIPTION, "Image Captured an Android using OPrime");
+    values.put(MediaColumns.TITLE, this.mImageFilename);
+    values.put(ImageColumns.DESCRIPTION, "Image Captured an Android using OPrime");
 
-    myPicture = getContentResolver().insert(Media.EXTERNAL_CONTENT_URI, values);
+    this.myPicture = this.getContentResolver().insert(Media.EXTERNAL_CONTENT_URI, values);
     /*
      * Store uri for the expected image into the prefs for persistance
      * (workaround for onCreate being called before onActivityResult)
      */
-    SharedPreferences prefs = getSharedPreferences(Config.PREFERENCE_NAME,
-        MODE_PRIVATE);
+    SharedPreferences prefs = this.getSharedPreferences(Config.PREFERENCE_NAME, MODE_PRIVATE);
     SharedPreferences.Editor editor = prefs.edit();
-    editor
-        .putString(Config.PREFERENCE_LAST_PICTURE_TAKEN, myPicture.toString());
+    editor.putString(Config.PREFERENCE_LAST_PICTURE_TAKEN, this.myPicture.toString());
     editor.commit();
 
     Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-    i.putExtra(MediaStore.EXTRA_OUTPUT, myPicture);
+    i.putExtra(MediaStore.EXTRA_OUTPUT, this.myPicture);
 
-    startActivityForResult(i, 0);
+    this.startActivityForResult(i, 0);
+  }
+
+  public String getPath(Uri uri) {
+
+    String selection = null;
+    String[] selectionArgs = null;
+    String sortOrder = null;
+
+    String[] projection = { MediaColumns.DATA };
+    CursorLoader cursorLoader = new CursorLoader(this, uri, projection, selection, selectionArgs, sortOrder);
+
+    Cursor cursor = cursorLoader.loadInBackground();
+
+    int column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
+    cursor.moveToFirst();
+    return cursor.getString(column_index);
   }
 
   @Override
@@ -80,14 +75,12 @@ public class TakePicture extends Activity {
       /*
        * get expected image uri in gallery folder
        */
-      SharedPreferences prefs = getSharedPreferences(Config.PREFERENCE_NAME,
-          MODE_PRIVATE);
-      String picture = prefs
-          .getString(Config.PREFERENCE_LAST_PICTURE_TAKEN, "");
+      SharedPreferences prefs = this.getSharedPreferences(Config.PREFERENCE_NAME, MODE_PRIVATE);
+      String picture = prefs.getString(Config.PREFERENCE_LAST_PICTURE_TAKEN, "");
       if (picture == "") {
         return;
       }
-      myPicture = Uri.parse(picture);
+      this.myPicture = Uri.parse(picture);
 
       /*
        * Copy it to the results folder
@@ -96,17 +89,18 @@ public class TakePicture extends Activity {
         File sd = Environment.getExternalStorageDirectory();
         if (sd.canWrite()) {
           // Get the source and destination
-          String sourceImagePath = getPath(myPicture);
+          String sourceImagePath = this.getPath(this.myPicture);
           File source = new File(sourceImagePath);
-          String destinationImagePath = mImageFilename;
+          String destinationImagePath = this.mImageFilename;
 
           // Calculate the scale based on the given max picture size, if there
           // is one
-          int maxPictureSize = getIntent().getExtras().getInt(Config.EXTRA_MAX_PICTURE_SIZE);
+          int maxPictureSize = this.getIntent().getExtras().getInt(Config.EXTRA_MAX_PICTURE_SIZE);
           if (maxPictureSize > 0) {
-            // Code from: http://stackoverflow.com/questions/477572/android-strange-out-of-memory-issue-while-loading-an-image-to-a-bitmap-object/823966#answer-3549021
+            // Code from:
+            // http://stackoverflow.com/questions/477572/android-strange-out-of-memory-issue-while-loading-an-image-to-a-bitmap-object/823966#answer-3549021
             Bitmap b = null;
-            
+
             // Decode the source picture size
             BitmapFactory.Options memoryEfficientOptions = new BitmapFactory.Options();
             memoryEfficientOptions.inJustDecodeBounds = true;
@@ -116,37 +110,33 @@ public class TakePicture extends Activity {
 
             // Determine the desired scale
             int scale = 1;
-            if (memoryEfficientOptions.outHeight > maxPictureSize
-                || memoryEfficientOptions.outWidth > maxPictureSize) {
+            if (memoryEfficientOptions.outHeight > maxPictureSize || memoryEfficientOptions.outWidth > maxPictureSize) {
               scale = (int) Math.pow(
                   2,
                   (int) Math.round(Math.log(maxPictureSize
-                      / (double) Math.max(memoryEfficientOptions.outHeight,
-                          memoryEfficientOptions.outWidth))
+                      / (double) Math.max(memoryEfficientOptions.outHeight, memoryEfficientOptions.outWidth))
                       / Math.log(0.5)));
             }
-            
+
             // Decode the picture with the determined scale
             BitmapFactory.Options scalingOptions = new BitmapFactory.Options();
             scalingOptions.inSampleSize = scale;
             fis = new FileInputStream(source);
             b = BitmapFactory.decodeStream(fis, null, scalingOptions);
             fis.close();
-            
+
             if (b != null) {
               // Send image to the destination
-              FileOutputStream destStream = new FileOutputStream(new File(
-                  destinationImagePath));
+              FileOutputStream destStream = new FileOutputStream(new File(destinationImagePath));
               b.compress(Bitmap.CompressFormat.PNG, 100, destStream);
-              
+
               destStream.flush();
               destStream.close();
             }
           } else {
             // There was no max picture size, so save to the destination as is
             if (source.exists()) {
-              FileOutputStream destStream = new FileOutputStream(new File(
-                  destinationImagePath));
+              FileOutputStream destStream = new FileOutputStream(new File(destinationImagePath));
               FileInputStream inStream = new FileInputStream(source);
 
               FileChannel src = inStream.getChannel();
@@ -168,40 +158,38 @@ public class TakePicture extends Activity {
         editor.putString(Config.PREFERENCE_LAST_PICTURE_TAKEN, "");
         editor.commit();
 
-        Toast.makeText(getApplicationContext(), "Saving as " + mImageFilename,
-            Toast.LENGTH_LONG).show();
-        if (mAppearSeamless) {
+        Toast.makeText(this.getApplicationContext(), "Saving as " + this.mImageFilename, Toast.LENGTH_LONG).show();
+        if (this.mAppearSeamless) {
           Intent intent = new Intent();
-          intent.putExtra(Config.EXTRA_RESULT_FILENAME, mImageFilename);
-          setResult(Activity.RESULT_OK, intent);
-          finish();
+          intent.putExtra(Config.EXTRA_RESULT_FILENAME, this.mImageFilename);
+          this.setResult(Activity.RESULT_OK, intent);
+          this.finish();
         }
       } catch (Exception e) {
-        Toast.makeText(
-            getApplicationContext(),
-            "Result picture wasn't copied, its in the Camera folder: "
-                + getPath(myPicture), Toast.LENGTH_LONG).show();
+        Toast.makeText(this.getApplicationContext(),
+            "Result picture wasn't copied, its in the Camera folder: " + this.getPath(this.myPicture),
+            Toast.LENGTH_LONG).show();
       }
 
     }
   }
 
-  public String getPath(Uri uri) {
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    this.setContentView(R.layout.fragment_take_picture);
 
-    String selection = null;
-    String[] selectionArgs = null;
-    String sortOrder = null;
-
-    String[] projection = { MediaStore.Images.Media.DATA };
-    CursorLoader cursorLoader = new CursorLoader(this, uri, projection,
-        selection, selectionArgs, sortOrder);
-
-    Cursor cursor = cursorLoader.loadInBackground();
-
-    int column_index = cursor
-        .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-    cursor.moveToFirst();
-    return cursor.getString(column_index);
+    this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+    this.mImageFilename = this.getIntent().getExtras().getString(Config.EXTRA_RESULT_FILENAME);
+    if (this.mImageFilename != null && this.mImageFilename != "") {
+      if (this.mAppearSeamless) {
+        SharedPreferences prefs = this.getSharedPreferences(Config.PREFERENCE_NAME, MODE_PRIVATE);
+        String picture = prefs.getString(Config.PREFERENCE_LAST_PICTURE_TAKEN, "");
+        if (picture == "") {
+          this.captureImage(null);
+        }
+      }
+    }
   }
 
   @Override

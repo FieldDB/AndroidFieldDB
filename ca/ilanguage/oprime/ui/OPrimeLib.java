@@ -6,12 +6,12 @@ import android.os.Bundle;
 
 public class OPrimeLib extends Activity {
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		startActivity(new Intent(this, ExperimentListActivity.class));
-		finish();
-	}
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    this.startActivity(new Intent(this, ExperimentListActivity.class));
+    this.finish();
+  }
 
 }

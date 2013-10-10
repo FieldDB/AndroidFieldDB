@@ -2,9 +2,6 @@ package ca.ilanguage.oprime.datacollection;
 
 import java.io.IOException;
 
-import ca.ilanguage.oprime.R;
-import ca.ilanguage.oprime.Config;
-import ca.ilanguage.oprime.model.OPrimeApp;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -16,62 +13,13 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
-import android.widget.VideoView;
+import ca.ilanguage.oprime.Config;
+import ca.ilanguage.oprime.model.OPrimeApp;
 
 public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
 
-  /*
-   * Recording variables
-   */
-  public boolean D = true;
-  protected static String TAG = "VideoRecorder";
-  protected Boolean mRecording = false;
-  protected Boolean mRecordingAudioInstead = false;
-  protected MediaRecorder mVideoRecorder = null;
-  protected Camera mCamera;
-  protected static int cameraNumberUsed = -1;
-  protected Context mContext;
-  protected SurfaceHolder holder;
-  protected Activity mParentUI;
-
-  String mAudioResultsFile = "";
-
-  public SurfaceHolder getHolder() {
-    return holder;
-  }
-
-  @Override
-  protected String doInBackground(Void... params) {
-    if (D)
-      Log.v(TAG, "DoTheRecordVideoThing doInBackground");
-    try {
-      beginRecording(holder);
-    } catch (Exception e) {
-      if (D)
-        Log.e(TAG, "Error calling begin recording " + e.toString());
-      return "error recording video.";
-    }
-    return "okay";
-  }
-
-  protected void onPreExecute() {
-    D = ((OPrimeApp) mParentUI.getApplication()).D;
-    if (D)
-      Log.v(TAG, " onPreExecute");
-    TAG = ((OPrimeApp) mParentUI.getApplication()).TAG;
-    mAudioResultsFile = mParentUI.getIntent().getExtras()
-        .getString(Config.EXTRA_RESULT_FILENAME);
-    if (D)
-      Log.d(TAG, "mAudioResultsFile" + mAudioResultsFile);
-  }
-
-  protected void onPostExecute(String result) {
-    if (D)
-      Log.v(TAG, "DoTheRecordVideoThing onPostExecute " + result);
-    if (result.startsWith("error")) {
-      beginRecordingAudio();
-    }
-  }
+  protected static int    cameraNumberUsed = -1;
+  protected static String TAG              = "VideoRecorder";
 
   @SuppressLint("NewApi")
   public static Camera getCameraInstance() throws IOException {
@@ -133,6 +81,21 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
     return c;
   }
 
+  /*
+   * Recording variables
+   */
+  public boolean          D                      = true;
+  protected SurfaceHolder holder;
+  String                  mAudioResultsFile      = "";
+  protected Camera        mCamera;
+  protected Context       mContext;
+  protected Activity      mParentUI;
+  protected Boolean       mRecording             = false;
+
+  protected Boolean       mRecordingAudioInstead = false;
+
+  protected MediaRecorder mVideoRecorder         = null;
+
   /**
    * Uses the surface defined in video_recorder.xml Tested using 2.2 (HTC
    * Desire/Hero phone) -> Use all defaults works, records back facing camera
@@ -154,125 +117,159 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
    */
   @SuppressLint("NewApi")
   protected void beginRecording(SurfaceHolder holder) throws IOException {
-    if (mVideoRecorder != null) {
-      if (D)
+    if (this.mVideoRecorder != null) {
+      if (this.D)
         Log.d(TAG, "mVideoRecorder was not null. ");
-      if (mRecording) {
-        if (D)
+      if (this.mRecording) {
+        if (this.D)
           Log.d(TAG, "Telling mVideoRecorder to stop. ");
-        mVideoRecorder.stop();
+        this.mVideoRecorder.stop();
       }
-      mVideoRecorder.release();
-      mVideoRecorder = null;
+      this.mVideoRecorder.release();
+      this.mVideoRecorder = null;
     }
-    if (mCamera != null) {
-      mCamera.reconnect();
-      mCamera.stopPreview();
-      mCamera.release();
-      mCamera = null;
+    if (this.mCamera != null) {
+      this.mCamera.reconnect();
+      this.mCamera.stopPreview();
+      this.mCamera.release();
+      this.mCamera = null;
     }
     try {
-      mCamera = getCameraInstance();
-      if (mCamera == null) {
-        if (D)
+      this.mCamera = getCameraInstance();
+      if (this.mCamera == null) {
+        if (this.D)
           Log.e(TAG, "There was a problem opening the camera. ");
         // TODO email devs?
-        beginRecordingAudio();
+        this.beginRecordingAudio();
         return;
       }
 
-      mCamera.startPreview();
-      mCamera.unlock(); // managed for you after 4.0
+      this.mCamera.startPreview();
+      this.mCamera.unlock(); // managed for you after 4.0
 
-      mVideoRecorder = new MediaRecorder();
-      mVideoRecorder.setCamera(mCamera);
+      this.mVideoRecorder = new MediaRecorder();
+      this.mVideoRecorder.setCamera(this.mCamera);
 
-      mVideoRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-      mVideoRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+      this.mVideoRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+      this.mVideoRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
       int sdk = android.os.Build.VERSION.SDK_INT;
       if (sdk > 7) {
         if (cameraNumberUsed == -1) {
-          if (D)
-            Log.e(TAG,
-                "This appears to have no camera set, trying another resolution.");
-          mVideoRecorder.setProfile(CamcorderProfile
-              .get(CamcorderProfile.QUALITY_HIGH));
+          if (this.D)
+            Log.e(TAG, "This appears to have no camera set, trying another resolution.");
+          this.mVideoRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
         } else {
-          mVideoRecorder.setProfile(CamcorderProfile.get(cameraNumberUsed,
-              CamcorderProfile.QUALITY_HIGH));
+          this.mVideoRecorder.setProfile(CamcorderProfile.get(cameraNumberUsed, CamcorderProfile.QUALITY_HIGH));
         }
       } else {
-        if (D)
-          Log.e(TAG,
-              "This appears to be android 2.1, trying to set the audio and video manually.");
-        mVideoRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mVideoRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
-        mVideoRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.DEFAULT);
+        if (this.D)
+          Log.e(TAG, "This appears to be android 2.1, trying to set the audio and video manually.");
+        this.mVideoRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        this.mVideoRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+        this.mVideoRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.DEFAULT);
       }
 
-      mVideoRecorder.setOutputFile(mAudioResultsFile);
-      mVideoRecorder.setPreviewDisplay(holder.getSurface());
-      mVideoRecorder.prepare();
-      mVideoRecorder.start();
-      mRecording = true;
+      this.mVideoRecorder.setOutputFile(this.mAudioResultsFile);
+      this.mVideoRecorder.setPreviewDisplay(holder.getSurface());
+      this.mVideoRecorder.prepare();
+      this.mVideoRecorder.start();
+      this.mRecording = true;
     } catch (Exception e) {
-      if (D)
+      if (this.D)
         Log.e(TAG, "There was a problem with the camera " + e.toString());
-      mRecording = false;
-      beginRecordingAudio();
+      this.mRecording = false;
+      this.beginRecordingAudio();
     }
   }
 
   public void beginRecordingAudio() {
-    if (mRecordingAudioInstead) {
+    if (this.mRecordingAudioInstead) {
       return;
     }
     Intent intent;
-    intent = new Intent(mParentUI, AudioRecorder.class);
-    intent.putExtra(Config.EXTRA_RESULT_FILENAME, mParentUI.getIntent()
-        .getExtras().getString(Config.EXTRA_RESULT_FILENAME));
-    mParentUI.startService(intent);
-    mRecordingAudioInstead = true;
+    intent = new Intent(this.mParentUI, AudioRecorder.class);
+    intent.putExtra(Config.EXTRA_RESULT_FILENAME,
+        this.mParentUI.getIntent().getExtras().getString(Config.EXTRA_RESULT_FILENAME));
+    this.mParentUI.startService(intent);
+    this.mRecordingAudioInstead = true;
   }
 
-  public void stopRecording() throws Exception {
-    if (mVideoRecorder != null) {
-      if (mRecording) {
-        if (D)
-          Log.d(TAG, "Telling mVideoRecorder to stop. ");
-        mVideoRecorder.stop();
-      }
-      mVideoRecorder.release();
-      mVideoRecorder = null;
-      Toast.makeText(mContext, "Saving.", Toast.LENGTH_LONG).show();
+  @Override
+  protected String doInBackground(Void... params) {
+    if (this.D)
+      Log.v(TAG, "DoTheRecordVideoThing doInBackground");
+    try {
+      this.beginRecording(this.holder);
+    } catch (Exception e) {
+      if (this.D)
+        Log.e(TAG, "Error calling begin recording " + e.toString());
+      return "error recording video.";
     }
-    if (mCamera != null) {
-      mCamera.reconnect();
-      mCamera.stopPreview();
-      mCamera.release();
-      mCamera = null;
-    }
-    mRecording = false;
-  }
-
-  public void setHolder(SurfaceHolder holder) {
-    this.holder = holder;
+    return "okay";
   }
 
   public Context getContext() {
-    return mContext;
+    return this.mContext;
+  }
+
+  public SurfaceHolder getHolder() {
+    return this.holder;
+  }
+
+  public Activity getParentUI() {
+    return this.mParentUI;
+  }
+
+  @Override
+  protected void onPostExecute(String result) {
+    if (this.D)
+      Log.v(TAG, "DoTheRecordVideoThing onPostExecute " + result);
+    if (result.startsWith("error")) {
+      this.beginRecordingAudio();
+    }
+  }
+
+  @Override
+  protected void onPreExecute() {
+    this.D = ((OPrimeApp) this.mParentUI.getApplication()).D;
+    if (this.D)
+      Log.v(TAG, " onPreExecute");
+    TAG = ((OPrimeApp) this.mParentUI.getApplication()).TAG;
+    this.mAudioResultsFile = this.mParentUI.getIntent().getExtras().getString(Config.EXTRA_RESULT_FILENAME);
+    if (this.D)
+      Log.d(TAG, "mAudioResultsFile" + this.mAudioResultsFile);
   }
 
   public void setContext(Context mContext) {
     this.mContext = mContext;
   }
 
-  public Activity getParentUI() {
-    return mParentUI;
+  public void setHolder(SurfaceHolder holder) {
+    this.holder = holder;
   }
 
   public void setParentUI(Activity mParentUI) {
     this.mParentUI = mParentUI;
+  }
+
+  public void stopRecording() throws Exception {
+    if (this.mVideoRecorder != null) {
+      if (this.mRecording) {
+        if (this.D)
+          Log.d(TAG, "Telling mVideoRecorder to stop. ");
+        this.mVideoRecorder.stop();
+      }
+      this.mVideoRecorder.release();
+      this.mVideoRecorder = null;
+      Toast.makeText(this.mContext, "Saving.", Toast.LENGTH_LONG).show();
+    }
+    if (this.mCamera != null) {
+      this.mCamera.reconnect();
+      this.mCamera.stopPreview();
+      this.mCamera.release();
+      this.mCamera = null;
+    }
+    this.mRecording = false;
   }
 
 }

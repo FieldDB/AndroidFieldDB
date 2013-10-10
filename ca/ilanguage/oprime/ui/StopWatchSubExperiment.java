@@ -37,65 +37,144 @@ import android.widget.TextView;
 import android.widget.VideoView;
 import ca.ilanguage.oprime.Config;
 import ca.ilanguage.oprime.R;
+import ca.ilanguage.oprime.datacollection.AudioRecorder;
+import ca.ilanguage.oprime.datacollection.VideoRecorderAsyncTask;
 import ca.ilanguage.oprime.model.OPrimeApp;
 import ca.ilanguage.oprime.model.Stimulus;
 import ca.ilanguage.oprime.model.SubExperimentBlock;
-import ca.ilanguage.oprime.datacollection.AudioRecorder;
-import ca.ilanguage.oprime.datacollection.VideoRecorderAsyncTask;
 
-public class StopWatchSubExperiment extends Activity implements
-    SurfaceHolder.Callback {
-  protected boolean D = true;
-  protected static String TAG = "StopWatchSubExperiment";
-  protected Chronometer mChronometer;
-  protected long lastPause = 0;
+public class StopWatchSubExperiment extends Activity implements SurfaceHolder.Callback {
+  protected static String                 TAG            = "StopWatchSubExperiment";
+  protected boolean                       D              = true;
+  protected long                          lastPause      = 0;
+  protected Chronometer                   mChronometer;
+  protected Boolean                       mRecording     = false;
+  View.OnClickListener                    mResetListener = new OnClickListener() {
+                                                           @Override
+                                                           public void onClick(View v) {
+                                                             StopWatchSubExperiment.this.mChronometer
+                                                                 .setBase(SystemClock.elapsedRealtime());
+                                                           }
+                                                         };
+
+  View.OnClickListener                    mStartListener = new OnClickListener() {
+                                                           @Override
+                                                           public void onClick(View v) {
+                                                             if (StopWatchSubExperiment.this.lastPause == 0) {
+                                                               StopWatchSubExperiment.this.mChronometer
+                                                                   .setBase(SystemClock.elapsedRealtime());
+
+                                                             } else {
+                                                               StopWatchSubExperiment.this.mChronometer
+                                                                   .setBase(StopWatchSubExperiment.this.mChronometer
+                                                                       .getBase()
+                                                                       + SystemClock.elapsedRealtime()
+                                                                       - StopWatchSubExperiment.this.lastPause);
+                                                             }
+
+                                                             StopWatchSubExperiment.this.mChronometer.start();
+                                                           }
+                                                         };
   protected ArrayList<? extends Stimulus> mStimuli;
-  protected SubExperimentBlock mSubExperiment;
+  View.OnClickListener                    mStopListener  = new OnClickListener() {
+                                                           @Override
+                                                           public void onClick(View v) {
+                                                             StopWatchSubExperiment.this.lastPause = SystemClock
+                                                                 .elapsedRealtime();
+
+                                                             StopWatchSubExperiment.this.mChronometer.stop();
+
+                                                           }
+                                                         };
+
+  protected SubExperimentBlock            mSubExperiment;
+
+  protected VideoView                     mVideoView     = null;
 
   /*
    * Video variables
    */
-  protected VideoRecorderAsyncTask recordVideoTask;
-  protected VideoView mVideoView = null;
-  protected Boolean mRecording = false;
+  protected VideoRecorderAsyncTask        recordVideoTask;
+
+  public void finishSubExperiment() {
+    this.mSubExperiment.setDisplayedStimuli(this.mStimuli.size());
+    this.mSubExperiment.setStimuli(this.mStimuli);
+    Intent video = new Intent(Config.INTENT_STOP_VIDEO_RECORDING);
+    this.sendBroadcast(video);
+    Intent audio = new Intent(this, AudioRecorder.class);
+    this.stopService(audio);
+
+    this.mSubExperiment.setResultsFileWithoutSuffix(this.getIntent().getExtras()
+        .getString(Config.EXTRA_RESULT_FILENAME).replace(".3gp", ""));
+    Intent intent = new Intent(Config.INTENT_FINISHED_SUB_EXPERIMENT);
+    intent.putExtra(Config.EXTRA_SUB_EXPERIMENT, this.mSubExperiment);
+    this.setResult(Config.EXPERIMENT_COMPLETED, intent);
+
+    try {
+      if (this.D)
+        Log.d(TAG, "Telling recorder asyc to stop. ");
+      if (this.recordVideoTask != null) {
+        this.recordVideoTask.stopRecording();
+      }
+    } catch (Exception e) {
+      if (this.D)
+        Log.d(TAG, "Error Telling recorder asyc to stop. ");
+      e.printStackTrace();
+    }
+    this.finish();
+  }
+
+  /**
+   * Requires android:configChanges="orientation|keyboardHidden|screenSize" in
+   * the manifest
+   */
+  @Override
+  public void onConfigurationChanged(Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
+    if (this.D)
+      Log.d(TAG, "Configuration has changed (rotation). Not redrawing the screen.");
+    /*
+     * Doing nothing makes the current redraw properly
+     */
+  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    setContentView(R.layout.fragment_stop_watch);
-    D = ((OPrimeApp) this.getApplication()).D;
+    this.setContentView(R.layout.fragment_stop_watch);
+    this.D = ((OPrimeApp) this.getApplication()).D;
     TAG = Config.TAG;
     Button button;
 
-    mChronometer = (Chronometer) findViewById(R.id.chronometer);
+    this.mChronometer = (Chronometer) this.findViewById(R.id.chronometer);
 
     // Watch for button clicks.
-    button = (Button) findViewById(R.id.start);
-    button.setOnClickListener(mStartListener);
+    button = (Button) this.findViewById(R.id.start);
+    button.setOnClickListener(this.mStartListener);
 
-    button = (Button) findViewById(R.id.stop);
-    button.setOnClickListener(mStopListener);
+    button = (Button) this.findViewById(R.id.stop);
+    button.setOnClickListener(this.mStopListener);
 
-    button = (Button) findViewById(R.id.reset);
-    button.setOnClickListener(mResetListener);
+    button = (Button) this.findViewById(R.id.reset);
+    button.setOnClickListener(this.mResetListener);
 
     /*
      * Prepare Stimuli
      */
-    mSubExperiment = (SubExperimentBlock) getIntent().getExtras()
+    this.mSubExperiment = (SubExperimentBlock) this.getIntent().getExtras()
         .getSerializable(Config.EXTRA_SUB_EXPERIMENT);
-    this.setTitle(mSubExperiment.getTitle());
-    mStimuli = mSubExperiment.getStimuli();
+    this.setTitle(this.mSubExperiment.getTitle());
+    this.mStimuli = this.mSubExperiment.getStimuli();
 
-    if (mStimuli == null || mStimuli.size() == 0) {
+    if (this.mStimuli == null || this.mStimuli.size() == 0) {
       ArrayList<Stimulus> ids = new ArrayList<Stimulus>();
       ids.add(new Stimulus(R.drawable.androids_experimenter_kids));
-      mStimuli = ids;
+      this.mStimuli = ids;
     }
 
-    TextView t = (TextView) findViewById(R.id.stimuli_number);
-    String displayStimuliLabel = mStimuli.get(0).getLabel();
+    TextView t = (TextView) this.findViewById(R.id.stimuli_number);
+    String displayStimuliLabel = this.mStimuli.get(0).getLabel();
     if ("".equals(displayStimuliLabel)) {
       int stimnumber = 1;
       int stimtotal = 1;
@@ -106,8 +185,8 @@ public class StopWatchSubExperiment extends Activity implements
     /*
      * Set up the video recording
      */
-    mVideoView = (VideoView) findViewById(R.id.videoViewStopWatch);
-    final SurfaceHolder holder = mVideoView.getHolder();
+    this.mVideoView = (VideoView) this.findViewById(R.id.videoViewStopWatch);
+    final SurfaceHolder holder = this.mVideoView.getHolder();
     holder.addCallback(this);
     int sdk = android.os.Build.VERSION.SDK_INT;
     /*
@@ -120,114 +199,44 @@ public class StopWatchSubExperiment extends Activity implements
 
   }
 
-  public void surfaceCreated(SurfaceHolder holder) {
-    if (mRecording) {
-      return;
-    }
-    if (D)
-      Log.d(TAG, "Preparing to record. ");
-    recordVideoTask = new VideoRecorderAsyncTask();
-    recordVideoTask.setContext(this);
-    recordVideoTask.setParentUI(this);
-    recordVideoTask.setHolder(holder);
-    if (D)
-      Log.d(TAG, "Telling recorder asyc to execute. ");
-    recordVideoTask.execute();
-
-  }
-
-  public void surfaceDestroyed(SurfaceHolder holder) {
-  }
-
-  public void surfaceChanged(SurfaceHolder holder, int format, int width,
-      int height) {
-    if (D)
-      Log.v(TAG, "Width x Height = " + width + "x" + height);
-  }
-
-  public void onNextClick(View v) {
-    finishSubExperiment();
-  }
-
   @Override
   public boolean onKeyDown(int keyCode, KeyEvent event) {
     if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-      finishSubExperiment();
+      this.finishSubExperiment();
     }
     return super.onKeyDown(keyCode, event);
 
   }
 
-  /**
-   * Requires android:configChanges="orientation|keyboardHidden|screenSize" in
-   * the manifest
-   */
+  public void onNextClick(View v) {
+    this.finishSubExperiment();
+  }
+
   @Override
-  public void onConfigurationChanged(Configuration newConfig) {
-    super.onConfigurationChanged(newConfig);
-    if (D)
-      Log.d(TAG,
-          "Configuration has changed (rotation). Not redrawing the screen.");
-    /*
-     * Doing nothing makes the current redraw properly
-     */
+  public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+    if (this.D)
+      Log.v(TAG, "Width x Height = " + width + "x" + height);
   }
 
-  public void finishSubExperiment() {
-    mSubExperiment.setDisplayedStimuli(mStimuli.size());
-    mSubExperiment.setStimuli(mStimuli);
-    Intent video = new Intent(Config.INTENT_STOP_VIDEO_RECORDING);
-    sendBroadcast(video);
-    Intent audio = new Intent(this, AudioRecorder.class);
-    stopService(audio);
-
-    mSubExperiment.setResultsFileWithoutSuffix(getIntent().getExtras()
-        .getString(Config.EXTRA_RESULT_FILENAME).replace(".3gp", ""));
-    Intent intent = new Intent(Config.INTENT_FINISHED_SUB_EXPERIMENT);
-    intent.putExtra(Config.EXTRA_SUB_EXPERIMENT, mSubExperiment);
-    setResult(Config.EXPERIMENT_COMPLETED, intent);
-
-    try {
-      if (D)
-        Log.d(TAG, "Telling recorder asyc to stop. ");
-      if (recordVideoTask != null) {
-        recordVideoTask.stopRecording();
-      }
-    } catch (Exception e) {
-      if (D)
-        Log.d(TAG, "Error Telling recorder asyc to stop. ");
-      e.printStackTrace();
+  @Override
+  public void surfaceCreated(SurfaceHolder holder) {
+    if (this.mRecording) {
+      return;
     }
-    finish();
+    if (this.D)
+      Log.d(TAG, "Preparing to record. ");
+    this.recordVideoTask = new VideoRecorderAsyncTask();
+    this.recordVideoTask.setContext(this);
+    this.recordVideoTask.setParentUI(this);
+    this.recordVideoTask.setHolder(holder);
+    if (this.D)
+      Log.d(TAG, "Telling recorder asyc to execute. ");
+    this.recordVideoTask.execute();
+
   }
 
-  View.OnClickListener mStartListener = new OnClickListener() {
-    public void onClick(View v) {
-      if (lastPause == 0) {
-        mChronometer.setBase(SystemClock.elapsedRealtime());
-
-      } else {
-        mChronometer.setBase(mChronometer.getBase()
-            + SystemClock.elapsedRealtime() - lastPause);
-      }
-
-      mChronometer.start();
-    }
-  };
-
-  View.OnClickListener mStopListener = new OnClickListener() {
-    public void onClick(View v) {
-      lastPause = SystemClock.elapsedRealtime();
-
-      mChronometer.stop();
-
-    }
-  };
-
-  View.OnClickListener mResetListener = new OnClickListener() {
-    public void onClick(View v) {
-      mChronometer.setBase(SystemClock.elapsedRealtime());
-    }
-  };
+  @Override
+  public void surfaceDestroyed(SurfaceHolder holder) {
+  }
 
 }

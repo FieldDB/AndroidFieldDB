@@ -18,23 +18,11 @@ import android.webkit.WebViewClient;
  * for sdk 11-15 
  */
 public class AssetIncludeWorkaround extends WebViewClient {
-  private Context mContext;
   private boolean D = false;
+  private Context mContext;
 
   public AssetIncludeWorkaround(Context context) {
-    mContext = context;
-  }
-
-  @SuppressLint("NewApi")
-  @Override
-  public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-    if (D)
-      Log.d("OPrime", "Intercepting an URL requestin the webview " + url);
-    InputStream stream = inputStreamForAndroidResource(url);
-    if (stream != null) {
-      return new WebResourceResponse(null, null, stream);
-    }
-    return super.shouldInterceptRequest(view, url);
+    this.mContext = context;
   }
 
   private InputStream inputStreamForAndroidResource(String url) {
@@ -43,30 +31,37 @@ public class AssetIncludeWorkaround extends WebViewClient {
     if (url.startsWith(ANDROID_ASSET)) {
       url = url.replaceFirst(ANDROID_ASSET, "");
       try {
-        AssetManager assets = mContext.getAssets();
+        AssetManager assets = this.mContext.getAssets();
         Uri uri = Uri.parse(url);
-        if (D)
-          Log.d(
-              "OPrime",
+        if (this.D)
+          Log.d("OPrime",
               "The URL was in the assets. (removed the assets and sending the contents of the file)? to the browser. "
                   + url);
 
         return assets.open(uri.getPath(), AssetManager.ACCESS_STREAMING);
       } catch (IOException e) {
-        if (D)
-          Log.d("OPrime",
-              "The URL was in the assets. But there was an IOException when opening it. "
-                  + url);
+        if (this.D)
+          Log.d("OPrime", "The URL was in the assets. But there was an IOException when opening it. " + url);
 
       }
     } else {
-      if (D)
-        Log.d(
-            "OPrime",
-            "The URL was not the assets. Not performing any action, letting the WebView handle it normally. "
-                + url);
+      if (this.D)
+        Log.d("OPrime",
+            "The URL was not the assets. Not performing any action, letting the WebView handle it normally. " + url);
 
     }
     return null;
+  }
+
+  @SuppressLint("NewApi")
+  @Override
+  public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+    if (this.D)
+      Log.d("OPrime", "Intercepting an URL requestin the webview " + url);
+    InputStream stream = this.inputStreamForAndroidResource(url);
+    if (stream != null) {
+      return new WebResourceResponse(null, null, stream);
+    }
+    return super.shouldInterceptRequest(view, url);
   }
 }

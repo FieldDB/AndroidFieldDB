@@ -1,33 +1,9 @@
 package ca.ilanguage.oprime.model;
 
 public class PageUrlGetPair {
+  String delimiter = "#"; // "\\?"
   String filename;
   String getString;
-  String delimiter = "#";//"\\?"
-
-  public String getDelimiter() {
-    return delimiter;
-  }
-
-  public void setDelimiter(String delimiter) {
-    this.delimiter = delimiter;
-  }
-
-  public String getFilename() {
-    return filename;
-  }
-
-  public void setFilename(String filename) {
-    this.filename = filename;
-  }
-
-  public String getGetString() {
-    return getString;
-  }
-
-  public void setGetString(String getString) {
-    this.getString = getString;
-  }
 
   public PageUrlGetPair(String filename, String getString) {
     super();
@@ -35,6 +11,31 @@ public class PageUrlGetPair {
     this.getString = getString;
   }
 
+  public String getDelimiter() {
+    return this.delimiter;
+  }
+
+  public String getFilename() {
+    return this.filename;
+  }
+
+  public String getGetString() {
+    return this.getString;
+  }
+
+  public void setDelimiter(String delimiter) {
+    this.delimiter = delimiter;
+  }
+
+  public void setFilename(String filename) {
+    this.filename = filename;
+  }
+
+  public void setGetString(String getString) {
+    this.getString = getString;
+  }
+
+  @Override
   public String toString() {
     return this.filename + this.delimiter + this.getString;
   }

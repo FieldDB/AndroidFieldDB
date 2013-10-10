@@ -12,7 +12,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-*/
+ */
 
 package ca.ilanguage.oprime.storybook;
 
@@ -25,180 +25,85 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
-
-import ca.ilanguage.oprime.R;
 import ca.ilanguage.oprime.Config;
-import android.widget.Toast;
+import ca.ilanguage.oprime.R;
 import ca.ilanguage.oprime.model.Stimulus;
 import ca.ilanguage.oprime.model.Touch;
 
 public class StoryBookSubExperiment extends Activity {
 
-	private Boolean mShowTwoPageBook = false;
-	private int mBorderSize = 0;
-	private CurlView mCurlView;
-	private ArrayList<Stimulus> mStimuli;
-	protected int mDelayAudioMilisecondsAfterImageStimuli = 1000;
-	private Locale language;
-	 int mCurrentStimuliIndex = 0;
-	 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.fragment_page_curl);
-		/*
-		 * Prepare Stimuli
-		 */
-		ArrayList<Stimulus> ids = new ArrayList<Stimulus>();
-		ids.add(new Stimulus(R.drawable.androids_experimenter_kids));
-		mStimuli = (ArrayList<Stimulus>) getIntent().getExtras().getSerializable(Config.EXTRA_STIMULI); 
-		mShowTwoPageBook = getIntent().getExtras().getBoolean(Config.EXTRA_TWO_PAGE_STORYBOOK, false);
-		if(mStimuli == null){
-			mStimuli = ids;
-		}
-		/*
-		 * Prepare language of Stimuli
-		 */
-		String lang = getIntent().getExtras().getString(Config.EXTRA_LANGUAGE);
-		if(lang == null){
-		  lang = Config.ENGLISH;
-		}
-		forceLocale(lang);
-		
-		int index = 0;
-		if (getLastNonConfigurationInstance() != null) {
-			index = (Integer) getLastNonConfigurationInstance();
-		}
-		mCurlView = (CurlView) findViewById(R.id.curl);
-		mCurlView.setBitmapProvider(new BitmapProvider());
-		mCurlView.setSizeChangedObserver(new SizeChangedObserver());
-		if(mShowTwoPageBook){
-			mCurlView.setCurrentIndex(index+1);
-		}else{
-			mCurlView.setCurrentIndex(index);
-		}
-		mCurlView.setBackgroundColor(0xFF202830);
-		mCurlView.setMargins(.0f, .0f, .0f, .0f);
-	
-		/*
-		 * Set 1 or 2 page view mode
-		 */
-		if(mShowTwoPageBook){
-			mCurlView.setViewMode(CurlView.SHOW_TWO_PAGES);
-			mCurlView.setRenderLeftPage(true);
-		}else{
-			mCurlView.setViewMode(CurlView.SHOW_ONE_PAGE);
-			mCurlView.setRenderLeftPage(false);
-			
-		}
-		
-		// This is something somewhat experimental. Before uncommenting next
-		// line, please see method comments in CurlView.
-		// mCurlView.setEnableTouchPressure(true);
-	}
+  /**
+   * Bitmap provider.
+   */
+  private class BitmapProvider implements CurlView.BitmapProvider {
 
-	/**
-	 * Forces the locale for the duration of the app to the language needed for that version of the Bilingual Aphasia Test
-	 * @param lang
-	 * @return
-	 */
-	public String forceLocale(String lang){
-		if (lang.equals(Locale.getDefault().getLanguage())){
-			language = Locale.getDefault();
-			return Locale.getDefault().getDisplayLanguage();
-		}
-		Configuration config = getBaseContext().getResources().getConfiguration();
-		Locale locale = new Locale(lang);
-        Locale.setDefault(locale);
-        config.locale = locale;
-        getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
-        language = Locale.getDefault();
-       
-		return Locale.getDefault().getDisplayLanguage();
+    @Override
+    public Bitmap getBitmap(int width, int height, int index) {
+
+      Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+      b.eraseColor(0xFFFFFFFF);
+      Canvas c = new Canvas(b);
+      Drawable d = StoryBookSubExperiment.this.getResources().getDrawable(
+          StoryBookSubExperiment.this.mStimuli.get(index).getImageFileId());
+
+      int margin = StoryBookSubExperiment.this.mBorderSize;
+      int border = StoryBookSubExperiment.this.mBorderSize;
+      Rect r = new Rect(margin, margin, width - margin, height - margin);
+
+      int imageWidth = r.width() - (border * 2);
+      int imageHeight = imageWidth * d.getIntrinsicHeight() / d.getIntrinsicWidth();
+      if (imageHeight > r.height() - (border * 2)) {
+        imageHeight = r.height() - (border * 2);
+        imageWidth = imageHeight * d.getIntrinsicWidth() / d.getIntrinsicHeight();
+      }
+
+      r.left += ((r.width() - imageWidth) / 2) - border;
+      r.right = r.left + imageWidth + border + border;
+      r.top += ((r.height() - imageHeight) / 2) - border;
+      r.bottom = r.top + imageHeight + border + border;
+
+      // Paint p = new Paint();
+      // p.setColor(0xFFC0C0C0);
+      // c.drawRect(r, p);
+      // p.setColor(0xFF0000C0);
+      // c.drawText(""+mStimuli.get(index).getLabel(), 50, 40, p);
+
+      r.left += border;
+      r.right -= border;
+      r.top += border;
+      r.bottom -= border;
+
+      d.setBounds(r);
+      d.draw(c);
+
+      return b;
     }
-	@Override
-	public void onPause() {
-		super.onPause();
-		mCurlView.onPause();
-	}
 
-	@Override
-	public void onResume() {
-		super.onResume();
-		mCurlView.onResume();
-	}
+    @Override
+    public int getBitmapCount() {
+      return StoryBookSubExperiment.this.mStimuli.size();
+    }
 
-	
-	@Override
-	public Object onRetainNonConfigurationInstance() {
-		return mCurlView.getCurrentIndex();
-	}
-
-	
-	@Override
-	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		super.onDestroy();
-		 
-	}
-	@Override
-	  public boolean onKeyDown(int keyCode, KeyEvent event) {
-	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-	    	Intent intent = new Intent(Config.INTENT_FINISHED_SUB_EXPERIMENT);
-		     intent.putExtra(Config.EXTRA_STIMULI,mStimuli);
-		     setResult(Config.EXPERIMENT_COMPLETED,intent);
-		     finish();
-	    }
-	    return super.onKeyDown(keyCode, event);
-
-	 }
-
-	/**
-	 * Bitmap provider.
-	 */
-	private class BitmapProvider implements CurlView.BitmapProvider {
-
-
-		@Override
-		public void recordTouchPoint(Touch touch, int stimuli) {
-			mStimuli.get(stimuli).touches.add(touch);
-			//Toast.makeText(getApplicationContext(), touch.x + ":" + touch.y, Toast.LENGTH_LONG).show();
-		}
-		@Override
-		public void playSound(){
-			MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.ploep);
-			try {
-				mediaPlayer.prepare();
-			} catch (IllegalStateException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			mediaPlayer.start();
-		}
-		
-		@Override
+    @Override
     public void playAudioStimuli() {
-      if(mCurrentStimuliIndex >= mStimuli.size()){
+      if (StoryBookSubExperiment.this.mCurrentStimuliIndex >= StoryBookSubExperiment.this.mStimuli.size()) {
         return;
       }
-      int audioStimuliResource = mStimuli.get(mCurrentStimuliIndex).getImageFileId() ;
+      int audioStimuliResource = StoryBookSubExperiment.this.mStimuli.get(
+          StoryBookSubExperiment.this.mCurrentStimuliIndex).getImageFileId();
       try {
-        Thread.sleep(mDelayAudioMilisecondsAfterImageStimuli);
+        Thread.sleep(StoryBookSubExperiment.this.mDelayAudioMilisecondsAfterImageStimuli);
       } catch (InterruptedException e1) {
         e1.printStackTrace();
       }
-      MediaPlayer mediaPlayer = MediaPlayer.create(
-          getApplicationContext(), audioStimuliResource);
+      MediaPlayer mediaPlayer = MediaPlayer.create(StoryBookSubExperiment.this.getApplicationContext(),
+          audioStimuliResource);
       if (mediaPlayer == null) {
         Log.d("OPrime", "Problem opening the audio stimuli");
         return;
@@ -211,80 +116,172 @@ public class StoryBookSubExperiment extends Activity {
         e.printStackTrace();
       }
       mediaPlayer.start();
-      mCurrentStimuliIndex++;
+      StoryBookSubExperiment.this.mCurrentStimuliIndex++;
     }
-		
-		@Override
-		public Bitmap getBitmap(int width, int height, int index) {
-			
-			Bitmap b = Bitmap.createBitmap(width, height,
-					Bitmap.Config.ARGB_8888);
-			b.eraseColor(0xFFFFFFFF);
-			Canvas c = new Canvas(b);
-			Drawable d = getResources().getDrawable(mStimuli.get(index).getImageFileId());
-			
 
-			int margin = mBorderSize;
-			int border = mBorderSize;
-			Rect r = new Rect(margin, margin, width - margin, height - margin);
+    @Override
+    public void playSound() {
+      MediaPlayer mediaPlayer = MediaPlayer.create(StoryBookSubExperiment.this.getApplicationContext(), R.raw.ploep);
+      try {
+        mediaPlayer.prepare();
+      } catch (IllegalStateException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      mediaPlayer.start();
+    }
 
-			int imageWidth = r.width() - (border * 2);
-			int imageHeight = imageWidth * d.getIntrinsicHeight()
-					/ d.getIntrinsicWidth();
-			if (imageHeight > r.height() - (border * 2)) {
-				imageHeight = r.height() - (border * 2);
-				imageWidth = imageHeight * d.getIntrinsicWidth()
-						/ d.getIntrinsicHeight();
-			}
+    @Override
+    public void recordTouchPoint(Touch touch, int stimuli) {
+      StoryBookSubExperiment.this.mStimuli.get(stimuli).touches.add(touch);
+      // Toast.makeText(getApplicationContext(), touch.x + ":" + touch.y,
+      // Toast.LENGTH_LONG).show();
+    }
+  }
 
-			r.left += ((r.width() - imageWidth) / 2) - border;
-			r.right = r.left + imageWidth + border + border;
-			r.top += ((r.height() - imageHeight) / 2) - border;
-			r.bottom = r.top + imageHeight + border + border;
+  /**
+   * CurlView size changed observer.
+   */
+  private class SizeChangedObserver implements CurlView.SizeChangedObserver {
+    @Override
+    public void onSizeChanged(int w, int h) {
+      if (w > h && StoryBookSubExperiment.this.mShowTwoPageBook) {
+        StoryBookSubExperiment.this.mCurlView.setViewMode(CurlView.SHOW_TWO_PAGES);
+        StoryBookSubExperiment.this.mCurlView.setMargins(.1f, .05f, .1f, .05f);
+      } else {
+        StoryBookSubExperiment.this.mCurlView.setViewMode(CurlView.SHOW_ONE_PAGE);
+        StoryBookSubExperiment.this.mCurlView.setMargins(.1f, .1f, .1f, .1f);
+      }
+      StoryBookSubExperiment.this.mCurlView.setMargins(.0f, .0f, .0f, .0f);
 
-//			Paint p = new Paint();
-//			p.setColor(0xFFC0C0C0);
-//			c.drawRect(r, p);
-//			p.setColor(0xFF0000C0);
-//			c.drawText(""+mStimuli.get(index).getLabel(), 50, 40, p);
-			
-			
-			r.left += border;
-			r.right -= border;
-			r.top += border;
-			r.bottom -= border;
+    }
+  }
 
-			d.setBounds(r);
-			d.draw(c);
-			
-			return b;
-		}
+  private Locale              language;
+  private int                 mBorderSize                             = 0;
+  private CurlView            mCurlView;
+  int                         mCurrentStimuliIndex                    = 0;
+  protected int               mDelayAudioMilisecondsAfterImageStimuli = 1000;
 
-		@Override
-		public int getBitmapCount() {
-			return mStimuli.size();
-		}
-	}
+  private Boolean             mShowTwoPageBook                        = false;
 
-	/**
-	 * CurlView size changed observer.
-	 */
-	private class SizeChangedObserver implements CurlView.SizeChangedObserver {
-		@Override
-		public void onSizeChanged(int w, int h) {
-			if (w > h && mShowTwoPageBook) {
-				mCurlView.setViewMode(CurlView.SHOW_TWO_PAGES);
-				mCurlView.setMargins(.1f, .05f, .1f, .05f);
-			} else {
-				mCurlView.setViewMode(CurlView.SHOW_ONE_PAGE);
-				mCurlView.setMargins(.1f, .1f, .1f, .1f);
-			}
-			mCurlView.setMargins(.0f, .0f, .0f, .0f);
+  private ArrayList<Stimulus> mStimuli;
 
-		}
-	}
+  /**
+   * Forces the locale for the duration of the app to the language needed for
+   * that version of the Bilingual Aphasia Test
+   * 
+   * @param lang
+   * @return
+   */
+  public String forceLocale(String lang) {
+    if (lang.equals(Locale.getDefault().getLanguage())) {
+      this.language = Locale.getDefault();
+      return Locale.getDefault().getDisplayLanguage();
+    }
+    Configuration config = this.getBaseContext().getResources().getConfiguration();
+    Locale locale = new Locale(lang);
+    Locale.setDefault(locale);
+    config.locale = locale;
+    this.getBaseContext().getResources()
+        .updateConfiguration(config, this.getBaseContext().getResources().getDisplayMetrics());
+    this.language = Locale.getDefault();
 
-	
-	
+    return Locale.getDefault().getDisplayLanguage();
+  }
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    this.setContentView(R.layout.fragment_page_curl);
+    /*
+     * Prepare Stimuli
+     */
+    ArrayList<Stimulus> ids = new ArrayList<Stimulus>();
+    ids.add(new Stimulus(R.drawable.androids_experimenter_kids));
+    this.mStimuli = (ArrayList<Stimulus>) this.getIntent().getExtras().getSerializable(Config.EXTRA_STIMULI);
+    this.mShowTwoPageBook = this.getIntent().getExtras().getBoolean(Config.EXTRA_TWO_PAGE_STORYBOOK, false);
+    if (this.mStimuli == null) {
+      this.mStimuli = ids;
+    }
+    /*
+     * Prepare language of Stimuli
+     */
+    String lang = this.getIntent().getExtras().getString(Config.EXTRA_LANGUAGE);
+    if (lang == null) {
+      lang = Config.ENGLISH;
+    }
+    this.forceLocale(lang);
+
+    int index = 0;
+    if (this.getLastNonConfigurationInstance() != null) {
+      index = (Integer) this.getLastNonConfigurationInstance();
+    }
+    this.mCurlView = (CurlView) this.findViewById(R.id.curl);
+    this.mCurlView.setBitmapProvider(new BitmapProvider());
+    this.mCurlView.setSizeChangedObserver(new SizeChangedObserver());
+    if (this.mShowTwoPageBook) {
+      this.mCurlView.setCurrentIndex(index + 1);
+    } else {
+      this.mCurlView.setCurrentIndex(index);
+    }
+    this.mCurlView.setBackgroundColor(0xFF202830);
+    this.mCurlView.setMargins(.0f, .0f, .0f, .0f);
+
+    /*
+     * Set 1 or 2 page view mode
+     */
+    if (this.mShowTwoPageBook) {
+      this.mCurlView.setViewMode(CurlView.SHOW_TWO_PAGES);
+      this.mCurlView.setRenderLeftPage(true);
+    } else {
+      this.mCurlView.setViewMode(CurlView.SHOW_ONE_PAGE);
+      this.mCurlView.setRenderLeftPage(false);
+
+    }
+
+    // This is something somewhat experimental. Before uncommenting next
+    // line, please see method comments in CurlView.
+    // mCurlView.setEnableTouchPressure(true);
+  }
+
+  @Override
+  protected void onDestroy() {
+    // TODO Auto-generated method stub
+    super.onDestroy();
+
+  }
+
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+      Intent intent = new Intent(Config.INTENT_FINISHED_SUB_EXPERIMENT);
+      intent.putExtra(Config.EXTRA_STIMULI, this.mStimuli);
+      this.setResult(Config.EXPERIMENT_COMPLETED, intent);
+      this.finish();
+    }
+    return super.onKeyDown(keyCode, event);
+
+  }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+    this.mCurlView.onPause();
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    this.mCurlView.onResume();
+  }
+
+  @Override
+  public Object onRetainNonConfigurationInstance() {
+    return this.mCurlView.getCurrentIndex();
+  }
 
 }

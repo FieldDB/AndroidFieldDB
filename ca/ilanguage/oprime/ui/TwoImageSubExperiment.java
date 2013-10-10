@@ -9,27 +9,21 @@ import android.view.SurfaceHolder;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
-
 import ca.ilanguage.oprime.R;
 import ca.ilanguage.oprime.model.TwoImageStimulus;
 
 public class TwoImageSubExperiment extends SubExperiment {
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-	}
-	@Override
-	public void initalizeLayout(){
-		mStimuliIndex = -1;
-		setContentView(R.layout.fragment_two_images);
-		
-		 /*
+  @Override
+  public void initalizeLayout() {
+    this.mStimuliIndex = -1;
+    this.setContentView(R.layout.fragment_two_images);
+
+    /*
      * Set up the video recording
      */
-    mVideoView = (VideoView) findViewById(R.id.videoViewTwoImage);
-    final SurfaceHolder holder = mVideoView.getHolder();
+    this.mVideoView = (VideoView) this.findViewById(R.id.videoViewTwoImage);
+    final SurfaceHolder holder = this.mVideoView.getHolder();
     holder.addCallback(this);
     int sdk = android.os.Build.VERSION.SDK_INT;
     /*
@@ -39,95 +33,97 @@ public class TwoImageSubExperiment extends SubExperiment {
     if (sdk < 11) {
       holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
-    
-		nextStimuli();
-	}
-	@Override
-	public void loadDefaults(){
-		ArrayList<TwoImageStimulus> ids = new ArrayList<TwoImageStimulus>();
-		ids.add(new TwoImageStimulus(R.drawable.androids_experimenter_kids));
-		mStimuli = ids;
-	}
-	
-	@Override
-	public void nextStimuli() {
-		if (mStimuliIndex < 0) {
-			mStimuliIndex = 0;
-		} else {
-			mStimuliIndex += 1;
-		}
-		
-		if (mStimuliIndex >= mStimuli.size()) {
-			finishSubExperiment();
-			return;
-		}
 
-		try {
-			TextView t = (TextView) findViewById(R.id.stimuli_number2);
-			String displayStimuliLabel = mStimuli.get(mStimuliIndex).getLabel();
-			if("".equals(displayStimuliLabel)){
-				int stimnumber = mStimuliIndex+1;
-				int stimtotal = mStimuli.size();
-				displayStimuliLabel = stimnumber+"/"+stimtotal;
-			}
-			t.setText(displayStimuliLabel);
-			
-			ImageView image = (ImageView) findViewById(R.id.leftimage);
-			Drawable d = getResources().getDrawable(
-					((TwoImageStimulus) mStimuli.get(mStimuliIndex))
-							.getLeftImageFileId());
-			image.setImageDrawable(d);
-			image.startAnimation(animationSlideInRight);
-			
-			ImageView rightimage = (ImageView) findViewById(R.id.rightimage);
-			d = getResources().getDrawable(
-					((TwoImageStimulus) mStimuli.get(mStimuliIndex))
-							.getRightImageFileId());
-			rightimage.setImageDrawable(d);
-			rightimage.startAnimation(animationSlideInRight);
-			mStimuli.get(mStimuliIndex).setStartTime(System.currentTimeMillis());
-			
-			
-		} catch (Exception e) {
-			Log.e(TAG, "Error getting images out." + e.getMessage());
-			
-		}
-		playAudioStimuli();
-		
-	}
+    this.nextStimuli();
+  }
 
-	@Override
-	public void previousStimuli() {
-		mStimuliIndex -= 1;
+  @Override
+  public void loadDefaults() {
+    ArrayList<TwoImageStimulus> ids = new ArrayList<TwoImageStimulus>();
+    ids.add(new TwoImageStimulus(R.drawable.androids_experimenter_kids));
+    this.mStimuli = ids;
+  }
 
-		if (mStimuliIndex < 0) {
-			mStimuliIndex = 0;
-			return;
-		}
-		try {
-			TextView t = (TextView) findViewById(R.id.stimuli_number2);
-			String displayStimuliLabel = mStimuli.get(mStimuliIndex).getLabel();
-			if("".equals(displayStimuliLabel)){
-				int stimnumber = mStimuliIndex+1;
-				int stimtotal = mStimuli.size();
-				displayStimuliLabel = stimnumber+"/"+stimtotal;
-			}
-			t.setText(displayStimuliLabel);
-			
-			ImageView image = (ImageView) findViewById(R.id.leftimage);
-			Drawable d = getResources().getDrawable(
-					((TwoImageStimulus) mStimuli.get(mStimuliIndex))
-							.getLeftImageFileId());
-			image.setImageDrawable(d);
+  @Override
+  public void nextStimuli() {
+    if (this.mStimuliIndex < 0) {
+      this.mStimuliIndex = 0;
+    } else {
+      this.mStimuliIndex += 1;
+    }
 
-			ImageView rightimage = (ImageView) findViewById(R.id.rightimage);
-			d = getResources().getDrawable(
-					((TwoImageStimulus) mStimuli.get(mStimuliIndex))
-							.getRightImageFileId());
-			rightimage.setImageDrawable(d);
-		} catch (Exception e) {
-			Log.e(TAG, "Error getting images out." + e.getMessage());
-		}
-		playAudioStimuli();
-	}
+    if (this.mStimuliIndex >= this.mStimuli.size()) {
+      this.finishSubExperiment();
+      return;
+    }
+
+    try {
+      TextView t = (TextView) this.findViewById(R.id.stimuli_number2);
+      String displayStimuliLabel = this.mStimuli.get(this.mStimuliIndex).getLabel();
+      if ("".equals(displayStimuliLabel)) {
+        int stimnumber = this.mStimuliIndex + 1;
+        int stimtotal = this.mStimuli.size();
+        displayStimuliLabel = stimnumber + "/" + stimtotal;
+      }
+      t.setText(displayStimuliLabel);
+
+      ImageView image = (ImageView) this.findViewById(R.id.leftimage);
+      Drawable d = this.getResources().getDrawable(
+          ((TwoImageStimulus) this.mStimuli.get(this.mStimuliIndex)).getLeftImageFileId());
+      image.setImageDrawable(d);
+      image.startAnimation(this.animationSlideInRight);
+
+      ImageView rightimage = (ImageView) this.findViewById(R.id.rightimage);
+      d = this.getResources().getDrawable(
+          ((TwoImageStimulus) this.mStimuli.get(this.mStimuliIndex)).getRightImageFileId());
+      rightimage.setImageDrawable(d);
+      rightimage.startAnimation(this.animationSlideInRight);
+      this.mStimuli.get(this.mStimuliIndex).setStartTime(System.currentTimeMillis());
+
+    } catch (Exception e) {
+      Log.e(this.TAG, "Error getting images out." + e.getMessage());
+
+    }
+    this.playAudioStimuli();
+
+  }
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+  }
+
+  @Override
+  public void previousStimuli() {
+    this.mStimuliIndex -= 1;
+
+    if (this.mStimuliIndex < 0) {
+      this.mStimuliIndex = 0;
+      return;
+    }
+    try {
+      TextView t = (TextView) this.findViewById(R.id.stimuli_number2);
+      String displayStimuliLabel = this.mStimuli.get(this.mStimuliIndex).getLabel();
+      if ("".equals(displayStimuliLabel)) {
+        int stimnumber = this.mStimuliIndex + 1;
+        int stimtotal = this.mStimuli.size();
+        displayStimuliLabel = stimnumber + "/" + stimtotal;
+      }
+      t.setText(displayStimuliLabel);
+
+      ImageView image = (ImageView) this.findViewById(R.id.leftimage);
+      Drawable d = this.getResources().getDrawable(
+          ((TwoImageStimulus) this.mStimuli.get(this.mStimuliIndex)).getLeftImageFileId());
+      image.setImageDrawable(d);
+
+      ImageView rightimage = (ImageView) this.findViewById(R.id.rightimage);
+      d = this.getResources().getDrawable(
+          ((TwoImageStimulus) this.mStimuli.get(this.mStimuliIndex)).getRightImageFileId());
+      rightimage.setImageDrawable(d);
+    } catch (Exception e) {
+      Log.e(this.TAG, "Error getting images out." + e.getMessage());
+    }
+    this.playAudioStimuli();
+  }
 }

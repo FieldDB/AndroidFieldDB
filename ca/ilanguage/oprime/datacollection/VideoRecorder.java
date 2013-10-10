@@ -2,18 +2,14 @@ package ca.ilanguage.oprime.datacollection;
 
 import java.io.IOException;
 
-import ca.ilanguage.oprime.Config;
-import ca.ilanguage.oprime.R;
-import ca.ilanguage.oprime.model.OPrimeApp;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.IntentFilter;
-import android.hardware.Camera;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
@@ -22,6 +18,9 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
 import android.widget.VideoView;
+import ca.ilanguage.oprime.Config;
+import ca.ilanguage.oprime.R;
+import ca.ilanguage.oprime.model.OPrimeApp;
 
 /**
  * Android video recorder with "no" preview (the preview is a 1x1 pixel which
@@ -68,192 +67,39 @@ import android.widget.VideoView;
 @Deprecated
 public class VideoRecorder extends Activity implements SurfaceHolder.Callback {
 
-  public static final String EXTRA_VIDEO_QUALITY = "videoQuality";
-  public static final String EXTRA_USE_FRONT_FACING_CAMERA = "usefrontcamera";
-  /* .5 megapixel */
-  public static final int DEFAULT_DEBUGGING_QUALITY = 500000;
-  /* 3 megapixel */
-  public static final int DEFAULT_HIGH_QUALITY = 3000000;
-
-  /*
-   * Recording variables
-   */
-  public boolean D = true;
-  private static final String TAG = "VideoRecorder";
-  private Boolean mRecording = false;
-  private Boolean mRecordingAudioInstead = false;
-  private Boolean mUseFrontFacingCamera = false;
-  private VideoView mVideoView = null;
-  private MediaRecorder mVideoRecorder = null;
-  private Camera mCamera;
-  private static int cameraNumberUsed = -1;
-  Context mContext;
-  private int mVideoQuality = DEFAULT_HIGH_QUALITY;
-
-  String mAudioResultsFile = "";
-  private VideoStatusReceiver videoStatusReceiver;
-
-  @Override
-  protected void onResume() {
-    super.onResume();
-
-    if (videoStatusReceiver == null) {
-      videoStatusReceiver = new VideoStatusReceiver();
-    }
-    IntentFilter intentStopped = new IntentFilter(
-        Config.INTENT_STOP_VIDEO_RECORDING);
-    registerReceiver(videoStatusReceiver, intentStopped);
-
-    D = ((OPrimeApp) getApplication()).D;
-
-  }
-
-  public void beginRecordingAudio() {
-    if (mRecordingAudioInstead) {
-      return;
-    }
-    Intent intent;
-    intent = new Intent(this, AudioRecorder.class);
-    intent.putExtra(Config.EXTRA_RESULT_FILENAME, getIntent().getExtras()
-        .getString(Config.EXTRA_RESULT_FILENAME));
-    startService(intent);
-  }
-
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    initalize();
-  }
-
-  @Override
-  public void onLowMemory() {
-    if(D) Log.w(TAG, "Low memory...closing");
-    super.onLowMemory();
-  }
-
-  @SuppressWarnings("deprecation")
-  public void initalize() {
-    /*
-     * Get extras from the Experiment Home screen and set up layout depending on
-     * extras
-     */
-    setContentView(R.layout.fragment_video_recorder);
-
-    mVideoView = (VideoView) this.findViewById(R.id.videoView);
-    mVideoQuality = getIntent().getExtras().getInt(EXTRA_VIDEO_QUALITY,
-        DEFAULT_HIGH_QUALITY);
-    /* default is high quality */
-    mAudioResultsFile = getIntent().getExtras().getString(
-        Config.EXTRA_RESULT_FILENAME);
-    mUseFrontFacingCamera = getIntent().getExtras().getBoolean(
-        EXTRA_USE_FRONT_FACING_CAMERA, true);
-
-    final SurfaceHolder holder = mVideoView.getHolder();
-    holder.addCallback(this);
-    int sdk = android.os.Build.VERSION.SDK_INT;
-    /*
-     * After 11 this is set by default http:stackoverflow.com/questions/9439186
-     * /surfaceholder-settype-is-deprecated-but-required
-     */
-    if (sdk < 11) {
-      holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-    }
-  }
-
-  public void surfaceCreated(SurfaceHolder holder) {
-    if (mRecording) {
-      return;
-    }
-    DoTheRecordVideoThing beginRecordingTask = new DoTheRecordVideoThing();
-    beginRecordingTask.setHolder(holder);
-    beginRecordingTask.execute();
-  }
-
   public class DoTheRecordVideoThing extends AsyncTask<Void, Void, String> {
     SurfaceHolder holder;
-
-    public SurfaceHolder getHolder() {
-      return holder;
-    }
-
-    public void setHolder(SurfaceHolder holder) {
-      this.holder = holder;
-    }
 
     @Override
     protected String doInBackground(Void... params) {
       Log.v(TAG, "DoTheRecordVideoThing doInBackground");
       try {
-        beginRecording(holder);
+        VideoRecorder.this.beginRecording(this.holder);
       } catch (Exception e) {
         Log.e(TAG, "Error calling begin recording " + e.toString());
-        beginRecordingAudio();
+        VideoRecorder.this.beginRecordingAudio();
         return "recording audio instead.";
       }
       return "beginRecording didnt throw an error.";
     }
 
+    public SurfaceHolder getHolder() {
+      return this.holder;
+    }
+
+    @Override
+    protected void onPostExecute(String result) {
+      Log.v(TAG, "DoTheRecordVideoThing onPostExecute " + result);
+    }
+
+    @Override
     protected void onPreExecute() {
       Log.v(TAG, "DoTheRecordVideoThing onPreExecute");
     }
 
-    protected void onPostExecute(String result) {
-      Log.v(TAG, "DoTheRecordVideoThing onPostExecute " + result);
+    public void setHolder(SurfaceHolder holder) {
+      this.holder = holder;
     }
-  }
-
-  public void surfaceDestroyed(SurfaceHolder holder) {
-  }
-
-  public void surfaceChanged(SurfaceHolder holder, int format, int width,
-      int height) {
-    Log.v(TAG, "Width x Height = " + width + "x" + height);
-  }
-
-  private void stopRecording() throws Exception {
-    if (mVideoRecorder != null) {
-      if (mRecording) {
-        if (D)
-          Log.d(TAG, "Telling mVideoRecorder to stop. ");
-        mVideoRecorder.stop();
-      }
-      mVideoRecorder.release();
-      mVideoRecorder = null;
-      Toast.makeText(getApplicationContext(), "Saving.", Toast.LENGTH_LONG)
-          .show();
-    }
-    if (mCamera != null) {
-      mCamera.reconnect();
-      mCamera.stopPreview();
-      mCamera.release();
-      mCamera = null;
-    }
-    mRecording = false;
-  }
-
-  /*
-   * Instead of calling the super, this stops the the recording and then
-   * finishes the activity. Without this the camera was experiencing death on
-   * Nexus 7 (non-Javadoc)
-   * 
-   * @see android.app.Activity#onBackPressed()
-   */
-  @Override
-  public void onBackPressed() {
-    try {
-      stopRecording();
-    } catch (Exception e) {
-      if (D)
-        Log.e(TAG, "Error calling stopRecording.");
-      if (D)
-        e.printStackTrace();
-    }
-    finish();
-  }
-
-  @Override
-  protected void onPause() {
-    super.onPause();
   }
 
   /*
@@ -275,39 +121,20 @@ public class VideoRecorder extends Activity implements SurfaceHolder.Callback {
     @Override
     public void onReceive(Context context, Intent intent) {
       if (intent.getAction().equals(Config.INTENT_STOP_VIDEO_RECORDING)) {
-        finish();
+        VideoRecorder.this.finish();
       }
     }
   }
 
-  @Override
-  protected void onDestroy() {
-    try {
-      stopRecording();
-    } catch (Exception e) {
-      if (D)
-        Log.e(TAG, e.toString());
-    }
-    super.onDestroy();
-    if (videoStatusReceiver != null) {
-      unregisterReceiver(videoStatusReceiver);
-    }
-  }
+  private static int          cameraNumberUsed              = -1;
+  /* .5 megapixel */
+  public static final int     DEFAULT_DEBUGGING_QUALITY     = 500000;
 
-  /**
-   * Requires android:configChanges="orientation|keyboardHidden|screenSize" in
-   * the manifest
-   */
-  @Override
-  public void onConfigurationChanged(Configuration newConfig) {
-    super.onConfigurationChanged(newConfig);
-    if (D)
-      Log.d(TAG,
-          "Configuration has changed (rotation). Not redrawing the screen.");
-    /*
-     * Doing nothing makes the current redraw properly
-     */
-  }
+  /* 3 megapixel */
+  public static final int     DEFAULT_HIGH_QUALITY          = 3000000;
+  public static final String  EXTRA_USE_FRONT_FACING_CAMERA = "usefrontcamera";
+  public static final String  EXTRA_VIDEO_QUALITY           = "videoQuality";
+  private static final String TAG                           = "VideoRecorder";
 
   @SuppressLint("NewApi")
   public static Camera getCameraInstance() throws IOException {
@@ -369,6 +196,25 @@ public class VideoRecorder extends Activity implements SurfaceHolder.Callback {
     return c;
   }
 
+  /*
+   * Recording variables
+   */
+  public boolean              D                      = true;
+  String                      mAudioResultsFile      = "";
+  private Camera              mCamera;
+  Context                     mContext;
+  private Boolean             mRecording             = false;
+  private Boolean             mRecordingAudioInstead = false;
+
+  private Boolean             mUseFrontFacingCamera  = false;
+  private int                 mVideoQuality          = DEFAULT_HIGH_QUALITY;
+
+  private MediaRecorder       mVideoRecorder         = null;
+
+  private VideoView           mVideoView             = null;
+
+  private VideoStatusReceiver videoStatusReceiver;
+
   /**
    * Uses the surface defined in video_recorder.xml Tested using 2.2 (HTC
    * Desire/Hero phone) -> Use all defaults works, records back facing camera
@@ -390,91 +236,243 @@ public class VideoRecorder extends Activity implements SurfaceHolder.Callback {
    */
   @SuppressLint("NewApi")
   private void beginRecording(SurfaceHolder holder) throws IOException {
-    if (mVideoRecorder != null) {
-      if (D)
+    if (this.mVideoRecorder != null) {
+      if (this.D)
         Log.d(TAG, "mVideoRecorder was not null. ");
-      if (mRecording) {
-        if (D)
+      if (this.mRecording) {
+        if (this.D)
           Log.d(TAG, "Telling mVideoRecorder to stop. ");
-        mVideoRecorder.stop();
+        this.mVideoRecorder.stop();
       }
-      mVideoRecorder.release();
-      mVideoRecorder = null;
+      this.mVideoRecorder.release();
+      this.mVideoRecorder = null;
     }
-    if (mCamera != null) {
-      mCamera.reconnect();
-      mCamera.stopPreview();
-      mCamera.release();
-      mCamera = null;
+    if (this.mCamera != null) {
+      this.mCamera.reconnect();
+      this.mCamera.stopPreview();
+      this.mCamera.release();
+      this.mCamera = null;
     }
     try {
-      mCamera = getCameraInstance();
-      if (mCamera == null) {
-        if (D)
+      this.mCamera = getCameraInstance();
+      if (this.mCamera == null) {
+        if (this.D)
           Log.e(TAG, "There was a problem opening the camera. ");
         // TODO email devs?
-        beginRecordingAudio();
-        finish();
+        this.beginRecordingAudio();
+        this.finish();
         return;
       }
 
-//      mCamera.setPreviewDisplay(holder); //this line doesn't seem to be necessary
-//      Camera.Parameters parameters = mCamera.getParameters();
-//      // parameters.setPreviewSize(640, 480);
-//      List<Camera.Size> previewSizes = parameters.getSupportedPreviewSizes();
-//      Camera.Size previewSize = previewSizes.get(0);
-//      Log.d(TAG, "These are supported by the device . " + previewSize.width
-//          + " : " + previewSize.height);
-//      parameters.setPreviewSize(previewSize.width, previewSize.height);
-//      mCamera.setParameters(parameters);
+      // mCamera.setPreviewDisplay(holder); //this line doesn't seem to be
+      // necessary
+      // Camera.Parameters parameters = mCamera.getParameters();
+      // // parameters.setPreviewSize(640, 480);
+      // List<Camera.Size> previewSizes = parameters.getSupportedPreviewSizes();
+      // Camera.Size previewSize = previewSizes.get(0);
+      // Log.d(TAG, "These are supported by the device . " + previewSize.width
+      // + " : " + previewSize.height);
+      // parameters.setPreviewSize(previewSize.width, previewSize.height);
+      // mCamera.setParameters(parameters);
 
-      mCamera.startPreview();
-      mCamera.unlock(); // managed for you after 4.0
+      this.mCamera.startPreview();
+      this.mCamera.unlock(); // managed for you after 4.0
 
-      mVideoRecorder = new MediaRecorder();
+      this.mVideoRecorder = new MediaRecorder();
       // mVideoRecorder.reset();
-      mVideoRecorder.setCamera(mCamera);
+      this.mVideoRecorder.setCamera(this.mCamera);
 
       /*
        * Media recorder setup is based on Listing 9-6, Hashimi et all 2010
        * values based on best practices and good quality, tested via upload to
        * YouTube and played in QuickTime on Mac Snow Leopard
        */
-      mVideoRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-      mVideoRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+      this.mVideoRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+      this.mVideoRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
       int sdk = android.os.Build.VERSION.SDK_INT;
       if (sdk > 7) {
         if (cameraNumberUsed == -1) {
-          if (D)
-            Log.e(TAG,
-                "This appears to have no camera set, trying another resolution.");
-          mVideoRecorder.setProfile(CamcorderProfile
-              .get(CamcorderProfile.QUALITY_HIGH));
+          if (this.D)
+            Log.e(TAG, "This appears to have no camera set, trying another resolution.");
+          this.mVideoRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
         } else {
-          mVideoRecorder.setProfile(CamcorderProfile.get(cameraNumberUsed,
-              CamcorderProfile.QUALITY_HIGH));
+          this.mVideoRecorder.setProfile(CamcorderProfile.get(cameraNumberUsed, CamcorderProfile.QUALITY_HIGH));
         }
       } else {
-        if (D)
-          Log.e(TAG,
-              "This appears to be android 2.1, trying to set the audio and video manually.");
-        mVideoRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mVideoRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
-        mVideoRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.DEFAULT);
+        if (this.D)
+          Log.e(TAG, "This appears to be android 2.1, trying to set the audio and video manually.");
+        this.mVideoRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        this.mVideoRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+        this.mVideoRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.DEFAULT);
       }
 
-      mVideoRecorder.setOutputFile(mAudioResultsFile);
-      mVideoRecorder.setPreviewDisplay(holder.getSurface());
-      mVideoRecorder.prepare();
-      mVideoRecorder.start();
-      mRecording = true;
+      this.mVideoRecorder.setOutputFile(this.mAudioResultsFile);
+      this.mVideoRecorder.setPreviewDisplay(holder.getSurface());
+      this.mVideoRecorder.prepare();
+      this.mVideoRecorder.start();
+      this.mRecording = true;
     } catch (Exception e) {
-      if (D)
+      if (this.D)
         Log.e(TAG, "There was a problem with the camera " + e.toString());
-      mRecording = false;
-      beginRecordingAudio();
-      finish();
+      this.mRecording = false;
+      this.beginRecordingAudio();
+      this.finish();
 
     }
+  }
+
+  public void beginRecordingAudio() {
+    if (this.mRecordingAudioInstead) {
+      return;
+    }
+    Intent intent;
+    intent = new Intent(this, AudioRecorder.class);
+    intent.putExtra(Config.EXTRA_RESULT_FILENAME, this.getIntent().getExtras().getString(Config.EXTRA_RESULT_FILENAME));
+    this.startService(intent);
+  }
+
+  @SuppressWarnings("deprecation")
+  public void initalize() {
+    /*
+     * Get extras from the Experiment Home screen and set up layout depending on
+     * extras
+     */
+    this.setContentView(R.layout.fragment_video_recorder);
+
+    this.mVideoView = (VideoView) this.findViewById(R.id.videoView);
+    this.mVideoQuality = this.getIntent().getExtras().getInt(EXTRA_VIDEO_QUALITY, DEFAULT_HIGH_QUALITY);
+    /* default is high quality */
+    this.mAudioResultsFile = this.getIntent().getExtras().getString(Config.EXTRA_RESULT_FILENAME);
+    this.mUseFrontFacingCamera = this.getIntent().getExtras().getBoolean(EXTRA_USE_FRONT_FACING_CAMERA, true);
+
+    final SurfaceHolder holder = this.mVideoView.getHolder();
+    holder.addCallback(this);
+    int sdk = android.os.Build.VERSION.SDK_INT;
+    /*
+     * After 11 this is set by default http:stackoverflow.com/questions/9439186
+     * /surfaceholder-settype-is-deprecated-but-required
+     */
+    if (sdk < 11) {
+      holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+    }
+  }
+
+  /*
+   * Instead of calling the super, this stops the the recording and then
+   * finishes the activity. Without this the camera was experiencing death on
+   * Nexus 7 (non-Javadoc)
+   * 
+   * @see android.app.Activity#onBackPressed()
+   */
+  @Override
+  public void onBackPressed() {
+    try {
+      this.stopRecording();
+    } catch (Exception e) {
+      if (this.D)
+        Log.e(TAG, "Error calling stopRecording.");
+      if (this.D)
+        e.printStackTrace();
+    }
+    this.finish();
+  }
+
+  /**
+   * Requires android:configChanges="orientation|keyboardHidden|screenSize" in
+   * the manifest
+   */
+  @Override
+  public void onConfigurationChanged(Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
+    if (this.D)
+      Log.d(TAG, "Configuration has changed (rotation). Not redrawing the screen.");
+    /*
+     * Doing nothing makes the current redraw properly
+     */
+  }
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    this.initalize();
+  }
+
+  @Override
+  protected void onDestroy() {
+    try {
+      this.stopRecording();
+    } catch (Exception e) {
+      if (this.D)
+        Log.e(TAG, e.toString());
+    }
+    super.onDestroy();
+    if (this.videoStatusReceiver != null) {
+      this.unregisterReceiver(this.videoStatusReceiver);
+    }
+  }
+
+  @Override
+  public void onLowMemory() {
+    if (this.D)
+      Log.w(TAG, "Low memory...closing");
+    super.onLowMemory();
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+
+    if (this.videoStatusReceiver == null) {
+      this.videoStatusReceiver = new VideoStatusReceiver();
+    }
+    IntentFilter intentStopped = new IntentFilter(Config.INTENT_STOP_VIDEO_RECORDING);
+    this.registerReceiver(this.videoStatusReceiver, intentStopped);
+
+    this.D = ((OPrimeApp) this.getApplication()).D;
+
+  }
+
+  private void stopRecording() throws Exception {
+    if (this.mVideoRecorder != null) {
+      if (this.mRecording) {
+        if (this.D)
+          Log.d(TAG, "Telling mVideoRecorder to stop. ");
+        this.mVideoRecorder.stop();
+      }
+      this.mVideoRecorder.release();
+      this.mVideoRecorder = null;
+      Toast.makeText(this.getApplicationContext(), "Saving.", Toast.LENGTH_LONG).show();
+    }
+    if (this.mCamera != null) {
+      this.mCamera.reconnect();
+      this.mCamera.stopPreview();
+      this.mCamera.release();
+      this.mCamera = null;
+    }
+    this.mRecording = false;
+  }
+
+  @Override
+  public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+    Log.v(TAG, "Width x Height = " + width + "x" + height);
+  }
+
+  @Override
+  public void surfaceCreated(SurfaceHolder holder) {
+    if (this.mRecording) {
+      return;
+    }
+    DoTheRecordVideoThing beginRecordingTask = new DoTheRecordVideoThing();
+    beginRecordingTask.setHolder(holder);
+    beginRecordingTask.execute();
+  }
+
+  @Override
+  public void surfaceDestroyed(SurfaceHolder holder) {
   }
 }
