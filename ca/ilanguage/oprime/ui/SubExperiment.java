@@ -1,4 +1,4 @@
-package ca.ilanguage.oprime.activity;
+package ca.ilanguage.oprime.ui;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -75,7 +75,7 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
      * Prepare Stimuli
      */
     mSubExperiment = (SubExperimentBlock) getIntent().getExtras()
-        .getSerializable(OPrime.EXTRA_SUB_EXPERIMENT);
+        .getSerializable(Config.EXTRA_SUB_EXPERIMENT);
     this.setTitle(mSubExperiment.getTitle());
     mStimuli = mSubExperiment.getStimuli();
     mAutoAdvanceStimuliOnTouch = mSubExperiment.isAutoAdvanceStimuliOnTouch();
@@ -300,16 +300,16 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
       mSubExperiment.setDisplayedStimuli(mStimuli.size());
     }
     mSubExperiment.setStimuli(mStimuli);
-    Intent video = new Intent(OPrime.INTENT_STOP_VIDEO_RECORDING);
+    Intent video = new Intent(Config.INTENT_STOP_VIDEO_RECORDING);
     sendBroadcast(video);
     Intent audio = new Intent(this, AudioRecorder.class);
     stopService(audio);
 
     mSubExperiment.setResultsFileWithoutSuffix(getIntent().getExtras()
-        .getString(OPrime.EXTRA_RESULT_FILENAME).replace(".3gp", ""));
-    Intent intent = new Intent(OPrime.INTENT_FINISHED_SUB_EXPERIMENT);
-    intent.putExtra(OPrime.EXTRA_SUB_EXPERIMENT, mSubExperiment);
-    setResult(OPrime.EXPERIMENT_COMPLETED, intent);
+        .getString(Config.EXTRA_RESULT_FILENAME).replace(".3gp", ""));
+    Intent intent = new Intent(Config.INTENT_FINISHED_SUB_EXPERIMENT);
+    intent.putExtra(Config.EXTRA_SUB_EXPERIMENT, mSubExperiment);
+    setResult(Config.EXPERIMENT_COMPLETED, intent);
 
     try {
       if (D)

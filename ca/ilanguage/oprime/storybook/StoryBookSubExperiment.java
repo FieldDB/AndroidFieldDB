@@ -54,15 +54,15 @@ public class StoryBookSubExperiment extends Activity {
 		 */
 		ArrayList<Stimulus> ids = new ArrayList<Stimulus>();
 		ids.add(new Stimulus(R.drawable.androids_experimenter_kids));
-		mStimuli = (ArrayList<Stimulus>) getIntent().getExtras().getSerializable(OPrime.EXTRA_STIMULI_IMAGE_ID); 
-		mShowTwoPageBook =getIntent().getExtras().getBoolean(OPrime.EXTRA_TWO_PAGE_STORYBOOK, false);
+		mStimuli = (ArrayList<Stimulus>) getIntent().getExtras().getSerializable(Config.EXTRA_STIMULI_IMAGE_ID); 
+		mShowTwoPageBook =getIntent().getExtras().getBoolean(Config.EXTRA_TWO_PAGE_STORYBOOK, false);
 		if(mStimuli == null){
 			mStimuli = ids;
 		}
 		/*
 		 * Prepare language of Stimuli
 		 */
-		String lang = getIntent().getExtras().getString(OPrime.EXTRA_LANGUAGE);
+		String lang = getIntent().getExtras().getString(Config.EXTRA_LANGUAGE);
 		forceLocale(lang);
 		
 		int index = 0;
@@ -144,9 +144,9 @@ public class StoryBookSubExperiment extends Activity {
 	@Override
 	  public boolean onKeyDown(int keyCode, KeyEvent event) {
 	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-	    	Intent intent = new Intent(OPrime.INTENT_FINISHED_SUB_EXPERIMENT);
-		     intent.putExtra(OPrime.EXTRA_STIMULI,mStimuli);
-		     setResult(OPrime.EXPERIMENT_COMPLETED,intent);
+	    	Intent intent = new Intent(Config.INTENT_FINISHED_SUB_EXPERIMENT);
+		     intent.putExtra(Config.EXTRA_STIMULI,mStimuli);
+		     setResult(Config.EXPERIMENT_COMPLETED,intent);
 		     finish();
 	    }
 	    return super.onKeyDown(keyCode, event);

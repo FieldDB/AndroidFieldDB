@@ -1,17 +1,17 @@
-package ca.ilanguage.oprime.activity;
+package ca.ilanguage.oprime.ui;
 
 import java.io.File;
 import java.io.Serializable;
 import java.util.Locale;
 
-import ca.ilanguage.oprime.content.ExperimentJavaScriptInterface;
-import ca.ilanguage.oprime.content.JavaScriptInterface;
 import ca.ilanguage.oprime.content.OPrime;
 import ca.ilanguage.oprime.content.OPrimeApp;
 import ca.ilanguage.oprime.content.Participant;
 import ca.ilanguage.oprime.content.SubExperimentBlock;
 import ca.ilanguage.oprime.datacollection.AudioRecorder;
 import ca.ilanguage.oprime.datacollection.SubExperimentToJson;
+import ca.ilanguage.oprime.javascript.ExperimentJavaScriptInterface;
+import ca.ilanguage.oprime.javascript.JavaScriptInterface;
 import android.app.Application;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -68,7 +68,7 @@ public class HTML5GameActivity extends HTML5Activity {
   protected void checkIfNeedToPrepareExperiment(
       boolean activtySaysToPrepareExperiment) {
     boolean prepareExperiment = getIntent().getExtras().getBoolean(
-        OPrime.EXTRA_PLEASE_PREPARE_EXPERIMENT, false);
+        Config.EXTRA_PLEASE_PREPARE_EXPERIMENT, false);
     if (prepareExperiment || activtySaysToPrepareExperiment) {
       if (D) {
         Log.d(TAG, "HTML5GameActivity was asked to prepare the experiment.");
@@ -179,14 +179,14 @@ public class HTML5GameActivity extends HTML5Activity {
       app = this.getApp();
     }
     switch (requestCode) {
-    case OPrime.EXPERIMENT_COMPLETED:
+    case Config.EXPERIMENT_COMPLETED:
       if (data != null) {
         SubExperimentBlock completedExp = (SubExperimentBlock) data.getExtras()
-            .getSerializable(OPrime.EXTRA_SUB_EXPERIMENT);
+            .getSerializable(Config.EXTRA_SUB_EXPERIMENT);
         app.getSubExperiments().set(mCurrentSubex, completedExp);
 
         Intent i = new Intent(this, SubExperimentToJson.class);
-        i.putExtra(OPrime.EXTRA_SUB_EXPERIMENT, (Serializable) app
+        i.putExtra(Config.EXTRA_SUB_EXPERIMENT, (Serializable) app
             .getSubExperiments().get(mCurrentSubex));
         startService(i);
         app.getExperiment()
@@ -209,7 +209,7 @@ public class HTML5GameActivity extends HTML5Activity {
             .getIntentToCallAfterThisSubExperiment();
         if (!"".equals(intentAfterSubExperiment)) {
           Intent takepicture = new Intent(intentAfterSubExperiment);
-          takepicture.putExtra(OPrime.EXTRA_RESULT_FILENAME, completedExp
+          takepicture.putExtra(Config.EXTRA_RESULT_FILENAME, completedExp
               .getResultsFileWithoutSuffix().replace("video", "images")
               + ".jpg");
           startActivity(takepicture);
@@ -229,11 +229,11 @@ public class HTML5GameActivity extends HTML5Activity {
         }
       }
       break;
-    case OPrime.PREPARE_TRIAL:
+    case Config.PREPARE_TRIAL:
       // initExperiment();
       checkIfNeedToPrepareExperiment(true);
       break;
-    case OPrime.SWITCH_LANGUAGE:
+    case Config.SWITCH_LANGUAGE:
       checkIfNeedToPrepareExperiment(true);
       // SharedPreferences prefs =
       // getSharedPreferences(OPrimeApp.PREFERENCE_NAME,
@@ -252,7 +252,7 @@ public class HTML5GameActivity extends HTML5Activity {
       // initExperiment();
       // }
       break;
-    case OPrime.REPLAY_RESULTS:
+    case Config.REPLAY_RESULTS:
       break;
     default:
       break;
@@ -262,7 +262,7 @@ public class HTML5GameActivity extends HTML5Activity {
   }
 
   protected void stopVideoRecorder() {
-    Intent i = new Intent(OPrime.INTENT_STOP_VIDEO_RECORDING);
+    Intent i = new Intent(Config.INTENT_STOP_VIDEO_RECORDING);
     sendBroadcast(i);
     Intent audio = new Intent(this, AudioRecorder.class);
     stopService(audio);

@@ -101,7 +101,7 @@ public class VideoRecorder extends Activity implements SurfaceHolder.Callback {
       videoStatusReceiver = new VideoStatusReceiver();
     }
     IntentFilter intentStopped = new IntentFilter(
-        OPrime.INTENT_STOP_VIDEO_RECORDING);
+        Config.INTENT_STOP_VIDEO_RECORDING);
     registerReceiver(videoStatusReceiver, intentStopped);
 
     D = ((OPrimeApp) getApplication()).D;
@@ -114,8 +114,8 @@ public class VideoRecorder extends Activity implements SurfaceHolder.Callback {
     }
     Intent intent;
     intent = new Intent(this, AudioRecorder.class);
-    intent.putExtra(OPrime.EXTRA_RESULT_FILENAME, getIntent().getExtras()
-        .getString(OPrime.EXTRA_RESULT_FILENAME));
+    intent.putExtra(Config.EXTRA_RESULT_FILENAME, getIntent().getExtras()
+        .getString(Config.EXTRA_RESULT_FILENAME));
     startService(intent);
   }
 
@@ -144,7 +144,7 @@ public class VideoRecorder extends Activity implements SurfaceHolder.Callback {
         DEFAULT_HIGH_QUALITY);
     /* default is high quality */
     mAudioResultsFile = getIntent().getExtras().getString(
-        OPrime.EXTRA_RESULT_FILENAME);
+        Config.EXTRA_RESULT_FILENAME);
     mUseFrontFacingCamera = getIntent().getExtras().getBoolean(
         EXTRA_USE_FRONT_FACING_CAMERA, true);
 
@@ -274,7 +274,7 @@ public class VideoRecorder extends Activity implements SurfaceHolder.Callback {
   public class VideoStatusReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-      if (intent.getAction().equals(OPrime.INTENT_STOP_VIDEO_RECORDING)) {
+      if (intent.getAction().equals(Config.INTENT_STOP_VIDEO_RECORDING)) {
         finish();
       }
     }

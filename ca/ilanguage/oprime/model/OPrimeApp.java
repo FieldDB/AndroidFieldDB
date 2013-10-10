@@ -1,4 +1,4 @@
-package ca.ilanguage.oprime.content;
+package ca.ilanguage.oprime.model;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import ca.ilanguage.oprime.Config;
 import ca.ilanguage.oprime.R;
 
 import android.app.Application;
@@ -150,8 +151,8 @@ public abstract class OPrimeApp extends Application {
           .getSubExperiments()
           .add(
               new SubExperimentBlock(subextitles[i], languagecode,
-                  subextitles[i], null, OPrime.EMPTYSTRING,
-                  OPrime.INTENT_START_SUB_EXPERIMENT, true,
+                  subextitles[i], null, Config.EMPTYSTRING,
+                  Config.INTENT_START_SUB_EXPERIMENT, true,
                   autoAdvanceStimuliOnTouch));
     }
     addStimuli();
@@ -177,7 +178,7 @@ public abstract class OPrimeApp extends Application {
         .getSubExperiments()
         .get(0)
         .setIntentToCallThisSubExperiment(
-            OPrime.INTENT_START_STOP_WATCH_SUB_EXPERIMENT);
+            Config.INTENT_START_STOP_WATCH_SUB_EXPERIMENT);
 
     stimuli = null;
 
@@ -193,7 +194,7 @@ public abstract class OPrimeApp extends Application {
     mExperiments.get(mCurrentExperiment).getSubExperiments().get(1)
         .setStimuli(stimuli);
     mExperiments.get(mCurrentExperiment).getSubExperiments().get(1)
-        .setIntentToCallThisSubExperiment(OPrime.INTENT_START_SUB_EXPERIMENT);
+        .setIntentToCallThisSubExperiment(Config.INTENT_START_SUB_EXPERIMENT);
     /*
      * Sample SubExperiment: 2 images per item.
      */
@@ -216,7 +217,7 @@ public abstract class OPrimeApp extends Application {
         .getSubExperiments()
         .get(1)
         .setIntentToCallThisSubExperiment(
-            OPrime.INTENT_START_TWO_IMAGE_SUB_EXPERIMENT);
+            Config.INTENT_START_TWO_IMAGE_SUB_EXPERIMENT);
   }
 
   /**

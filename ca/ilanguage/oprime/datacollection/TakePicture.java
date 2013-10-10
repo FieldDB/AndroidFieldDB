@@ -37,12 +37,12 @@ public class TakePicture extends Activity {
 
     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     mImageFilename = getIntent().getExtras().getString(
-        OPrime.EXTRA_RESULT_FILENAME);
+        Config.EXTRA_RESULT_FILENAME);
     if (mImageFilename != null && mImageFilename != "") {
       if (mAppearSeamless) {
-        SharedPreferences prefs = getSharedPreferences(OPrime.PREFERENCE_NAME,
+        SharedPreferences prefs = getSharedPreferences(Config.PREFERENCE_NAME,
             MODE_PRIVATE);
-        String picture = prefs.getString(OPrime.PREFERENCE_LAST_PICTURE_TAKEN,
+        String picture = prefs.getString(Config.PREFERENCE_LAST_PICTURE_TAKEN,
             "");
         if (picture == "") {
           this.captureImage(null);
@@ -61,11 +61,11 @@ public class TakePicture extends Activity {
      * Store uri for the expected image into the prefs for persistance
      * (workaround for onCreate being called before onActivityResult)
      */
-    SharedPreferences prefs = getSharedPreferences(OPrime.PREFERENCE_NAME,
+    SharedPreferences prefs = getSharedPreferences(Config.PREFERENCE_NAME,
         MODE_PRIVATE);
     SharedPreferences.Editor editor = prefs.edit();
     editor
-        .putString(OPrime.PREFERENCE_LAST_PICTURE_TAKEN, myPicture.toString());
+        .putString(Config.PREFERENCE_LAST_PICTURE_TAKEN, myPicture.toString());
     editor.commit();
 
     Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -81,10 +81,10 @@ public class TakePicture extends Activity {
       /*
        * get expected image uri in gallery folder
        */
-      SharedPreferences prefs = getSharedPreferences(OPrime.PREFERENCE_NAME,
+      SharedPreferences prefs = getSharedPreferences(Config.PREFERENCE_NAME,
           MODE_PRIVATE);
       String picture = prefs
-          .getString(OPrime.PREFERENCE_LAST_PICTURE_TAKEN, "");
+          .getString(Config.PREFERENCE_LAST_PICTURE_TAKEN, "");
       if (picture == "") {
         return;
       }
@@ -103,7 +103,7 @@ public class TakePicture extends Activity {
 
           // Calculate the scale based on the given max picture size, if there
           // is one
-          int maxPictureSize = getIntent().getExtras().getInt(OPrime.EXTRA_MAX_PICTURE_SIZE);
+          int maxPictureSize = getIntent().getExtras().getInt(Config.EXTRA_MAX_PICTURE_SIZE);
           if (maxPictureSize > 0) {
             // Code from: http://stackoverflow.com/questions/477572/android-strange-out-of-memory-issue-while-loading-an-image-to-a-bitmap-object/823966#answer-3549021
             Bitmap b = null;
@@ -166,14 +166,14 @@ public class TakePicture extends Activity {
         // blank out the last picture taken, as it is used to control whether
         // onCreate launches directly into a picture.
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(OPrime.PREFERENCE_LAST_PICTURE_TAKEN, "");
+        editor.putString(Config.PREFERENCE_LAST_PICTURE_TAKEN, "");
         editor.commit();
 
         Toast.makeText(getApplicationContext(), "Saving as " + mImageFilename,
             Toast.LENGTH_LONG).show();
         if (mAppearSeamless) {
           Intent intent = new Intent();
-          intent.putExtra(OPrime.EXTRA_RESULT_FILENAME, mImageFilename);
+          intent.putExtra(Config.EXTRA_RESULT_FILENAME, mImageFilename);
           setResult(Activity.RESULT_OK, intent);
           finish();
         }

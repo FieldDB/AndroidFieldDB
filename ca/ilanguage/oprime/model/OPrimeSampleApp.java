@@ -1,4 +1,4 @@
-package ca.ilanguage.oprime.content;
+package ca.ilanguage.oprime.model;
 
 public class OPrimeSampleApp extends OPrimeApp {
 

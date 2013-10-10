@@ -1,4 +1,4 @@
-package ca.ilanguage.oprime.activity;
+package ca.ilanguage.oprime.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,20 +42,20 @@ public class ParticipantDetails extends PreferenceActivity {
     boolean d = ((OPrimeApp) this.getApplication()).isD();
     try {
       boolean prepareExperiment = getIntent().getExtras().getBoolean(
-          OPrime.EXTRA_PLEASE_PREPARE_EXPERIMENT, false);
+          Config.EXTRA_PLEASE_PREPARE_EXPERIMENT, false);
       if (prepareExperiment) {
       } else {
         Intent i = new Intent(getBaseContext(), HTML5GameActivity.class);
-        i.putExtra(OPrime.EXTRA_PLEASE_PREPARE_EXPERIMENT, true);
-        i.putExtra(OPrime.EXTRA_DEBUG_MODE, d);
-        i.putExtra(OPrime.EXTRA_TAG, tag);
+        i.putExtra(Config.EXTRA_PLEASE_PREPARE_EXPERIMENT, true);
+        i.putExtra(Config.EXTRA_DEBUG_MODE, d);
+        i.putExtra(Config.EXTRA_TAG, tag);
         startActivity(i);
       }
     } catch (Exception e) {
       Intent i = new Intent(getBaseContext(), HTML5GameActivity.class);
-      i.putExtra(OPrime.EXTRA_PLEASE_PREPARE_EXPERIMENT, true);
-      i.putExtra(OPrime.EXTRA_DEBUG_MODE, d);
-      i.putExtra(OPrime.EXTRA_TAG, tag);
+      i.putExtra(Config.EXTRA_PLEASE_PREPARE_EXPERIMENT, true);
+      i.putExtra(Config.EXTRA_DEBUG_MODE, d);
+      i.putExtra(Config.EXTRA_TAG, tag);
       startActivity(i);
     }
     finish();

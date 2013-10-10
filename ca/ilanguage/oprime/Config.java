@@ -1,6 +1,6 @@
-package ca.ilanguage.oprime.content;
+package ca.ilanguage.oprime;
 
-public class OPrime {
+public class Config {
   public static final int NOTSPECIFIED = 0;
   public static final String EMPTYSTRING = "";
   public static final String DEFAULT_LANGUAGE = "en";

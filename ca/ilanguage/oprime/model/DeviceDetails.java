@@ -1,5 +1,6 @@
-package ca.ilanguage.oprime.content;
+package ca.ilanguage.oprime.model;
 
+import ca.ilanguage.oprime.Config;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -15,7 +16,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 
 public class DeviceDetails implements LocationListener {
-  protected String TAG = OPrime.OPRIME_TAG;
+  protected String TAG = Config.OPRIME_TAG;
   protected boolean D = true;
 
   Context mContext;

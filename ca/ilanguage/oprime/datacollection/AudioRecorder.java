@@ -50,7 +50,7 @@ public class AudioRecorder extends Service {
 		if (audioFileUpdateReceiver == null){
 			audioFileUpdateReceiver = new RecordingReceiver();
 		}
-		IntentFilter intentDictRunning = new IntentFilter(OPrime.INTENT_STOP_AUDIO_RECORDING);
+		IntentFilter intentDictRunning = new IntentFilter(Config.INTENT_STOP_AUDIO_RECORDING);
 		registerReceiver(audioFileUpdateReceiver, intentDictRunning);
 
 		mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -125,7 +125,7 @@ public class AudioRecorder extends Service {
 		 * get data from extras bundle, store it in the member variables
 		 */
 		try {
-			mAudioResultsFile = intent.getExtras().getString(OPrime.EXTRA_RESULT_FILENAME);
+			mAudioResultsFile = intent.getExtras().getString(Config.EXTRA_RESULT_FILENAME);
 			
 		} catch (Exception e) {
 			//Toast.makeText(SRTGeneratorActivity.this, "Error "+e,Toast.LENGTH_LONG).show();

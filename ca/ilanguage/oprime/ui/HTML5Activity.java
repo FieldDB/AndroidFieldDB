@@ -1,4 +1,4 @@
-package ca.ilanguage.oprime.activity;
+package ca.ilanguage.oprime.ui;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -12,7 +12,7 @@ import java.util.List;
 import ca.ilanguage.oprime.R;
 import ca.ilanguage.oprime.content.AssetIncludeWorkaround;
 import ca.ilanguage.oprime.content.OPrime;
-import ca.ilanguage.oprime.content.JavaScriptInterface;
+import ca.ilanguage.oprime.javascript.JavaScriptInterface;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -120,7 +120,7 @@ public abstract class HTML5Activity extends Activity {
               + "/databases/");
 
     webSettings.setUserAgentString(webSettings.getUserAgentString() + " "
-        + OPrime.USER_AGENT_STRING);
+        + Config.USER_AGENT_STRING);
     
     // getJavaScriptInterface().setUIParent(this);
 
@@ -193,10 +193,10 @@ public abstract class HTML5Activity extends Activity {
 
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     switch (requestCode) {
-    case OPrime.PICTURE_TAKEN:
+    case Config.PICTURE_TAKEN:
       if (data != null) {
         String pictureFilePath = data.getExtras().getString(
-            OPrime.EXTRA_RESULT_FILENAME);
+            Config.EXTRA_RESULT_FILENAME);
         mWebView
             .loadUrl("javascript:OPrime.hub.publish('pictureCaptureSucessfullyCompleted','"
                 + pictureFilePath + "');");
@@ -221,13 +221,13 @@ public abstract class HTML5Activity extends Activity {
   public boolean onOptionsItemSelected(MenuItem item) {
     if (item.getItemId() == R.id.open_settings) {
       Intent i = new Intent(getBaseContext(), ParticipantDetails.class);
-      i.putExtra(OPrime.EXTRA_PLEASE_PREPARE_EXPERIMENT, true);
+      i.putExtra(Config.EXTRA_PLEASE_PREPARE_EXPERIMENT, true);
       startActivity(i);
       return true;
     } else if (item.getItemId() == R.id.language_settings) {
       Intent inte = new Intent(getBaseContext(), ParticipantDetails.class);
-      startActivityForResult(inte, OPrime.SWITCH_LANGUAGE);
-      inte.putExtra(OPrime.EXTRA_PLEASE_PREPARE_EXPERIMENT, true);
+      startActivityForResult(inte, Config.SWITCH_LANGUAGE);
+      inte.putExtra(Config.EXTRA_PLEASE_PREPARE_EXPERIMENT, true);
       return true;
     } else if (item.getItemId() == R.id.result_folder) {
       final boolean fileManagerAvailable = isIntentAvailable(this,

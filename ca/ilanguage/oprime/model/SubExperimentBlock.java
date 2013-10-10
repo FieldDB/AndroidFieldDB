@@ -1,29 +1,31 @@
-package ca.ilanguage.oprime.content;
+package ca.ilanguage.oprime.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import ca.ilanguage.oprime.Config;
 
 import com.google.gson.Gson;
 
 public class SubExperimentBlock implements Serializable {
   private static final long serialVersionUID = -3637915995040502723L;
-  protected String title = OPrime.EMPTYSTRING;
-  protected String language = OPrime.DEFAULT_LANGUAGE;
-  protected String description = OPrime.EMPTYSTRING;
+  protected String title = Config.EMPTYSTRING;
+  protected String language = Config.DEFAULT_LANGUAGE;
+  protected String description = Config.EMPTYSTRING;
   protected ArrayList<? extends Stimulus> stimuli;
-  protected String resultsFileWithoutSuffix = OPrime.EMPTYSTRING;
+  protected String resultsFileWithoutSuffix = Config.EMPTYSTRING;
   protected long startTime = 0;
   protected int displayedStimuli = 0;
-  protected String intentToCallThisSubExperiment = OPrime.INTENT_START_SUB_EXPERIMENT;
+  protected String intentToCallThisSubExperiment = Config.INTENT_START_SUB_EXPERIMENT;
   protected String intentToCallAfterThisSubExperiment = "";
   protected boolean autoAdvanceStimuliOnTouchIsPossible = true;
   protected boolean autoAdvanceStimuliOnTouch = false;
 
   public SubExperimentBlock() {
     super();
-    this.title = OPrime.EMPTYSTRING;
-    this.language = OPrime.DEFAULT_LANGUAGE;
-    this.description = OPrime.EMPTYSTRING;
+    this.title = Config.EMPTYSTRING;
+    this.language = Config.DEFAULT_LANGUAGE;
+    this.description = Config.EMPTYSTRING;
     this.startTime = System.currentTimeMillis();
     // this.stimuli = new ArrayList<Stimulus>();
 
@@ -32,8 +34,8 @@ public class SubExperimentBlock implements Serializable {
   public SubExperimentBlock(String title) {
     super();
     this.title = title;
-    this.language = OPrime.DEFAULT_LANGUAGE;
-    this.description = OPrime.EMPTYSTRING;
+    this.language = Config.DEFAULT_LANGUAGE;
+    this.description = Config.EMPTYSTRING;
     this.startTime = System.currentTimeMillis();
     // this.stimuli = new ArrayList<Stimulus>();
 

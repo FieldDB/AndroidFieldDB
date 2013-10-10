@@ -1,14 +1,16 @@
-package ca.ilanguage.oprime.content;
+package ca.ilanguage.oprime.model;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import ca.ilanguage.oprime.Config;
+
 public class Participant {
 	private static int counter = 0;
 	
-	public static final int UNKNOWN_GENDER = OPrime.NOTSPECIFIED;
+	public static final int UNKNOWN_GENDER = Config.NOTSPECIFIED;
 	public static final int MALE = 1;
 	public static final int FEMALE = 2;
 	public static final String participantCSVprivateString ="Code" +
@@ -27,17 +29,17 @@ public class Participant {
 			",Languages";
 	public static final String PARTICIPANT_ID_DEFAULT = "0000";
 
-	String code = OPrime.EMPTYSTRING;
+	String code = Config.EMPTYSTRING;
 	String experimenterCode = "NA";
-	String firstname = OPrime.EMPTYSTRING;
-	String lastname = OPrime.EMPTYSTRING;
+	String firstname = Config.EMPTYSTRING;
+	String lastname = Config.EMPTYSTRING;
 	ArrayList<String> languages;
 	ArrayList<String> languageCodes;
 	Date birthdate;
-	String details = OPrime.EMPTYSTRING;
+	String details = Config.EMPTYSTRING;
 	int gender = UNKNOWN_GENDER;
 	long dateTested = System.currentTimeMillis();
-	String status = OPrime.EMPTYSTRING;
+	String status = Config.EMPTYSTRING;
 	
 	public Participant(){
 		this.firstname = "";

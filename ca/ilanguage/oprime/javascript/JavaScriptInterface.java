@@ -1,4 +1,4 @@
-package ca.ilanguage.oprime.content;
+package ca.ilanguage.oprime.javascript;
 
 import java.io.BufferedWriter;
 import java.io.File;

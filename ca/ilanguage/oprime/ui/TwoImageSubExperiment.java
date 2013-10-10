@@ -1,4 +1,4 @@
-package ca.ilanguage.oprime.activity;
+package ca.ilanguage.oprime.ui;
 
 import java.util.ArrayList;
 

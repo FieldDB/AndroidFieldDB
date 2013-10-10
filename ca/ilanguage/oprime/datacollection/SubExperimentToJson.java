@@ -30,7 +30,7 @@ public class SubExperimentToJson extends IntentService {
   protected void onHandleIntent(Intent intent) {
     D = ((OPrimeApp) getApplication()).D;
     SubExperimentBlock subex = (SubExperimentBlock) intent.getExtras()
-        .getSerializable(OPrime.EXTRA_SUB_EXPERIMENT);
+        .getSerializable(Config.EXTRA_SUB_EXPERIMENT);
     String resultsFile = subex.getResultsFileWithoutSuffix().replace("video",
         "touchdata")
         + ".json";

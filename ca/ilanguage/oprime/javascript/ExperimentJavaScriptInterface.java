@@ -1,4 +1,4 @@
-package ca.ilanguage.oprime.content;
+package ca.ilanguage.oprime.javascript;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,8 +6,8 @@ import android.util.Log;
 import android.webkit.JavascriptInterface;
 import ca.ilanguage.oprime.activity.HTML5Activity;
 import ca.ilanguage.oprime.activity.HTML5GameActivity;
-import ca.ilanguage.oprime.content.JavaScriptInterface;
 import ca.ilanguage.oprime.content.OPrime;
+import ca.ilanguage.oprime.javascript.JavaScriptInterface;
 
 public class ExperimentJavaScriptInterface extends JavaScriptInterface
     implements NonObfuscateable {

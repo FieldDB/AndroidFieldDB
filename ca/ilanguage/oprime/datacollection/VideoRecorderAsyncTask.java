@@ -60,7 +60,7 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
       Log.v(TAG, " onPreExecute");
     TAG = ((OPrimeApp) mParentUI.getApplication()).TAG;
     mAudioResultsFile = mParentUI.getIntent().getExtras()
-        .getString(OPrime.EXTRA_RESULT_FILENAME);
+        .getString(Config.EXTRA_RESULT_FILENAME);
     if (D)
       Log.d(TAG, "mAudioResultsFile" + mAudioResultsFile);
   }
@@ -229,8 +229,8 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
     }
     Intent intent;
     intent = new Intent(mParentUI, AudioRecorder.class);
-    intent.putExtra(OPrime.EXTRA_RESULT_FILENAME, mParentUI.getIntent()
-        .getExtras().getString(OPrime.EXTRA_RESULT_FILENAME));
+    intent.putExtra(Config.EXTRA_RESULT_FILENAME, mParentUI.getIntent()
+        .getExtras().getString(Config.EXTRA_RESULT_FILENAME));
     mParentUI.startService(intent);
     mRecordingAudioInstead = true;
   }
