@@ -170,7 +170,7 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
     /*
      * Set up the video recording
      */
-    this.mVideoView = (VideoView) this.findViewById(R.id.videoViewOneImage);
+    this.mVideoView = (VideoView) this.findViewById(R.id.videoView);
     final SurfaceHolder holder = this.mVideoView.getHolder();
     holder.addCallback(this);
     int sdk = android.os.Build.VERSION.SDK_INT;
