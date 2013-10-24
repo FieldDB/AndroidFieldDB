@@ -1,12 +1,14 @@
 package ca.ilanguage.oprime.ui;
 
-import android.content.res.TypedArray;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import ca.ilanguage.oprime.Config;
 import ca.ilanguage.oprime.R;
 import ca.ilanguage.oprime.database.DataCollectionContent;
 
@@ -64,4 +66,15 @@ public class ExperimentFragment extends Fragment {
 
     return rootView;
   }
+
+
+  @Override
+  public void onDestroy() {
+    Intent i = new Intent(Config.INTENT_STOP_VIDEO_RECORDING);
+    getActivity().sendBroadcast(i);
+    
+    Log.d(Config.TAG, "Requesting video recording to exit from the destroy of the experiment fragment.");
+    super.onDestroy();
+  }
+
 }

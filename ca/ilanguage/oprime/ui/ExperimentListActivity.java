@@ -1,9 +1,17 @@
 package ca.ilanguage.oprime.ui;
 
+import java.io.File;
+
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import ca.ilanguage.oprime.Config;
 import ca.ilanguage.oprime.R;
+import ca.ilanguage.oprime.datacollection.AudioRecorder;
+import ca.ilanguage.oprime.datacollection.VideoRecorder;
 
 /**
  * An activity representing a list of Experiments. This activity has different
@@ -29,6 +37,63 @@ public class ExperimentListActivity extends FragmentActivity implements Experime
    */
   private boolean mTwoPane;
 
+  /**
+   * Turn audio/video data collection
+   */
+  private void beginDataCollection(String id) {
+    Log.d(Config.TAG, "Turning on data collection");
+
+    new File(Config.DEFAULT_OUTPUT_DIRECTORY).mkdirs();
+
+    Intent intent = new Intent(this, VideoRecorder.class);
+
+    intent.putExtra(Config.EXTRA_USE_FRONT_FACING_CAMERA, true);
+    intent.putExtra(Config.EXTRA_LANGUAGE, Config.ENGLISH);
+    intent.putExtra(Config.EXTRA_PARTICIPANT_ID, "00000");
+    intent.putExtra(Config.EXTRA_OUTPUT_DIR, Config.DEFAULT_OUTPUT_DIRECTORY);
+    intent.putExtra(Config.EXTRA_RESULT_FILENAME,
+        Config.DEFAULT_OUTPUT_DIRECTORY + "/" + id + System.currentTimeMillis() + "_" + ".3gp");
+    intent.putExtra(Config.EXTRA_EXPERIMENT_TRIAL_INFORMATION,
+        "ParticipantID,FirstName,LastName,WorstLanguage,FirstBat,StartTime,EndTime,ExperimenterID");
+
+    this.startActivity(intent);
+  }
+
+  public void launchExperiment(String id) {
+    if (this.mTwoPane) {
+      // In two-pane mode, show the detail view in this activity by
+      // adding or replacing the detail fragment using a
+      // fragment transaction.
+      Bundle arguments = new Bundle();
+      arguments.putString(ExperimentFragment.ARG_ITEM_ID, id);
+      ExperimentFragment fragment = new ExperimentFragment();
+      fragment.setArguments(arguments);
+      this.getSupportFragmentManager().beginTransaction().replace(R.id.experiment_detail_container, fragment)
+          .commitAllowingStateLoss();
+    } else {
+      // In single-pane mode, simply start the detail activity
+      // for the selected item ID.
+      Intent detailIntent = new Intent(this, ExperimentActivity.class);
+      detailIntent.putExtra(ExperimentFragment.ARG_ITEM_ID, id);
+      this.startActivityForResult(detailIntent, Config.EXPERIMENT_COMPLETED);
+    }
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, requestCode, data);
+    if (resultCode == Activity.RESULT_OK) {
+      if (requestCode == Config.EXPERIMENT_COMPLETED) {
+        Intent i = new Intent(Config.INTENT_STOP_VIDEO_RECORDING);
+        this.sendBroadcast(i);
+        Intent audio = new Intent(this, AudioRecorder.class);
+        this.stopService(audio);
+        Log.d(Config.TAG, "Requesting video recording to exit from the activity result.");
+      }
+    }
+
+  }
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -50,28 +115,30 @@ public class ExperimentListActivity extends FragmentActivity implements Experime
     // TODO: If exposing deep links into your app, handle intents here.
   }
 
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+  }
+
   /**
    * Callback method from {@link ExperimentListFragment.Callbacks} indicating
    * that the item with the given ID was selected.
    */
   @Override
-  public void onItemSelected(String id) {
-    if (this.mTwoPane) {
-      // In two-pane mode, show the detail view in this activity by
-      // adding or replacing the detail fragment using a
-      // fragment transaction.
-      Bundle arguments = new Bundle();
-      arguments.putString(ExperimentFragment.ARG_ITEM_ID, id);
-      ExperimentFragment fragment = new ExperimentFragment();
-      fragment.setArguments(arguments);
-      this.getSupportFragmentManager().beginTransaction().replace(R.id.experiment_detail_container, fragment).commit();
-
-    } else {
-      // In single-pane mode, simply start the detail activity
-      // for the selected item ID.
-      Intent detailIntent = new Intent(this, ExperimentActivity.class);
-      detailIntent.putExtra(ExperimentFragment.ARG_ITEM_ID, id);
-      this.startActivity(detailIntent);
-    }
+  public void onItemSelected(final String id) {
+    
+    this.beginDataCollection(id);
+    /*
+     * Wait two seconds so that the video activity has time to load the camera.
+     * It will continue recording until you exit the video activity.
+     */
+    new Handler().postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        ExperimentListActivity.this.launchExperiment(id);
+      }
+    }, 5000);
+    
   }
+
 }

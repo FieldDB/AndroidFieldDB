@@ -14,8 +14,39 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
 import ca.ilanguage.oprime.Config;
-import ca.ilanguage.oprime.model.OPrimeApp;
 
+
+/**
+ * Android video recorder with "no" preview (the preview is a 1x1 pixel which
+ * simulates an unobtrusive recording led). Based on Pro Android 2 2010 (Hashimi
+ * et al) source code in Listing 9-6.
+ * 
+ * Also demonstrates how to use the front-facing and back-facing cameras. A
+ * calling Intent can pass an Extra to use the front facing camera if available.
+ * 
+ * Suitable use cases: A: eye gaze tracking library to let users use eyes as a
+ * mouse to navigate a web page B: use tablet camera(s) to replace video camera
+ * in lab experiments (psycholingusitics or other experiments)
+ * 
+ * Video is recording is controlled in two ways: 1. Video starts and stops with
+ * the activity 2. Video starts and stops on any touch
+ * 
+ * To control recording in other ways see the try blocks of the onTouchEvent
+ * 
+ * To incorporate into project add these features and permissions to
+ * manifest.xml:
+ * 
+ * <uses-feature android:name="android.hardware.camera"/> <uses-feature
+ * android:name="android.hardware.camera.autofocus"/>
+ * 
+ * <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+ * <uses-permission android:name="android.permission.CAMERA" /> <uses-permission
+ * android:name="android.permission.RECORD_AUDIO" />
+ * 
+ * Tested Date: October 2 2011 with manifest.xml <uses-sdk
+ * android:minSdkVersion="8" android:targetSdkVersion="11"/>
+ * 
+ */
 public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
 
   protected static int    cameraNumberUsed = -1;
@@ -122,7 +153,7 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
         Log.d(TAG, "mVideoRecorder was not null. ");
       if (this.mRecording) {
         if (this.D)
-          Log.d(TAG, "Telling mVideoRecorder to stop. ");
+          Log.d(TAG, "Telling mVideoRecorder to stop before we start. ");
         this.mVideoRecorder.stop();
       }
       this.mVideoRecorder.release();
@@ -171,7 +202,12 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
 
       this.mVideoRecorder.setOutputFile(this.mAudioResultsFile);
       this.mVideoRecorder.setPreviewDisplay(holder.getSurface());
-      this.mVideoRecorder.prepare();
+      
+      try{
+        this.mVideoRecorder.prepare();
+      }catch(Exception e){
+        Log.d(TAG, "There was a problem preparing the video recorder.");
+      }
       this.mVideoRecorder.start();
       this.mRecording = true;
     } catch (Exception e) {
@@ -197,7 +233,7 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
   @Override
   protected String doInBackground(Void... params) {
     if (this.D)
-      Log.v(TAG, "DoTheRecordVideoThing doInBackground");
+      Log.v(TAG, " doInBackground");
     try {
       this.beginRecording(this.holder);
     } catch (Exception e) {
@@ -223,7 +259,7 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
   @Override
   protected void onPostExecute(String result) {
     if (this.D)
-      Log.v(TAG, "DoTheRecordVideoThing onPostExecute " + result);
+      Log.v(TAG, " onPostExecute " + result);
     if (result.startsWith("error")) {
       this.beginRecordingAudio();
     }
@@ -231,10 +267,10 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
 
   @Override
   protected void onPreExecute() {
-    this.D = ((OPrimeApp) this.mParentUI.getApplication()).D;
+    this.D = Config.D;
     if (this.D)
       Log.v(TAG, " onPreExecute");
-    TAG = ((OPrimeApp) this.mParentUI.getApplication()).TAG;
+    TAG = Config.TAG;
     this.mAudioResultsFile = this.mParentUI.getIntent().getExtras().getString(Config.EXTRA_RESULT_FILENAME);
     if (this.D)
       Log.d(TAG, "mAudioResultsFile" + this.mAudioResultsFile);
@@ -256,9 +292,9 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
     if (this.mVideoRecorder != null) {
       if (this.mRecording) {
         if (this.D)
-          Log.d(TAG, "Telling mVideoRecorder to stop. ");
-        this.mVideoRecorder.stop();
+          Log.d(TAG, "We are recording. Telling mVideoRecorder to stop. ");
       }
+      this.mVideoRecorder.stop();
       this.mVideoRecorder.release();
       this.mVideoRecorder = null;
       Toast.makeText(this.mContext, "Saving.", Toast.LENGTH_LONG).show();

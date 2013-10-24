@@ -15,6 +15,7 @@ import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.media.MediaRecorder;
 import android.os.IBinder;
+import android.util.Log;
 import ca.ilanguage.oprime.Config;
 import ca.ilanguage.oprime.R;
 import ca.ilanguage.oprime.ui.OPrimeLib;
@@ -31,7 +32,7 @@ public class AudioRecorder extends Service {
   }
 
   protected static String     TAG               = "OPrime";
-  private RecordingReceiver   audioFileUpdateReceiver;
+  private RecordingReceiver   mAudioFileUpdateReceiver;
   private int                 mAuBlogIconId     = R.drawable.ic_oprime;
   private String              mAudioResultsFile = "";
   private PendingIntent       mContentIntent;
@@ -53,11 +54,11 @@ public class AudioRecorder extends Service {
   @Override
   public void onCreate() {
     super.onCreate();
-    if (this.audioFileUpdateReceiver == null) {
-      this.audioFileUpdateReceiver = new RecordingReceiver();
+    if (this.mAudioFileUpdateReceiver == null) {
+      this.mAudioFileUpdateReceiver = new RecordingReceiver();
     }
     IntentFilter intentDictRunning = new IntentFilter(Config.INTENT_STOP_AUDIO_RECORDING);
-    this.registerReceiver(this.audioFileUpdateReceiver, intentDictRunning);
+    this.registerReceiver(this.mAudioFileUpdateReceiver, intentDictRunning);
 
     this.mNM = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
     // The PendingIntent to launch our activity if the user selects this
@@ -92,8 +93,8 @@ public class AudioRecorder extends Service {
     this.mNM.cancel(this.NOTIFICATION);
 
     super.onDestroy();
-    if (this.audioFileUpdateReceiver != null) {
-      this.unregisterReceiver(this.audioFileUpdateReceiver);
+    if (this.mAudioFileUpdateReceiver != null) {
+      this.unregisterReceiver(this.mAudioFileUpdateReceiver);
     }
 
   }
@@ -104,8 +105,8 @@ public class AudioRecorder extends Service {
     this.mNM.cancel(this.NOTIFICATION);
 
     super.onLowMemory();
-    if (this.audioFileUpdateReceiver != null) {
-      this.unregisterReceiver(this.audioFileUpdateReceiver);
+    if (this.mAudioFileUpdateReceiver != null) {
+      this.unregisterReceiver(this.mAudioFileUpdateReceiver);
     }
   }
 
@@ -124,8 +125,9 @@ public class AudioRecorder extends Service {
       // "Error "+e,Toast.LENGTH_LONG).show();
     }
     if (this.mAudioResultsFile == null) {
-      this.mAudioResultsFile = "/sdcard/temp.mp3";
+      this.mAudioResultsFile = "/sdcard/temp"+System.currentTimeMillis()+".mp3";
     }
+    this.mAudioResultsFile = this.mAudioResultsFile.replace("3gp", "mp3");
     /*
      * turn on the recorder
      */
@@ -152,9 +154,9 @@ public class AudioRecorder extends Service {
       this.mRecorder.prepare();
       this.mRecorder.start();
     } catch (IllegalStateException e) {
-
+      Log.d(TAG, "IllegalStateException in audio recorder");
     } catch (IOException e) {
-
+      Log.d(TAG, "IOException in audio recorder");
     }
 
     // autofilled by eclipsereturn super.onStartCommand(intent, flags, startId);
@@ -178,8 +180,10 @@ public class AudioRecorder extends Service {
         try {
           this.mRecorder.stop();
           this.mRecorder.release();
+          Log.d(TAG, "Turned off the audio recorder.");
         } catch (Exception e) {
           // Do nothing
+          Log.d(TAG, "There was an error when off the audio recorder.");
         }
         this.mRecorder = null;
 
@@ -188,6 +192,8 @@ public class AudioRecorder extends Service {
         this.mRecorder.release(); // this is called in the stop save recording
         this.mRecorder = null;
       }
+    } else{
+      Log.d(TAG, "The audio recorder was null, didnt turn it off.");
     }
   }
 
