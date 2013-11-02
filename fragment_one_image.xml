@@ -50,8 +50,8 @@
 
         <VideoView
             android:id="@+id/videoView"
-            android:layout_width="100dp"
-            android:layout_height="100dp" />
+            android:layout_width="10dp"
+            android:layout_height="10dp" />
 
         <ImageButton
             android:id="@+id/button1"
