@@ -40,7 +40,8 @@ public class VideoRecorder extends Activity implements SurfaceHolder.Callback {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    this.setContentView(R.layout.fragment_one_image);
+    this.setContentView(R.layout.fragment_fixation_video_recorder);
+    
     /*
      * Set up the video recording
      */
@@ -84,17 +85,19 @@ public class VideoRecorder extends Activity implements SurfaceHolder.Callback {
   public boolean finishSubExperiment(boolean fromExternalRequest) {
     try {
       if (Config.D)
-        Log.d(Config.TAG, "Telling recorder asyc to stop. ");
+        Log.d(Config.TAG, "Telling recorder async to stop. ");
       if (this.mRecordVideoTask != null) {
         this.mRecordVideoTask.stopRecording();
-      } else {
-        if(!this.mRecordVideoTask.mRecording){
+        if (!this.mRecordVideoTask.mRecording) {
           return true;
         }
+      } else {
+        Log.d(Config.TAG, "Recording task is null, returning already finished. ");
+        return true;
       }
     } catch (Exception e) {
       if (Config.D)
-        Log.d(Config.TAG, "Error Telling recorder asyc to stop. ");
+        Log.d(Config.TAG, "Error Telling recorder async to stop. ");
       e.printStackTrace();
     }
     if (fromExternalRequest) {
@@ -106,17 +109,19 @@ public class VideoRecorder extends Activity implements SurfaceHolder.Callback {
   @Override
   protected void onDestroy() {
     boolean alreadyFinished = finishSubExperiment(false);
-    if(alreadyFinished){
-      super.onDestroy();
-      if (this.mVideoStatusReceiver != null) {
-        this.unregisterReceiver(this.mVideoStatusReceiver);
-      }
+    if (!alreadyFinished) {
+      Log.d(Config.TAG, "Experiment wasnt finished");
     }
+    if (this.mVideoStatusReceiver != null) {
+      this.unregisterReceiver(this.mVideoStatusReceiver);
+    }
+    super.onDestroy();
   }
 
   @Override
   public void onBackPressed() {
-    finishSubExperiment(true);
+    finishSubExperiment(false);
+    super.onBackPressed();
   }
 
   public class VideoStatusReceiver extends BroadcastReceiver {

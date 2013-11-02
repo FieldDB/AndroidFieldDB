@@ -92,7 +92,8 @@ public class TakePicture extends Activity {
           String sourceImagePath = this.getPath(this.myPicture);
           File source = new File(sourceImagePath);
           String destinationImagePath = this.mImageFilename;
-
+          (new File(destinationImagePath).getParentFile()).mkdirs();
+          
           // Calculate the scale based on the given max picture size, if there
           // is one
           int maxPictureSize = this.getIntent().getExtras().getInt(Config.EXTRA_MAX_PICTURE_SIZE);

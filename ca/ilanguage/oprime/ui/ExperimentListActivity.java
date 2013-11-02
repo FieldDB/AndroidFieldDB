@@ -8,9 +8,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.widget.Toast;
 import ca.ilanguage.oprime.Config;
 import ca.ilanguage.oprime.R;
 import ca.ilanguage.oprime.datacollection.AudioRecorder;
+import ca.ilanguage.oprime.datacollection.TakePicture;
 import ca.ilanguage.oprime.datacollection.VideoRecorder;
 
 /**
@@ -89,7 +91,11 @@ public class ExperimentListActivity extends FragmentActivity implements Experime
         Intent audio = new Intent(this, AudioRecorder.class);
         this.stopService(audio);
         Log.d(Config.TAG, "Requesting video recording to exit from the activity result.");
+      } else if (requestCode == Config.PICTURE_TAKEN) {
+        String pictureFilePath = data.getExtras().getString(Config.EXTRA_RESULT_FILENAME);
+        Log.d(Config.TAG, "Saved image as " + pictureFilePath);
       }
+
     }
 
   }
@@ -126,19 +132,37 @@ public class ExperimentListActivity extends FragmentActivity implements Experime
    */
   @Override
   public void onItemSelected(final String id) {
+    if ("Photo".equals(id)) {
+
+      new File(Config.DEFAULT_OUTPUT_DIRECTORY + "/image/").mkdirs();
+      Intent intent = new Intent(this, TakePicture.class);
+      intent.putExtra(Config.EXTRA_RESULT_FILENAME,
+          Config.DEFAULT_OUTPUT_DIRECTORY + "/image/" + System.currentTimeMillis() + ".png");
+      this.startActivityForResult(intent, Config.PICTURE_TAKEN);
+
+    }else if ("Audio".equals(id)) {
+
+      new File(Config.DEFAULT_OUTPUT_DIRECTORY + "/audio/").mkdirs();
+      Intent intent = new Intent(this, AudioRecorder.class);
+      intent.putExtra(Config.EXTRA_RESULT_FILENAME,
+          Config.DEFAULT_OUTPUT_DIRECTORY + "/audio/" + System.currentTimeMillis()+ ".mp3");
+      this.startService(intent);
     
-    this.beginDataCollection(id);
-    /*
-     * Wait two seconds so that the video activity has time to load the camera.
-     * It will continue recording until you exit the video activity.
-     */
-    new Handler().postDelayed(new Runnable() {
-      @Override
-      public void run() {
-        ExperimentListActivity.this.launchExperiment(id);
-      }
-    }, 5000);
-    
+    } else {
+      this.beginDataCollection(id);
+
+      /*
+       * Wait two seconds so that the video activity has time to load the
+       * camera. It will continue recording until you exit the video activity.
+       */
+      new Handler().postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          ExperimentListActivity.this.launchExperiment(id);
+        }
+      }, 3000);
+    }
+
   }
 
 }

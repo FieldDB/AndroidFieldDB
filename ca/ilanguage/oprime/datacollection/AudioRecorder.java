@@ -1,5 +1,6 @@
 package ca.ilanguage.oprime.datacollection;
 
+import java.io.File;
 import java.io.IOException;
 
 import android.annotation.SuppressLint;
@@ -63,7 +64,7 @@ public class AudioRecorder extends Service {
     this.mNM = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
     // The PendingIntent to launch our activity if the user selects this
     // notification
-    Intent i = new Intent(this, OPrimeLib.class);
+    Intent i = new Intent(this, StopAudioRecorder.class);
     this.mContentIntent = PendingIntent.getActivity(this, 0, i, 0);
 
     int sdk = android.os.Build.VERSION.SDK_INT;
@@ -125,9 +126,11 @@ public class AudioRecorder extends Service {
       // "Error "+e,Toast.LENGTH_LONG).show();
     }
     if (this.mAudioResultsFile == null) {
-      this.mAudioResultsFile = "/sdcard/temp"+System.currentTimeMillis()+".mp3";
+      this.mAudioResultsFile = Config.DEFAULT_OUTPUT_DIRECTORY + "/audio/" + System.currentTimeMillis() + ".mp3";
     }
     this.mAudioResultsFile = this.mAudioResultsFile.replace("3gp", "mp3");
+    
+    (new File(mAudioResultsFile).getParentFile()).mkdirs();
     /*
      * turn on the recorder
      */

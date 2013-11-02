@@ -1,5 +1,6 @@
 package ca.ilanguage.oprime.datacollection;
 
+import java.io.File;
 import java.io.IOException;
 
 import android.annotation.SuppressLint;
@@ -117,7 +118,7 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
    */
   public boolean          D                      = true;
   protected SurfaceHolder holder;
-  String                  mAudioResultsFile      = "";
+  String                  mVideoResultsFile      = "";
   protected Camera        mCamera;
   protected Context       mContext;
   protected Activity      mParentUI;
@@ -200,7 +201,7 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
         this.mVideoRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.DEFAULT);
       }
 
-      this.mVideoRecorder.setOutputFile(this.mAudioResultsFile);
+      this.mVideoRecorder.setOutputFile(this.mVideoResultsFile);
       this.mVideoRecorder.setPreviewDisplay(holder.getSurface());
       
       try{
@@ -224,10 +225,10 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
     }
     Intent intent;
     intent = new Intent(this.mParentUI, AudioRecorder.class);
-    intent.putExtra(Config.EXTRA_RESULT_FILENAME,
-        this.mParentUI.getIntent().getExtras().getString(Config.EXTRA_RESULT_FILENAME));
+    intent.putExtra(Config.EXTRA_RESULT_FILENAME, mVideoResultsFile);
     this.mParentUI.startService(intent);
     this.mRecordingAudioInstead = true;
+    Log.e(TAG, "Recording audio instead " + this.mVideoResultsFile);
   }
 
   @Override
@@ -271,9 +272,15 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
     if (this.D)
       Log.v(TAG, " onPreExecute");
     TAG = Config.TAG;
-    this.mAudioResultsFile = this.mParentUI.getIntent().getExtras().getString(Config.EXTRA_RESULT_FILENAME);
+    this.mVideoResultsFile = this.mParentUI.getIntent().getExtras().getString(Config.EXTRA_RESULT_FILENAME);
+    if(mVideoResultsFile == null){
+      mVideoResultsFile = Config.DEFAULT_OUTPUT_DIRECTORY + "/video/Unnamed_result_file_" + System.currentTimeMillis()
+          + "_" + ".3gp";
+    }
+    (new File(mVideoResultsFile).getParentFile()).mkdirs();
+    
     if (this.D)
-      Log.d(TAG, "mAudioResultsFile" + this.mAudioResultsFile);
+      Log.d(TAG, "mAudioResultsFile" + this.mVideoResultsFile);
   }
 
   public void setContext(Context mContext) {
