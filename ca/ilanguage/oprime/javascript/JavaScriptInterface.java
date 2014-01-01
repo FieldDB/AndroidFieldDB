@@ -557,7 +557,7 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
 
   @JavascriptInterface
   public void setD(boolean newvalue) {
-    this.getUIParent().D = newvalue;
+    Config.D = newvalue;
   }
 
   public abstract void setUIParent(HTML5Activity UIParent);

@@ -3,9 +3,10 @@ package ca.ilanguage.oprime;
 public class Config {
   public static final int     AUTO_ADVANCE_NEXT_SUB_EXPERIMENT            = 59;
 
-  public static final boolean D                                           = true;
+  public static boolean D                                                 = true;
   public static final String  DEFAULT_LANGUAGE                            = "en";
   public static final String  DEFAULT_OUTPUT_DIRECTORY                    = "/sdcard/OPrime";
+  public static final String  WEB_APP_BASE_DIR                            = "www";
   public static final String  DEFAULT_PARTICIPANT_ID                      = "0000";
   public static final String  EMPTYSTRING                                 = "";
   public static final String  ENGLISH                                     = "en";
@@ -86,4 +87,7 @@ public class Config {
   public static final String  TAG                                         = "OPrime";
   public static final String  USER_AGENT_STRING                           = "OfflineAndroidApp";
 
+  public static String getStartUrl(){
+    return "file:///android_asset/www/index.html";
+  }
 }

@@ -51,4 +51,8 @@ public class Experiment {
     this.title = title;
   }
 
+  public String getLanguage() {
+    return "en";
+  }
+
 }
