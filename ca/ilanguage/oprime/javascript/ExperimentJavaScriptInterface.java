@@ -15,8 +15,7 @@ public class ExperimentJavaScriptInterface extends JavaScriptInterface implement
 
   private HTML5GameActivity mUIParent;
 
-  public ExperimentJavaScriptInterface(boolean d, String tag, String outputDir, Context context,
-      HTML5GameActivity UIParent, String assetsPrefix) {
+  public ExperimentJavaScriptInterface(boolean d, String tag, String outputDir, Context context, HTML5GameActivity UIParent, String assetsPrefix) {
     super(d, tag, outputDir, context, UIParent, assetsPrefix);
   }
 
@@ -52,13 +51,11 @@ public class ExperimentJavaScriptInterface extends JavaScriptInterface implement
     final int currentSubExperiment = Integer.parseInt(subex);
     ((HTML5GameActivity) this.getUIParent()).setCurrentSubex(currentSubExperiment);
 
-    String mDateString = (String) android.text.format.DateFormat.format("yyyy-MM-dd_kk_mm",
-        new java.util.Date(System.currentTimeMillis()));
+    String mDateString = (String) android.text.format.DateFormat.format("yyyy-MM-dd_kk_mm", new java.util.Date(System.currentTimeMillis()));
     mDateString = mDateString.replaceAll("/", "-").replaceAll(" ", "-");
 
     OPrimeApp app = this.getApp();
-    String resultsFile = app.getExperiment().getParticipant().getCode() + "_" + app.getLanguage()
-        + currentSubExperiment + "_"
+    String resultsFile = app.getExperiment().getParticipant().getCode() + "_" + app.getLanguage() + currentSubExperiment + "_"
         + app.getSubExperiments().get(currentSubExperiment).getTitle().replaceAll(" ", "_") + "-" + mDateString;
 
     Intent intent = new Intent(app.getSubExperiments().get(currentSubExperiment).getIntentToCallThisSubExperiment());
@@ -68,8 +65,7 @@ public class ExperimentJavaScriptInterface extends JavaScriptInterface implement
     intent.putExtra(Config.EXTRA_RESULT_FILENAME, this.mOutputDir + "video/" + resultsFile + ".3gp");
     this.getUIParent().startActivityForResult(intent, Config.EXPERIMENT_COMPLETED);
 
-    app.getSubExperiments().get(currentSubExperiment)
-        .setResultsFileWithoutSuffix(this.mOutputDir + "video/" + resultsFile);
+    app.getSubExperiments().get(currentSubExperiment).setResultsFileWithoutSuffix(this.mOutputDir + "video/" + resultsFile);
     if (this.D)
       Log.d(this.TAG, "setResultsFileWithoutSuffix sub experiment:" + resultsFile);
 
@@ -93,15 +89,13 @@ public class ExperimentJavaScriptInterface extends JavaScriptInterface implement
   @Deprecated
   @JavascriptInterface
   public void startVideoRecorderWithResult() {
-    String mDateString = (String) android.text.format.DateFormat.format("yyyy-MM-dd_kk_mm",
-        new java.util.Date(System.currentTimeMillis()));
+    String mDateString = (String) android.text.format.DateFormat.format("yyyy-MM-dd_kk_mm", new java.util.Date(System.currentTimeMillis()));
     mDateString = mDateString.replaceAll("/", "-").replaceAll(" ", "-");
 
     OPrimeApp app = this.getApp();
     int currentSubExperiment = ((HTML5GameActivity) this.getUIParent()).getCurrentSubex();
 
-    String resultsFile = app.getExperiment().getParticipant().getCode() + "_" + app.getLanguage()
-        + currentSubExperiment + "_"
+    String resultsFile = app.getExperiment().getParticipant().getCode() + "_" + app.getLanguage() + currentSubExperiment + "_"
         + app.getSubExperiments().get(currentSubExperiment).getTitle().replaceAll(" ", "_") + "-" + mDateString;
 
     if (this.D) {
@@ -109,8 +103,7 @@ public class ExperimentJavaScriptInterface extends JavaScriptInterface implement
     }
     this.startVideoRecorder(resultsFile);
 
-    app.getSubExperiments().get(currentSubExperiment)
-        .setResultsFileWithoutSuffix(this.mOutputDir + "video/" + resultsFile);
+    app.getSubExperiments().get(currentSubExperiment).setResultsFileWithoutSuffix(this.mOutputDir + "video/" + resultsFile);
   }
 
 }

@@ -54,10 +54,9 @@ public abstract class HTML5Activity extends Activity {
   public class HTML5JavaScriptInterface extends JavaScriptInterface {
     private static final long serialVersionUID = 373085850425945181L;
 
-    HTML5Activity             mUIParent;
+    HTML5Activity mUIParent;
 
-    public HTML5JavaScriptInterface(boolean d, String tag, String outputDir, Context context, HTML5Activity UIParent,
-        String assetsPrefix) {
+    public HTML5JavaScriptInterface(boolean d, String tag, String outputDir, Context context, HTML5Activity UIParent, String assetsPrefix) {
       super(d, tag, outputDir, context, UIParent, assetsPrefix);
     }
 
@@ -96,8 +95,7 @@ public abstract class HTML5Activity extends Activity {
        * Handle CORS server refusal to connect by telling user the entire error.
        */
       if (cm.message().startsWith("XMLHttpRequest cannot load")) {
-        new AlertDialog.Builder(HTML5Activity.this).setTitle("")
-            .setMessage(cm.message() + "\nPlease contact the server administrator.")
+        new AlertDialog.Builder(HTML5Activity.this).setTitle("").setMessage(cm.message() + "\nPlease contact the server administrator.")
             .setPositiveButton(android.R.string.ok, new AlertDialog.OnClickListener() {
               @Override
               public void onClick(DialogInterface dialog, int which) {
@@ -110,13 +108,12 @@ public abstract class HTML5Activity extends Activity {
 
     @Override
     public boolean onJsAlert(WebView view, String url, String message, final JsResult result) {
-      new AlertDialog.Builder(HTML5Activity.this).setTitle("").setMessage(message)
-          .setPositiveButton(android.R.string.ok, new AlertDialog.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-              result.confirm();
-            }
-          }).setCancelable(false).create().show();
+      new AlertDialog.Builder(HTML5Activity.this).setTitle("").setMessage(message).setPositiveButton(android.R.string.ok, new AlertDialog.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+          result.confirm();
+        }
+      }).setCancelable(false).create().show();
 
       return true;
     }
@@ -142,18 +139,17 @@ public abstract class HTML5Activity extends Activity {
 
     @Override
     public boolean onJsConfirm(WebView view, String url, String message, final JsResult result) {
-      new AlertDialog.Builder(HTML5Activity.this).setTitle("").setMessage(message)
-          .setPositiveButton(android.R.string.ok, new AlertDialog.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-              result.confirm();
-            }
-          }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-              result.cancel();
-            }
-          }).create().show();
+      new AlertDialog.Builder(HTML5Activity.this).setTitle("").setMessage(message).setPositiveButton(android.R.string.ok, new AlertDialog.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+          result.confirm();
+        }
+      }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int id) {
+          result.cancel();
+        }
+      }).create().show();
 
       return true;
     }
@@ -194,8 +190,7 @@ public abstract class HTML5Activity extends Activity {
           @Override
           public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             // Send result back to JS
-            result.confirm(year + "-" + String.format("%02d", (monthOfYear + 1)) + "-"
-                + String.format("%02d", (dayOfMonth)) + " 00:00:00");
+            result.confirm(year + "-" + String.format("%02d", (monthOfYear + 1)) + "-" + String.format("%02d", (dayOfMonth)) + " 00:00:00");
           }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE));
 
@@ -242,25 +237,20 @@ public abstract class HTML5Activity extends Activity {
         TextView prompt = (TextView) promptsView.findViewById(R.id.prompt);
         prompt.setText(message);
         // set dialog message
-        alertDialogBuilder
-            .setCancelable(false)
-            .setPositiveButton(HTML5Activity.this.getString(R.string.ok_label), new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int id) {
-                // get user input and set it to result
-                // edit text
-                Toast.makeText(HTML5Activity.this.getApplicationContext(), userInput.getText().toString(),
-                    Toast.LENGTH_LONG).show();
-                result.confirm(userInput.getText().toString());
-              }
-            })
-            .setNegativeButton(HTML5Activity.this.getString(R.string.cancel_label),
-                new DialogInterface.OnClickListener() {
-                  @Override
-                  public void onClick(DialogInterface dialog, int id) {
-                    result.cancel();
-                  }
-                });
+        alertDialogBuilder.setCancelable(false).setPositiveButton(HTML5Activity.this.getString(R.string.ok_label), new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int id) {
+            // get user input and set it to result
+            // edit text
+            Toast.makeText(HTML5Activity.this.getApplicationContext(), userInput.getText().toString(), Toast.LENGTH_LONG).show();
+            result.confirm(userInput.getText().toString());
+          }
+        }).setNegativeButton(HTML5Activity.this.getString(R.string.cancel_label), new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int id) {
+            result.cancel();
+          }
+        });
 
         // create alert dialog
         AlertDialog alertDialog = alertDialogBuilder.create();
@@ -334,7 +324,7 @@ public abstract class HTML5Activity extends Activity {
     return list.size() > 0;
   }
 
-  public boolean   D   = true;
+  public boolean D = true;
 
   protected String logs;
 
@@ -344,7 +334,7 @@ public abstract class HTML5Activity extends Activity {
 
   protected String mWebAppBaseDir;
 
-  public WebView   mWebView;
+  public WebView mWebView;
 
   protected String TAG = "HTML5Activity";
 
@@ -418,8 +408,7 @@ public abstract class HTML5Activity extends Activity {
     case Config.PICTURE_TAKEN:
       if (data != null) {
         String pictureFilePath = data.getExtras().getString(Config.EXTRA_RESULT_FILENAME);
-        this.mWebView.loadUrl("javascript:OPrime.hub.publish('pictureCaptureSucessfullyCompleted','" + pictureFilePath
-            + "');");
+        this.mWebView.loadUrl("javascript:OPrime.hub.publish('pictureCaptureSucessfullyCompleted','" + pictureFilePath + "');");
         if (this.D)
           Log.d(this.TAG, "In the result for PICTURE_TAKEN. " + pictureFilePath);
         break;
@@ -464,8 +453,7 @@ public abstract class HTML5Activity extends Activity {
       this.getJavaScriptInterface().mMediaPlayer.stop();
       this.getJavaScriptInterface().mMediaPlayer.release();
     }
-    if (this.getJavaScriptInterface().mListenForEndAudioInterval != null
-        && !this.getJavaScriptInterface().mListenForEndAudioInterval.isCancelled()) {
+    if (this.getJavaScriptInterface().mListenForEndAudioInterval != null && !this.getJavaScriptInterface().mListenForEndAudioInterval.isCancelled()) {
       this.getJavaScriptInterface().mListenForEndAudioInterval.cancel(true);
       // getJavaScriptInterface().mListenForEndAudioInterval = null;
     }
@@ -487,16 +475,11 @@ public abstract class HTML5Activity extends Activity {
     } else if (item.getItemId() == R.id.result_folder) {
       final boolean fileManagerAvailable = isIntentAvailable(this, "org.openintents.action.PICK_FILE");
       if (!fileManagerAvailable) {
-        Toast
-            .makeText(
-                this.getApplicationContext(),
-                "To open and export recorded files or "
-                    + "draft data you can install the OI File Manager, "
-                    + "it allows you to browse your SDCARD directly on your mobile device."
-                    + " There are other apps which allow you to view the files, but OI is the one this app uses when you click on this button",
-                Toast.LENGTH_LONG).show();
-        Intent goToMarket = new Intent(Intent.ACTION_VIEW).setData(Uri
-            .parse("market://details?id=org.openintents.filemanager"));
+        Toast.makeText(
+            this.getApplicationContext(),
+            "To open and export recorded files or " + "draft data you can install the OI File Manager, " + "it allows you to browse your SDCARD directly on your mobile device."
+                + " There are other apps which allow you to view the files, but OI is the one this app uses when you click on this button", Toast.LENGTH_LONG).show();
+        Intent goToMarket = new Intent(Intent.ACTION_VIEW).setData(Uri.parse("market://details?id=org.openintents.filemanager"));
         this.startActivity(goToMarket);
       } else {
         Intent openResults = new Intent("org.openintents.action.PICK_FILE");
@@ -555,8 +538,7 @@ public abstract class HTML5Activity extends Activity {
     // //TODO change to this
     webSettings.setDatabasePath("/data/data/" + this.getApplicationContext().getPackageName() + "/databases/");
     if (this.D)
-      Log.d(this.TAG, "Turning on dom storage enabled webSettings.setDomStorageEnabled " + "/data/data/"
-          + this.getApplicationContext().getPackageName() + "/databases/");
+      Log.d(this.TAG, "Turning on dom storage enabled webSettings.setDomStorageEnabled " + "/data/data/" + this.getApplicationContext().getPackageName() + "/databases/");
 
     webSettings.setUserAgentString(webSettings.getUserAgentString() + " " + Config.USER_AGENT_STRING);
 
@@ -598,8 +580,7 @@ public abstract class HTML5Activity extends Activity {
      * assets works as expected
      */
     else if (android.os.Build.VERSION.SDK_INT <= 10) {
-      Log.w(this.TAG, "This Android SDK " + android.os.Build.VERSION.SDK_INT
-          + " may or may not be able to display a file if the HTML5 uses a # or ? to set variables.");
+      Log.w(this.TAG, "This Android SDK " + android.os.Build.VERSION.SDK_INT + " may or may not be able to display a file if the HTML5 uses a # or ? to set variables.");
       this.mWebView.setWebViewClient(new OPrimeWebViewClient());
     }
 

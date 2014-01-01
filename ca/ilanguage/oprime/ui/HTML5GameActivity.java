@@ -20,9 +20,9 @@ import ca.ilanguage.oprime.model.SubExperimentBlock;
 
 public class HTML5GameActivity extends HTML5Activity {
 
-  private OPrimeApp           app;
-  protected Boolean           mAutoAdvance  = false;
-  protected int               mCurrentSubex = 0;
+  private OPrimeApp app;
+  protected Boolean mAutoAdvance = false;
+  protected int mCurrentSubex = 0;
   private JavaScriptInterface mJavaScriptInterface;
 
   protected void checkIfNeedToPrepareExperiment(boolean activtySaysToPrepareExperiment) {
@@ -102,8 +102,7 @@ public class HTML5GameActivity extends HTML5Activity {
     /*
      * Build the participant ID and save the start time to the preferences.
      */
-    p.setCode(testDayNumber + experimenter + participantNumberOnDay + firstname.substring(0, 1).toUpperCase()
-        + lastname.substring(0, 1).toUpperCase());
+    p.setCode(testDayNumber + experimenter + participantNumberOnDay + firstname.substring(0, 1).toUpperCase() + lastname.substring(0, 1).toUpperCase());
     p.setFirstname(firstname);
     p.setLastname(lastname);
     p.setExperimenterCode(experimenter);
@@ -133,8 +132,7 @@ public class HTML5GameActivity extends HTML5Activity {
     switch (requestCode) {
     case Config.EXPERIMENT_COMPLETED:
       if (data != null) {
-        SubExperimentBlock completedExp = (SubExperimentBlock) data.getExtras().getSerializable(
-            Config.EXTRA_SUB_EXPERIMENT);
+        SubExperimentBlock completedExp = (SubExperimentBlock) data.getExtras().getSerializable(Config.EXTRA_SUB_EXPERIMENT);
         this.app.getSubExperiments().set(this.mCurrentSubex, completedExp);
 
         Intent i = new Intent(this, SubExperimentToJson.class);
@@ -144,19 +142,16 @@ public class HTML5GameActivity extends HTML5Activity {
             .getExperiment()
             .getParticipant()
             .setStatus(
-                this.app.getExperiment().getParticipant().getStatus() + ":::" + completedExp.getTitle() + " in "
-                    + (new Locale(completedExp.getLanguage())).getDisplayLanguage() + " --- "
-                    + completedExp.getDisplayedStimuli() + "/" + completedExp.getStimuli().size() + " Completed ");
+                this.app.getExperiment().getParticipant().getStatus() + ":::" + completedExp.getTitle() + " in " + (new Locale(completedExp.getLanguage())).getDisplayLanguage()
+                    + " --- " + completedExp.getDisplayedStimuli() + "/" + completedExp.getStimuli().size() + " Completed ");
         this.trackCompletedExperiment(completedExp);
 
         this.app.writePrivateParticipantToFile();
 
-        String intentAfterSubExperiment = this.app.getExperiment().getSubExperiments().get(this.mCurrentSubex)
-            .getIntentToCallAfterThisSubExperiment();
+        String intentAfterSubExperiment = this.app.getExperiment().getSubExperiments().get(this.mCurrentSubex).getIntentToCallAfterThisSubExperiment();
         if (!"".equals(intentAfterSubExperiment)) {
           Intent takepicture = new Intent(intentAfterSubExperiment);
-          takepicture.putExtra(Config.EXTRA_RESULT_FILENAME,
-              completedExp.getResultsFileWithoutSuffix().replace("video", "images") + ".jpg");
+          takepicture.putExtra(Config.EXTRA_RESULT_FILENAME, completedExp.getResultsFileWithoutSuffix().replace("video", "images") + ".jpg");
           this.startActivity(takepicture);
         }
       }
@@ -241,8 +236,7 @@ public class HTML5GameActivity extends HTML5Activity {
     this.D = this.getApp().isD();
     this.mOutputDir = this.getApp().getOutputDir();
     this.mInitialAppServerUrl = "file:///android_asset/index.html";// "http://192.168.0.180:3001/";
-    this.setJavaScriptInterface(new ExperimentJavaScriptInterface(this.D, this.TAG, this.mOutputDir, this
-        .getApplicationContext(), this, ""));
+    this.setJavaScriptInterface(new ExperimentJavaScriptInterface(this.D, this.TAG, this.mOutputDir, this.getApplicationContext(), this, ""));
     if (this.D)
       Log.d(this.TAG, "Using the OPrime experiment javascript interface.");
 
