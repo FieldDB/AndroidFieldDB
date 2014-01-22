@@ -35,7 +35,7 @@ public class OPrimeStorybookExperimentTutorial extends Activity {
 	private String mCurrentSubExperimentLanguage = OPrime.ENGLISH;
 	public long mExperimentLaunch;
 	public long mExperimentQuit;
-	public static final String OUTPUT_DIRECTORY = "/sdcard/OPrime/MorphologicalAwarenessShort/video/";
+	public static final String OUTPUT_DIRECTORY = "/sdcard/OPrime/StoryBook/video/";
 
 	public ArrayList<String> mSubExperimentParticipantVideos = new ArrayList<String>();
 	public ArrayList<String> mParticipantsCodesCompleted = new ArrayList<String>();
@@ -296,6 +296,8 @@ public class OPrimeStorybookExperimentTutorial extends Activity {
 			intent.putExtra(OPrime.EXTRA_LANGUAGE, OPrime.ENGLISH);
 			intent.putExtra(OPrime.EXTRA_PARTICIPANT_ID, mParticipantId);
 			intent.putExtra(OPrime.EXTRA_OUTPUT_DIR, OUTPUT_DIRECTORY);
+			intent.putExtra("videoQuality",500000);
+			intent.putExtra(OPrime.EXTRA_RESULT_FILENAME, OUTPUT_DIRECTORY + "/"+System.currentTimeMillis() + ".3gp");
 			intent.putExtra(OPrime.EXTRA_EXPERIMENT_TRIAL_INFORMATION,
 					mExperimentTrialHeader);
 
