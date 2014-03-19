@@ -1,36 +1,29 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativelayout"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp" >
-
-    <TextView
-        android:id="@+id/datum_detail"
-        style="?android:attr/textAppearanceLarge"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Example:"
-        android:textIsSelectable="true"
-        tools:context=".DatumDetailFragment" />
+    android:layout_height="fill_parent" >
 
     <ImageView
         android:id="@+id/image_view"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:layout_marginRight="10dp"
-        android:gravity="center" >
-    </ImageView>
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:src="@drawable/ic_launcher" />
 
     <EditText
-        android:id="@+id/utterance_edit"
+        android:id="@+id/datum_detail"
         android:layout_width="wrap_content"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/image_view"
+        android:layout_alignLeft="@+id/image_view"
+        android:layout_alignRight="@+id/image_view"
+        android:layout_alignTop="@+id/image_view"
+        android:background="#77000000"
+        android:gravity="center"
         android:hint="Word, sentence, phrase, paragraph example"
-        android:inputType="text" />
+        android:inputType="text"
+        android:text="The quick brown fox jumped over the fence"
+        android:textColor="#FFFFFF"
+        android:textSize="25sp" />
 
-</LinearLayout>
+</RelativeLayout>
