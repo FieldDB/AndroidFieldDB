@@ -1,8 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relativelayout"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent"
+    android:background="#ff000000" >
 
     <ImageView
         android:id="@+id/image_view"
@@ -10,20 +10,68 @@
         android:layout_height="fill_parent"
         android:src="@drawable/ic_launcher" />
 
-    <EditText
-        android:id="@+id/datum_detail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:layout_alignBottom="@+id/image_view"
         android:layout_alignLeft="@+id/image_view"
         android:layout_alignRight="@+id/image_view"
         android:layout_alignTop="@+id/image_view"
-        android:background="#77000000"
-        android:gravity="center"
-        android:hint="Word, sentence, phrase, paragraph example"
-        android:inputType="text"
-        android:text="The quick brown fox jumped over the fence"
-        android:textColor="#FFFFFF"
-        android:textSize="25sp" />
+        android:gravity="center" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="#55000000"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <EditText
+                android:id="@+id/utterance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:hint="Noqata tusunayawanmi"
+                android:inputType="textMultiLine"
+                android:scrollHorizontally="false"
+                android:text=""
+                android:textColor="#FFFFFF"
+                android:textSize="25sp" />
+
+            <EditText
+                android:id="@+id/morphemes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:hint="noqa-ta tusu-nay-wa-n-mi"
+                android:inputType="textMultiLine"
+                android:scrollHorizontally="false"
+                android:text=""
+                android:textColor="#FFFFFF" />
+
+            <EditText
+                android:id="@+id/gloss"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:hint="I-ACC dance-IMP-wan"
+                android:inputType="textMultiLine"
+                android:scrollHorizontally="false"
+                android:text=""
+                android:textColor="#FFFFFF" />
+
+            <EditText
+                android:id="@+id/translation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:hint="I feel like dancing."
+                android:inputType="textMultiLine"
+                android:scrollHorizontally="false"
+                android:text=""
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+    </ScrollView>
 
 </RelativeLayout>
