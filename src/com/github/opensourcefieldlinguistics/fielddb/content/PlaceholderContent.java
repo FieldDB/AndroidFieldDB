@@ -25,7 +25,7 @@ public class PlaceholderContent {
 
     static {
         // Add 3 sample items.
-        addItem(new DummyItem("1", "Lore ipsum wie oienoiwaenoa oaiwneoiawneoiajeow"));
+        addItem(new DummyItem("1", "Lore ipsum wie oienoiwaenoa oaiwneoiawneoiajeow  ipsum wie oienoiwaenoa oaiwneoiawneoiajeow  ipsum wie oienoiwaenoa oaiwneoiawneoiajeow  ipsum wie oienoiwaenoa oaiwneoiawneoiajeow  ipsum wie oienoiwaenoa oaiwneoiawneoiajeow  ipsum wie oienoiwaenoa oaiwneoiawneoiajeow  ipsum wie oienoiwaenoa oaiwneoiawneoiajeow"));
         addItem(new DummyItem("2", "Lorem"));
         addItem(new DummyItem("3", "Eioin iwaoin aionwea oiwe ew"));
     }

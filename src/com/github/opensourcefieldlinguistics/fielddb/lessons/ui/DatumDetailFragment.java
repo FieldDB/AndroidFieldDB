@@ -82,7 +82,7 @@ public class DatumDetailFragment extends Fragment {
 
 		// Show the dummy content as text in a TextView.
 		if (mItem != null) {
-			((TextView) rootView.findViewById(R.id.datum_detail))
+			((TextView) rootView.findViewById(R.id.utterance))
 					.setText(mItem.content);
 		}
 
