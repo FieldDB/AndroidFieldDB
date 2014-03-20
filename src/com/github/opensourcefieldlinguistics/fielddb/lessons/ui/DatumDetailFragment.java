@@ -1,6 +1,10 @@
 package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
 
+import java.io.File;
+
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
@@ -84,6 +89,16 @@ public class DatumDetailFragment extends Fragment {
 		if (mItem != null) {
 			((TextView) rootView.findViewById(R.id.utterance))
 					.setText(mItem.content);
+			File image = new File("/sdcard/FieldDB/1.jpg");
+			if (image.exists()) {
+				ImageView iv = (ImageView) rootView
+						.findViewById(R.id.image_view);
+				Bitmap d = new BitmapDrawable(this.getResources(),
+						image.getAbsolutePath()).getBitmap();
+				int nh = (int) (d.getHeight() * (512.0 / d.getWidth()));
+				Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
+				iv.setImageBitmap(scaled);
+			}
 		}
 
 		return rootView;
