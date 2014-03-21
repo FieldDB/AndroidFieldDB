@@ -13,43 +13,53 @@ import java.util.Map;
  */
 public class PlaceholderContent {
 
-    /**
-     * An array of sample (dummy) items.
-     */
-    public static List<DummyItem> ITEMS = new ArrayList<DummyItem>();
+	/**
+	 * An array of sample (dummy) items.
+	 */
+	public static List<Datum> ITEMS = new ArrayList<Datum>();
 
-    /**
-     * A map of sample (dummy) items, by ID.
-     */
-    public static Map<String, DummyItem> ITEM_MAP = new HashMap<String, DummyItem>();
+	/**
+	 * A map of sample (dummy) items, by ID.
+	 */
+	public static Map<String, Datum> ITEM_MAP = new HashMap<String, Datum>();
 
-    static {
-        // Add 3 sample items.
-        addItem(new DummyItem("1", "Lore ipsum wie oienoiwaenoa oaiwneoiawneoiajeow  ipsum wie oienoiwaenoa oaiwneoiawneoiajeow  ipsum wie oienoiwaenoa oaiwneoiawneoiajeow  ipsum wie oienoiwaenoa oaiwneoiawneoiajeow  ipsum wie oienoiwaenoa oaiwneoiawneoiajeow  ipsum wie oienoiwaenoa oaiwneoiawneoiajeow  ipsum wie oienoiwaenoa oaiwneoiawneoiajeow"));
-        addItem(new DummyItem("2", "Lorem"));
-        addItem(new DummyItem("3", "Eioin iwaoin aionwea oiwe ew"));
-    }
+	static {
+		// Add 3 sample items.
+		// addItem(new Datum(
+		// "Lorem ipsum wie oienoiwaenoa oaiwneoiawneoiajeow  ipsum wie oienoiwaenoa oaiwneoiawneoiajeow  ipsum wie oienoiwaenoa oaiwneoiawneoiajeow  ipsum wie oienoiwaenoa oaiwneoiawneoiajeow  ipsum wie oienoiwaenoa oaiwneoiawneoiajeow  ipsum wie oienoiwaenoa oaiwneoiawneoiajeow  ipsum wie oienoiwaenoa oaiwneoiawneoiajeow"));
+		Datum hello = new Datum("გამარჯობა", "gamardʒoba", "hello", "Hello",
+				"(Standard greeting)");
+		hello.addImage("gamardZoba.jpg");
+		addItem(hello);
 
-    private static void addItem(DummyItem item) {
-        ITEMS.add(item);
-        ITEM_MAP.put(item.id, item);
-    }
+		addItem(new Datum("არა მადლობა", "ara madloba", "no.thanks",
+				"No thanks", "(most common form)"));
+		addItem(new Datum("მადლობა", "madloba", "thanks", "Thanks",
+				"(most common form)"));
 
-    /**
-     * A dummy item representing a piece of content.
-     */
-    public static class DummyItem {
-        public String id;
-        public String content;
+		Datum howMuch = new Datum("რა ღირს?", "ra ɣirs es?", "what worth is",
+				"How much is this?");
+		howMuch.addImage("ra_ghirs_es.jpg");
+		addItem(howMuch);
 
-        public DummyItem(String id, String content) {
-            this.id = id;
-            this.content = content;
-        }
+		Datum repeat = new Datum("გთხოვთ გაიმეორეთ სამჯერ",
+				"ktχoft gaimeorɛt samdʒɹ", "please repeat 3.times",
+				"Please repeat 3 times?");
+		repeat.addImage("ktxoft_gaimeorets_samdZr.jpg");
+		addItem(repeat);
 
-        @Override
-        public String toString() {
-            return content;
-        }
-    }
+		addItem(new Datum("გაიმეორეთ გთხოვთ", "gaimeorɛt ktχoft",
+				"repeat please", "Repeat please?"));
+
+		Datum dontHave = new Datum("არ მაქვს", "ar markʰfs", "no have",
+				"I don't have any", "(to begging children).");
+		dontHave.addImage("ar_makfs.jpg");
+		addItem(dontHave);
+	}
+
+	private static void addItem(Datum item) {
+		ITEMS.add(item);
+		ITEM_MAP.put(item.id, item);
+	}
+
 }

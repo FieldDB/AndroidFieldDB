@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.github.opensourcefieldlinguistics.fielddb.content.Datum;
 import com.github.opensourcefieldlinguistics.fielddb.content.PlaceholderContent;
 
 /**
@@ -70,15 +72,12 @@ public class DatumListFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TODO: replace with a real list adapter.
-        setListAdapter(new ArrayAdapter<PlaceholderContent.DummyItem>(
+        setListAdapter(new DatumRowArrayAdapter(
                 getActivity(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
                 PlaceholderContent.ITEMS));
     }
 
-    @Override
+	@Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -115,7 +114,7 @@ public class DatumListFragment extends ListFragment {
 
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(PlaceholderContent.ITEMS.get(position).id);
+        mCallbacks.onItemSelected(PlaceholderContent.ITEMS.get(position).getId());
     }
 
     @Override
