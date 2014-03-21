@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 import com.github.opensourcefieldlinguistics.fielddb.content.Datum;
 import com.github.opensourcefieldlinguistics.fielddb.content.PlaceholderContent;
-import com.github.opensourcefieldlinguistics.fielddb.lessons.R;
+import com.github.opensourcefieldlinguistics.fielddb.lessons.georgian.R;
 
 /**
  * A fragment representing a single Datum detail screen. This fragment is either
