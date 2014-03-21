@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
+import com.github.opensourcefieldlinguistics.fielddb.content.Datum;
 import com.github.opensourcefieldlinguistics.fielddb.content.PlaceholderContent;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.R;
 
@@ -35,7 +36,7 @@ public class DatumDetailFragment extends Fragment {
 	/**
 	 * The dummy content this fragment is presenting.
 	 */
-	private PlaceholderContent.DummyItem mItem;
+	private Datum mItem;
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -87,9 +88,17 @@ public class DatumDetailFragment extends Fragment {
 
 		// Show the dummy content as text in a TextView.
 		if (mItem != null) {
-			((TextView) rootView.findViewById(R.id.utterance))
-					.setText(mItem.content);
-			File image = new File("/sdcard/FieldDB/1.jpg");
+			((TextView) rootView.findViewById(R.id.orthography)).setText(mItem
+					.getOrthography());
+			((TextView) rootView.findViewById(R.id.morphemes)).setText(mItem
+					.getMorphemes());
+			((TextView) rootView.findViewById(R.id.gloss)).setText(mItem
+					.getGloss());
+			((TextView) rootView.findViewById(R.id.translation)).setText(mItem
+					.getTranslation());
+			((TextView) rootView.findViewById(R.id.context)).setText(mItem
+					.getContext());
+			File image = new File("/sdcard/FieldDB/" + mItem.getMainImage());
 			if (image.exists()) {
 				ImageView iv = (ImageView) rootView
 						.findViewById(R.id.image_view);

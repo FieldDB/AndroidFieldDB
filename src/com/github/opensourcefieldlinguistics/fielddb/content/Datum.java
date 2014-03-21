@@ -6,10 +6,11 @@ public class Datum {
 	protected String id;
 	protected String rev;
 	protected DatumField utterance;
-	protected DatumField morphmemes;
+	protected DatumField morphemes;
 	protected DatumField gloss;
 	protected DatumField translation;
 	protected DatumField orthography;
+	protected DatumField context;
 	protected ArrayList<AudioVideo> imageFiles;
 	protected ArrayList<AudioVideo> audioFiles;
 	protected ArrayList<AudioVideo> videoFiles;
@@ -21,20 +22,21 @@ public class Datum {
 	protected String actualJSON;
 
 	public Datum(String id, String rev, DatumField utterance,
-			DatumField morphmemes, DatumField gloss, DatumField translation,
-			DatumField orthography, ArrayList<AudioVideo> imageFiles,
-			ArrayList<AudioVideo> audioFiles, ArrayList<AudioVideo> videoFiles,
-			ArrayList<String> locations, ArrayList<String> similar,
-			ArrayList<String> reminders, ArrayList<String> tags,
-			ArrayList<String> coments, String actualJSON) {
+			DatumField morphemes, DatumField gloss, DatumField translation,
+			DatumField orthography, DatumField context,
+			ArrayList<AudioVideo> imageFiles, ArrayList<AudioVideo> audioFiles,
+			ArrayList<AudioVideo> videoFiles, ArrayList<String> locations,
+			ArrayList<String> similar, ArrayList<String> reminders,
+			ArrayList<String> tags, ArrayList<String> coments, String actualJSON) {
 		super();
 		this.id = id;
 		this.rev = rev;
 		this.utterance = utterance;
-		this.morphmemes = morphmemes;
+		this.morphemes = morphemes;
 		this.gloss = gloss;
 		this.translation = translation;
 		this.orthography = orthography;
+		this.context = context;
 		this.imageFiles = imageFiles;
 		this.audioFiles = audioFiles;
 		this.videoFiles = videoFiles;
@@ -46,14 +48,77 @@ public class Datum {
 		this.actualJSON = actualJSON;
 	}
 
+	public Datum(String orthography) {
+		super();
+		this.id = System.currentTimeMillis() + "";
+		this.utterance = new DatumField("utterance", orthography);
+		this.morphemes = new DatumField("morphemes", "");
+		this.gloss = new DatumField("gloss", "");
+		this.translation = new DatumField("translation", "");
+		this.orthography = new DatumField("orthography", orthography);
+		this.context = new DatumField("context", " ");
+		this.imageFiles = new ArrayList<Datum.AudioVideo>();
+		this.audioFiles = new ArrayList<Datum.AudioVideo>();
+		this.videoFiles = new ArrayList<Datum.AudioVideo>();
+		this.locations = new ArrayList<String>();
+		this.similar = new ArrayList<String>();
+		this.reminders = new ArrayList<String>();
+		this.tags = new ArrayList<String>();
+		this.coments = new ArrayList<String>();
+		this.actualJSON = "";
+	}
+
+	public Datum(String orthography, String morphemes, String gloss,
+			String translation) {
+		super();
+		this.id = System.currentTimeMillis() + translation;
+		this.utterance = new DatumField("utterance", orthography);
+		this.morphemes = new DatumField("morphemes", morphemes);
+		this.gloss = new DatumField("gloss", gloss);
+		this.translation = new DatumField("translation", translation);
+		this.orthography = new DatumField("orthography", orthography);
+		this.context = new DatumField("context", " ");
+		this.imageFiles = new ArrayList<Datum.AudioVideo>();
+		this.audioFiles = new ArrayList<Datum.AudioVideo>();
+		this.videoFiles = new ArrayList<Datum.AudioVideo>();
+		this.locations = new ArrayList<String>();
+		this.similar = new ArrayList<String>();
+		this.reminders = new ArrayList<String>();
+		this.tags = new ArrayList<String>();
+		this.coments = new ArrayList<String>();
+		this.actualJSON = "";
+	}
+
+	public Datum(String orthography, String morphemes, String gloss,
+			String translation, String context) {
+		super();
+		this.id = System.currentTimeMillis() + translation;
+		this.utterance = new DatumField("utterance", orthography);
+		this.morphemes = new DatumField("morphemes", morphemes);
+		this.gloss = new DatumField("gloss", gloss);
+		this.translation = new DatumField("translation", translation);
+		this.orthography = new DatumField("orthography", orthography);
+		this.context = new DatumField("context", context);
+		this.imageFiles = new ArrayList<Datum.AudioVideo>();
+		this.audioFiles = new ArrayList<Datum.AudioVideo>();
+		this.videoFiles = new ArrayList<Datum.AudioVideo>();
+		this.locations = new ArrayList<String>();
+		this.similar = new ArrayList<String>();
+		this.reminders = new ArrayList<String>();
+		this.tags = new ArrayList<String>();
+		this.coments = new ArrayList<String>();
+		this.actualJSON = "";
+	}
+
 	public Datum() {
 		super();
 		this.id = System.currentTimeMillis() + "";
 		this.utterance = new DatumField("utterance", "");
-		this.morphmemes = new DatumField("morphmemes", "");
+		this.morphemes = new DatumField("morphemes", "");
 		this.gloss = new DatumField("gloss", "");
 		this.translation = new DatumField("translation", "");
 		this.orthography = new DatumField("orthography", "");
+		this.context = new DatumField("context", " ");
 		this.imageFiles = new ArrayList<Datum.AudioVideo>();
 		this.audioFiles = new ArrayList<Datum.AudioVideo>();
 		this.videoFiles = new ArrayList<Datum.AudioVideo>();
@@ -89,12 +154,12 @@ public class Datum {
 		this.utterance.setValue(utterance);
 	}
 
-	public String getMorphmemes() {
-		return morphmemes.getValue();
+	public String getMorphemes() {
+		return morphemes.getValue();
 	}
 
-	public void setMorphmemes(String morphmemes) {
-		this.morphmemes.setValue(morphmemes);
+	public void setMorphemes(String morphemes) {
+		this.morphemes.setValue(morphemes);
 	}
 
 	public String getGloss() {
@@ -119,6 +184,14 @@ public class Datum {
 
 	public void setOrthography(String orthography) {
 		this.orthography.setValue(orthography);
+	}
+
+	public String getContext() {
+		return this.context.getValue();
+	}
+
+	public void setContext(String context) {
+		this.context.setValue(context);
 	}
 
 	public ArrayList<AudioVideo> getImageFiles() {
@@ -193,6 +266,17 @@ public class Datum {
 		this.actualJSON = actualJSON;
 	}
 
+	public void addImage(String filename) {
+		this.imageFiles.add(new AudioVideo(filename));
+	}
+
+	public String getMainImage() {
+		if (this.imageFiles == null || this.imageFiles.size() == 0) {
+			return "missing.jpg";
+		}
+		return this.imageFiles.get(0).getFilename();
+	}
+
 	public class AudioVideo {
 		protected String filename;
 		protected String description;
@@ -205,15 +289,15 @@ public class Datum {
 			URL = uRL;
 		}
 
-		public AudioVideo(String filenameL) {
+		public AudioVideo(String filename) {
 			super();
 			this.filename = filename;
 			this.description = "";
-			URL = filenameL;
+			this.URL = filename;
 		}
 
 		public String getFilename() {
-			return filename;
+			return this.filename;
 		}
 
 		public void setFilename(String filename) {

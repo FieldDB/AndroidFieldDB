@@ -29,7 +29,7 @@
             android:orientation="vertical" >
 
             <EditText
-                android:id="@+id/utterance"
+                android:id="@+id/orthography"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -72,6 +72,17 @@
                 android:scrollHorizontally="false"
                 android:text=""
                 android:textColor="#FFFFFF" />
+            
+            <EditText
+                android:id="@+id/context"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:hint="(like when you cant keep your feet from tapping)"
+                android:inputType="textMultiLine"
+                android:scrollHorizontally="false"
+                android:text=""
+                android:textColor="#CCCCCC" />
         </LinearLayout>
     </ScrollView>
 
