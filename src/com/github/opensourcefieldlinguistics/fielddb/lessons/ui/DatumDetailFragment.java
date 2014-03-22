@@ -7,15 +7,17 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ShareActionProvider;
-import android.widget.TextView;
 
 import com.github.opensourcefieldlinguistics.fielddb.content.Datum;
 import com.github.opensourcefieldlinguistics.fielddb.content.PlaceholderContent;
@@ -88,15 +90,123 @@ public class DatumDetailFragment extends Fragment {
 
 		// Show the dummy content as text in a TextView.
 		if (mItem != null) {
-			((TextView) rootView.findViewById(R.id.orthography)).setText(mItem
-					.getOrthography());
-			((TextView) rootView.findViewById(R.id.morphemes)).setText(mItem
-					.getMorphemes());
-			((TextView) rootView.findViewById(R.id.gloss)).setText(mItem
+
+			final EditText orthographyEditText = ((EditText) rootView
+					.findViewById(R.id.orthography));
+			orthographyEditText.setText(mItem.getOrthography());
+			orthographyEditText.addTextChangedListener(new TextWatcher() {
+
+				@Override
+				public void afterTextChanged(Editable arg0) {
+				}
+
+				@Override
+				public void beforeTextChanged(CharSequence arg0, int arg1,
+						int arg2, int arg3) {
+				}
+
+				@Override
+				public void onTextChanged(CharSequence arg0, int arg1,
+						int arg2, int arg3) {
+					String currentText = orthographyEditText.getText()
+							.toString();
+					mItem.setOrthography(currentText);
+				}
+			});
+
+			final EditText morphemesEditText = ((EditText) rootView
+					.findViewById(R.id.morphemes));
+			morphemesEditText.setText(mItem.getMorphemes());
+			morphemesEditText.addTextChangedListener(new TextWatcher() {
+
+				@Override
+				public void afterTextChanged(Editable arg0) {
+				}
+
+				@Override
+				public void beforeTextChanged(CharSequence arg0, int arg1,
+						int arg2, int arg3) {
+				}
+
+				@Override
+				public void onTextChanged(CharSequence arg0, int arg1,
+						int arg2, int arg3) {
+					String currentText = morphemesEditText.getText().toString();
+					mItem.setMorphemes(currentText);
+				}
+			});
+
+			final EditText glossEditText = ((EditText) rootView
+					.findViewById(R.id.gloss));
+			glossEditText.setText(mItem.getGloss());
+			glossEditText.addTextChangedListener(new TextWatcher() {
+
+				@Override
+				public void afterTextChanged(Editable arg0) {
+				}
+
+				@Override
+				public void beforeTextChanged(CharSequence arg0, int arg1,
+						int arg2, int arg3) {
+				}
+
+				@Override
+				public void onTextChanged(CharSequence arg0, int arg1,
+						int arg2, int arg3) {
+					String currentText = glossEditText.getText().toString();
+					mItem.setGloss(currentText);
+				}
+			});
+			((EditText) rootView.findViewById(R.id.gloss)).setText(mItem
 					.getGloss());
-			((TextView) rootView.findViewById(R.id.translation)).setText(mItem
+
+			final EditText translationEditText = ((EditText) rootView
+					.findViewById(R.id.translation));
+			translationEditText.setText(mItem.getTranslation());
+			translationEditText.addTextChangedListener(new TextWatcher() {
+
+				@Override
+				public void afterTextChanged(Editable arg0) {
+				}
+
+				@Override
+				public void beforeTextChanged(CharSequence arg0, int arg1,
+						int arg2, int arg3) {
+				}
+
+				@Override
+				public void onTextChanged(CharSequence arg0, int arg1,
+						int arg2, int arg3) {
+					String currentText = translationEditText.getText()
+							.toString();
+					mItem.setTranslation(currentText);
+				}
+			});
+			((EditText) rootView.findViewById(R.id.translation)).setText(mItem
 					.getTranslation());
-			((TextView) rootView.findViewById(R.id.context)).setText(mItem
+
+			final EditText contextEditText = ((EditText) rootView
+					.findViewById(R.id.context));
+			contextEditText.setText(mItem.getContext());
+			contextEditText.addTextChangedListener(new TextWatcher() {
+
+				@Override
+				public void afterTextChanged(Editable arg0) {
+				}
+
+				@Override
+				public void beforeTextChanged(CharSequence arg0, int arg1,
+						int arg2, int arg3) {
+				}
+
+				@Override
+				public void onTextChanged(CharSequence arg0, int arg1,
+						int arg2, int arg3) {
+					String currentText = contextEditText.getText().toString();
+					mItem.setContext(currentText);
+				}
+			});
+			((EditText) rootView.findViewById(R.id.context)).setText(mItem
 					.getContext());
 			File image = new File("/sdcard/FieldDB/" + mItem.getMainImage());
 			if (image.exists()) {
