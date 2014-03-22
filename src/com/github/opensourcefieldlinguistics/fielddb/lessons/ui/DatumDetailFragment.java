@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +19,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ShareActionProvider;
+
+import ca.ilanguage.oprime.Config;
+import ca.ilanguage.oprime.datacollection.AudioRecorder;
 
 import com.github.opensourcefieldlinguistics.fielddb.content.Datum;
 import com.github.opensourcefieldlinguistics.fielddb.content.PlaceholderContent;
@@ -48,6 +52,8 @@ public class DatumDetailFragment extends Fragment {
 	}
 
 	private ShareActionProvider mShareActionProvider;
+	private String TAG = "FieldDB";
+	private boolean mRecordingAudio = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -256,6 +262,22 @@ public class DatumDetailFragment extends Fragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// handle item selection
 		switch (item.getItemId()) {
+		case R.id.action_speak:
+			if (!this.mRecordingAudio) {
+				String audioFileName = "/sdcard/FieldDB/audio"
+						+ System.currentTimeMillis() + ".amr";
+				Intent intent;
+				intent = new Intent(getActivity(), AudioRecorder.class);
+				intent.putExtra(Config.EXTRA_RESULT_FILENAME, audioFileName);
+				getActivity().startService(intent);
+				Log.e(TAG, "Recording audio " + audioFileName);
+				this.mRecordingAudio = true;
+			} else {
+				Intent audio = new Intent(getActivity(), AudioRecorder.class);
+				getActivity().stopService(audio);
+				this.mRecordingAudio = false;
+			}
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
