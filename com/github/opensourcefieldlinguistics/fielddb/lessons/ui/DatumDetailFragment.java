@@ -1,14 +1,10 @@
 package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -43,7 +39,6 @@ public class DatumDetailFragment extends Fragment {
 	 * The dummy content this fragment is presenting.
 	 */
 	private Datum mItem;
-	private Bitmap mPlaceHolderBitmap;
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -213,139 +208,19 @@ public class DatumDetailFragment extends Fragment {
 			});
 			((EditText) rootView.findViewById(R.id.context)).setText(mItem
 					.getContext());
-			String filename = mItem.getMainImage();
-			File image = new File("/sdcard/FieldDB/" + filename);
+			File image = new File("/sdcard/FieldDB/" + mItem.getMainImage());
 			if (image.exists()) {
 				ImageView iv = (ImageView) rootView
 						.findViewById(R.id.image_view);
-				// Bitmap d = new BitmapDrawable(this.getResources(),
-				// image.getAbsolutePath()).getBitmap();
-				// int nh = (int) (d.getHeight() * (512.0 / d.getWidth()));
-				// Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
-				// iv.setImageBitmap(scaled);
-
-				BitmapWorkerTask loadBitMapSafely = new BitmapWorkerTask(iv);
-				loadBitMapSafely.setFilename(filename);
-				loadBitMapSafely.execute();
+				Bitmap d = new BitmapDrawable(this.getResources(),
+						image.getAbsolutePath()).getBitmap();
+				int nh = (int) (d.getHeight() * (512.0 / d.getWidth()));
+				Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
+				iv.setImageBitmap(scaled);
 			}
 		}
 
 		return rootView;
-	}
-
-	public void loadBitmap(int resId, ImageView imageView) {
-		if (cancelPotentialWork(resId, imageView)) {
-			final BitmapWorkerTask task = new BitmapWorkerTask(imageView);
-			final AsyncDrawable asyncDrawable = new AsyncDrawable(
-					getResources(), mPlaceHolderBitmap, task);
-			imageView.setImageDrawable(asyncDrawable);
-			task.execute(resId);
-		}
-	}
-
-	public static boolean cancelPotentialWork(int data, ImageView imageView) {
-		final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
-
-		if (bitmapWorkerTask != null) {
-			final int bitmapData = bitmapWorkerTask.data;
-			// If bitmapData is not yet set or it differs from the new data
-			if (bitmapData == 0 || bitmapData != data) {
-				// Cancel previous task
-				bitmapWorkerTask.cancel(true);
-			} else {
-				// The same work is already in progress
-				return false;
-			}
-		}
-		// No task associated with the ImageView, or an existing task was
-		// cancelled
-		return true;
-	}
-
-	private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
-		if (imageView != null) {
-			final Drawable drawable = imageView.getDrawable();
-			if (drawable instanceof AsyncDrawable) {
-				final AsyncDrawable asyncDrawable = (AsyncDrawable) drawable;
-				return asyncDrawable.getBitmapWorkerTask();
-			}
-		}
-		return null;
-	}
-
-	static class AsyncDrawable extends BitmapDrawable {
-		private final WeakReference<BitmapWorkerTask> bitmapWorkerTaskReference;
-
-		public AsyncDrawable(Resources res, Bitmap bitmap,
-				BitmapWorkerTask bitmapWorkerTask) {
-			super(res, bitmap);
-			bitmapWorkerTaskReference = new WeakReference<BitmapWorkerTask>(
-					bitmapWorkerTask);
-		}
-
-		public BitmapWorkerTask getBitmapWorkerTask() {
-			return bitmapWorkerTaskReference.get();
-		}
-	}
-
-	private static Bitmap decodeSampledBitmapFromFile(Resources resources,
-			String filename, int width, int height) {
-
-		File image = new File("/sdcard/FieldDB/" + filename);
-
-		Bitmap d = new BitmapDrawable(resources, image.getAbsolutePath())
-				.getBitmap();
-		int nh = (int) (d.getHeight() * (512.0 / d.getWidth()));
-		Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
-
-		return scaled;
-	}
-
-	/**
-	 * http://developer.android.com/training/displaying-bitmaps/process-bitmap.html
-	 */
-	class BitmapWorkerTask extends AsyncTask<Integer, Void, Bitmap> {
-		private final WeakReference<ImageView> imageViewReference;
-		private int data = 0;
-		private String filename = "unknown.jpg";
-
-		public String getFilename() {
-			return filename;
-		}
-
-		public void setFilename(String filename) {
-			this.filename = filename;
-		}
-
-		public BitmapWorkerTask(ImageView imageView) {
-			// Use a WeakReference to ensure the ImageView can be garbage
-			// collected
-			imageViewReference = new WeakReference<ImageView>(imageView);
-		}
-
-		// Decode image in background.
-		@Override
-		protected Bitmap doInBackground(Integer... params) {
-			// data = params[0];
-			return decodeSampledBitmapFromFile(getResources(), filename, 100,
-					100);
-		}
-
-		// Once complete, see if ImageView is still around and set bitmap.
-		@Override
-		protected void onPostExecute(Bitmap bitmap) {
-			if (isCancelled()) {
-				bitmap = null;
-			}
-
-			if (imageViewReference != null && bitmap != null) {
-				final ImageView imageView = imageViewReference.get();
-				final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
-				if (this == bitmapWorkerTask && imageView != null) {
-					imageView.setImageBitmap(bitmap);
-				}
-			}
-		}
 	}
 
 	@Override
