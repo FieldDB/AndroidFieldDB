@@ -23,6 +23,7 @@ import android.widget.MediaController;
 import android.widget.VideoView;
 
 import ca.ilanguage.oprime.datacollection.AudioRecorder;
+import ca.ilanguage.oprime.datacollection.TakePicture;
 import ca.ilanguage.oprime.datacollection.VideoRecorder;
 
 import com.github.opensourcefieldlinguistics.fielddb.content.Datum;
@@ -232,7 +233,7 @@ public class DatumDetailFragment extends Fragment {
 				mVideoView = (VideoView) rootView.findViewById(R.id.video_view);
 				mVideoView.setMediaController(mMediaController);
 			}
-			this.loadVisuals(true);
+			this.loadVisuals(false);
 		}
 
 		return rootView;
@@ -295,7 +296,10 @@ public class DatumDetailFragment extends Fragment {
 		case R.id.action_play:
 			return this.loadMainVideo(true);
 		case R.id.action_videos:
-			return this.recordVideo();
+			return this.captureVideo();
+		case R.id.action_images:
+
+			return this.captureImage();
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -370,34 +374,46 @@ public class DatumDetailFragment extends Fragment {
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (resultCode != Activity.RESULT_OK) {
-			return;
-		}
+		// if (!(resultCode == Activity.RESULT_OK || resultCode == 65596)) {
+		// return;
+		// }
+		String resultFile;
 		switch (requestCode) {
 		case Config.CODE_EXPERIMENT_COMPLETED:
-			String resultFile = data.getExtras().getString(
-					Config.EXTRA_RESULT_FILENAME);
-
-			if (new File(resultFile).exists()) {
-				if (resultFile.endsWith(Config.DEFAULT_AUDIO_EXTENSION)) {
-					mItem.addAudioFile(resultFile.replace(
-							Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
-				} else {
-					mItem.addVideoFile(resultFile.replace(
-							Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
+			if (data != null && data.hasExtra(Config.EXTRA_RESULT_FILENAME)) {
+				resultFile = data.getExtras().getString(
+						Config.EXTRA_RESULT_FILENAME);
+				if (resultFile != null && new File(resultFile).exists()) {
+					if (resultFile.endsWith(Config.DEFAULT_AUDIO_EXTENSION)) {
+						mItem.addAudioFile(resultFile.replace(
+								Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
+					} else {
+						mItem.addVideoFile(resultFile.replace(
+								Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
+					}
+					this.loadMainVideo(false);
 				}
 			}
-
+			break;
+		case Config.CODE_PICTURE_TAKEN:
+			if (data != null && data.hasExtra(Config.EXTRA_RESULT_FILENAME)) {
+				resultFile = data.getExtras().getString(
+						Config.EXTRA_RESULT_FILENAME);
+				if (resultFile != null && new File(resultFile).exists()) {
+					mItem.addImageFile(resultFile.replace(
+							Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
+					this.loadMainImage();
+				}
+			}
 			break;
 		}
+		super.onActivityResult(requestCode, requestCode, data);
 	}
 
-	private boolean recordVideo() {
+	private boolean captureVideo() {
 		String videoFileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/"
 				+ mItem.getBaseFilename() + Config.DEFAULT_VIDEO_EXTENSION;
-		Intent intent;
-		intent = new Intent(getActivity(), VideoRecorder.class);
-
+		Intent intent = new Intent(getActivity(), VideoRecorder.class);
 		intent.putExtra(Config.EXTRA_USE_FRONT_FACING_CAMERA, true);
 		intent.putExtra(Config.EXTRA_LANGUAGE, Config.ENGLISH);
 		intent.putExtra(Config.EXTRA_RESULT_FILENAME, videoFileName);
@@ -406,8 +422,16 @@ public class DatumDetailFragment extends Fragment {
 		intent.putExtra(Config.EXTRA_OUTPUT_DIR,
 				Config.DEFAULT_OUTPUT_DIRECTORY);
 		intent.putExtra(Config.EXTRA_EXPERIMENT_TRIAL_INFORMATION, "");
-
 		startActivityForResult(intent, Config.CODE_EXPERIMENT_COMPLETED);
+		return true;
+	}
+
+	private boolean captureImage() {
+		String imageFileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/"
+				+ mItem.getBaseFilename() + Config.DEFAULT_IMAGE_EXTENSION;
+		Intent intent = new Intent(getActivity(), TakePicture.class);
+		intent.putExtra(Config.EXTRA_RESULT_FILENAME, imageFileName);
+		startActivityForResult(intent, Config.CODE_PICTURE_TAKEN);
 		return true;
 	}
 }

@@ -17,9 +17,8 @@ public class Datum {
 	protected DatumField context;
 	protected ArrayList<AudioVideo> imageFiles;
 	protected ArrayList<AudioVideo> audioVideoFiles;
-	protected int currentAudioIndex = 0;
+	protected int currentAudioVideoIndex = 0;
 	protected int currentImageIndex = 0;
-	protected int currentVideoIndex = 0;
 	protected ArrayList<String> locations;
 	protected ArrayList<String> similar;
 	protected ArrayList<String> reminders;
@@ -314,13 +313,13 @@ public class Datum {
 		}
 		int index = 0;
 		if ("audio".equals(type)) {
-			index = currentAudioIndex;
+			index = this.currentAudioVideoIndex;
 		}
 		if ("image".equals(type)) {
-			index = currentImageIndex;
+			index = this.currentImageIndex;
 		}
 		if ("video".equals(type)) {
-			index = currentVideoIndex;
+			index = this.currentAudioVideoIndex;
 		}
 
 		/* make it circular */
@@ -340,13 +339,13 @@ public class Datum {
 		}
 
 		if ("audio".equals(type)) {
-			currentAudioIndex = index;
+			this.currentAudioVideoIndex = index;
 		}
 		if ("image".equals(type)) {
 			currentImageIndex = index;
 		}
 		if ("video".equals(type)) {
-			currentVideoIndex = index;
+			this.currentAudioVideoIndex = index;
 		}
 		String fileWillBe = mediaFiles.get(index).getFilename();
 		if (Config.D) {
