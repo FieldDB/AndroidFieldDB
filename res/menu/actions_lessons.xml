@@ -7,12 +7,12 @@
         android:title="Search for similar"/>
     <item
         android:id="@+id/action_speak"
-        android:icon="@android:drawable/ic_btn_speak_now"
+        android:icon="@drawable/ic_action_mic"
         android:showAsAction="ifRoom"
         android:title="Speak"/>
     <item
         android:id="@+id/action_play"
-        android:icon="@android:drawable/ic_media_play"
+        android:icon="@drawable/ic_action_play"
         android:showAsAction="ifRoom"
         android:title="Listen"/>
     <item
