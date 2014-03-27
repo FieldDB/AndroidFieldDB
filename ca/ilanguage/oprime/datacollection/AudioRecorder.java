@@ -19,7 +19,6 @@ import android.os.IBinder;
 import android.util.Log;
 import ca.ilanguage.oprime.Config;
 import ca.ilanguage.oprime.R;
-import ca.ilanguage.oprime.ui.OPrimeLib;
 
 @SuppressLint({ "NewApi" })
 public class AudioRecorder extends Service {
@@ -126,9 +125,9 @@ public class AudioRecorder extends Service {
       // "Error "+e,Toast.LENGTH_LONG).show();
     }
     if (this.mAudioResultsFile == null) {
-      this.mAudioResultsFile = Config.DEFAULT_OUTPUT_DIRECTORY + "/audio/" + System.currentTimeMillis() + ".mp3";
+      this.mAudioResultsFile = Config.DEFAULT_OUTPUT_DIRECTORY + "/audio/" + System.currentTimeMillis() +  Config.DEFAULT_AUDIO_EXTENSION;
     }
-    this.mAudioResultsFile = this.mAudioResultsFile.replace("3gp", "mp3");
+    this.mAudioResultsFile = this.mAudioResultsFile.replace(Config.DEFAULT_VIDEO_EXTENSION, Config.DEFAULT_AUDIO_EXTENSION);
     
     (new File(mAudioResultsFile).getParentFile()).mkdirs();
     /*

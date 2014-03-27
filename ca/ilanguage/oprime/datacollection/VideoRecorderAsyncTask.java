@@ -225,6 +225,7 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
     }
     Intent intent;
     intent = new Intent(this.mParentUI, AudioRecorder.class);
+    mVideoResultsFile = mVideoResultsFile.replace(Config.DEFAULT_VIDEO_EXTENSION, Config.DEFAULT_AUDIO_EXTENSION);
     intent.putExtra(Config.EXTRA_RESULT_FILENAME, mVideoResultsFile);
     this.mParentUI.startService(intent);
     this.mRecordingAudioInstead = true;
@@ -275,7 +276,7 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
     this.mVideoResultsFile = this.mParentUI.getIntent().getExtras().getString(Config.EXTRA_RESULT_FILENAME);
     if(mVideoResultsFile == null){
       mVideoResultsFile = Config.DEFAULT_OUTPUT_DIRECTORY + "/video/Unnamed_result_file_" + System.currentTimeMillis()
-          + "_" + ".3gp";
+          + "_" + Config.DEFAULT_VIDEO_EXTENSION;
     }
     (new File(mVideoResultsFile).getParentFile()).mkdirs();
     

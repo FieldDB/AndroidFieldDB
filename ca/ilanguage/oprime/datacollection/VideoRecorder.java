@@ -4,6 +4,7 @@ import ca.ilanguage.oprime.Config;
 import ca.ilanguage.oprime.R;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -23,7 +24,7 @@ import android.widget.VideoView;
  * intent.putExtra(Config.EXTRA_PARTICIPANT_ID, "00000");
  * intent.putExtra(Config.EXTRA_OUTPUT_DIR, Config.DEFAULT_OUTPUT_DIRECTORY);
  * intent.putExtra(Config.EXTRA_RESULT_FILENAME, Config.DEFAULT_OUTPUT_DIRECTORY
- * + "/" +id+ System.currentTimeMillis() + "_" + ".3gp");
+ * + "/" +id+ System.currentTimeMillis() + "_" + Config.DEFAULT_VIDEO_EXTENSION);
  * intent.putExtra(Config.EXTRA_EXPERIMENT_TRIAL_INFORMATION,
  * "ParticipantID,FirstName,LastName,WorstLanguage,FirstBat,StartTime,EndTime,ExperimenterID"
  * );
@@ -70,6 +71,9 @@ public class VideoRecorder extends Activity implements SurfaceHolder.Callback {
     this.mRecordVideoTask.setContext(this);
     this.mRecordVideoTask.setParentUI(this);
     this.mRecordVideoTask.setHolder(holder);
+
+    setResult(Activity.RESULT_OK, getIntent());
+    
     if (Config.D)
       Log.d(Config.TAG, "Telling recorder asyc to execute. ");
     this.mRecordVideoTask.execute();
@@ -115,6 +119,10 @@ public class VideoRecorder extends Activity implements SurfaceHolder.Callback {
     if (this.mVideoStatusReceiver != null) {
       this.unregisterReceiver(this.mVideoStatusReceiver);
     }
+    /* end the audio recording if it was running */
+    Intent audio = new Intent(this, AudioRecorder.class);
+	this.stopService(audio);
+	
     super.onDestroy();
   }
 
@@ -170,4 +178,11 @@ public class VideoRecorder extends Activity implements SurfaceHolder.Callback {
   public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
     Log.v(Config.TAG, "Width x Height = " + width + "x" + height);
   }
+  
+  @Override
+  public ComponentName startService(Intent service) {
+    setResult(Activity.RESULT_OK, service);
+	return super.startService(service);
+  }
+
 }
