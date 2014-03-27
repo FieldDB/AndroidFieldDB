@@ -5,7 +5,10 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.ilanguage.oprime.Config;
+import ca.ilanguage.oprime.storybook.StoryBookSubExperiment;
 import ca.ilanguage.oprime.tutorial.R;
+import ca.ilanguage.oprime.model.Stimulus;
 import ca.ilanguage.oprime.preferences.PreferenceConstants;
 import ca.ilanguage.oprime.preferences.SetPreferencesActivity;
 
@@ -55,7 +58,7 @@ public class OPrimeStorybookExperimentTutorial extends Activity {
     if (savedInstanceState == null) {
       Intent setupIntent = new Intent(getBaseContext(),
           SetPreferencesActivity.class);
-      startActivityForResult(setupIntent, Config.PREPARE_TRIAL);
+      startActivityForResult(setupIntent, Config.CODE_PREPARE_TRIAL);
 
     }
 
@@ -311,7 +314,7 @@ public class OPrimeStorybookExperimentTutorial extends Activity {
       intent.putExtra(Config.EXTRA_EXPERIMENT_TRIAL_INFORMATION,
           mExperimentTrialHeader);
 
-      startActivityForResult(intent, Config.EXPERIMENT_COMPLETED);
+      startActivityForResult(intent, Config.CODE_EXPERIMENT_COMPLETED);
     }
   }
 
@@ -323,9 +326,9 @@ public class OPrimeStorybookExperimentTutorial extends Activity {
 
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     switch (requestCode) {
-    case Config.EXPERIMENT_COMPLETED:
+    case Config.CODE_EXPERIMENT_COMPLETED:
       break;
-    case Config.PREPARE_TRIAL:
+    case Config.CODE_PREPARE_TRIAL:
       initExperiment();
       startVideoRecorder();
 
