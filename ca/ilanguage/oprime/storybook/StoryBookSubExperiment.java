@@ -260,7 +260,7 @@ public class StoryBookSubExperiment extends Activity {
     if ((keyCode == KeyEvent.KEYCODE_BACK)) {
       Intent intent = new Intent(Config.INTENT_FINISHED_SUB_EXPERIMENT);
       intent.putExtra(Config.EXTRA_STIMULI, this.mStimuli);
-      this.setResult(Config.EXPERIMENT_COMPLETED, intent);
+      this.setResult(Config.CODE_EXPERIMENT_COMPLETED, intent);
       this.finish();
     }
     return super.onKeyDown(keyCode, event);

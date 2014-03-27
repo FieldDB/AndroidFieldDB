@@ -77,7 +77,7 @@ public class ExperimentListActivity extends FragmentActivity implements Experime
       // for the selected item ID.
       Intent detailIntent = new Intent(this, ExperimentActivity.class);
       detailIntent.putExtra(ExperimentFragment.ARG_ITEM_ID, id);
-      this.startActivityForResult(detailIntent, Config.EXPERIMENT_COMPLETED);
+      this.startActivityForResult(detailIntent, Config.CODE_EXPERIMENT_COMPLETED);
     }
   }
 
@@ -85,13 +85,13 @@ public class ExperimentListActivity extends FragmentActivity implements Experime
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, requestCode, data);
     if (resultCode == Activity.RESULT_OK) {
-      if (requestCode == Config.EXPERIMENT_COMPLETED) {
+      if (requestCode == Config.CODE_EXPERIMENT_COMPLETED) {
         Intent i = new Intent(Config.INTENT_STOP_VIDEO_RECORDING);
         this.sendBroadcast(i);
         Intent audio = new Intent(this, AudioRecorder.class);
         this.stopService(audio);
         Log.d(Config.TAG, "Requesting video recording to exit from the activity result.");
-      } else if (requestCode == Config.PICTURE_TAKEN) {
+      } else if (requestCode == Config.CODE_PICTURE_TAKEN) {
         String pictureFilePath = data.getExtras().getString(Config.EXTRA_RESULT_FILENAME);
         Log.d(Config.TAG, "Saved image as " + pictureFilePath);
       }
@@ -138,7 +138,7 @@ public class ExperimentListActivity extends FragmentActivity implements Experime
       Intent intent = new Intent(this, TakePicture.class);
       intent.putExtra(Config.EXTRA_RESULT_FILENAME,
           Config.DEFAULT_OUTPUT_DIRECTORY + "/image/" + System.currentTimeMillis() + ".png");
-      this.startActivityForResult(intent, Config.PICTURE_TAKEN);
+      this.startActivityForResult(intent, Config.CODE_PICTURE_TAKEN);
 
     }else if ("Audio".equals(id)) {
 

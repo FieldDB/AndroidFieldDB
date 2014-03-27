@@ -46,7 +46,7 @@ public abstract class HTML5Activity extends Activity {
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     switch (requestCode) {
-    case Config.PICTURE_TAKEN:
+    case Config.CODE_PICTURE_TAKEN:
       if (data != null) {
         Log.d(Config.TAG, "Deprecated PICTURE_TAKEN ");
         break;
@@ -107,7 +107,7 @@ public abstract class HTML5Activity extends Activity {
       return true;
     } else if (item.getItemId() == R.id.language_settings) {
       Intent inte = new Intent(this.getBaseContext(), ParticipantDetails.class);
-      this.startActivityForResult(inte, Config.SWITCH_LANGUAGE);
+      this.startActivityForResult(inte, Config.CODE_SWITCH_LANGUAGE);
       inte.putExtra(Config.EXTRA_PLEASE_PREPARE_EXPERIMENT, true);
       return true;
     } else if (item.getItemId() == R.id.result_folder) {

@@ -88,7 +88,7 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
         .getString(Config.EXTRA_RESULT_FILENAME).replace(".3gp", ""));
     Intent intent = new Intent(Config.INTENT_FINISHED_SUB_EXPERIMENT);
     intent.putExtra(Config.EXTRA_SUB_EXPERIMENT, this.mSubExperiment);
-    this.setResult(Config.EXPERIMENT_COMPLETED, intent);
+    this.setResult(Config.CODE_EXPERIMENT_COMPLETED, intent);
 
     try {
       if (this.D)

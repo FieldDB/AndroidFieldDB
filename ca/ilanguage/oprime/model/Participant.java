@@ -18,7 +18,7 @@ public class Participant {
                                                              + ",Languages";
   public static final String participantCSVpublicString  = "Code" + ",DateTested" + ",InterviewerCode" + ",Status"
                                                              + ",Languages";
-  public static final int    UNKNOWN_GENDER              = Config.NOTSPECIFIED;
+  public static final int    UNKNOWN_GENDER              = Config.CODE_NOTSPECIFIED;
 
   public static int autoIncrement() {
     counter++;

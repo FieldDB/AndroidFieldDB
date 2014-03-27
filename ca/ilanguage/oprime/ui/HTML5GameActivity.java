@@ -23,16 +23,16 @@ public class HTML5GameActivity extends HTML5Activity {
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     switch (requestCode) {
-    case Config.EXPERIMENT_COMPLETED:
+    case Config.CODE_EXPERIMENT_COMPLETED:
       Log.d(Config.TAG, "Deprecated EXPERIMENT_COMPLETED ");
       break;
-    case Config.PREPARE_TRIAL:
+    case Config.CODE_PREPARE_TRIAL:
       Log.d(Config.TAG, "Deprecated PREPARE_TRIAL ");
       break;
-    case Config.SWITCH_LANGUAGE:
+    case Config.CODE_SWITCH_LANGUAGE:
       Log.d(Config.TAG, "Deprecated SWITCH_LANGUAGE ");
       break;
-    case Config.REPLAY_RESULTS:
+    case Config.CODE_REPLAY_RESULTS:
       Log.d(Config.TAG, "Deprecated REPLAY_RESULTS ");
       break;
     default:
