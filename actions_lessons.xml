@@ -19,12 +19,12 @@
         android:id="@+id/action_videos"
         android:icon="@drawable/ic_action_video"
         android:showAsAction="ifRoom"
-        android:title="Video(s)"/>
+        android:title="Video"/>
     <item
         android:id="@+id/action_images"
         android:icon="@android:drawable/ic_menu_slideshow"
         android:showAsAction="ifRoom"
-        android:title="Image(s)"/>
+        android:title="Image"/>
     <item
         android:id="@+id/action_reminders"
         android:icon="@android:drawable/ic_popup_reminder"
