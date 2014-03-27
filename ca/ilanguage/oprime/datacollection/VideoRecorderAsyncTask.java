@@ -209,6 +209,7 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
       }catch(Exception e){
         Log.d(TAG, "There was a problem preparing the video recorder.");
       }
+      Thread.sleep(500);
       this.mVideoRecorder.start();
       this.mRecording = true;
     } catch (Exception e) {
