@@ -9,8 +9,18 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center"
-        android:src="@drawable/ic_launcher" />
+        android:src="@drawable/ic_launcher"
+        android:contentDescription="This is the main image representing this example."
+        android:visibility="gone" />
 
+    <VideoView
+        android:id="@+id/video_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:background="@drawable/ic_launcher"/>
+    
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

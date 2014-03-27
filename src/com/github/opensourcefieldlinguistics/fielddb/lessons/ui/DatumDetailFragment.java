@@ -18,13 +18,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ShareActionProvider;
+import android.widget.VideoView;
 
-import ca.ilanguage.oprime.Config;
 import ca.ilanguage.oprime.datacollection.AudioRecorder;
 
 import com.github.opensourcefieldlinguistics.fielddb.content.Datum;
 import com.github.opensourcefieldlinguistics.fielddb.content.PlaceholderContent;
+import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.georgian.R;
 
 /**
@@ -51,9 +51,9 @@ public class DatumDetailFragment extends Fragment {
 	public DatumDetailFragment() {
 	}
 
-	private ShareActionProvider mShareActionProvider;
 	private String TAG = "FieldDB";
 	private boolean mRecordingAudio = false;
+	private VideoView mVideoView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -214,7 +214,8 @@ public class DatumDetailFragment extends Fragment {
 			});
 			((EditText) rootView.findViewById(R.id.context)).setText(mItem
 					.getContext());
-			File image = new File("/sdcard/FieldDB/" + mItem.getMainImage());
+			File image = new File(Config.DEFAULT_OUTPUT_DIRECTORY + "/"
+					+ mItem.getMainImageFile());
 			if (image.exists()) {
 				ImageView iv = (ImageView) rootView
 						.findViewById(R.id.image_view);
@@ -224,6 +225,8 @@ public class DatumDetailFragment extends Fragment {
 				Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
 				iv.setImageBitmap(scaled);
 			}
+			mVideoView = (VideoView) rootView.findViewById(R.id.video_view);
+			this.loadMainVideo(true);
 		}
 
 		return rootView;
@@ -264,23 +267,44 @@ public class DatumDetailFragment extends Fragment {
 		switch (item.getItemId()) {
 		case R.id.action_speak:
 			if (!this.mRecordingAudio) {
-				String audioFileName = "/sdcard/FieldDB/audio"
-						+ System.currentTimeMillis() + ".amr";
+				String audioFileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/"
+						+ mItem.getBaseFilename()
+						+ Config.DEFAULT_AUDIO_EXTENSION;
 				Intent intent;
 				intent = new Intent(getActivity(), AudioRecorder.class);
 				intent.putExtra(Config.EXTRA_RESULT_FILENAME, audioFileName);
+				mItem.addAudioFile(audioFileName.replace(
+						Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
 				getActivity().startService(intent);
 				Log.e(TAG, "Recording audio " + audioFileName);
 				this.mRecordingAudio = true;
+				item.setIcon(R.drawable.ic_action_stop);
 			} else {
 				Intent audio = new Intent(getActivity(), AudioRecorder.class);
 				getActivity().stopService(audio);
 				this.mRecordingAudio = false;
+				item.setIcon(R.drawable.ic_action_mic);
 			}
 			return true;
+		case R.id.action_play:
+			return this.loadMainVideo(true);
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	public boolean loadMainVideo(boolean playNow) {
+		String fileName = "/sdcard/1.mp4";// Config.DEFAULT_OUTPUT_DIRECTORY + "/" + mItem.getMainAudioFile();
+		File audioVideoFile = new File(fileName);
+		if (!audioVideoFile.exists()) {
+			return false;
+		}
+		mVideoView.setVideoPath(fileName);
+		mVideoView.setBackground(null);
+		if (playNow) {
+			mVideoView.start();
+		}
+		return true;
 	}
 
 }

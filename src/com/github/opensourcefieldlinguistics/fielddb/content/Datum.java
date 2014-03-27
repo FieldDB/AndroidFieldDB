@@ -2,6 +2,8 @@ package com.github.opensourcefieldlinguistics.fielddb.content;
 
 import java.util.ArrayList;
 
+import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
+
 public class Datum {
 	protected String id;
 	protected String rev;
@@ -266,15 +268,26 @@ public class Datum {
 		this.actualJSON = actualJSON;
 	}
 
-	public void addImage(String filename) {
+	public void addImageFile(String filename) {
 		this.imageFiles.add(new AudioVideo(filename));
 	}
 
-	public String getMainImage() {
+	public String getMainImageFile() {
 		if (this.imageFiles == null || this.imageFiles.size() == 0) {
 			return "missing.jpg";
 		}
 		return this.imageFiles.get(0).getFilename();
+	}
+
+	public void addAudioFile(String audioFileName) {
+		this.audioFiles.add(new AudioVideo(audioFileName));
+	}
+
+	public String getMainAudioFile() {
+		if (this.audioFiles == null || this.audioFiles.size() == 0) {
+			return "missing.amr";
+		}
+		return this.audioFiles.get(0).getFilename();
 	}
 
 	public class AudioVideo {
@@ -433,4 +446,42 @@ public class Datum {
 		}
 
 	}
+
+	public String getBaseFilename() {
+		String filenameBasedOnMorphemesOrWhateverIsAvailable = "";
+		filenameBasedOnMorphemesOrWhateverIsAvailable = this.getMorphemes();
+		if (filenameBasedOnMorphemesOrWhateverIsAvailable == null
+				|| "".equals(filenameBasedOnMorphemesOrWhateverIsAvailable)) {
+			filenameBasedOnMorphemesOrWhateverIsAvailable = this.getUtterance();
+		}
+		if (filenameBasedOnMorphemesOrWhateverIsAvailable == null
+				|| "".equals(filenameBasedOnMorphemesOrWhateverIsAvailable)) {
+			filenameBasedOnMorphemesOrWhateverIsAvailable = this
+					.getOrthography();
+		}
+		if (filenameBasedOnMorphemesOrWhateverIsAvailable == null
+				|| "".equals(filenameBasedOnMorphemesOrWhateverIsAvailable)) {
+			filenameBasedOnMorphemesOrWhateverIsAvailable = this
+					.getTranslation();
+		}
+		if (filenameBasedOnMorphemesOrWhateverIsAvailable == null
+				|| "".equals(filenameBasedOnMorphemesOrWhateverIsAvailable)) {
+			filenameBasedOnMorphemesOrWhateverIsAvailable = "unknown";
+		}
+		filenameBasedOnMorphemesOrWhateverIsAvailable = Config
+				.getSafeUri(filenameBasedOnMorphemesOrWhateverIsAvailable);
+		/* If the string will be longer than 50 char, truncate it with ellipsis */
+		if (filenameBasedOnMorphemesOrWhateverIsAvailable.length() >= 50) {
+			filenameBasedOnMorphemesOrWhateverIsAvailable = filenameBasedOnMorphemesOrWhateverIsAvailable
+					.substring(0, 49) + "___";
+		}
+		/* Add a unique human readable date, and a timestamp */
+		String dateString = (String) android.text.format.DateFormat.format(
+				"yyyy-MM-dd_kk.mm", new java.util.Date());
+		dateString = dateString.replaceAll("/", "-");
+		filenameBasedOnMorphemesOrWhateverIsAvailable = filenameBasedOnMorphemesOrWhateverIsAvailable
+				+ "_" + dateString + "_" + System.currentTimeMillis();
+		return filenameBasedOnMorphemesOrWhateverIsAvailable;
+	}
+
 }
