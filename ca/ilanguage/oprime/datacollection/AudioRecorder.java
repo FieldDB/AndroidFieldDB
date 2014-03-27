@@ -34,7 +34,7 @@ public class AudioRecorder extends Service {
 
   protected static String     TAG               = "OPrime";
   private RecordingReceiver   mAudioFileUpdateReceiver;
-  private int                 mAuBlogIconId     = R.drawable.ic_oprime;
+  private int                 mAuBlogIconId     = android.R.drawable.ic_btn_speak_now;
   private String              mAudioResultsFile = "";
   private PendingIntent       mContentIntent;
 
