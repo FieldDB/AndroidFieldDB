@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.MediaController;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 import ca.ilanguage.oprime.datacollection.AudioRecorder;
@@ -54,6 +56,8 @@ public class DatumDetailFragment extends Fragment {
 	private String TAG = "FieldDB";
 	private boolean mRecordingAudio = false;
 	private VideoView mVideoView;
+	private ImageView mImageView;
+	private MediaController mMediaController;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -214,19 +218,20 @@ public class DatumDetailFragment extends Fragment {
 			});
 			((EditText) rootView.findViewById(R.id.context)).setText(mItem
 					.getContext());
-			File image = new File(Config.DEFAULT_OUTPUT_DIRECTORY + "/"
-					+ mItem.getMainImageFile());
-			if (image.exists()) {
-				ImageView iv = (ImageView) rootView
-						.findViewById(R.id.image_view);
-				Bitmap d = new BitmapDrawable(this.getResources(),
-						image.getAbsolutePath()).getBitmap();
-				int nh = (int) (d.getHeight() * (512.0 / d.getWidth()));
-				Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
-				iv.setImageBitmap(scaled);
+			if (mImageView == null) {
+				mImageView = (ImageView) rootView.findViewById(R.id.image_view);
 			}
-			mVideoView = (VideoView) rootView.findViewById(R.id.video_view);
-			this.loadMainVideo(true);
+			if (mMediaController == null) {
+				mMediaController = new MediaController(getActivity());
+				mMediaController.setAnchorView((TextView) rootView
+						.findViewById(R.id.video_controls_padding));
+//				mMediaController.setPadding(0, 0, 0, 200);
+			}
+			if (mVideoView == null) {
+				mVideoView = (VideoView) rootView.findViewById(R.id.video_view);
+				mVideoView.setMediaController(mMediaController);
+			}
+			this.loadVisuals(true);
 		}
 
 		return rootView;
@@ -293,18 +298,45 @@ public class DatumDetailFragment extends Fragment {
 		}
 	}
 
+	private void loadVisuals(boolean playImmediately) {
+		loadMainVideo(playImmediately);
+	}
+
 	public boolean loadMainVideo(boolean playNow) {
-		String fileName = "/sdcard/1.mp4";// Config.DEFAULT_OUTPUT_DIRECTORY + "/" + mItem.getMainAudioFile();
+		String fileName = "/sdcard/1.mp4";
+		// Config.DEFAULT_OUTPUT_DIRECTORY + "/"
+		// + mItem.getMainAudioFile();
 		File audioVideoFile = new File(fileName);
 		if (!audioVideoFile.exists()) {
+			this.loadMainImage();
 			return false;
 		}
 		mVideoView.setVideoPath(fileName);
-		mVideoView.setBackground(null);
+		if (fileName.endsWith(Config.DEFAULT_AUDIO_EXTENSION)) {
+			loadMainImage();
+		} else {
+			mVideoView.setBackground(null);
+		}
 		if (playNow) {
 			mVideoView.start();
 		}
 		return true;
+	}
+
+	private void loadMainImage() {
+		File image = new File(Config.DEFAULT_OUTPUT_DIRECTORY + "/"
+				+ mItem.getMainImageFile());
+		if (image.exists()) {
+			Bitmap d = new BitmapDrawable(this.getResources(),
+					image.getAbsolutePath()).getBitmap();
+			int nh = (int) (d.getHeight() * (512.0 / d.getWidth()));
+			Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
+			// mImageView.setImageBitmap(scaled);
+			// mImageView.setVisibility(View.VISIBLE);
+			// mVideoView.setVisibility(View.GONE);
+			mVideoView
+					.setBackground(new BitmapDrawable(getResources(), scaled));
+		}
 	}
 
 }
