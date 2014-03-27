@@ -19,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.MediaController;
-import android.widget.TextView;
 import android.widget.VideoView;
 
 import ca.ilanguage.oprime.datacollection.AudioRecorder;
@@ -223,9 +222,9 @@ public class DatumDetailFragment extends Fragment {
 			}
 			if (mMediaController == null) {
 				mMediaController = new MediaController(getActivity());
-				mMediaController.setAnchorView((TextView) rootView
-						.findViewById(R.id.video_controls_padding));
-//				mMediaController.setPadding(0, 0, 0, 200);
+				mMediaController.setAnchorView((VideoView) rootView
+						.findViewById(R.id.video_view));
+				// mMediaController.setPadding(0, 0, 0, 200);
 			}
 			if (mVideoView == null) {
 				mVideoView = (VideoView) rootView.findViewById(R.id.video_view);
@@ -303,9 +302,8 @@ public class DatumDetailFragment extends Fragment {
 	}
 
 	public boolean loadMainVideo(boolean playNow) {
-		String fileName = "/sdcard/1.mp4";
-		// Config.DEFAULT_OUTPUT_DIRECTORY + "/"
-		// + mItem.getMainAudioFile();
+		String fileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/"
+				+ mItem.getMainAudioFile();
 		File audioVideoFile = new File(fileName);
 		if (!audioVideoFile.exists()) {
 			this.loadMainImage();
