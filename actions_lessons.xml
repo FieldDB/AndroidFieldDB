@@ -17,7 +17,7 @@
         android:title="Listen"/>
     <item
         android:id="@+id/action_videos"
-        android:icon="@android:drawable/ic_menu_camera"
+        android:icon="@drawable/ic_action_video"
         android:showAsAction="ifRoom"
         android:title="Video(s)"/>
     <item
