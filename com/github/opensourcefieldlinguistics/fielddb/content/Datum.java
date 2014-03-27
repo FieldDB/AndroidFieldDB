@@ -2,6 +2,8 @@ package com.github.opensourcefieldlinguistics.fielddb.content;
 
 import java.util.ArrayList;
 
+import android.util.Log;
+
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 
 public class Datum {
@@ -14,8 +16,10 @@ public class Datum {
 	protected DatumField orthography;
 	protected DatumField context;
 	protected ArrayList<AudioVideo> imageFiles;
-	protected ArrayList<AudioVideo> audioFiles;
-	protected ArrayList<AudioVideo> videoFiles;
+	protected ArrayList<AudioVideo> audioVideoFiles;
+	protected int currentAudioIndex = 0;
+	protected int currentImageIndex = 0;
+	protected int currentVideoIndex = 0;
 	protected ArrayList<String> locations;
 	protected ArrayList<String> similar;
 	protected ArrayList<String> reminders;
@@ -26,7 +30,8 @@ public class Datum {
 	public Datum(String id, String rev, DatumField utterance,
 			DatumField morphemes, DatumField gloss, DatumField translation,
 			DatumField orthography, DatumField context,
-			ArrayList<AudioVideo> imageFiles, ArrayList<AudioVideo> audioFiles,
+			ArrayList<AudioVideo> imageFiles,
+			ArrayList<AudioVideo> audioVideoFiles,
 			ArrayList<AudioVideo> videoFiles, ArrayList<String> locations,
 			ArrayList<String> similar, ArrayList<String> reminders,
 			ArrayList<String> tags, ArrayList<String> coments, String actualJSON) {
@@ -40,8 +45,7 @@ public class Datum {
 		this.orthography = orthography;
 		this.context = context;
 		this.imageFiles = imageFiles;
-		this.audioFiles = audioFiles;
-		this.videoFiles = videoFiles;
+		this.audioVideoFiles = audioVideoFiles;
 		this.locations = locations;
 		this.similar = similar;
 		this.reminders = reminders;
@@ -60,8 +64,7 @@ public class Datum {
 		this.orthography = new DatumField("orthography", orthography);
 		this.context = new DatumField("context", " ");
 		this.imageFiles = new ArrayList<Datum.AudioVideo>();
-		this.audioFiles = new ArrayList<Datum.AudioVideo>();
-		this.videoFiles = new ArrayList<Datum.AudioVideo>();
+		this.audioVideoFiles = new ArrayList<Datum.AudioVideo>();
 		this.locations = new ArrayList<String>();
 		this.similar = new ArrayList<String>();
 		this.reminders = new ArrayList<String>();
@@ -81,8 +84,7 @@ public class Datum {
 		this.orthography = new DatumField("orthography", orthography);
 		this.context = new DatumField("context", " ");
 		this.imageFiles = new ArrayList<Datum.AudioVideo>();
-		this.audioFiles = new ArrayList<Datum.AudioVideo>();
-		this.videoFiles = new ArrayList<Datum.AudioVideo>();
+		this.audioVideoFiles = new ArrayList<Datum.AudioVideo>();
 		this.locations = new ArrayList<String>();
 		this.similar = new ArrayList<String>();
 		this.reminders = new ArrayList<String>();
@@ -102,8 +104,7 @@ public class Datum {
 		this.orthography = new DatumField("orthography", orthography);
 		this.context = new DatumField("context", context);
 		this.imageFiles = new ArrayList<Datum.AudioVideo>();
-		this.audioFiles = new ArrayList<Datum.AudioVideo>();
-		this.videoFiles = new ArrayList<Datum.AudioVideo>();
+		this.audioVideoFiles = new ArrayList<Datum.AudioVideo>();
 		this.locations = new ArrayList<String>();
 		this.similar = new ArrayList<String>();
 		this.reminders = new ArrayList<String>();
@@ -122,8 +123,7 @@ public class Datum {
 		this.orthography = new DatumField("orthography", "");
 		this.context = new DatumField("context", " ");
 		this.imageFiles = new ArrayList<Datum.AudioVideo>();
-		this.audioFiles = new ArrayList<Datum.AudioVideo>();
-		this.videoFiles = new ArrayList<Datum.AudioVideo>();
+		this.audioVideoFiles = new ArrayList<Datum.AudioVideo>();
 		this.locations = new ArrayList<String>();
 		this.similar = new ArrayList<String>();
 		this.reminders = new ArrayList<String>();
@@ -204,20 +204,28 @@ public class Datum {
 		this.imageFiles = imageFiles;
 	}
 
-	public ArrayList<AudioVideo> getAudioFiles() {
-		return audioFiles;
+	public ArrayList<AudioVideo> getAudioVideoFiles() {
+		return audioVideoFiles;
 	}
 
-	public void setAudioFiles(ArrayList<AudioVideo> audioFiles) {
-		this.audioFiles = audioFiles;
+	public void setAudioVideoFiles(ArrayList<AudioVideo> audioVideoFiles) {
+		this.audioVideoFiles = audioVideoFiles;
 	}
 
 	public ArrayList<AudioVideo> getVideoFiles() {
+		ArrayList<AudioVideo> videoFiles = new ArrayList<AudioVideo>();
+		for (AudioVideo audioVideo : this.audioVideoFiles) {
+			if (audioVideo.getFilename().endsWith(
+					Config.DEFAULT_VIDEO_EXTENSION)) {
+				videoFiles.add(audioVideo);
+			}
+		}
 		return videoFiles;
 	}
 
-	public void setVideoFiles(ArrayList<AudioVideo> videoFiles) {
-		this.videoFiles = videoFiles;
+	public void setVideoFiles(ArrayList<AudioVideo> videoFiles)
+			throws Exception {
+		throw new Exception("Use setAudioVideoFiles instead");
 	}
 
 	public ArrayList<String> getLocations() {
@@ -274,20 +282,77 @@ public class Datum {
 
 	public String getMainImageFile() {
 		if (this.imageFiles == null || this.imageFiles.size() == 0) {
-			return "missing.jpg";
+			return null;
 		}
-		return this.imageFiles.get(0).getFilename();
+		return this.imageFiles.get(this.imageFiles.size() - 1).getFilename();
 	}
 
 	public void addAudioFile(String audioFileName) {
-		this.audioFiles.add(new AudioVideo(audioFileName));
+		this.audioVideoFiles.add(new AudioVideo(audioFileName));
 	}
 
-	public String getMainAudioFile() {
-		if (this.audioFiles == null || this.audioFiles.size() == 0) {
-			return "missing.amr";
+	public String getMainAudioVideoFile() {
+		if (this.audioVideoFiles == null || this.audioVideoFiles.size() == 0) {
+			return null;
 		}
-		return this.audioFiles.get(0).getFilename();
+		return this.audioVideoFiles.get(this.audioVideoFiles.size() - 1)
+				.getFilename();
+	}
+
+	public void addVideoFile(String videoFileName) {
+		this.audioVideoFiles.add(new AudioVideo(videoFileName));
+	}
+
+	public String getMainVideoFile() {
+		return this.getMainAudioVideoFile();
+	}
+
+	public String getPrevNextMediaFile(String type,
+			ArrayList<AudioVideo> mediaFiles, String prevNext) {
+		if (mediaFiles == null || mediaFiles.size() == 0) {
+			return null;
+		}
+		int index = 0;
+		if ("audio".equals(type)) {
+			index = currentAudioIndex;
+		}
+		if ("image".equals(type)) {
+			index = currentImageIndex;
+		}
+		if ("video".equals(type)) {
+			index = currentVideoIndex;
+		}
+
+		/* make it circular */
+		if ("prev".equals(prevNext)) {
+			if (index - 1 > 0) {
+				index--;
+			} else {
+				index = mediaFiles.size() - 1;
+			}
+		}
+		if ("next".equals(prevNext)) {
+			if (mediaFiles.size() < index + 1) {
+				index++;
+			} else {
+				index = 0;
+			}
+		}
+
+		if ("audio".equals(type)) {
+			currentAudioIndex = index;
+		}
+		if ("image".equals(type)) {
+			currentImageIndex = index;
+		}
+		if ("video".equals(type)) {
+			currentVideoIndex = index;
+		}
+		String fileWillBe = mediaFiles.get(index).getFilename();
+		if (Config.D) {
+			Log.d(Config.TAG, fileWillBe);
+		}
+		return fileWillBe;
 	}
 
 	public class AudioVideo {
