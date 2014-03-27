@@ -45,7 +45,7 @@ public class DeviceDetails implements LocationListener {
   int               sdk;
 
   String            serial            = "unknown";
-  protected String  TAG               = Config.OPRIME_TAG;
+  protected String  TAG               = Config.TAG;
   String            telephonyDeviceId = "unknown";
   String            userFriendlyBuildID;
   String            wifiMacAddress    = "unknown";

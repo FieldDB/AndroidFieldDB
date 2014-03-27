@@ -175,7 +175,7 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
 
   protected String mTakeAPictureFileUrl;
 
-  protected String TAG = Config.OPRIME_TAG;
+  protected String TAG = Config.TAG;
 
   /**
    * Can pass in all or none of the parameters. Expects the caller to set the
@@ -674,7 +674,7 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
     // intent = new Intent(OPrime.INTENT_TAKE_PICTURE);
     intent = new Intent(this.mContext, TakePicture.class);
     intent.putExtra(Config.EXTRA_RESULT_FILENAME, this.mTakeAPictureFileUrl);
-    this.getUIParent().startActivityForResult(intent, Config.PICTURE_TAKEN);
+    this.getUIParent().startActivityForResult(intent, Config.CODE_PICTURE_TAKEN);
   }
 
 }
