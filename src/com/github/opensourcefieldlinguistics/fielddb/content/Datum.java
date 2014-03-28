@@ -20,7 +20,7 @@ public class Datum {
 	protected int currentAudioVideoIndex = 0;
 	protected int currentImageIndex = 0;
 	protected ArrayList<String> locations;
-	protected ArrayList<String> similar;
+	protected ArrayList<String> related;
 	protected ArrayList<String> reminders;
 	protected ArrayList<String> tags;
 	protected ArrayList<String> coments;
@@ -32,7 +32,7 @@ public class Datum {
 			ArrayList<AudioVideo> imageFiles,
 			ArrayList<AudioVideo> audioVideoFiles,
 			ArrayList<AudioVideo> videoFiles, ArrayList<String> locations,
-			ArrayList<String> similar, ArrayList<String> reminders,
+			ArrayList<String> related, ArrayList<String> reminders,
 			ArrayList<String> tags, ArrayList<String> coments, String actualJSON) {
 		super();
 		this.id = id;
@@ -46,7 +46,7 @@ public class Datum {
 		this.imageFiles = imageFiles;
 		this.audioVideoFiles = audioVideoFiles;
 		this.locations = locations;
-		this.similar = similar;
+		this.related = related;
 		this.reminders = reminders;
 		this.tags = tags;
 		this.coments = coments;
@@ -65,7 +65,7 @@ public class Datum {
 		this.imageFiles = new ArrayList<Datum.AudioVideo>();
 		this.audioVideoFiles = new ArrayList<Datum.AudioVideo>();
 		this.locations = new ArrayList<String>();
-		this.similar = new ArrayList<String>();
+		this.related = new ArrayList<String>();
 		this.reminders = new ArrayList<String>();
 		this.tags = new ArrayList<String>();
 		this.coments = new ArrayList<String>();
@@ -85,7 +85,7 @@ public class Datum {
 		this.imageFiles = new ArrayList<Datum.AudioVideo>();
 		this.audioVideoFiles = new ArrayList<Datum.AudioVideo>();
 		this.locations = new ArrayList<String>();
-		this.similar = new ArrayList<String>();
+		this.related = new ArrayList<String>();
 		this.reminders = new ArrayList<String>();
 		this.tags = new ArrayList<String>();
 		this.coments = new ArrayList<String>();
@@ -105,7 +105,7 @@ public class Datum {
 		this.imageFiles = new ArrayList<Datum.AudioVideo>();
 		this.audioVideoFiles = new ArrayList<Datum.AudioVideo>();
 		this.locations = new ArrayList<String>();
-		this.similar = new ArrayList<String>();
+		this.related = new ArrayList<String>();
 		this.reminders = new ArrayList<String>();
 		this.tags = new ArrayList<String>();
 		this.coments = new ArrayList<String>();
@@ -124,7 +124,7 @@ public class Datum {
 		this.imageFiles = new ArrayList<Datum.AudioVideo>();
 		this.audioVideoFiles = new ArrayList<Datum.AudioVideo>();
 		this.locations = new ArrayList<String>();
-		this.similar = new ArrayList<String>();
+		this.related = new ArrayList<String>();
 		this.reminders = new ArrayList<String>();
 		this.tags = new ArrayList<String>();
 		this.coments = new ArrayList<String>();
@@ -235,12 +235,12 @@ public class Datum {
 		this.locations = locations;
 	}
 
-	public ArrayList<String> getSimilar() {
-		return similar;
+	public ArrayList<String> getRelated() {
+		return related;
 	}
 
-	public void setSimilar(ArrayList<String> similar) {
-		this.similar = similar;
+	public void setRelated(ArrayList<String> Related) {
+		this.related = Related;
 	}
 
 	public ArrayList<String> getReminders() {
