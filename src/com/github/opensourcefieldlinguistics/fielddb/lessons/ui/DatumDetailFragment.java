@@ -3,7 +3,9 @@ package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
 import java.io.File;
 
 import android.app.Activity;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -27,7 +29,9 @@ import ca.ilanguage.oprime.datacollection.TakePicture;
 import ca.ilanguage.oprime.datacollection.VideoRecorder;
 
 import com.github.opensourcefieldlinguistics.fielddb.content.Datum;
+import com.github.opensourcefieldlinguistics.fielddb.content.DatumContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.content.PlaceholderContent;
+import com.github.opensourcefieldlinguistics.fielddb.content.DatumContentProvider.DatumTable;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.georgian.R;
 
@@ -71,23 +75,23 @@ public class DatumDetailFragment extends Fragment {
 			// arguments. In a real-world scenario, use a Loader
 			// to load content from a content provider.
 
-			// public String getPath(Uri uri) {
-			//
-			// String selection = null;
-			// String[] selectionArgs = null;
-			// String sortOrder = null;
-			//
-			// String[] projection = { MediaColumns.DATA };
-			// CursorLoader cursorLoader = new CursorLoader(this, uri,
-			// projection, selection, selectionArgs, sortOrder);
-			//
-			// Cursor cursor = cursorLoader.loadInBackground();
-			//
-			// int column_index =
-			// cursor.getColumnIndexOrThrow(MediaColumns.DATA);
-			// cursor.moveToFirst();
-			// return cursor.getString(column_index);
-			// }
+//			 public String getPath(Uri uri) {
+			
+			 String selection = null;
+			 String[] selectionArgs = null;
+			 String sortOrder = null;
+			
+			 String[] projection = { DatumTable.COLUMN_MORPHEMES };
+			 CursorLoader cursorLoader = new CursorLoader(getActivity(), DatumContentProvider.CONTENT_URI,
+			 projection, selection, selectionArgs, sortOrder);
+			
+			 Cursor cursor = cursorLoader.loadInBackground();
+			
+			 int column_index =
+			 cursor.getColumnIndexOrThrow(DatumTable.COLUMN_MORPHEMES);
+			 cursor.moveToFirst();
+//			 return cursor.getString(column_index);
+//			 }
 
 			mItem = PlaceholderContent.ITEM_MAP.get(getArguments().getString(
 					ARG_ITEM_ID));
