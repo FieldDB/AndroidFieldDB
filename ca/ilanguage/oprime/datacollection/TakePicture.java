@@ -48,7 +48,7 @@ public class TakePicture extends Activity {
 
     Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
     i.putExtra(MediaStore.EXTRA_OUTPUT, this.myPicture);
-
+    this.setResult(Activity.RESULT_OK, new Intent().putExtra(Config.EXTRA_RESULT_FILENAME, this.mImageFilename));
     this.startActivityForResult(i, 0);
   }
 
@@ -161,9 +161,6 @@ public class TakePicture extends Activity {
 
         Toast.makeText(this.getApplicationContext(), "Saving as " + this.mImageFilename, Toast.LENGTH_LONG).show();
         if (this.mAppearSeamless) {
-          Intent intent = new Intent();
-          intent.putExtra(Config.EXTRA_RESULT_FILENAME, this.mImageFilename);
-          this.setResult(Activity.RESULT_OK, intent);
           this.finish();
         }
       } catch (Exception e) {
@@ -194,8 +191,14 @@ public class TakePicture extends Activity {
   }
 
   @Override
-  protected void onDestroy() {
+protected void onPause() {
+  this.setResult(Activity.RESULT_OK, new Intent().putExtra(Config.EXTRA_RESULT_FILENAME, this.mImageFilename));
+  super.onPause();
+}
 
+@Override
+  protected void onDestroy() {
+    this.setResult(Activity.RESULT_OK, new Intent().putExtra(Config.EXTRA_RESULT_FILENAME, this.mImageFilename));
     super.onDestroy();
   }
 }
