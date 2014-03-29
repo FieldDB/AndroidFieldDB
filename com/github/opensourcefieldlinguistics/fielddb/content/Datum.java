@@ -548,4 +548,41 @@ public class Datum {
 		return filenameBasedOnMorphemesOrWhateverIsAvailable;
 	}
 
+	public void addMediaFiles(String mediaFiles) {
+		if (mediaFiles == null || "".equals(mediaFiles)) {
+			return;
+		}
+		String[] files = mediaFiles.trim().split(",");
+		for (String filename : files) {
+			if (filename.trim().length() > 4) {
+				filename = filename.trim();
+				if (filename.endsWith("jpg")) {
+					this.addImageFile(filename);
+				} else if (filename.endsWith("png")) {
+					this.addImageFile(filename);
+				} else if (filename.endsWith("gif")) {
+					this.addImageFile(filename);
+				} else if (filename.endsWith("png")) {
+					this.addAudioFile(filename);
+				} else if (filename.endsWith("wav")) {
+					this.addAudioFile(filename);
+				} else if (filename.endsWith("ogg")) {
+					this.addAudioFile(filename);
+				} else if (filename.endsWith("amr")) {
+					this.addAudioFile(filename);
+				} else if (filename.endsWith("mp3")) {
+					this.addAudioFile(filename);
+				} else if (filename.endsWith("mtk")) {
+					this.addAudioFile(filename);
+				} else if (filename.endsWith("mov")) {
+					this.addAudioFile(filename);
+				} else if (filename.endsWith("avi")) {
+					this.addAudioFile(filename);
+				} else if (filename.endsWith("mp4")) {
+					this.addVideoFile(filename);
+				}
+			}
+		}
+	}
+
 }

@@ -187,8 +187,8 @@ public class AudioVideoContentProvider extends ContentProvider {
 		// Sample data
 		private static ContentValues sampleData() {
 			ContentValues values = new ContentValues();
-			values.put(COLUMN_FILENAME, "ar_makfs_cleaned.mp3");
-			values.put(COLUMN_URL, "https://corpus.lingsync.org/community-georgian/723a8b707e579087aa36c2e338ecdb4c/ar_makfs_cleaned.mp3");
+			values.put(COLUMN_FILENAME, "gamardZoba.jpg");
+			values.put(COLUMN_URL, "https://corpus.lingsync.org/community-georgian/723a8b707e579087aa36c2e338eb17ec/gamardZoba.jpg");
 			return values;
 
 		}
