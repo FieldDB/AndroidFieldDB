@@ -72,12 +72,12 @@
         </service>
 
         <provider
-            android:name="com.github.opensourcefieldlinguistics.fielddb.content.DatumContentProvider"
+            android:name="com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider"
             android:authorities="com.github.opensourcefieldlinguistics.fielddb.datum"
             android:exported="false" >
         </provider>
         <provider
-            android:name="com.github.opensourcefieldlinguistics.fielddb.content.AudioVideoContentProvider"
+            android:name="com.github.opensourcefieldlinguistics.fielddb.database.AudioVideoContentProvider"
             android:authorities="com.github.opensourcefieldlinguistics.fielddb.audiovideo"
             android:exported="false" >
         </provider>

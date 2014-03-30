@@ -1,4 +1,4 @@
-package com.github.opensourcefieldlinguistics.fielddb.content;
+package com.github.opensourcefieldlinguistics.fielddb.database;
 
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 
@@ -221,6 +221,9 @@ public class DatumContentProvider extends ContentProvider {
 				+ " text , " + COLUMN_REMINDERS + " text , " + COLUMN_TAGS
 				+ " text , " + COLUMN_COMMENTS + " text , "
 				+ COLUMN_ACTUAL_JSON + " blob " + ");";
+
+		private static String sampleDataUrl = Config.DEFAULT_SERVER_URL
+				+ "/community-georgian/_design/learnx/_view/byTag?key=%22SampleData%22";
 
 		// Sample data
 		private static ContentValues sampleData() {

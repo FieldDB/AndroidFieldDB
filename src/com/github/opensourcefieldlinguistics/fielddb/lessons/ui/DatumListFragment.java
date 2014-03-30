@@ -8,8 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import com.github.opensourcefieldlinguistics.fielddb.content.Datum;
-import com.github.opensourcefieldlinguistics.fielddb.content.PlaceholderContent;
+import com.github.opensourcefieldlinguistics.fielddb.database.PlaceholderContent;
+import com.github.opensourcefieldlinguistics.fielddb.model.Datum;
 
 /**
  * A list fragment representing a list of Datums. This fragment

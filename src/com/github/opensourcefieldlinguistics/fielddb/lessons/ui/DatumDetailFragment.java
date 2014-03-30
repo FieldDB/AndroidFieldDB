@@ -27,11 +27,11 @@ import ca.ilanguage.oprime.datacollection.AudioRecorder;
 import ca.ilanguage.oprime.datacollection.TakePicture;
 import ca.ilanguage.oprime.datacollection.VideoRecorder;
 
-import com.github.opensourcefieldlinguistics.fielddb.content.Datum;
-import com.github.opensourcefieldlinguistics.fielddb.content.DatumContentProvider;
-import com.github.opensourcefieldlinguistics.fielddb.content.DatumContentProvider.DatumTable;
+import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
+import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.georgian.R;
+import com.github.opensourcefieldlinguistics.fielddb.model.Datum;
 
 /**
  * A fragment representing a single Datum detail screen. This fragment is either
