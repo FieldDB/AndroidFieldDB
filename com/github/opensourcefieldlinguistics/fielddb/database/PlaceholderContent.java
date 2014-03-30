@@ -1,9 +1,11 @@
-package com.github.opensourcefieldlinguistics.fielddb.content;
+package com.github.opensourcefieldlinguistics.fielddb.database;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.github.opensourcefieldlinguistics.fielddb.model.Datum;
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -59,7 +61,7 @@ public class PlaceholderContent {
 
 	private static void addItem(Datum item) {
 		ITEMS.add(item);
-		ITEM_MAP.put(item.id, item);
+		ITEM_MAP.put(item.getId(), item);
 	}
 
 }

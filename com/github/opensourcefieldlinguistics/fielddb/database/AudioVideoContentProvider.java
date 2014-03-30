@@ -1,4 +1,4 @@
-package com.github.opensourcefieldlinguistics.fielddb.content;
+package com.github.opensourcefieldlinguistics.fielddb.database;
 
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 
