@@ -1,6 +1,9 @@
 
 AndroidClient/assets/release
+
 # private constants #
+*PrivateConstants.java
+sslkeystore.bks
 *nonpublic*
 node_modules
 .project

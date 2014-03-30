@@ -29,9 +29,11 @@ import ca.ilanguage.oprime.datacollection.VideoRecorder;
 
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
+import com.github.opensourcefieldlinguistics.fielddb.database.PlaceholderContent;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.georgian.R;
 import com.github.opensourcefieldlinguistics.fielddb.model.Datum;
+import com.github.opensourcefieldlinguistics.fielddb.service.DownloadDatumsService;
 
 /**
  * A fragment representing a single Datum detail screen. This fragment is either
@@ -109,9 +111,18 @@ public class DatumDetailFragment extends Fragment {
 			datum.addMediaFiles((cursor.getString(cursor
 					.getColumnIndexOrThrow(DatumTable.COLUMN_AUDIO_VIDEO_FILES))));
 
-			mItem = datum;
-			// PlaceholderContent.ITEM_MAP.get(getArguments().getString(
-			// ARG_ITEM_ID));
+			// mItem = datum;
+			mItem = PlaceholderContent.ITEM_MAP.get(getArguments().getString(
+					ARG_ITEM_ID));
+
+			/*
+			 * Imagine DB is empty, fill it (TODO put ths in the oncreate of the
+			 * db later...
+			 */
+			Intent downloadSamples = new Intent(getActivity(),
+					DownloadDatumsService.class);
+			getActivity().startService(downloadSamples);
+
 		}
 	}
 

@@ -39,7 +39,8 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme" 
+        android:name="com.github.opensourcefieldlinguistics.fielddb.FieldDBApplication">
         <activity
             android:name="com.github.opensourcefieldlinguistics.fielddb.lessons.ui.DatumListActivity"
             android:label="@string/app_name" >
@@ -70,7 +71,8 @@
 
         <service android:name="ca.ilanguage.oprime.datacollection.AudioRecorder" >
         </service>
-
+        <service android:name="com.github.opensourcefieldlinguistics.fielddb.service.DownloadDatumsService" >
+        </service>
         <provider
             android:name="com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider"
             android:authorities="com.github.opensourcefieldlinguistics.fielddb.datum"
