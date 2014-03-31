@@ -9,9 +9,9 @@ public class Config extends ca.ilanguage.oprime.Config {
 
 	public static final String DEFAULT_CORPUS = "community-georgian";
 	public static final String DEFAULT_OUTPUT_DIRECTORY = "/sdcard/FieldDB";
-	public static final String DEFAULT_SERVER_URL = PrivateConstants.DEFAULT_SERVER_URL;
 	public static final String DEFAULT_SAMPLE_DATA_URL = PrivateConstants.DEFAULT_SERVER_URL
 			+ "/" + DEFAULT_CORPUS + "/_design/learnx/views/byTag?key=";
+	public static final String DEFAULT_SERVER_URL = PrivateConstants.DEFAULT_SERVER_URL;
 
 	public static final String KEYSTORE_PASS = PrivateConstants.KEYSTORE_PASS;
 	public static final String USER_FRIENDLY_DATA_NAME = "ფრაზა";
