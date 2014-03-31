@@ -7,10 +7,14 @@ import java.nio.charset.Charset;
 
 import org.acra.ACRA;
 import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
@@ -43,6 +47,7 @@ public class DownloadDatumsService extends IntentService {
 		if (Config.D) {
 			Log.d(Config.TAG, "Inside DownloadDatumsService intent");
 		}
+		String datumTagToDownload = "SampleData";
 
 		int notificationId = (int) System.currentTimeMillis();
 		String uploadStatusMessage = "Downloading sample "
@@ -68,23 +73,29 @@ public class DownloadDatumsService extends IntentService {
 		noti.flags = Notification.FLAG_AUTO_CANCEL;
 		notifyUser(uploadStatusMessage, noti, notificationId, false);
 
-		String datumTagToDownload = "SampleData";
-		ACRA.getErrorReporter().putCustomData("downloadDatums",
-				datumTagToDownload);
-		ACRA.getErrorReporter().handleException(
-				new Exception("*** Download Data Started ***"));
-
 		SecureHttpClient httpClient = new SecureHttpClient(
 				getApplicationContext());
 		httpClient.setKeystoreIdandPassword(R.raw.sslkeystore,
 				Config.KEYSTORE_PASS);
 
 		HttpContext localContext = new BasicHttpContext();
-		HttpGet httpGet = new HttpGet(Config.DEFAULT_SAMPLE_DATA_URL
-				+ datumTagToDownload);
-		MultipartEntity entity = new MultipartEntity(
-				HttpMultipartMode.BROWSER_COMPATIBLE, null,
-				Charset.forName("UTF-8"));
+		String url = Config.DEFAULT_SAMPLE_DATA_URL + "?key=%22"
+				+ datumTagToDownload + "%22";
+		HttpGet httpGet = new HttpGet(url);
+		/*
+		 * http://remotedroid.net/blog/2010/12/15/basic-authentication-with-
+		 * httpclient-on-android-using-https-and-put/
+		 */
+		CredentialsProvider credProvider = new BasicCredentialsProvider();
+		credProvider.setCredentials(new AuthScope(AuthScope.ANY_HOST,
+				AuthScope.ANY_PORT),
+				new UsernamePasswordCredentials(Config.DEFAULT_PUBLIC_USERNAME,
+						Config.DEFAULT_PUBLIC_USER_PASS));
+		httpClient.setCredentialsProvider(credProvider);
+
+		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+		builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+		builder.setCharset(Charset.forName("UTF-8"));
 
 		String userFriendlyErrorMessage = "";
 		uploadStatusMessage = "Contacting server";
@@ -105,7 +116,11 @@ public class DownloadDatumsService extends IntentService {
 					JSONResponse += newLine;
 				}
 			} while (newLine != null);
-			Log.d(Config.TAG, JSONResponse);
+			Log.d(Config.TAG, url + ":::" + JSONResponse);
+			ACRA.getErrorReporter().putCustomData("downloadDatums",
+					datumTagToDownload);
+			// ACRA.getErrorReporter().handleException(
+			// new Exception("*** Download Data Completed ***"));
 
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
@@ -121,8 +136,8 @@ public class DownloadDatumsService extends IntentService {
 					true);
 		} else {
 			/* Success: remove the notification */
-			((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
-					.cancel(notificationId);
+			// ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
+			// .cancel(notificationId);
 		}
 	}
 
