@@ -1,5 +1,9 @@
 package com.github.opensourcefieldlinguistics.fielddb.database;
 
+import java.util.ArrayList;
+
+import ca.ilanguage.oprime.database.OPrimeTable;
+
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 
 import android.content.ContentProvider;
@@ -8,6 +12,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
@@ -20,7 +25,8 @@ public class DatumContentProvider extends ContentProvider {
 	private static final int ITEMS = 10;
 	private static final int ITEM_ID = 20;
 
-	private static final String AUTHORITY = "com.github.opensourcefieldlinguistics.fielddb.datum";
+	private static final String AUTHORITY = "com.github.opensourcefieldlinguistics.fielddb."
+			+ DatumTable.TABLE_NAME;
 	private static final String BASE_PATH = DatumTable.TABLE_NAME + "s";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + BASE_PATH);
@@ -103,7 +109,8 @@ public class DatumContentProvider extends ContentProvider {
 	}
 
 	public class DatumSQLiteHelper extends SQLiteOpenHelper {
-		private static final String DATABASE_NAME = "datum.db";
+		private static final String DATABASE_NAME = DatumTable.TABLE_NAME
+				+ ".db";
 		private static final int DATABASE_VERSION = 1;
 
 		public DatumSQLiteHelper(Context context) {
@@ -112,8 +119,16 @@ public class DatumContentProvider extends ContentProvider {
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-			db.execSQL(DatumTable.CREATE);
-			db.insert(DatumTable.TABLE_NAME, null, DatumTable.sampleData());
+			try {
+				DatumTable.setColumns();
+				db.execSQL(DatumTable
+						.generateCreateTableSQLStatement(DatumTable.TABLE_NAME));
+				db.insert(DatumTable.TABLE_NAME, null, DatumTable.sampleData());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 		@Override
@@ -138,63 +153,40 @@ public class DatumContentProvider extends ContentProvider {
 
 			/* Re-create table using current schema, and remove the sample data */
 			onCreate(db);
-			String clearSampleData = "DELETE FROM " + DatumTable.TABLE_NAME
-					+ ";";
 			try {
+				String clearSampleData = "DELETE FROM " + DatumTable.TABLE_NAME
+						+ ";";
 				db.execSQL(clearSampleData);
 			} catch (Exception e) {
 				Log.w(Config.TAG,
 						"Problem upgrading, unable to clear sample data." + e);
 			}
-			String performUpgrade = "";
-			performUpgrade = "INSERT INTO " + DatumTable.TABLE_NAME + "("
-					+ DatumTable.COLUMN_ID + ", " + DatumTable.COLUMN_REV
-					+ ", " + DatumTable.COLUMN_UTTERANCE + ", "
-					+ DatumTable.COLUMN_MORPHEMES + ", "
-					+ DatumTable.COLUMN_GLOSS + ", "
-					+ DatumTable.COLUMN_TRANSLATION + ", "
-					+ DatumTable.COLUMN_ORTHOGRAPHY + ", "
-					+ DatumTable.COLUMN_CONTEXT + ", "
-					+ DatumTable.COLUMN_IMAGE_FILES + ", "
-					+ DatumTable.COLUMN_AUDIO_VIDEO_FILES + ", "
-					+ DatumTable.COLUMN_LOCATIONS + ", "
-					+ DatumTable.COLUMN_RELATED + ", "
-					+ DatumTable.COLUMN_REMINDERS + ", "
-					+ DatumTable.COLUMN_TAGS + ", "
-					+ DatumTable.COLUMN_COMMENTS + ", "
-					+ DatumTable.COLUMN_ACTUAL_JSON + ") " + "SELECT "
 
-					+ DatumTable.COLUMN_ID + ", " + DatumTable.COLUMN_REV
-					+ ", " + DatumTable.COLUMN_UTTERANCE + ", "
-					+ DatumTable.COLUMN_MORPHEMES + ", "
-					+ DatumTable.COLUMN_GLOSS + ", "
-					+ DatumTable.COLUMN_TRANSLATION + ", "
-					+ DatumTable.COLUMN_ORTHOGRAPHY + ", "
-					+ DatumTable.COLUMN_CONTEXT + ", "
-					+ DatumTable.COLUMN_IMAGE_FILES + ", "
-					+ DatumTable.COLUMN_AUDIO_VIDEO_FILES + ", "
-					+ DatumTable.COLUMN_LOCATIONS + ", "
-					+ DatumTable.COLUMN_RELATED + ", "
-					+ DatumTable.COLUMN_REMINDERS + ", "
-					+ DatumTable.COLUMN_TAGS + ", "
-					+ DatumTable.COLUMN_COMMENTS + ", "
-					+ DatumTable.COLUMN_ACTUAL_JSON + " " + "FROM "
-					+ DatumTable.TABLE_NAME + "backup1;";
+			ArrayList<String> previousColumns = OPrimeTable.getBaseColumns();
+			String[] knownColumns = DatumTable.version1Columns;
+
+			/* Add other versions to this if statement */
+			if (oldVersion == 1) {
+				knownColumns = DatumTable.version1Columns;
+			}
+
+			/* Copy the data from previous columns over */
+			for (String column : knownColumns) {
+				previousColumns.add(column);
+			}
 			try {
-				db.execSQL(performUpgrade);
+				db.execSQL(DatumTable.generateUpgradeTableSQLStatement(
+						DatumTable.TABLE_NAME, previousColumns));
 			} catch (Exception e) {
 				Log.w(Config.TAG,
-						"Problem upgrading, unable to copy user data." + e);
+						"Problem upgrading, unable to copy datum data." + e);
 			}
 		}
-
 	}
 
-	public static class DatumTable {
+	public static class DatumTable extends OPrimeTable {
 		public static final String TABLE_NAME = "datum";
 
-		public static final String COLUMN_ID = "_id";
-		public static final String COLUMN_REV = "_rev";
 		public static final String COLUMN_UTTERANCE = "utterance";
 		public static final String COLUMN_MORPHEMES = "morphemes";
 		public static final String COLUMN_GLOSS = "gloss";
@@ -204,28 +196,18 @@ public class DatumContentProvider extends ContentProvider {
 		public static final String COLUMN_IMAGE_FILES = "imageFiles";
 		public static final String COLUMN_AUDIO_VIDEO_FILES = "audioVideoFiles";
 		public static final String COLUMN_LOCATIONS = "locations";
-		public static final String COLUMN_RELATED = "related";
 		public static final String COLUMN_REMINDERS = "reminders";
 		public static final String COLUMN_TAGS = "tags";
-		public static final String COLUMN_COMMENTS = "comments";
-		public static final String COLUMN_ACTUAL_JSON = "actualJSON";
 
-		// Database creation SQL statement
-		private static final String CREATE = "create table " + TABLE_NAME + "("
-				+ COLUMN_ID + " text primary key, " + COLUMN_REV + " text , "
-				+ COLUMN_UTTERANCE + " text , " + COLUMN_MORPHEMES + " text , "
-				+ COLUMN_GLOSS + " text , " + COLUMN_TRANSLATION + " text , "
-				+ COLUMN_ORTHOGRAPHY + " text , " + COLUMN_CONTEXT + " text , "
-				+ COLUMN_IMAGE_FILES + " text , " + COLUMN_AUDIO_VIDEO_FILES
-				+ " text , " + COLUMN_LOCATIONS + " text , " + COLUMN_RELATED
-				+ " text , " + COLUMN_REMINDERS + " text , " + COLUMN_TAGS
-				+ " text , " + COLUMN_COMMENTS + " text , "
-				+ COLUMN_ACTUAL_JSON + " blob " + ");";
+		public static String[] version1Columns = { COLUMN_UTTERANCE,
+				COLUMN_MORPHEMES, COLUMN_GLOSS, COLUMN_TRANSLATION,
+				COLUMN_ORTHOGRAPHY, COLUMN_CONTEXT, COLUMN_IMAGE_FILES,
+				COLUMN_AUDIO_VIDEO_FILES, COLUMN_LOCATIONS, COLUMN_REMINDERS,
+				COLUMN_TAGS };
 
-		private static String sampleDataUrl = Config.DEFAULT_SERVER_URL
-				+ "/community-georgian/_design/learnx/_view/byTag?key=%22SampleData%22";
+		public static String[] currentColumns = version1Columns;
 
-		// Sample data
+		// Offline Sample data
 		private static ContentValues sampleData() {
 			ContentValues values = new ContentValues();
 			values.put(COLUMN_ID, "sample1234");
@@ -237,6 +219,13 @@ public class DatumContentProvider extends ContentProvider {
 			values.put(COLUMN_IMAGE_FILES, "gamardZoba.jpg");
 			return values;
 
+		}
+
+		public static void setColumns() {
+			DatumTable.columns = OPrimeTable.getBaseColumns();
+			for (String column : currentColumns) {
+				DatumTable.columns.add(column);
+			}
 		}
 	}
 
