@@ -160,15 +160,15 @@ public class UserContentProvider extends ContentProvider {
 			}
 
 			ArrayList<String> previousColumns = OPrimeTable.getBaseColumns();
-			String[] knowColumns = UserTable.version1Columns;
+			String[] knownColumns = UserTable.version1Columns;
 
 			/* Add other versions to this if statement */
 			if (oldVersion == 1) {
-				knowColumns = UserTable.version1Columns;
+				knownColumns = UserTable.version1Columns;
 			}
 
 			/* Copy the data from previous columns over */
-			for (String column : knowColumns) {
+			for (String column : knownColumns) {
 				previousColumns.add(column);
 			}
 			try {
@@ -198,8 +198,10 @@ public class UserContentProvider extends ContentProvider {
 				COLUMN_FIRSTNAME, COLUMN_LASTNAME, COLUMN_EMAIL,
 				COLUMN_GRAVATAR, COLUMN_AFFILIATION, COLUMN_RESEARCH_INTEREST,
 				COLUMN_DESCRIPTION, COLUMN_SUBTITLE };
+		
+		public static String[] currentColumns = version1Columns;
 
-		// Sample data
+		// Offline Sample data
 		protected static ContentValues sampleData() {
 			ContentValues values = new ContentValues();
 			String username = "anonymous" + System.currentTimeMillis();
@@ -213,15 +215,9 @@ public class UserContentProvider extends ContentProvider {
 
 		public static void setColumns() {
 			UserTable.columns = OPrimeTable.getBaseColumns();
-			UserTable.columns.add(COLUMN_USERNAME);
-			UserTable.columns.add(COLUMN_FIRSTNAME);
-			UserTable.columns.add(COLUMN_LASTNAME);
-			UserTable.columns.add(COLUMN_EMAIL);
-			UserTable.columns.add(COLUMN_GRAVATAR);
-			UserTable.columns.add(COLUMN_AFFILIATION);
-			UserTable.columns.add(COLUMN_RESEARCH_INTEREST);
-			UserTable.columns.add(COLUMN_DESCRIPTION);
-			UserTable.columns.add(COLUMN_SUBTITLE);
+			for (String column : currentColumns) {
+				UserTable.columns.add(column);
+			}
 		}
 	}
 }

@@ -10,8 +10,9 @@ public abstract class OPrimeTable {
 	public static final String COLUMN_ID = "_id";
 	public static final String COLUMN_RELATED = "related";
 	public static final String COLUMN_REV = "_rev";
-
+	public static final String COLUMN_TRASHED = "trashed";
 	public static final String COLUMN_UPDATED_AT = "updated_at";
+	
 	public static ArrayList<String> columns;
 
 	public static String generateCreateTableSQLStatement(String TABLE_NAME)
@@ -91,6 +92,7 @@ public abstract class OPrimeTable {
 		ArrayList<String> columns = new ArrayList<String>();
 		columns.add(COLUMN_ID);
 		columns.add(COLUMN_REV);
+		columns.add(COLUMN_TRASHED);
 		columns.add(COLUMN_CREATED_AT);
 		columns.add(COLUMN_UPDATED_AT);
 		columns.add(COLUMN_APP_VERSION_WHEN_CREATED);
