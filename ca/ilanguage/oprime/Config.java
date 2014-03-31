@@ -64,6 +64,9 @@ public class Config {
 	public static final String INTENT_STOP_VIDEO_RECORDING = "ca.ilanguage.oprime.intent.action.BROADCAST_STOP_VIDEO_RECORDING_SERVICE";
 	public static final String INTENT_TAKE_PICTURE = "ca.ilanguage.oprime.intent.action.TAKE_PICTURE";
 
+	
+	public static String KEYSTORE_PASS = "notarealpassword";
+
 	/*
 	 * Preferences for persisting values
 	 */
