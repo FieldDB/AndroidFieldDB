@@ -4,8 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Authenticator;
-import java.net.CookieHandler;
-import java.net.CookieManager;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
@@ -102,17 +101,9 @@ public class DownloadDatumsService extends IntentService {
 				}
 			});
 
-			CookieManager cookieManager = new CookieManager();
-			// cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-			CookieHandler.setDefault(cookieManager);
-
-			HttpsURLConnection urlConnection = (HttpsURLConnection) url
-					.openConnection();
-			// urlConnection
-			// .setRequestProperty(
-			// "User-Agent",
-			// "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.2 Safari/537.36 ( compatible ) Android App");
-			// urlConnection.setRequestProperty("Accept", "*/*");
+			// CookieManager cookieManager = new CookieManager();
+			// // cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+			// CookieHandler.setDefault(cookieManager);
 
 			if (useSelfSignedCertificates) {
 				KeyStore trusted = KeyStore.getInstance("BKS");
@@ -124,9 +115,17 @@ public class DownloadDatumsService extends IntentService {
 				tmf.init(trusted);
 				SSLContext sslContext = SSLContext.getInstance("TLS");
 				sslContext.init(null, tmf.getTrustManagers(), null);
-				urlConnection
-						.setSSLSocketFactory(sslContext.getSocketFactory());
+				HttpsURLConnection.setDefaultSSLSocketFactory(sslContext
+						.getSocketFactory());
 			}
+			HttpURLConnection urlConnection = (HttpURLConnection) url
+					.openConnection();
+
+			// urlConnection
+			// .setRequestProperty(
+			// "User-Agent",
+			// "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.2 Safari/537.36 ( compatible ) Android App");
+			// urlConnection.setRequestProperty("Accept", "*/*");
 
 			try {
 				if (!url.getHost().equals(urlConnection.getURL().getHost())) {
