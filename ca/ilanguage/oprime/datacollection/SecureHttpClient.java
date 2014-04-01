@@ -13,6 +13,7 @@ import org.apache.http.impl.conn.SingleClientConnManager;
 
 import android.content.Context;
 
+@Deprecated
 public class SecureHttpClient extends DefaultHttpClient {
 	int keystoreResource;
 	String keystorePassword;
