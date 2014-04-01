@@ -5,17 +5,21 @@ import java.util.ArrayList;
 import ca.ilanguage.oprime.database.OPrimeTable;
 
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
+import com.github.opensourcefieldlinguistics.fielddb.service.DownloadDatumsService;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.Log;
 
@@ -40,7 +44,7 @@ public class DatumContentProvider extends ContentProvider {
 
 	static {
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH, ITEMS);
-		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/#", ITEM_ID);
+		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/*", ITEM_ID);
 	}
 
 	@Override
@@ -56,9 +60,12 @@ public class DatumContentProvider extends ContentProvider {
 	}
 
 	@Override
-	public Uri insert(Uri arg0, ContentValues arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public Uri insert(Uri arg0, ContentValues values) {
+		Log.d(Config.TAG, "insert " + arg0.toString());
+		SQLiteDatabase db = database.getWritableDatabase();
+		long insertedRowId = db.insert(DatumTable.TABLE_NAME, null, values);
+		Log.d(Config.TAG, "insertedRowId " + insertedRowId);
+		return arg0;
 	}
 
 	@Override
@@ -86,8 +93,8 @@ public class DatumContentProvider extends ContentProvider {
 			break;
 		case ITEM_ID:
 			// Adding the ID to the original query
-			queryBuilder.appendWhere(DatumTable.COLUMN_ID + "="
-					+ uri.getLastPathSegment());
+			queryBuilder.appendWhere(DatumTable.COLUMN_ID + "='"
+					+ uri.getLastPathSegment() + "'");
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -123,7 +130,24 @@ public class DatumContentProvider extends ContentProvider {
 				DatumTable.setColumns();
 				db.execSQL(DatumTable
 						.generateCreateTableSQLStatement(DatumTable.TABLE_NAME));
-				db.insert(DatumTable.TABLE_NAME, null, DatumTable.sampleData());
+				
+				ConnectivityManager connManager = (ConnectivityManager) getContext()
+						.getSystemService(Context.CONNECTIVITY_SERVICE);
+				NetworkInfo mWifi = connManager
+						.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+				if (mWifi.isConnected()) {
+					// if the user has a wifi connection we can download some
+					// real sample data
+					Intent downloadSamples = new Intent(getContext(),
+							DownloadDatumsService.class);
+					getContext().startService(downloadSamples);
+				} else {
+					// Otherwise, insert offline data
+					db.insert(DatumTable.TABLE_NAME, null,
+							DatumTable.sampleData());
+				}
+
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
@@ -198,12 +222,17 @@ public class DatumContentProvider extends ContentProvider {
 		public static final String COLUMN_LOCATIONS = "locations";
 		public static final String COLUMN_REMINDERS = "reminders";
 		public static final String COLUMN_TAGS = "tags";
+		public static final String COLUMN_COMMENTS = "comments";
+		public static final String COLUMN_VALIDATION_STATUS = "validationStatus";
+		public static final String COLUMN_ENTERED_BY_USER = "enteredByUser";
+		public static final String COLUMN_MODIFIED_BY_USER = "modifiedByUser";
 
 		public static String[] version1Columns = { COLUMN_UTTERANCE,
 				COLUMN_MORPHEMES, COLUMN_GLOSS, COLUMN_TRANSLATION,
 				COLUMN_ORTHOGRAPHY, COLUMN_CONTEXT, COLUMN_IMAGE_FILES,
 				COLUMN_AUDIO_VIDEO_FILES, COLUMN_LOCATIONS, COLUMN_REMINDERS,
-				COLUMN_TAGS };
+				COLUMN_TAGS, COLUMN_COMMENTS, COLUMN_VALIDATION_STATUS,
+				COLUMN_ENTERED_BY_USER, COLUMN_MODIFIED_BY_USER };
 
 		public static String[] currentColumns = version1Columns;
 
@@ -218,7 +247,6 @@ public class DatumContentProvider extends ContentProvider {
 			values.put(COLUMN_CONTEXT, "(Standard greeting)");
 			values.put(COLUMN_IMAGE_FILES, "gamardZoba.jpg");
 			return values;
-
 		}
 
 		public static void setColumns() {

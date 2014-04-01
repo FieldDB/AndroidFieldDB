@@ -14,8 +14,13 @@ import org.acra.annotation.ReportsCrashes;
 
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.georgian.R;
+import com.github.opensourcefieldlinguistics.fielddb.service.DownloadDatumsService;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 @ReportsCrashes(formKey = "", formUri = "", reportType = org.acra.sender.HttpSender.Type.JSON, httpMethod = org.acra.sender.HttpSender.Method.PUT, formUriBasicAuthLogin = "see_private_constants", formUriBasicAuthPassword = "see_private_constants")
 public class FieldDBApplication extends Application {
@@ -72,5 +77,17 @@ public class FieldDBApplication extends Application {
 		ACRA.setConfig(config);
 
 		ACRA.init(this);
+
+		/* If the user is connected to wifi, download updates */
+		ConnectivityManager connManager = (ConnectivityManager) getApplicationContext()
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo wifi = connManager
+				.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		if (wifi.isConnected()) {
+			Intent updateSamples = new Intent(getApplicationContext(),
+					DownloadDatumsService.class);
+			getApplicationContext().startService(updateSamples);
+		}
+
 	}
 }
