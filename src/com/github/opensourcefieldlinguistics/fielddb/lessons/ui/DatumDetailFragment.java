@@ -129,13 +129,6 @@ public class DatumDetailFragment extends Fragment {
 			mItem = PlaceholderContent.ITEM_MAP.get(getArguments().getString(
 					ARG_ITEM_ID));
 
-			/*
-			 * Imagine DB is empty, fill it (TODO put this in the oncreate of
-			 * the db later...
-			 */
-			 Intent downloadSamples = new Intent(getActivity(),
-			 DownloadDatumsService.class);
-			 getActivity().startService(downloadSamples);
 
 		}
 	}
