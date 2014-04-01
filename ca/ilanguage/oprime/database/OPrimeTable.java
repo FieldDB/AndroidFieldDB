@@ -4,7 +4,8 @@ import java.util.ArrayList;
 
 public abstract class OPrimeTable {
 	public static final String COLUMN_ACTUAL_JSON = "actualJSON";
-	public static final String COLUMN_APP_VERSION_WHEN_CREATED = "appVersionWhenCreated";
+	public static final String COLUMN_ANDROID_ID = "android_id";
+	public static final String COLUMN_APP_VERSIONS_WHEN_MODIFIED = "appVersionsWhenModified";
 	public static final String COLUMN_COMMENTS = "comments";
 	public static final String COLUMN_CREATED_AT = "created_at";
 	public static final String COLUMN_ID = "_id";
@@ -22,14 +23,14 @@ public abstract class OPrimeTable {
 					"Columns have not been defined, please define the columns first.");
 		}
 
-		String preamble = "create table " + TABLE_NAME + "(" + COLUMN_ID
-				+ " text primary key, ";
+		String preamble = "create table " + TABLE_NAME + "(" + COLUMN_ANDROID_ID
+				+ " INTEGER primary key AUTOINCREMENT, ";
 		String postamble = ");";
 		final StringBuilder sb = new StringBuilder(preamble);
 		boolean isFirst = true;
 		for (String column : columns) {
 			/* Primary key and actualJSON get special treatment */
-			if (COLUMN_ID.equals(column) || COLUMN_ACTUAL_JSON.equals(column)) {
+			if (COLUMN_ANDROID_ID.equals(column) || COLUMN_ACTUAL_JSON.equals(column)) {
 				continue;
 			}
 			if (!isFirst) {
@@ -90,12 +91,13 @@ public abstract class OPrimeTable {
 
 	public static ArrayList<String> getBaseColumns() {
 		ArrayList<String> columns = new ArrayList<String>();
+		columns.add(COLUMN_ANDROID_ID);
 		columns.add(COLUMN_ID);
 		columns.add(COLUMN_REV);
 		columns.add(COLUMN_TRASHED);
 		columns.add(COLUMN_CREATED_AT);
 		columns.add(COLUMN_UPDATED_AT);
-		columns.add(COLUMN_APP_VERSION_WHEN_CREATED);
+		columns.add(COLUMN_APP_VERSIONS_WHEN_MODIFIED);
 		columns.add(COLUMN_RELATED);
 		columns.add(COLUMN_ACTUAL_JSON);
 		return columns;
