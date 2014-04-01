@@ -13,6 +13,8 @@ public class Config extends ca.ilanguage.oprime.Config {
 	public static final String DEFAULT_PUBLIC_USERNAME = PrivateConstants.DEFAULT_PUBLIC_USERNAME;
 	public static final String DEFAULT_SAMPLE_DATA_URL = PrivateConstants.DEFAULT_SERVER_URL
 			+ "/" + DEFAULT_CORPUS + "/_design/learnx/_view/byTag";
+	public static final String DEFAULT_CORPUS_LOGIN = PrivateConstants.DEFAULT_SERVER_URL
+			+ "/_session";
 	public static final String DEFAULT_SERVER_URL = PrivateConstants.DEFAULT_SERVER_URL;
 
 	public static final String KEYSTORE_PASS = PrivateConstants.KEYSTORE_PASS;

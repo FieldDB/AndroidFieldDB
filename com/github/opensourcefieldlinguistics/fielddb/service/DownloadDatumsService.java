@@ -3,11 +3,12 @@ package com.github.opensourcefieldlinguistics.fielddb.service;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Authenticator;
+import java.net.CookieHandler;
+import java.net.CookieManager;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -19,6 +20,9 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.acra.ACRA;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.util.ByteArrayBuffer;
 
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
@@ -76,14 +80,16 @@ public class DownloadDatumsService extends IntentService {
 		notifyUser(uploadStatusMessage, noti, notificationId, false);
 
 		String userFriendlyErrorMessage = "";
-		String urlString = Config.DEFAULT_SAMPLE_DATA_URL + "?key=%22"
-				+ datumTagToDownload + "%22";
+		String urlStringAuthenticationSession = Config.DEFAULT_CORPUS_LOGIN;
+		String urlStringSampleDataDownload = Config.DEFAULT_SAMPLE_DATA_URL
+				+ "?key=%22" + datumTagToDownload + "%22";
 		if (Config.D) {
-			Log.d(Config.TAG, urlString);
+			Log.d(Config.TAG, urlStringAuthenticationSession);
 		}
 		ACRA.getErrorReporter().putCustomData("downloadDatums",
 				datumTagToDownload);
-		ACRA.getErrorReporter().putCustomData("urlString", urlString);
+		ACRA.getErrorReporter().putCustomData("urlString",
+				urlStringAuthenticationSession);
 		uploadStatusMessage = "Contacting server";
 		notifyUser(uploadStatusMessage, noti, notificationId, false);
 
@@ -92,18 +98,18 @@ public class DownloadDatumsService extends IntentService {
 		 * html
 		 */
 		try {
-			URL url = new URL(urlString);
-			Authenticator.setDefault(new Authenticator() {
-				protected PasswordAuthentication getPasswordAuthentication() {
-					return new PasswordAuthentication(
-							Config.DEFAULT_PUBLIC_USERNAME,
-							Config.DEFAULT_PUBLIC_USER_PASS.toCharArray());
-				}
-			});
+			URL url = new URL(urlStringAuthenticationSession);
+			// Authenticator.setDefault(new Authenticator() {
+			// protected PasswordAuthentication getPasswordAuthentication() {
+			// return new PasswordAuthentication(
+			// Config.DEFAULT_PUBLIC_USERNAME,
+			// Config.DEFAULT_PUBLIC_USER_PASS.toCharArray());
+			// }
+			// });
 
-			// CookieManager cookieManager = new CookieManager();
-			// // cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-			// CookieHandler.setDefault(cookieManager);
+			CookieManager cookieManager = new CookieManager();
+			// cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+			CookieHandler.setDefault(cookieManager);
 
 			if (useSelfSignedCertificates) {
 				KeyStore trusted = KeyStore.getInstance("BKS");
@@ -118,8 +124,21 @@ public class DownloadDatumsService extends IntentService {
 				HttpsURLConnection.setDefaultSSLSocketFactory(sslContext
 						.getSocketFactory());
 			}
+
 			HttpURLConnection urlConnection = (HttpURLConnection) url
 					.openConnection();
+			urlConnection.setRequestMethod("POST");
+			urlConnection.setDoInput(true);
+			urlConnection.setDoOutput(true);
+
+			MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+			builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+			builder.setCharset(Charset.forName("UTF-8"));
+			builder.addTextBody("name", Config.DEFAULT_PUBLIC_USERNAME);
+			builder.addTextBody("password", Config.DEFAULT_PUBLIC_USER_PASS);
+			final HttpEntity entity = builder.build();
+			urlConnection.addRequestProperty(entity.getContentType().getName(),
+					entity.getContentType().getValue());
 
 			// urlConnection
 			// .setRequestProperty(
@@ -127,6 +146,10 @@ public class DownloadDatumsService extends IntentService {
 			// "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.2 Safari/537.36 ( compatible ) Android App");
 			// urlConnection.setRequestProperty("Accept", "*/*");
 
+//			con.setRequestMethod("GET");
+//		    con.connect();
+			
+			urlConnection.connect();
 			try {
 				if (!url.getHost().equals(urlConnection.getURL().getHost())) {
 					Log.d(Config.TAG,
