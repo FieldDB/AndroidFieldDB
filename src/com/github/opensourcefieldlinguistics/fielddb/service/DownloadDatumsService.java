@@ -2,8 +2,11 @@ package com.github.opensourcefieldlinguistics.fielddb.service;
 
 import java.io.BufferedInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.HttpURLConnection;
@@ -24,7 +27,9 @@ import javax.net.ssl.TrustManagerFactory;
 import org.acra.ACRA;
 import org.apache.http.util.ByteArrayBuffer;
 
+import com.github.opensourcefieldlinguistics.fielddb.database.AudioVideoContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
+import com.github.opensourcefieldlinguistics.fielddb.database.AudioVideoContentProvider.AudioVideoTable;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.georgian.R;
@@ -406,7 +411,8 @@ public class DownloadDatumsService extends IntentService {
 					uri = getContentResolver().insert(
 							DatumContentProvider.CONTENT_URI, datumAsValues);
 				} catch (Exception e) {
-					Log.d(Config.TAG, "Failed to insert this sample...");
+					Log.d(Config.TAG,
+							"Failed to insert this sample most likely something was missing from the server...");
 					e.printStackTrace();
 				}
 			}
@@ -421,12 +427,116 @@ public class DownloadDatumsService extends IntentService {
 		return;
 	}
 
+	public void downloadMediaFile(String mediaFileUrl) {
+		/*
+		 * TODO sanitize url and filename and size or something... to ensure its
+		 * not dangerous
+		 */
+		String filename = Uri.parse(mediaFileUrl).getLastPathSegment();
+
+		if ((new File(Config.DEFAULT_OUTPUT_DIRECTORY + "/" + filename))
+				.exists()) {
+			Log.d(Config.TAG, "Not re-requesting download of " + mediaFileUrl
+					+ " a file with this name already exists...");
+			return;
+		}
+
+		URL url;
+		try {
+			url = new URL(mediaFileUrl);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			this.userFriendlyErrorMessage = "Problem determining which server to contact for media data, please report this error."+ mediaFileUrl;
+			return;
+		}
+
+		HttpURLConnection urlConnection;
+		try {
+			urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("GET");
+			urlConnection.connect();
+		} catch (IOException e) {
+			e.printStackTrace();
+			this.userFriendlyErrorMessage = "Problem contacting the server to download media data.";
+			return;
+		}
+		if (!url.getHost().equals(urlConnection.getURL().getHost())) {
+			Log.d(Config.TAG,
+					"We were redirected! Kick the user out to the browser to sign on?");
+		}
+
+		/* Open the input or error stream */
+		int status;
+		try {
+			status = urlConnection.getResponseCode();
+		} catch (IOException e) {
+			e.printStackTrace();
+			this.userFriendlyErrorMessage = "Problem getting server resonse code for media file.";
+			return;
+		}
+		if (Config.D) {
+			Log.d(Config.TAG, "Server status code " + status);
+		}
+		this.uploadStatusMessage = "Server contacted.";
+		BufferedInputStream reader;
+		try {
+			if (status < 400 && urlConnection.getInputStream() != null) {
+				reader = new BufferedInputStream(urlConnection.getInputStream());
+				byte[] buffer = new byte[4096];
+				int n = -1;
+				OutputStream output = new FileOutputStream(
+						Config.DEFAULT_OUTPUT_DIRECTORY + "/" + filename);
+				while ((n = reader.read(buffer)) != -1) {
+					if (n > 0) {
+						output.write(buffer, 0, n);
+					}
+				}
+				output.close();
+				this.uploadStatusMessage = "Downloaded " + filename;
+			} else {
+				this.userFriendlyErrorMessage = "Server replied " + status;
+			}
+			this.notifyUser(this.uploadStatusMessage, this.noti,
+					notificationId, false);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			this.userFriendlyErrorMessage = "Problem writing to the server connection.";
+			return;
+		}
+
+		return;
+	}
+
+	public Uri insertMediaFileInDB(String url) {
+		String filename = Uri.parse(url).getLastPathSegment();
+		String[] audioVideoProjection = { AudioVideoTable.COLUMN_FILENAME };
+
+		Uri uri = Uri.withAppendedPath(AudioVideoContentProvider.CONTENT_URI,
+				filename);
+		Cursor cursor = getContentResolver().query(uri, audioVideoProjection,
+				null, null, null);
+
+		// TODO instead, update it, without losing info
+		if (cursor == null || cursor.getCount() <= 0) {
+			ContentValues mediaAsValues = new ContentValues();
+			mediaAsValues.put(AudioVideoTable.COLUMN_ID, filename);
+			mediaAsValues.put(AudioVideoTable.COLUMN_FILENAME, filename);
+			mediaAsValues.put(AudioVideoTable.COLUMN_URL, url);
+			uri = getContentResolver().insert(
+					AudioVideoContentProvider.CONTENT_URI, mediaAsValues);
+		}
+		return uri;
+	}
+
 	public String addAdditionalDownloads(String commadelimitedUrls) {
 		String[] urls = commadelimitedUrls.split(",");
 		String filenames = "";
 		for (String url : urls) {
 			url = url.replaceAll("SERVER_URL", Config.DEFAULT_DATA_SERVER_URL);
 			this.additionalDownloads.add(url);
+			this.downloadMediaFile(url);
+			this.insertMediaFileInDB(url);
 			if (!"".equals(filenames)) {
 				filenames = filenames + ",";
 			}
