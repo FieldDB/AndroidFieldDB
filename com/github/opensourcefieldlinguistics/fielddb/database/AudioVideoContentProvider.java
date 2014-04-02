@@ -1,5 +1,9 @@
 package com.github.opensourcefieldlinguistics.fielddb.database;
 
+import java.util.ArrayList;
+
+import ca.ilanguage.oprime.database.OPrimeTable;
+
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 
 import android.content.ContentProvider;
@@ -8,6 +12,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
@@ -35,7 +40,7 @@ public class AudioVideoContentProvider extends ContentProvider {
 
 	static {
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH, ITEMS);
-		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/#", ITEM_ID);
+		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/*", ITEM_ID);
 	}
 
 	@Override
@@ -51,9 +56,12 @@ public class AudioVideoContentProvider extends ContentProvider {
 	}
 
 	@Override
-	public Uri insert(Uri arg0, ContentValues arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public Uri insert(Uri id, ContentValues values) {
+		Log.d(Config.TAG, "insert " + id.toString());
+		SQLiteDatabase db = database.getWritableDatabase();
+		long insertedRowId = db.insert(AudioVideoTable.TABLE_NAME, null, values);
+		Log.d(Config.TAG, "insertedRowId " + insertedRowId);
+		return id;
 	}
 
 	@Override
@@ -81,8 +89,8 @@ public class AudioVideoContentProvider extends ContentProvider {
 			break;
 		case ITEM_ID:
 			// Adding the ID to the original query
-			queryBuilder.appendWhere(AudioVideoTable.COLUMN_FILENAME + "="
-					+ uri.getLastPathSegment());
+			queryBuilder.appendWhere(AudioVideoTable.COLUMN_FILENAME + "='"
+					+ uri.getLastPathSegment() + "'");
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -104,7 +112,8 @@ public class AudioVideoContentProvider extends ContentProvider {
 	}
 
 	public class AudioVideoSQLiteHelper extends SQLiteOpenHelper {
-		private static final String DATABASE_NAME = "AudioVideo.db";
+		private static final String DATABASE_NAME = AudioVideoTable.TABLE_NAME
+				+ ".db";
 		private static final int DATABASE_VERSION = 1;
 
 		public AudioVideoSQLiteHelper(Context context) {
@@ -113,9 +122,15 @@ public class AudioVideoContentProvider extends ContentProvider {
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-			db.execSQL(AudioVideoTable.CREATE);
-			db.insert(AudioVideoTable.TABLE_NAME, null,
-					AudioVideoTable.sampleData());
+			try {
+				AudioVideoTable.setColumns();
+				db.execSQL(AudioVideoTable
+						.generateCreateTableSQLStatement(AudioVideoTable.TABLE_NAME));
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 		@Override
@@ -141,31 +156,29 @@ public class AudioVideoContentProvider extends ContentProvider {
 
 			/* Re-create table using current schema, and remove the sample data */
 			onCreate(db);
-			String clearSampleData = "DELETE FROM "
-					+ AudioVideoTable.TABLE_NAME + ";";
 			try {
+				String clearSampleData = "DELETE FROM "
+						+ AudioVideoTable.TABLE_NAME + ";";
 				db.execSQL(clearSampleData);
 			} catch (Exception e) {
 				Log.w(Config.TAG,
 						"Problem upgrading, unable to clear sample data." + e);
 			}
-			String performUpgrade = "";
-			performUpgrade = "INSERT INTO " + AudioVideoTable.TABLE_NAME + "("
-					+ AudioVideoTable.COLUMN_FILENAME + ", "
-					+ AudioVideoTable.COLUMN_URL + ", "
-					+ AudioVideoTable.COLUMN_DESCRIPTION + ", "
-					+ AudioVideoTable.COLUMN_COMMENTS + ", "
-					+ AudioVideoTable.COLUMN_ACTUAL_JSON + ") " + "SELECT "
+			ArrayList<String> previousColumns = OPrimeTable.getBaseColumns();
+			String[] knownColumns = AudioVideoTable.version1Columns;
 
-					+ AudioVideoTable.COLUMN_FILENAME + ", "
-					+ AudioVideoTable.COLUMN_URL + ", "
-					+ AudioVideoTable.COLUMN_DESCRIPTION + ", "
-					+ AudioVideoTable.COLUMN_COMMENTS + ", "
-					+ AudioVideoTable.COLUMN_COMMENTS + ", "
-					+ AudioVideoTable.COLUMN_ACTUAL_JSON + " " + "FROM "
-					+ AudioVideoTable.TABLE_NAME + "backup1;";
+			/* Add other versions to this if statement */
+			if (oldVersion == 1) {
+				knownColumns = AudioVideoTable.version1Columns;
+			}
+
+			/* Copy the data from previous columns over */
+			for (String column : knownColumns) {
+				previousColumns.add(column);
+			}
 			try {
-				db.execSQL(performUpgrade);
+				db.execSQL(AudioVideoTable.generateUpgradeTableSQLStatement(
+						AudioVideoTable.TABLE_NAME, previousColumns));
 			} catch (Exception e) {
 				Log.w(Config.TAG,
 						"Problem upgrading, unable to copy user data." + e);
@@ -174,23 +187,19 @@ public class AudioVideoContentProvider extends ContentProvider {
 
 	}
 
-	public static class AudioVideoTable {
+	public static class AudioVideoTable extends OPrimeTable {
 		public static final String TABLE_NAME = "audiovideo";
 
 		public static final String COLUMN_FILENAME = "filename";
 		public static final String COLUMN_URL = "url";
 		public static final String COLUMN_DESCRIPTION = "description";
-		public static final String COLUMN_COMMENTS = "comments";
-		public static final String COLUMN_ACTUAL_JSON = "actualJSON";
 
-		// Database creation SQL statement
-		private static final String CREATE = "create table " + TABLE_NAME + "("
-				+ COLUMN_FILENAME + " text primary key, " + COLUMN_URL
-				+ " text , " + COLUMN_DESCRIPTION + " text , "
-				+ COLUMN_COMMENTS + " text , " + COLUMN_ACTUAL_JSON + " blob "
-				+ ");";
+		public static String[] version1Columns = { COLUMN_FILENAME, COLUMN_URL,
+				COLUMN_DESCRIPTION };
 
-		// Sample data
+		public static String[] currentColumns = version1Columns;
+
+		// Offline Sample data
 		private static ContentValues sampleData() {
 			ContentValues values = new ContentValues();
 			values.put(COLUMN_FILENAME, "gamardZoba.jpg");
@@ -198,7 +207,13 @@ public class AudioVideoContentProvider extends ContentProvider {
 					COLUMN_URL,
 					"https://corpus.lingsync.org/community-georgian/723a8b707e579087aa36c2e338eb17ec/gamardZoba.jpg");
 			return values;
+		}
 
+		public static void setColumns() {
+			AudioVideoTable.columns = OPrimeTable.getBaseColumns();
+			for (String column : currentColumns) {
+				AudioVideoTable.columns.add(column);
+			}
 		}
 	}
 

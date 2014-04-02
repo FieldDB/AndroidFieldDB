@@ -60,12 +60,12 @@ public class DatumContentProvider extends ContentProvider {
 	}
 
 	@Override
-	public Uri insert(Uri arg0, ContentValues values) {
-		Log.d(Config.TAG, "insert " + arg0.toString());
+	public Uri insert(Uri id, ContentValues values) {
+		Log.d(Config.TAG, "insert " + id.toString());
 		SQLiteDatabase db = database.getWritableDatabase();
 		long insertedRowId = db.insert(DatumTable.TABLE_NAME, null, values);
 		Log.d(Config.TAG, "insertedRowId " + insertedRowId);
-		return arg0;
+		return id;
 	}
 
 	@Override
@@ -130,7 +130,7 @@ public class DatumContentProvider extends ContentProvider {
 				DatumTable.setColumns();
 				db.execSQL(DatumTable
 						.generateCreateTableSQLStatement(DatumTable.TABLE_NAME));
-				
+
 				ConnectivityManager connManager = (ConnectivityManager) getContext()
 						.getSystemService(Context.CONNECTIVITY_SERVICE);
 				NetworkInfo mWifi = connManager
