@@ -1,6 +1,7 @@
 package com.github.opensourcefieldlinguistics.fielddb;
 
 /* https://github.com/ACRA/acralyzer/wiki/setup */
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
@@ -27,6 +28,8 @@ public class FieldDBApplication extends Application {
 	@Override
 	public final void onCreate() {
 		super.onCreate();
+
+		(new File(Config.DEFAULT_OUTPUT_DIRECTORY)).mkdirs();
 
 		ACRAConfiguration config = ACRA.getNewDefaultConfig(this);
 		config.setFormUri(Config.ACRA_SERVER_URL);
