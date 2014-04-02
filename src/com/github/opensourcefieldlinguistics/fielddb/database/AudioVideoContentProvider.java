@@ -20,7 +20,8 @@ public class AudioVideoContentProvider extends ContentProvider {
 	private static final int ITEMS = 10;
 	private static final int ITEM_ID = 20;
 
-	private static final String AUTHORITY = "com.github.opensourcefieldlinguistics.fielddb.audiovideo";
+	private static final String AUTHORITY = "com.github.opensourcefieldlinguistics.fielddb."
+			+ AudioVideoTable.TABLE_NAME;
 	private static final String BASE_PATH = AudioVideoTable.TABLE_NAME + "s";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + BASE_PATH);
@@ -113,7 +114,8 @@ public class AudioVideoContentProvider extends ContentProvider {
 		@Override
 		public void onCreate(SQLiteDatabase db) {
 			db.execSQL(AudioVideoTable.CREATE);
-			db.insert(AudioVideoTable.TABLE_NAME, null, AudioVideoTable.sampleData());
+			db.insert(AudioVideoTable.TABLE_NAME, null,
+					AudioVideoTable.sampleData());
 		}
 
 		@Override
@@ -128,8 +130,9 @@ public class AudioVideoContentProvider extends ContentProvider {
 			 * old table, then create the new table and then populate the new
 			 * table with the contents of the old table.
 			 */
-			String copyTableToBackup = "ALTER TABLE " + AudioVideoTable.TABLE_NAME
-					+ " RENAME TO " + AudioVideoTable.TABLE_NAME + "backup1;";
+			String copyTableToBackup = "ALTER TABLE "
+					+ AudioVideoTable.TABLE_NAME + " RENAME TO "
+					+ AudioVideoTable.TABLE_NAME + "backup1;";
 			db.execSQL(copyTableToBackup);
 
 			Log.w(Config.TAG, "Upgrading database from version " + oldVersion
@@ -138,8 +141,8 @@ public class AudioVideoContentProvider extends ContentProvider {
 
 			/* Re-create table using current schema, and remove the sample data */
 			onCreate(db);
-			String clearSampleData = "DELETE FROM " + AudioVideoTable.TABLE_NAME
-					+ ";";
+			String clearSampleData = "DELETE FROM "
+					+ AudioVideoTable.TABLE_NAME + ";";
 			try {
 				db.execSQL(clearSampleData);
 			} catch (Exception e) {
@@ -148,13 +151,15 @@ public class AudioVideoContentProvider extends ContentProvider {
 			}
 			String performUpgrade = "";
 			performUpgrade = "INSERT INTO " + AudioVideoTable.TABLE_NAME + "("
-					+ AudioVideoTable.COLUMN_FILENAME + ", " + AudioVideoTable.COLUMN_URL
-					+ ", " + AudioVideoTable.COLUMN_DESCRIPTION + ", "
+					+ AudioVideoTable.COLUMN_FILENAME + ", "
+					+ AudioVideoTable.COLUMN_URL + ", "
+					+ AudioVideoTable.COLUMN_DESCRIPTION + ", "
 					+ AudioVideoTable.COLUMN_COMMENTS + ", "
 					+ AudioVideoTable.COLUMN_ACTUAL_JSON + ") " + "SELECT "
 
-					+ AudioVideoTable.COLUMN_FILENAME + ", " + AudioVideoTable.COLUMN_URL
-					+ ", " + AudioVideoTable.COLUMN_DESCRIPTION + ", "
+					+ AudioVideoTable.COLUMN_FILENAME + ", "
+					+ AudioVideoTable.COLUMN_URL + ", "
+					+ AudioVideoTable.COLUMN_DESCRIPTION + ", "
 					+ AudioVideoTable.COLUMN_COMMENTS + ", "
 					+ AudioVideoTable.COLUMN_COMMENTS + ", "
 					+ AudioVideoTable.COLUMN_ACTUAL_JSON + " " + "FROM "
@@ -170,7 +175,7 @@ public class AudioVideoContentProvider extends ContentProvider {
 	}
 
 	public static class AudioVideoTable {
-		public static final String TABLE_NAME = "AudioVideo";
+		public static final String TABLE_NAME = "audiovideo";
 
 		public static final String COLUMN_FILENAME = "filename";
 		public static final String COLUMN_URL = "url";
@@ -180,15 +185,18 @@ public class AudioVideoContentProvider extends ContentProvider {
 
 		// Database creation SQL statement
 		private static final String CREATE = "create table " + TABLE_NAME + "("
-				+ COLUMN_FILENAME + " text primary key, " + COLUMN_URL + " text , "
-				+ COLUMN_DESCRIPTION + " text , " + COLUMN_COMMENTS + " text , "
-				+ COLUMN_ACTUAL_JSON + " blob " + ");";
+				+ COLUMN_FILENAME + " text primary key, " + COLUMN_URL
+				+ " text , " + COLUMN_DESCRIPTION + " text , "
+				+ COLUMN_COMMENTS + " text , " + COLUMN_ACTUAL_JSON + " blob "
+				+ ");";
 
 		// Sample data
 		private static ContentValues sampleData() {
 			ContentValues values = new ContentValues();
 			values.put(COLUMN_FILENAME, "gamardZoba.jpg");
-			values.put(COLUMN_URL, "https://corpus.lingsync.org/community-georgian/723a8b707e579087aa36c2e338eb17ec/gamardZoba.jpg");
+			values.put(
+					COLUMN_URL,
+					"https://corpus.lingsync.org/community-georgian/723a8b707e579087aa36c2e338eb17ec/gamardZoba.jpg");
 			return values;
 
 		}
