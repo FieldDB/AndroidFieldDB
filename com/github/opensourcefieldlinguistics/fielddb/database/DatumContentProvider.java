@@ -44,7 +44,7 @@ public class DatumContentProvider extends ContentProvider {
 
 	static {
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH, ITEMS);
-		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/*", ITEM_ID);
+		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/#", ITEM_ID);
 	}
 
 	@Override
@@ -93,8 +93,10 @@ public class DatumContentProvider extends ContentProvider {
 			break;
 		case ITEM_ID:
 			// Adding the ID to the original query
-			queryBuilder.appendWhere(DatumTable.COLUMN_ID + "='"
-					+ uri.getLastPathSegment() + "'");
+//			queryBuilder.appendWhere(DatumTable.COLUMN_ID + "='"
+//					+ uri.getLastPathSegment() + "'");
+			queryBuilder.appendWhere(DatumTable.COLUMN_ID + "="
+					+ uri.getLastPathSegment());
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -239,7 +241,7 @@ public class DatumContentProvider extends ContentProvider {
 		// Offline Sample data
 		private static ContentValues sampleData() {
 			ContentValues values = new ContentValues();
-			values.put(COLUMN_ID, "sample1234");
+//			values.put(COLUMN_ID, "sample1234");
 			values.put(COLUMN_MORPHEMES, "gamardʒoba");
 			values.put(COLUMN_GLOSS, "hello");
 			values.put(COLUMN_TRANSLATION, "Hello");

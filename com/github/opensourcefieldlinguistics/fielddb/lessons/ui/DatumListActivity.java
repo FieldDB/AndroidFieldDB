@@ -1,8 +1,10 @@
 package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
 
+import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.georgian.R;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
@@ -59,13 +61,16 @@ public class DatumListActivity extends FragmentActivity
      * indicating that the item with the given ID was selected.
      */
     @Override
-    public void onItemSelected(String id) {
+    public void onItemSelected(long id) {
+    	
+    	Bundle arguments = new Bundle();
+    	Uri datumUrl = Uri.parse(DatumContentProvider.CONTENT_URI+"/"+id);
+    	arguments.putParcelable(DatumContentProvider.CONTENT_ITEM_TYPE, datumUrl);
+    	
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
-            Bundle arguments = new Bundle();
-            arguments.putString(DatumDetailFragment.ARG_ITEM_ID, id);
             DatumDetailFragment fragment = new DatumDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -76,7 +81,7 @@ public class DatumListActivity extends FragmentActivity
             // In single-pane mode, simply start the detail activity
             // for the selected item ID.
             Intent detailIntent = new Intent(this, DatumDetailActivity.class);
-            detailIntent.putExtra(DatumDetailFragment.ARG_ITEM_ID, id);
+            detailIntent.putExtras(arguments);
             startActivity(detailIntent);
         }
     }
