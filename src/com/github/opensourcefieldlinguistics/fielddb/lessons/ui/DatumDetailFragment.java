@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -31,11 +32,9 @@ import ca.ilanguage.oprime.datacollection.VideoRecorder;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
 import com.github.opensourcefieldlinguistics.fielddb.database.FieldDBUserContentProvider;
-import com.github.opensourcefieldlinguistics.fielddb.database.PlaceholderContent;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.georgian.R;
 import com.github.opensourcefieldlinguistics.fielddb.model.Datum;
-import com.github.opensourcefieldlinguistics.fielddb.service.DownloadDatumsService;
 
 /**
  * A fragment representing a single Datum detail screen. This fragment is either
@@ -50,7 +49,7 @@ public class DatumDetailFragment extends Fragment {
 	public static final String ARG_ITEM_ID = "item_id";
 
 	/**
-	 * The dummy content this fragment is presenting.
+	 * The content this fragment is presenting.
 	 */
 	private Datum mItem;
 
@@ -73,12 +72,6 @@ public class DatumDetailFragment extends Fragment {
 		setHasOptionsMenu(true);
 
 		if (getArguments().containsKey(ARG_ITEM_ID)) {
-			// Load the dummy content specified by the fragment
-			// arguments. In a real-world scenario, use a Loader
-			// to load content from a content provider.
-
-			// public String getPath(Uri uri) {
-
 			String id = getArguments().getString(ARG_ITEM_ID);
 			Log.d(Config.TAG, "Will get id " + id);
 			String selection = null;
@@ -91,44 +84,43 @@ public class DatumDetailFragment extends Fragment {
 					DatumTable.COLUMN_IMAGE_FILES,
 					DatumTable.COLUMN_AUDIO_VIDEO_FILES };
 			CursorLoader cursorLoader = new CursorLoader(getActivity(),
-					DatumContentProvider.CONTENT_URI, datumProjection,
-					selection, selectionArgs, sortOrder);
+					Uri.withAppendedPath(DatumContentProvider.CONTENT_URI, id),
+					datumProjection, selection, selectionArgs, sortOrder);
 
 			Cursor cursor = cursorLoader.loadInBackground();
 			cursor.moveToFirst();
-			Datum datum = new Datum(
-					cursor.getString(cursor
-							.getColumnIndexOrThrow(DatumTable.COLUMN_ORTHOGRAPHY)),
-					cursor.getString(cursor
-							.getColumnIndexOrThrow(DatumTable.COLUMN_MORPHEMES)),
-					cursor.getString(cursor
-							.getColumnIndexOrThrow(DatumTable.COLUMN_GLOSS)),
-					cursor.getString(cursor
-							.getColumnIndexOrThrow(DatumTable.COLUMN_TRANSLATION)),
-					cursor.getString(cursor
-							.getColumnIndexOrThrow(DatumTable.COLUMN_CONTEXT)));
-			datum.addMediaFiles(cursor.getString(cursor
-					.getColumnIndexOrThrow(DatumTable.COLUMN_IMAGE_FILES)));
+			if (cursor.getCount() > 0) {
+				Datum datum = new Datum(
+						cursor.getString(cursor
+								.getColumnIndexOrThrow(DatumTable.COLUMN_ORTHOGRAPHY)),
+						cursor.getString(cursor
+								.getColumnIndexOrThrow(DatumTable.COLUMN_MORPHEMES)),
+						cursor.getString(cursor
+								.getColumnIndexOrThrow(DatumTable.COLUMN_GLOSS)),
+						cursor.getString(cursor
+								.getColumnIndexOrThrow(DatumTable.COLUMN_TRANSLATION)),
+						cursor.getString(cursor
+								.getColumnIndexOrThrow(DatumTable.COLUMN_CONTEXT)));
+				datum.addMediaFiles(cursor.getString(cursor
+						.getColumnIndexOrThrow(DatumTable.COLUMN_IMAGE_FILES)));
 
-			datum.addMediaFiles((cursor.getString(cursor
-					.getColumnIndexOrThrow(DatumTable.COLUMN_AUDIO_VIDEO_FILES))));
-			cursor.close();
+				datum.addMediaFiles((cursor.getString(cursor
+						.getColumnIndexOrThrow(DatumTable.COLUMN_AUDIO_VIDEO_FILES))));
+				cursor.close();
 
-			// Test user provider
-			String[] userProjection = { UserTable.COLUMN_USERNAME };
-			cursorLoader = new CursorLoader(getActivity(),
-					FieldDBUserContentProvider.CONTENT_URI, userProjection,
-					selection, selectionArgs, sortOrder);
-			cursor = cursorLoader.loadInBackground();
-			cursor.moveToFirst();
-			Log.d(Config.TAG, cursor.getString(cursor
-					.getColumnIndexOrThrow(UserTable.COLUMN_USERNAME)));
-			cursor.close();
+				// Test user provider
+				String[] userProjection = { UserTable.COLUMN_USERNAME };
+				cursorLoader = new CursorLoader(getActivity(),
+						FieldDBUserContentProvider.CONTENT_URI, userProjection,
+						selection, selectionArgs, sortOrder);
+				cursor = cursorLoader.loadInBackground();
+				cursor.moveToFirst();
+				Log.d(Config.TAG, cursor.getString(cursor
+						.getColumnIndexOrThrow(UserTable.COLUMN_USERNAME)));
+				cursor.close();
 
-			// mItem = datum;
-			mItem = PlaceholderContent.ITEM_MAP.get(getArguments().getString(
-					ARG_ITEM_ID));
-
+				mItem = datum;
+			}
 
 		}
 	}
@@ -139,7 +131,6 @@ public class DatumDetailFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_datum_detail,
 				container, false);
 
-		// Show the dummy content as text in a TextView.
 		if (mItem != null) {
 
 			final EditText orthographyEditText = ((EditText) rootView

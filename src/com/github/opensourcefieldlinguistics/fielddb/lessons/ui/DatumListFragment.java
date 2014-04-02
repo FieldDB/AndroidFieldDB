@@ -53,7 +53,7 @@ public class DatumListFragment extends ListFragment implements
 		/**
 		 * Callback for when an item has been selected.
 		 */
-		public void onItemSelected(long id);
+		public void onItemSelected(String id);
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class DatumListFragment extends ListFragment implements
 	 */
 	private static Callbacks sDummyCallbacks = new Callbacks() {
 		@Override
-		public void onItemSelected(long id) {
+		public void onItemSelected(String id) {
 		}
 	};
 
@@ -121,7 +121,12 @@ public class DatumListFragment extends ListFragment implements
 
 		// Notify the active callbacks interface (the activity, if the
 		// fragment is attached to one) that an item has been selected.
-		mCallbacks.onItemSelected(id);
+		adapter.getCursor().moveToPosition(position);
+		String actualId = adapter.getCursor()
+				.getString(
+						adapter.getCursor().getColumnIndexOrThrow(
+								DatumTable.COLUMN_ID));
+		mCallbacks.onItemSelected(actualId);
 	}
 
 	@Override

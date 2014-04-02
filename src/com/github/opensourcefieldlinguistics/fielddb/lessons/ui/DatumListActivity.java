@@ -61,11 +61,12 @@ public class DatumListActivity extends FragmentActivity
      * indicating that the item with the given ID was selected.
      */
     @Override
-    public void onItemSelected(long id) {
+    public void onItemSelected(String id) {
     	
     	Bundle arguments = new Bundle();
     	Uri datumUrl = Uri.parse(DatumContentProvider.CONTENT_URI+"/"+id);
     	arguments.putParcelable(DatumContentProvider.CONTENT_ITEM_TYPE, datumUrl);
+        arguments.putString(DatumDetailFragment.ARG_ITEM_ID, id);
     	
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
