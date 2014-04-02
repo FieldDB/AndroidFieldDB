@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="Search for similar"/>
+    <item
+        android:id="@+id/action_speak"
+        android:icon="@drawable/ic_action_mic"
+        android:showAsAction="ifRoom"
+        android:title="Speak"/>
+    <item
+        android:id="@+id/action_play"
+        android:icon="@drawable/ic_action_play"
+        android:showAsAction="ifRoom"
+        android:title="Listen"/>
+    <item
+        android:id="@+id/action_videos"
+        android:icon="@drawable/ic_action_video"
+        android:showAsAction="ifRoom"
+        android:title="Video"/>
+    <item
+        android:id="@+id/action_images"
+        android:icon="@android:drawable/ic_menu_slideshow"
+        android:showAsAction="ifRoom"
+        android:title="Image"/>
+    <item
+        android:id="@+id/action_reminders"
+        android:icon="@android:drawable/ic_popup_reminder"
+        android:showAsAction="ifRoom"
+        android:title="Reminder(s)"/>
+    <item
+        android:id="@+id/action_locations"
+        android:icon="@android:drawable/ic_menu_mylocation"
+        android:showAsAction="ifRoom"
+        android:title="GPS Location(s)"/>
+    <item
+        android:id="@+id/action_similar"
+        android:icon="@android:drawable/ic_menu_search"
+        android:showAsAction="ifRoom"
+        android:title="Similar"/>
+    <item
+        android:id="@+id/action_tags"
+        android:icon="@android:drawable/ic_input_get"
+        android:showAsAction="ifRoom"
+        android:title="Tag(s)"/>
+    <item
+        android:id="@+id/action_share"
+        android:icon="@android:drawable/ic_menu_share"
+        android:showAsAction="ifRoom"
+        android:title="Share"/>
+    <item
+        android:id="@+id/action_comments"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:showAsAction="ifRoom"
+        android:title="Comment(s)"/>
+
+</menu>

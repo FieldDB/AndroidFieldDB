@@ -1,0 +1,100 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ff000000" >
+
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:contentDescription="This is the main image representing this example."
+        android:gravity="center"
+        android:src="@drawable/ic_launcher"
+        android:visibility="gone" />
+
+    <VideoView
+        android:id="@+id/video_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerInParent="true"
+        android:background="@drawable/ic_launcher"
+        android:gravity="center" />
+
+    <ScrollView
+        android:id="@+id/video_controls_padding"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignBottom="@+id/image_view"
+        android:layout_alignLeft="@+id/image_view"
+        android:layout_alignRight="@+id/image_view"
+        android:layout_alignTop="@+id/image_view"
+        android:gravity="center" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="#55000000"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <EditText
+                android:id="@+id/orthography"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:hint="Noqata tusunayawanmi"
+                android:inputType="textMultiLine"
+                android:scrollHorizontally="false"
+                android:text=""
+                android:textColor="#FFFFFF"
+                android:textSize="25sp" />
+
+            <EditText
+                android:id="@+id/morphemes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:hint="noqa-ta tusu-nay-wa-n-mi"
+                android:inputType="textMultiLine"
+                android:scrollHorizontally="false"
+                android:text=""
+                android:textColor="#FFFFFF" />
+
+            <EditText
+                android:id="@+id/gloss"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:hint="I-ACC dance-IMP-wan"
+                android:inputType="textMultiLine"
+                android:scrollHorizontally="false"
+                android:text=""
+                android:textColor="#FFFFFF" />
+
+            <EditText
+                android:id="@+id/translation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:hint="I feel like dancing."
+                android:inputType="textMultiLine"
+                android:scrollHorizontally="false"
+                android:text=""
+                android:textColor="#FFFFFF" />
+
+            <EditText
+                android:id="@+id/context"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:hint="(like when you cant keep your feet from tapping)"
+                android:inputType="textMultiLine"
+                android:scrollHorizontally="false"
+                android:text=""
+                android:textColor="#CCCCCC" />
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
