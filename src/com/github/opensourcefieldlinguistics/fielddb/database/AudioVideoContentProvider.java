@@ -17,6 +17,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 
 public class AudioVideoContentProvider extends ContentProvider {
@@ -59,7 +60,8 @@ public class AudioVideoContentProvider extends ContentProvider {
 	public Uri insert(Uri id, ContentValues values) {
 		Log.d(Config.TAG, "insert " + id.toString());
 		SQLiteDatabase db = database.getWritableDatabase();
-		long insertedRowId = db.insert(AudioVideoTable.TABLE_NAME, null, values);
+		long insertedRowId = db
+				.insert(AudioVideoTable.TABLE_NAME, null, values);
 		Log.d(Config.TAG, "insertedRowId " + insertedRowId);
 		return id;
 	}
@@ -106,9 +108,33 @@ public class AudioVideoContentProvider extends ContentProvider {
 	}
 
 	@Override
-	public int update(Uri arg0, ContentValues arg1, String arg2, String[] arg3) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int update(Uri uri, ContentValues values, String selection,
+			String[] selectionArgs) {
+
+		int uriType = sURIMatcher.match(uri);
+		SQLiteDatabase sqlDB = database.getWritableDatabase();
+		int rowsUpdated = 0;
+		switch (uriType) {
+		case ITEMS:
+			rowsUpdated = sqlDB.update(AudioVideoTable.TABLE_NAME, values,
+					selection, selectionArgs);
+			break;
+		case ITEM_ID:
+			String id = uri.getLastPathSegment();
+			if (TextUtils.isEmpty(selection)) {
+				rowsUpdated = sqlDB.update(AudioVideoTable.TABLE_NAME, values,
+						AudioVideoTable.COLUMN_ID + "='" + id + "'", null);
+			} else {
+				rowsUpdated = sqlDB.update(AudioVideoTable.TABLE_NAME, values,
+						AudioVideoTable.COLUMN_ID + "='" + id + "' and "
+								+ selection, selectionArgs);
+			}
+			break;
+		default:
+			throw new IllegalArgumentException("Unknown Update URI: " + uri);
+		}
+		getContext().getContentResolver().notifyChange(uri, null);
+		return rowsUpdated;
 	}
 
 	public class AudioVideoSQLiteHelper extends SQLiteOpenHelper {
