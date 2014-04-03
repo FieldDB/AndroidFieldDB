@@ -24,14 +24,12 @@ import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
-import ca.ilanguage.oprime.database.UserContentProvider.UserTable;
 import ca.ilanguage.oprime.datacollection.AudioRecorder;
 import ca.ilanguage.oprime.datacollection.TakePicture;
 import ca.ilanguage.oprime.datacollection.VideoRecorder;
 
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
-import com.github.opensourcefieldlinguistics.fielddb.database.FieldDBUserContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.georgian.R;
 import com.github.opensourcefieldlinguistics.fielddb.model.Datum;
@@ -106,17 +104,6 @@ public class DatumDetailFragment extends Fragment {
 
 				datum.addMediaFiles((cursor.getString(cursor
 						.getColumnIndexOrThrow(DatumTable.COLUMN_AUDIO_VIDEO_FILES))));
-				cursor.close();
-
-				// Test user provider
-				String[] userProjection = { UserTable.COLUMN_USERNAME };
-				cursorLoader = new CursorLoader(getActivity(),
-						FieldDBUserContentProvider.CONTENT_URI, userProjection,
-						selection, selectionArgs, sortOrder);
-				cursor = cursorLoader.loadInBackground();
-				cursor.moveToFirst();
-				Log.d(Config.TAG, cursor.getString(cursor
-						.getColumnIndexOrThrow(UserTable.COLUMN_USERNAME)));
 				cursor.close();
 
 				mItem = datum;
