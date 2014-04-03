@@ -152,7 +152,7 @@ public class FieldDBApplication extends Application {
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo wifi = connManager
 				.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-		if (Config.D || wifi.isConnected()) {
+		if ( wifi.isConnected()) {
 			Intent updateSamples = new Intent(getApplicationContext(),
 					DownloadDatumsService.class);
 			getApplicationContext().startService(updateSamples);
