@@ -73,6 +73,8 @@
         </service>
         <service android:name="com.github.opensourcefieldlinguistics.fielddb.service.DownloadDatumsService" >
         </service>
+        <service android:name="com.github.opensourcefieldlinguistics.fielddb.service.RegisterUserService" >
+        </service>
 
         <provider
             android:name="com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider"
