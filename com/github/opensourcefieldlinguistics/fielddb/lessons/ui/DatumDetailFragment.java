@@ -2,6 +2,7 @@ package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
 
 import java.io.File;
 
+import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.database.Cursor;
@@ -50,6 +51,7 @@ public class DatumDetailFragment extends Fragment {
 	 * The content this fragment is presenting.
 	 */
 	private Datum mItem;
+	private Uri mUri;
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -81,8 +83,8 @@ public class DatumDetailFragment extends Fragment {
 					DatumTable.COLUMN_TRANSLATION, DatumTable.COLUMN_CONTEXT,
 					DatumTable.COLUMN_IMAGE_FILES,
 					DatumTable.COLUMN_AUDIO_VIDEO_FILES };
-			CursorLoader cursorLoader = new CursorLoader(getActivity(),
-					Uri.withAppendedPath(DatumContentProvider.CONTENT_URI, id),
+			mUri = Uri.withAppendedPath(DatumContentProvider.CONTENT_URI, id);
+			CursorLoader cursorLoader = new CursorLoader(getActivity(), mUri,
 					datumProjection, selection, selectionArgs, sortOrder);
 
 			Cursor cursor = cursorLoader.loadInBackground();
@@ -140,6 +142,10 @@ public class DatumDetailFragment extends Fragment {
 					String currentText = orthographyEditText.getText()
 							.toString();
 					mItem.setOrthography(currentText);
+					ContentValues values = new ContentValues();
+					values.put(DatumTable.COLUMN_ORTHOGRAPHY, currentText);
+					getActivity().getContentResolver().update(mUri, values,
+							null, null);
 				}
 			});
 
@@ -162,6 +168,10 @@ public class DatumDetailFragment extends Fragment {
 						int arg2, int arg3) {
 					String currentText = morphemesEditText.getText().toString();
 					mItem.setMorphemes(currentText);
+					ContentValues values = new ContentValues();
+					values.put(DatumTable.COLUMN_MORPHEMES, currentText);
+					getActivity().getContentResolver().update(mUri, values,
+							null, null);
 				}
 			});
 
@@ -184,6 +194,10 @@ public class DatumDetailFragment extends Fragment {
 						int arg2, int arg3) {
 					String currentText = glossEditText.getText().toString();
 					mItem.setGloss(currentText);
+					ContentValues values = new ContentValues();
+					values.put(DatumTable.COLUMN_GLOSS, currentText);
+					getActivity().getContentResolver().update(mUri, values,
+							null, null);
 				}
 			});
 			((EditText) rootView.findViewById(R.id.gloss)).setText(mItem
@@ -209,6 +223,10 @@ public class DatumDetailFragment extends Fragment {
 					String currentText = translationEditText.getText()
 							.toString();
 					mItem.setTranslation(currentText);
+					ContentValues values = new ContentValues();
+					values.put(DatumTable.COLUMN_TRANSLATION, currentText);
+					getActivity().getContentResolver().update(mUri, values,
+							null, null);
 				}
 			});
 			((EditText) rootView.findViewById(R.id.translation)).setText(mItem
@@ -233,6 +251,10 @@ public class DatumDetailFragment extends Fragment {
 						int arg2, int arg3) {
 					String currentText = contextEditText.getText().toString();
 					mItem.setContext(currentText);
+					ContentValues values = new ContentValues();
+					values.put(DatumTable.COLUMN_CONTEXT, currentText);
+					getActivity().getContentResolver().update(mUri, values,
+							null, null);
 				}
 			});
 			((EditText) rootView.findViewById(R.id.context)).setText(mItem
@@ -300,7 +322,12 @@ public class DatumDetailFragment extends Fragment {
 				mItem.addAudioFile(audioFileName.replace(
 						Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
 				getActivity().startService(intent);
-				Log.e(TAG, "Recording audio " + audioFileName);
+				ContentValues values = new ContentValues();
+				values.put(DatumTable.COLUMN_AUDIO_VIDEO_FILES,
+						mItem.getMediaFilesAsCSV(mItem.getAudioVideoFiles()));
+				getActivity().getContentResolver().update(mUri, values, null,
+						null);
+				Log.d(TAG, "Recording audio " + audioFileName);
 				this.mRecordingAudio = true;
 				item.setIcon(R.drawable.ic_action_stop);
 			} else {
@@ -400,7 +427,9 @@ public class DatumDetailFragment extends Fragment {
 			if (data != null && data.hasExtra(Config.EXTRA_RESULT_FILENAME)) {
 				resultFile = data.getExtras().getString(
 						Config.EXTRA_RESULT_FILENAME);
-				if (resultFile != null && new File(resultFile).exists()) {
+				if (resultFile != null) {
+					// if (resultFile != null && new File(resultFile).exists())
+					// {
 					if (resultFile.endsWith(Config.DEFAULT_AUDIO_EXTENSION)) {
 						mItem.addAudioFile(resultFile.replace(
 								Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
@@ -408,6 +437,11 @@ public class DatumDetailFragment extends Fragment {
 						mItem.addVideoFile(resultFile.replace(
 								Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
 					}
+					ContentValues values = new ContentValues();
+					values.put(DatumTable.COLUMN_AUDIO_VIDEO_FILES, mItem
+							.getMediaFilesAsCSV(mItem.getAudioVideoFiles()));
+					getActivity().getContentResolver().update(mUri, values,
+							null, null);
 					this.loadMainVideo(false);
 				}
 			}
@@ -416,9 +450,16 @@ public class DatumDetailFragment extends Fragment {
 			if (data != null && data.hasExtra(Config.EXTRA_RESULT_FILENAME)) {
 				resultFile = data.getExtras().getString(
 						Config.EXTRA_RESULT_FILENAME);
-				if (resultFile != null && new File(resultFile).exists()) {
+				if (resultFile != null) {
+					// if (resultFile != null && new File(resultFile).exists())
+					// {
 					mItem.addImageFile(resultFile.replace(
 							Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
+					ContentValues values = new ContentValues();
+					values.put(DatumTable.COLUMN_IMAGE_FILES,
+							mItem.getMediaFilesAsCSV(mItem.getImageFiles()));
+					getActivity().getContentResolver().update(mUri, values,
+							null, null);
 					this.loadMainImage();
 				}
 			}

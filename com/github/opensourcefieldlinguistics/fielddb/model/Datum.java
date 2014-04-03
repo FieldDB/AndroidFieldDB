@@ -585,4 +585,17 @@ public class Datum {
 		}
 	}
 
+	public String getMediaFilesAsCSV(ArrayList<AudioVideo> mediaFiles) {
+		String asString = "";
+		boolean isFirst = true;
+		for (AudioVideo file : mediaFiles) {
+			if (!isFirst) {
+				asString = asString + ",";
+			}
+			isFirst = false;
+			asString = asString + file.getFilename();
+		}
+		return asString;
+	}
+
 }
