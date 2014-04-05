@@ -1,47 +1,144 @@
 package ca.ilanguage.oprime.database;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+import java.util.ArrayList;
 
-public class User extends SQLiteOpenHelper {
+public class User {
+	protected String _id;
+	protected String _rev;
+	protected String username;
+	protected String firstname;
+	protected String lastname;
+	protected String email;
+	protected String gravatar;
+	protected String affiliation;
+	protected String researchInterest;
+	protected String description;
+	protected String subtitle;
+	protected ArrayList<String> coments;
+	protected String actualJSON;
 
-	public static final String TABLE_NAME = "users";
-	public static final String COLUMN_ID = "_id";
-	public static final String COLUMN_USERNAME = "username";
-	public static final String COLUMN_DETAILS = "userDetails";
-
-	private static final String DATABASE_NAME = TABLE_NAME + ".db";
-	private static final int DATABASE_VERSION = 1;
-
-	private static final String CREATE_TABLE_SQL = "create table " + TABLE_NAME
-			+ "(" + COLUMN_ID + " integer primary key autoincrement" 
-			+ ", " + COLUMN_USERNAME + " text not null "
-			+ ", " + COLUMN_DETAILS + " text not null " + ");";
-
-	public User(Context context, String name, CursorFactory factory, int version) {
-		super(context, name, factory, version);
-		// TODO Auto-generated constructor stub
+	public User(String _id, String _rev, String username, String firstname,
+			String lastname, String email, String gravatar, String affiliation,
+			String researchInterest, String description, String subtitle,
+			ArrayList<String> coments, String actualJSON) {
+		super();
+		this._id = _id;
+		this._rev = _rev;
+		this.username = username;
+		this.firstname = firstname;
+		this.lastname = lastname;
+		this.email = email;
+		this.gravatar = gravatar;
+		this.affiliation = affiliation;
+		this.researchInterest = researchInterest;
+		this.description = description;
+		this.subtitle = subtitle;
+		this.coments = coments;
+		this.actualJSON = actualJSON;
 	}
 
-	public User(Context context) {
-		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+	public String get_id() {
+		return _id;
 	}
 
-	@Override
-	public void onCreate(SQLiteDatabase database) {
-		database.execSQL(CREATE_TABLE_SQL);
-		// TODO insert sample users here
+	public void set_id(String _id) {
+		this._id = _id;
 	}
 
-	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		Log.w(User.class.getName(), "Upgrading database from version "
-				+ oldVersion + " to " + newVersion
-				+ ", which will destroy all old data");
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-		onCreate(db);
+	public String get_rev() {
+		return _rev;
 	}
+
+	public void set_rev(String _rev) {
+		this._rev = _rev;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getFirstname() {
+		return firstname;
+	}
+
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
+	}
+
+	public String getLastname() {
+		return lastname;
+	}
+
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getGravatar() {
+		return gravatar;
+	}
+
+	public void setGravatar(String gravatar) {
+		this.gravatar = gravatar;
+	}
+
+	public String getAffiliation() {
+		return affiliation;
+	}
+
+	public void setAffiliation(String affiliation) {
+		this.affiliation = affiliation;
+	}
+
+	public String getResearchInterest() {
+		return researchInterest;
+	}
+
+	public void setResearchInterest(String researchInterest) {
+		this.researchInterest = researchInterest;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getSubtitle() {
+		return subtitle;
+	}
+
+	public void setSubtitle(String subtitle) {
+		this.subtitle = subtitle;
+	}
+
+	public ArrayList<String> getComents() {
+		return coments;
+	}
+
+	public void setComents(ArrayList<String> coments) {
+		this.coments = coments;
+	}
+
+	public String getActualJSON() {
+		return actualJSON;
+	}
+
+	public void setActualJSON(String actualJSON) {
+		this.actualJSON = actualJSON;
+	}
+
 }
