@@ -1,5 +1,7 @@
 package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
 
+import org.acra.ACRA;
+
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -168,6 +170,8 @@ public class DatumListFragment extends ListFragment implements
 				android.R.layout.simple_list_item_activated_1, null, from, to,
 				0);
 		setListAdapter(adapter);
+		ACRA.getErrorReporter().handleException(
+				new Exception("*** User load datum list ***"));
 	}
 
 	@Override

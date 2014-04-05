@@ -44,7 +44,7 @@ public class RegisterUserService extends NotifyingIntentService {
 		if (Config.D) {
 			Log.d(Config.TAG, "Inside RegisterUserService intent");
 		}
-		ACRA.getErrorReporter().putCustomData("registerUser", "");
+		ACRA.getErrorReporter().putCustomData("action", "registerUser:::");
 		ACRA.getErrorReporter().putCustomData("urlString",
 				Config.DEFAULT_REGISTER_USER_URL);
 
@@ -86,6 +86,8 @@ public class RegisterUserService extends NotifyingIntentService {
 		/* Success: remove the notification */
 		((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
 				.cancel(this.notificationId);
+		ACRA.getErrorReporter().handleException(
+				new Exception("*** Registered user ssucessfully ***"));
 	}
 
 	public String loginUser(String username, String password, String loginUrl) {

@@ -47,7 +47,7 @@ public class DownloadDatumsService extends NotifyingIntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		this.D = Config.D;
-		this.statusMessage = "Downloading samples"
+		this.statusMessage = "Downloading samples "
 				+ Config.USER_FRIENDLY_DATA_NAME;
 		this.tryAgain = intent;
 		this.keystoreResourceId = R.raw.sslkeystore;
@@ -62,8 +62,8 @@ public class DownloadDatumsService extends NotifyingIntentService {
 			Log.d(Config.TAG, this.urlStringSampleDataDownload);
 		}
 
-		ACRA.getErrorReporter().putCustomData("downloadDatums",
-				datumTagToDownload);
+		ACRA.getErrorReporter().putCustomData("action",
+				"downloadDatums:::" + datumTagToDownload);
 		ACRA.getErrorReporter().putCustomData("urlString",
 				this.urlStringSampleDataDownload);
 		super.onHandleIntent(intent);
@@ -107,6 +107,12 @@ public class DownloadDatumsService extends NotifyingIntentService {
 		/* Success: remove the notification */
 		((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
 				.cancel(this.notificationId);
+		ACRA.getErrorReporter().putCustomData("action",
+				"downloadDatums:::" + datumTagToDownload);
+		ACRA.getErrorReporter().putCustomData("urlString",
+				this.urlStringSampleDataDownload);
+		ACRA.getErrorReporter().handleException(
+				new Exception("*** Downloaded data sucessfully ***"));
 	}
 
 	public void getSampleData() {
@@ -118,7 +124,8 @@ public class DownloadDatumsService extends NotifyingIntentService {
 			this.userFriendlyErrorMessage = "Problem determining which server to contact, please report this error.";
 			return;
 		}
-
+		this.statusMessage = "Contacting server...";
+		this.notifyUser(this.statusMessage, this.noti, notificationId, false);
 		HttpURLConnection urlConnection;
 		try {
 			urlConnection = (HttpURLConnection) url.openConnection();
@@ -149,6 +156,9 @@ public class DownloadDatumsService extends NotifyingIntentService {
 			this.userFriendlyErrorMessage = "The sample data was empty, please report this.";
 			return;
 		}
+		this.statusMessage = "Processing response...";
+		this.notifyUser(this.statusMessage, this.noti, notificationId, false);
+
 		JsonObject datumJson;
 		String id = "";
 		Uri uri;
@@ -240,6 +250,11 @@ public class DownloadDatumsService extends NotifyingIntentService {
 	}
 
 	public void downloadMediaFile(String mediaFileUrl) {
+		if (mediaFileUrl == null || "".equals(mediaFileUrl)) {
+			Log.d(Config.TAG,
+					"Not re-requesting download of media file, it is a blank string");
+			return;
+		}
 		/*
 		 * TODO sanitize url and filename and size or something... to ensure its
 		 * not dangerous
@@ -262,7 +277,8 @@ public class DownloadDatumsService extends NotifyingIntentService {
 					+ mediaFileUrl;
 			return;
 		}
-
+		this.statusMessage = "Contacting server...";
+		this.notifyUser(this.statusMessage, this.noti, notificationId, false);
 		HttpURLConnection urlConnection;
 		try {
 			urlConnection = (HttpURLConnection) url.openConnection();
@@ -290,7 +306,8 @@ public class DownloadDatumsService extends NotifyingIntentService {
 		if (Config.D) {
 			Log.d(Config.TAG, "Server status code " + status);
 		}
-		this.statusMessage = "Server contacted.";
+		this.statusMessage = "Downloading...";
+		this.notifyUser(this.statusMessage, this.noti, notificationId, false);
 		BufferedInputStream reader;
 		try {
 			if (status < 400 && urlConnection.getInputStream() != null) {
@@ -306,11 +323,16 @@ public class DownloadDatumsService extends NotifyingIntentService {
 				}
 				output.close();
 				this.statusMessage = "Downloaded " + filename;
+				ACRA.getErrorReporter().putCustomData("action",
+						"downloadMedia:::" + filename);
+				ACRA.getErrorReporter()
+						.putCustomData("urlString", mediaFileUrl);
+				ACRA.getErrorReporter().handleException(
+						new Exception(
+								"*** Downloaded media file sucessfully ***"));
 			} else {
 				this.userFriendlyErrorMessage = "Server replied " + status;
 			}
-			this.notifyUser(this.statusMessage, this.noti, notificationId,
-					false);
 
 		} catch (IOException e) {
 			e.printStackTrace();

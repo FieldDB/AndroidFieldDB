@@ -1,6 +1,11 @@
 package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.acra.ACRA;
 
 import android.content.ContentValues;
 import android.content.CursorLoader;
@@ -28,6 +33,7 @@ import android.widget.VideoView;
 import ca.ilanguage.oprime.datacollection.AudioRecorder;
 import ca.ilanguage.oprime.datacollection.TakePicture;
 import ca.ilanguage.oprime.datacollection.VideoRecorder;
+import ca.ilanguage.oprime.model.DeviceDetails;
 
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
@@ -65,11 +71,17 @@ public class DatumDetailFragment extends Fragment {
 	private VideoView mVideoView;
 	private ImageView mImageView;
 	private MediaController mMediaController;
+	protected DeviceDetails mDeviceDetails;
+	protected HashMap<String, Integer> mDatumEditCounts;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
+		if (this.mDeviceDetails == null) {
+			this.mDeviceDetails = new DeviceDetails(getActivity(), Config.D,
+					this.TAG);
+		}
 
 		if (getArguments().containsKey(ARG_ITEM_ID)) {
 			String id = getArguments().getString(ARG_ITEM_ID);
@@ -109,6 +121,9 @@ public class DatumDetailFragment extends Fragment {
 				cursor.close();
 
 				mItem = datum;
+				this.recordUserEvent("loadDatum", mUri.getLastPathSegment());
+				ACRA.getErrorReporter().putCustomData("urlString",
+						mUri.toString());
 			}
 
 		}
@@ -146,6 +161,7 @@ public class DatumDetailFragment extends Fragment {
 					values.put(DatumTable.COLUMN_ORTHOGRAPHY, currentText);
 					getActivity().getContentResolver().update(mUri, values,
 							null, null);
+					recordUserEvent("editDatum", "orthography");
 				}
 			});
 
@@ -172,6 +188,7 @@ public class DatumDetailFragment extends Fragment {
 					values.put(DatumTable.COLUMN_MORPHEMES, currentText);
 					getActivity().getContentResolver().update(mUri, values,
 							null, null);
+					recordUserEvent("editDatum", "morphemes");
 				}
 			});
 
@@ -198,8 +215,10 @@ public class DatumDetailFragment extends Fragment {
 					values.put(DatumTable.COLUMN_GLOSS, currentText);
 					getActivity().getContentResolver().update(mUri, values,
 							null, null);
+					recordUserEvent("editDatum", "gloss");
 				}
 			});
+
 			((EditText) rootView.findViewById(R.id.gloss)).setText(mItem
 					.getGloss());
 
@@ -227,6 +246,7 @@ public class DatumDetailFragment extends Fragment {
 					values.put(DatumTable.COLUMN_TRANSLATION, currentText);
 					getActivity().getContentResolver().update(mUri, values,
 							null, null);
+					recordUserEvent("editDatum", "translation");
 				}
 			});
 			((EditText) rootView.findViewById(R.id.translation)).setText(mItem
@@ -255,6 +275,7 @@ public class DatumDetailFragment extends Fragment {
 					values.put(DatumTable.COLUMN_CONTEXT, currentText);
 					getActivity().getContentResolver().update(mUri, values,
 							null, null);
+					recordUserEvent("editDatum", "translation");
 				}
 			});
 			((EditText) rootView.findViewById(R.id.context)).setText(mItem
@@ -330,11 +351,14 @@ public class DatumDetailFragment extends Fragment {
 				Log.d(TAG, "Recording audio " + audioFileName);
 				this.mRecordingAudio = true;
 				item.setIcon(R.drawable.ic_action_stop);
+				this.recordUserEvent("captureAudio", audioFileName);
+
 			} else {
 				Intent audio = new Intent(getActivity(), AudioRecorder.class);
 				getActivity().stopService(audio);
 				this.mRecordingAudio = false;
 				item.setIcon(R.drawable.ic_action_mic);
+				this.recordUserEvent("stopAudio", "");
 			}
 			return true;
 		case R.id.action_play:
@@ -368,6 +392,8 @@ public class DatumDetailFragment extends Fragment {
 			mVideoView.setBackground(null);
 		}
 		if (playNow) {
+			this.recordUserEvent("loadMainVideo", fileName);
+
 			mVideoView.start();
 			mMediaController.setPrevNextListeners(new View.OnClickListener() {
 
@@ -403,17 +429,21 @@ public class DatumDetailFragment extends Fragment {
 	private void loadMainImage() {
 		File image = new File(Config.DEFAULT_OUTPUT_DIRECTORY + "/"
 				+ mItem.getMainImageFile());
-		if (image.exists()) {
-			Bitmap d = new BitmapDrawable(this.getResources(),
-					image.getAbsolutePath()).getBitmap();
-			int nh = (int) (d.getHeight() * (512.0 / d.getWidth()));
-			Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
-			// mImageView.setImageBitmap(scaled);
-			// mImageView.setVisibility(View.VISIBLE);
-			// mVideoView.setVisibility(View.GONE);
-			mVideoView
-					.setBackground(new BitmapDrawable(getResources(), scaled));
+		if (!image.exists()) {
+			return;
 		}
+		Bitmap d = new BitmapDrawable(this.getResources(),
+				image.getAbsolutePath()).getBitmap();
+		if (d == null) {
+			return;
+		}
+		int nh = (int) (d.getHeight() * (512.0 / d.getWidth()));
+		Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
+		// mImageView.setImageBitmap(scaled);
+		// mImageView.setVisibility(View.VISIBLE);
+		// mVideoView.setVisibility(View.GONE);
+		mVideoView.setBackground(new BitmapDrawable(getResources(), scaled));
+
 	}
 
 	@Override
@@ -481,6 +511,7 @@ public class DatumDetailFragment extends Fragment {
 				Config.DEFAULT_OUTPUT_DIRECTORY);
 		intent.putExtra(Config.EXTRA_EXPERIMENT_TRIAL_INFORMATION, "");
 		startActivityForResult(intent, Config.CODE_EXPERIMENT_COMPLETED);
+		this.recordUserEvent("captureVideo", videoFileName);
 		return true;
 	}
 
@@ -490,6 +521,49 @@ public class DatumDetailFragment extends Fragment {
 		Intent intent = new Intent(getActivity(), TakePicture.class);
 		intent.putExtra(Config.EXTRA_RESULT_FILENAME, imageFileName);
 		startActivityForResult(intent, Config.CODE_PICTURE_TAKEN);
+		this.recordUserEvent("captureImage", imageFileName);
 		return true;
+	}
+
+	@Override
+	public void onPause() {
+		if (this.mDatumEditCounts != null) {
+			String edits = "";
+			Iterator it = this.mDatumEditCounts.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry pair = (Map.Entry) it.next();
+				if (!"".equals(edits)) {
+					edits = edits + ",";
+				}
+				edits = edits + "{" + pair.getKey() + " : " + pair.getValue()
+						+ "}";
+				it.remove(); // avoids a ConcurrentModificationException
+			}
+			edits = "[" + edits + "]";
+			recordUserEvent("totalDatumEditsOnPause", edits);
+		}
+		super.onPause();
+	}
+
+	private void recordUserEvent(String eventType, String eventValue) {
+		if ("editDatum".equals(eventType)) {
+			if (this.mDatumEditCounts == null) {
+				this.mDatumEditCounts = new HashMap<String, Integer>();
+			}
+			Integer count = 1;
+			if (this.mDatumEditCounts.containsKey(eventValue)) {
+				count = this.mDatumEditCounts.get(eventValue) + 1;
+			}
+			this.mDatumEditCounts.put(eventValue, count);
+			return;
+		}
+		ACRA.getErrorReporter().putCustomData("action",
+				"{" + eventType + " : " + eventValue + "}");
+		ACRA.getErrorReporter().putCustomData("androidTimestamp",
+				System.currentTimeMillis() + "");
+		ACRA.getErrorReporter().putCustomData("deviceDetails",
+				this.mDeviceDetails.getCurrentDeviceDetails());
+		ACRA.getErrorReporter().handleException(
+				new Exception("*** User event " + eventType + " ***"));
 	}
 }
