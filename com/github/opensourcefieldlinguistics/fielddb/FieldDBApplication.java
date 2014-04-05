@@ -14,7 +14,6 @@ import org.acra.ACRAConfiguration;
 import org.acra.annotation.ReportsCrashes;
 
 import ca.ilanguage.oprime.database.User;
-import ca.ilanguage.oprime.database.UserContentProvider;
 import ca.ilanguage.oprime.database.UserContentProvider.UserTable;
 
 import com.github.opensourcefieldlinguistics.fielddb.database.FieldDBUserContentProvider;
@@ -152,18 +151,18 @@ public class FieldDBApplication extends Application {
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo wifi = connManager
 				.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-		if ( wifi.isConnected()) {
+		if (wifi.isConnected()) {
 			Intent updateSamples = new Intent(getApplicationContext(),
 					DownloadDatumsService.class);
 			getApplicationContext().startService(updateSamples);
 
-			if (mUser.get_rev() == null || "".equals(mUser.get_rev())) {
-				Intent registerUser = new Intent(getApplicationContext(),
-						RegisterUserService.class);
-				registerUser.setData(Uri.parse(FieldDBUserContentProvider.CONTENT_URI
-						+ "/" + _id));
-				getApplicationContext().startService(registerUser);
-			}
+		}
+		if (mUser.get_rev() == null || "".equals(mUser.get_rev())) {
+			Intent registerUser = new Intent(getApplicationContext(),
+					RegisterUserService.class);
+			registerUser.setData(Uri
+					.parse(FieldDBUserContentProvider.CONTENT_URI + "/" + _id));
+			getApplicationContext().startService(registerUser);
 		}
 
 	}
