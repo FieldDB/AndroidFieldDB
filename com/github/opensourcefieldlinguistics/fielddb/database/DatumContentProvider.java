@@ -1,6 +1,7 @@
 package com.github.opensourcefieldlinguistics.fielddb.database;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import ca.ilanguage.oprime.database.OPrimeTable;
 
@@ -61,12 +62,29 @@ public class DatumContentProvider extends ContentProvider {
 	}
 
 	@Override
-	public Uri insert(Uri id, ContentValues values) {
+	public Uri insert(Uri uri, ContentValues values) {
+		String id;
+		if (values == null) {
+			values = new ContentValues();
+			id = UUID.randomUUID().toString();
+			values.put(DatumTable.COLUMN_ID, id);
+		} else {
+			id = values.getAsString(DatumTable.COLUMN_ID);
+			if (id == null) {
+				id = UUID.randomUUID().toString();
+				values.put(DatumTable.COLUMN_ID, id);
+			}
+		}
 		Log.d(Config.TAG, "insert " + id.toString());
 		SQLiteDatabase db = database.getWritableDatabase();
 		long insertedRowId = db.insert(DatumTable.TABLE_NAME, null, values);
 		Log.d(Config.TAG, "insertedRowId " + insertedRowId);
-		return id;
+		if (insertedRowId > 0) {
+			uri = Uri.withAppendedPath(uri, id);
+		} else {
+			return null;
+		}
+		return uri;
 	}
 
 	@Override

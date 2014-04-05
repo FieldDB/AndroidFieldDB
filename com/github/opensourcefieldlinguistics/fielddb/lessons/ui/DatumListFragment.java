@@ -3,18 +3,24 @@ package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
 import org.acra.ACRA;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
+import com.github.opensourcefieldlinguistics.fielddb.lessons.georgian.R;
 
 /**
  * A list fragment representing a list of Datums. This fragment also supports
@@ -77,6 +83,7 @@ public class DatumListFragment extends ListFragment implements
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		setHasOptionsMenu(true);
 		super.onCreate(savedInstanceState);
 		fillData();
 		// setListAdapter(new DatumRowArrayAdapter(getActivity(),
@@ -191,5 +198,29 @@ public class DatumListFragment extends ListFragment implements
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		adapter.swapCursor(null);
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.actions_list, menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// handle item selection
+		switch (item.getItemId()) {
+		case R.id.action_new:
+			Uri newDatum = getActivity().getContentResolver().insert(
+					DatumContentProvider.CONTENT_URI, new ContentValues());
+			if (newDatum != null) {
+				mCallbacks.onItemSelected(newDatum.getLastPathSegment());
+			} else {
+				ACRA.getErrorReporter().handleException(
+						new Exception("*** Error inserting a datum in DB ***"));
+			}
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 }
