@@ -192,7 +192,11 @@ public class DatumListFragment extends ListFragment implements
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+//		this.getListView().invalidate();
 		adapter.swapCursor(data);
+		// http://stackoverflow.com/questions/14867324/update-listview-after-update-database-sqlite
+//		this.getListView().invalidate();
+//		adapter.notifyDataSetChanged();
 	}
 
 	@Override
