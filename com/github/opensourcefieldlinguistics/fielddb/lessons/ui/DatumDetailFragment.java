@@ -302,7 +302,7 @@ public class DatumDetailFragment extends Fragment {
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.actions_lessons, menu);
+		inflater.inflate(R.menu.actions_datum, menu);
 		// // https://developer.android.com/guide/topics/ui/actionbar.html
 		// MenuItem searchItem = menu.findItem(R.id.action_search);
 		// SearchView searchView = (SearchView) MenuItemCompat
