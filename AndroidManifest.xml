@@ -28,6 +28,18 @@
         android:smallScreens="true" />
 
     <uses-feature
+        android:name="android.hardware.location"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.wifi"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.gps"
+        android:required="false" />
+    <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
     <uses-feature
