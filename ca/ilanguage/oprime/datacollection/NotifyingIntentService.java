@@ -76,7 +76,7 @@ public class NotifyingIntentService extends IntentService {
 				this.statusMessage);
 		this.noti = new NotificationCompat.Builder(this)
 				.setTicker(statusMessage).setContent(notificationView)
-				.setSmallIcon(R.drawable.ic_oprime).setContentIntent(pIntent)
+				.setSmallIcon(R.drawable.ic_launcher).setContentIntent(pIntent)
 				.build();
 		this.noti.flags = Notification.FLAG_AUTO_CANCEL;
 		this.notifyUser(statusMessage, this.noti, notificationId, false);
