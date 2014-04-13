@@ -138,6 +138,7 @@ public class FieldDBApplication extends Application {
 					"There is no user... this is a problme the app wont work.");
 			ACRA.getErrorReporter().putCustomData("username", "unknown");
 		}
+		ACRA.getErrorReporter().putCustomData("dbname", Config.DEFAULT_CORPUS);
 		Log.d(Config.TAG, cursor.getString(cursor
 				.getColumnIndexOrThrow(UserTable.COLUMN_USERNAME)));
 		cursor.close();
