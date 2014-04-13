@@ -15,6 +15,7 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.IBinder;
 import android.util.Log;
 import ca.ilanguage.oprime.Config;
@@ -74,7 +75,7 @@ public class AudioRecorder extends Service {
       Notification.Builder builder = new Notification.Builder(this.getApplicationContext());
 
       builder.setContentIntent(this.mContentIntent).setSmallIcon(this.mAuBlogIconId)
-          .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.ic_oprime))
+          .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.ic_launcher))
           .setTicker(res.getString(R.string.app_name)).setWhen(System.currentTimeMillis()).setAutoCancel(true)
           .setContentTitle(res.getString(R.string.app_name)).setContentText(res.getString(R.string.app_name));
       this.mNotification = builder.getNotification();
