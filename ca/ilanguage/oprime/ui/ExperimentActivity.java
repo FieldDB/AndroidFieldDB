@@ -1,5 +1,6 @@
 package ca.ilanguage.oprime.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -18,7 +19,8 @@ import ca.ilanguage.oprime.R;
  */
 public class ExperimentActivity extends FragmentActivity {
 
-  @Override
+  @SuppressLint("NewApi")
+@Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     this.setContentView(R.layout.activity_experiment_detail);
