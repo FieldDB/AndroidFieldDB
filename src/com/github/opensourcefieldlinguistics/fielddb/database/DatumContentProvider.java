@@ -1,6 +1,7 @@
 package com.github.opensourcefieldlinguistics.fielddb.database;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import ca.ilanguage.oprime.database.OPrimeTable;
 
@@ -21,6 +22,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 
 public class DatumContentProvider extends ContentProvider {
@@ -30,6 +32,8 @@ public class DatumContentProvider extends ContentProvider {
 	private static final int ITEM_ID = 20;
 
 	private static final String AUTHORITY = "com.github.opensourcefieldlinguistics.fielddb."
+			+ Config.DATA_IS_ABOUT_LANGUAGE_NAME_ASCII.toLowerCase()
+			+ "."
 			+ DatumTable.TABLE_NAME;
 	private static final String BASE_PATH = DatumTable.TABLE_NAME + "s";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
@@ -48,24 +52,43 @@ public class DatumContentProvider extends ContentProvider {
 	}
 
 	@Override
-	public int delete(Uri arg0, String arg1, String[] arg2) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int delete(Uri uri, String selection, String[] selectionArgs) {
+		ContentValues values = new ContentValues();
+		values.put(DatumTable.COLUMN_TRASHED, "deleted");
+		int rowsUpdated = this.update(uri, values, selection, selectionArgs);
+		return rowsUpdated;
 	}
 
 	@Override
-	public String getType(Uri arg0) {
+	public String getType(Uri uri) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Uri insert(Uri id, ContentValues values) {
+	public Uri insert(Uri uri, ContentValues values) {
+		String id;
+		if (values == null) {
+			values = new ContentValues();
+			id = UUID.randomUUID().toString();
+			values.put(DatumTable.COLUMN_ID, id);
+		} else {
+			id = values.getAsString(DatumTable.COLUMN_ID);
+			if (id == null) {
+				id = UUID.randomUUID().toString();
+				values.put(DatumTable.COLUMN_ID, id);
+			}
+		}
 		Log.d(Config.TAG, "insert " + id.toString());
 		SQLiteDatabase db = database.getWritableDatabase();
 		long insertedRowId = db.insert(DatumTable.TABLE_NAME, null, values);
 		Log.d(Config.TAG, "insertedRowId " + insertedRowId);
-		return id;
+		if (insertedRowId > 0) {
+			uri = Uri.withAppendedPath(uri, id);
+		} else {
+			return null;
+		}
+		return uri;
 	}
 
 	@Override
@@ -90,6 +113,8 @@ public class DatumContentProvider extends ContentProvider {
 		int uriType = sURIMatcher.match(uri);
 		switch (uriType) {
 		case ITEMS:
+//			 queryBuilder.appendWhere(DatumTable.COLUMN_TRASHED + " LIKE 'deleted'");
+			 queryBuilder.appendWhere(DatumTable.COLUMN_TRASHED + " IS NULL");
 			break;
 		case ITEM_ID:
 			// Adding the ID to the original query
@@ -110,9 +135,34 @@ public class DatumContentProvider extends ContentProvider {
 	}
 
 	@Override
-	public int update(Uri arg0, ContentValues arg1, String arg2, String[] arg3) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int update(Uri uri, ContentValues values, String selection,
+			String[] selectionArgs) {
+
+		int uriType = sURIMatcher.match(uri);
+		SQLiteDatabase sqlDB = database.getWritableDatabase();
+		int rowsUpdated = 0;
+		switch (uriType) {
+		case ITEMS:
+			rowsUpdated = sqlDB.update(DatumTable.TABLE_NAME, values,
+					selection, selectionArgs);
+			break;
+		case ITEM_ID:
+			String id = uri.getLastPathSegment();
+			if (TextUtils.isEmpty(selection)) {
+				rowsUpdated = sqlDB.update(DatumTable.TABLE_NAME, values,
+						DatumTable.COLUMN_ID + "='" + id + "'", null);
+			} else {
+				rowsUpdated = sqlDB
+						.update(DatumTable.TABLE_NAME, values,
+								DatumTable.COLUMN_ID + "='" + id + "' and "
+										+ selection, selectionArgs);
+			}
+			break;
+		default:
+			throw new IllegalArgumentException("Unknown Update URI: " + uri);
+		}
+		getContext().getContentResolver().notifyChange(uri, null);
+		return rowsUpdated;
 	}
 
 	public class DatumSQLiteHelper extends SQLiteOpenHelper {
@@ -239,13 +289,12 @@ public class DatumContentProvider extends ContentProvider {
 		// Offline Sample data
 		private static ContentValues sampleData() {
 			ContentValues values = new ContentValues();
-			values.put(COLUMN_ID, "sample1234");
-			values.put(COLUMN_MORPHEMES, "gamardʒoba");
-			values.put(COLUMN_GLOSS, "hello");
-			values.put(COLUMN_TRANSLATION, "Hello");
-			values.put(COLUMN_ORTHOGRAPHY, "გამარჯობა");
-			values.put(COLUMN_CONTEXT, "(Standard greeting)");
-			values.put(COLUMN_IMAGE_FILES, "gamardZoba.jpg");
+			values.put(COLUMN_ID, "sample12345");
+			values.put(COLUMN_MORPHEMES, "e'sig");
+			values.put(COLUMN_GLOSS, "clam");
+			values.put(COLUMN_TRANSLATION, "Clam");
+			values.put(COLUMN_ORTHOGRAPHY, "e'sig");
+			values.put(COLUMN_CONTEXT, " ");
 			return values;
 		}
 

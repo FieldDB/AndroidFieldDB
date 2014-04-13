@@ -7,8 +7,8 @@ import android.util.Log;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 
 public class Datum {
-	protected String id;
-	protected String rev;
+	protected String _id;
+	protected String _rev;
 	protected DatumField utterance;
 	protected DatumField morphemes;
 	protected DatumField gloss;
@@ -35,8 +35,8 @@ public class Datum {
 			ArrayList<String> related, ArrayList<String> reminders,
 			ArrayList<String> tags, ArrayList<String> coments, String actualJSON) {
 		super();
-		this.id = id;
-		this.rev = rev;
+		this._id = id;
+		this._rev = rev;
 		this.utterance = utterance;
 		this.morphemes = morphemes;
 		this.gloss = gloss;
@@ -55,7 +55,7 @@ public class Datum {
 
 	public Datum(String orthography) {
 		super();
-		this.id = System.currentTimeMillis() + "";
+		this._id = System.currentTimeMillis() + "";
 		this.utterance = new DatumField("utterance", orthography);
 		this.morphemes = new DatumField("morphemes", "");
 		this.gloss = new DatumField("gloss", "");
@@ -75,7 +75,7 @@ public class Datum {
 	public Datum(String orthography, String morphemes, String gloss,
 			String translation) {
 		super();
-		this.id = System.currentTimeMillis() + translation;
+		this._id = System.currentTimeMillis() + translation;
 		this.utterance = new DatumField("utterance", orthography);
 		this.morphemes = new DatumField("morphemes", morphemes);
 		this.gloss = new DatumField("gloss", gloss);
@@ -95,7 +95,7 @@ public class Datum {
 	public Datum(String orthography, String morphemes, String gloss,
 			String translation, String context) {
 		super();
-		this.id = System.currentTimeMillis() + translation;
+		this._id = System.currentTimeMillis() + translation;
 		this.utterance = new DatumField("utterance", orthography);
 		this.morphemes = new DatumField("morphemes", morphemes);
 		this.gloss = new DatumField("gloss", gloss);
@@ -114,7 +114,7 @@ public class Datum {
 
 	public Datum() {
 		super();
-		this.id = System.currentTimeMillis() + "";
+		this._id = System.currentTimeMillis() + "";
 		this.utterance = new DatumField("utterance", "");
 		this.morphemes = new DatumField("morphemes", "");
 		this.gloss = new DatumField("gloss", "");
@@ -132,19 +132,19 @@ public class Datum {
 	}
 
 	public String getId() {
-		return id;
+		return _id;
 	}
 
 	public void setId(String id) {
-		this.id = id;
+		this._id = id;
 	}
 
 	public String getRev() {
-		return rev;
+		return _rev;
 	}
 
 	public void setRev(String rev) {
-		this.rev = rev;
+		this._rev = rev;
 	}
 
 	public String getUtterance() {
@@ -583,6 +583,19 @@ public class Datum {
 				}
 			}
 		}
+	}
+
+	public String getMediaFilesAsCSV(ArrayList<AudioVideo> mediaFiles) {
+		String asString = "";
+		boolean isFirst = true;
+		for (AudioVideo file : mediaFiles) {
+			if (!isFirst) {
+				asString = asString + ",";
+			}
+			isFirst = false;
+			asString = asString + file.getFilename();
+		}
+		return asString;
 	}
 
 }
