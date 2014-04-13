@@ -52,13 +52,15 @@ public class DatumContentProvider extends ContentProvider {
 	}
 
 	@Override
-	public int delete(Uri arg0, String arg1, String[] arg2) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int delete(Uri uri, String selection, String[] selectionArgs) {
+		ContentValues values = new ContentValues();
+		values.put(DatumTable.COLUMN_TRASHED, "deleted");
+		int rowsUpdated = this.update(uri, values, selection, selectionArgs);
+		return rowsUpdated;
 	}
 
 	@Override
-	public String getType(Uri arg0) {
+	public String getType(Uri uri) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -111,6 +113,8 @@ public class DatumContentProvider extends ContentProvider {
 		int uriType = sURIMatcher.match(uri);
 		switch (uriType) {
 		case ITEMS:
+//			 queryBuilder.appendWhere(DatumTable.COLUMN_TRASHED + " LIKE 'deleted'");
+			 queryBuilder.appendWhere(DatumTable.COLUMN_TRASHED + " IS NULL");
 			break;
 		case ITEM_ID:
 			// Adding the ID to the original query
