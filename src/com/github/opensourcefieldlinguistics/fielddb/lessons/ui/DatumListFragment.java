@@ -3,7 +3,9 @@ package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
 import org.acra.ACRA;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,14 +14,18 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
+import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.georgian.R;
 
 /**
@@ -31,8 +37,9 @@ import com.github.opensourcefieldlinguistics.fielddb.lessons.georgian.R;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class DatumListFragment extends ListFragment implements
-		LoaderManager.LoaderCallbacks<Cursor> {
+public class DatumListFragment extends ListFragment
+		implements
+			LoaderManager.LoaderCallbacks<Cursor> {
 	private SimpleCursorAdapter adapter;
 
 	/**
@@ -62,6 +69,9 @@ public class DatumListFragment extends ListFragment implements
 		 * Callback for when an item has been selected.
 		 */
 		public void onItemSelected(String id);
+
+		public void onItemDeleted(Uri uri);
+
 	}
 
 	/**
@@ -71,6 +81,10 @@ public class DatumListFragment extends ListFragment implements
 	private static Callbacks sDummyCallbacks = new Callbacks() {
 		@Override
 		public void onItemSelected(String id) {
+		}
+
+		@Override
+		public void onItemDeleted(Uri uri) {
 		}
 	};
 
@@ -83,11 +97,17 @@ public class DatumListFragment extends ListFragment implements
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		setHasOptionsMenu(true);
 		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
 		fillData();
 		// setListAdapter(new DatumRowArrayAdapter(getActivity(),
 		// PlaceholderContent.ITEMS));
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		registerForContextMenu(getListView());
 	}
 
 	@Override
@@ -155,8 +175,61 @@ public class DatumListFragment extends ListFragment implements
 		// When setting CHOICE_MODE_SINGLE, ListView will automatically
 		// give items the 'activated' state when touched.
 		getListView().setChoiceMode(
-				activateOnItemClick ? ListView.CHOICE_MODE_SINGLE
+				activateOnItemClick
+						? ListView.CHOICE_MODE_SINGLE
 						: ListView.CHOICE_MODE_NONE);
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.action_delete :
+				AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+						.getMenuInfo();
+				adapter.getCursor().moveToPosition(info.position);
+				String actualId = adapter.getCursor().getString(
+						adapter.getCursor().getColumnIndexOrThrow(
+								DatumTable.COLUMN_ID));
+				final Uri uri = Uri.parse(DatumContentProvider.CONTENT_URI
+						+ "/" + actualId);
+				AlertDialog deleteConfirmationDialog = new AlertDialog.Builder(
+						getActivity())
+						.setTitle("Are you sure?")
+						.setMessage(
+								"Are you sure you want to put this "
+										+ Config.USER_FRIENDLY_DATA_NAME
+										+ " in the trash?")
+						.setPositiveButton(android.R.string.ok,
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										getActivity().getContentResolver()
+												.delete(uri, null, null);
+										fillData();
+										mCallbacks.onItemDeleted(uri);
+										dialog.dismiss();
+									}
+								})
+						.setNegativeButton(android.R.string.cancel,
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										dialog.dismiss();
+									}
+								}).create();
+				deleteConfirmationDialog.show();
+		}
+		return super.onContextItemSelected(item);
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater inflater = getActivity().getMenuInflater();
+		inflater.inflate(R.menu.actions_context_select, menu);
 	}
 
 	private void setActivatedPosition(int position) {
@@ -170,8 +243,8 @@ public class DatumListFragment extends ListFragment implements
 	}
 
 	private void fillData() {
-		String[] from = new String[] { DatumTable.COLUMN_ORTHOGRAPHY };
-		int[] to = new int[] { android.R.id.text1 };
+		String[] from = new String[]{DatumTable.COLUMN_ORTHOGRAPHY};
+		int[] to = new int[]{android.R.id.text1};
 		getLoaderManager().initLoader(0, null, this);
 		adapter = new SimpleCursorAdapter(getActivity(),
 				android.R.layout.simple_list_item_activated_1, null, from, to,
@@ -183,8 +256,8 @@ public class DatumListFragment extends ListFragment implements
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String[] projection = { DatumTable.COLUMN_ID,
-				DatumTable.COLUMN_ORTHOGRAPHY, DatumTable.COLUMN_TRANSLATION };
+		String[] projection = {DatumTable.COLUMN_ID,
+				DatumTable.COLUMN_ORTHOGRAPHY, DatumTable.COLUMN_TRANSLATION};
 		CursorLoader cursorLoader = new CursorLoader(getActivity(),
 				DatumContentProvider.CONTENT_URI, projection, null, null, null);
 		return cursorLoader;
@@ -192,11 +265,11 @@ public class DatumListFragment extends ListFragment implements
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-//		this.getListView().invalidate();
+		// this.getListView().invalidate();
 		adapter.swapCursor(data);
 		// http://stackoverflow.com/questions/14867324/update-listview-after-update-database-sqlite
-//		this.getListView().invalidate();
-//		adapter.notifyDataSetChanged();
+		// this.getListView().invalidate();
+		// adapter.notifyDataSetChanged();
 	}
 
 	@Override
@@ -213,18 +286,19 @@ public class DatumListFragment extends ListFragment implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// handle item selection
 		switch (item.getItemId()) {
-		case R.id.action_new:
-			Uri newDatum = getActivity().getContentResolver().insert(
-					DatumContentProvider.CONTENT_URI, new ContentValues());
-			if (newDatum != null) {
-				mCallbacks.onItemSelected(newDatum.getLastPathSegment());
-			} else {
-				ACRA.getErrorReporter().handleException(
-						new Exception("*** Error inserting a datum in DB ***"));
-			}
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+			case R.id.action_new :
+				Uri newDatum = getActivity().getContentResolver().insert(
+						DatumContentProvider.CONTENT_URI, new ContentValues());
+				if (newDatum != null) {
+					mCallbacks.onItemSelected(newDatum.getLastPathSegment());
+				} else {
+					ACRA.getErrorReporter().handleException(
+							new Exception(
+									"*** Error inserting a datum in DB ***"));
+				}
+				return true;
+			default :
+				return super.onOptionsItemSelected(item);
 		}
 	}
 }
