@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.acra.ACRA;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -377,6 +378,7 @@ public class DatumDetailFragment extends Fragment {
 		loadMainVideo(playImmediately);
 	}
 
+	@SuppressLint("NewApi")
 	public boolean loadMainVideo(boolean playNow) {
 		String fileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/"
 				+ mItem.getMainAudioVideoFile();
@@ -389,7 +391,16 @@ public class DatumDetailFragment extends Fragment {
 		if (fileName.endsWith(Config.DEFAULT_AUDIO_EXTENSION)) {
 			loadMainImage();
 		} else {
-			mVideoView.setBackground(null);
+			int sdk = android.os.Build.VERSION.SDK_INT;
+			if (sdk >= 16) {
+				mVideoView.setBackground(null);
+			} else {
+				Log.e(Config.TAG,
+						"Couldnt set the video background. (this might be a kindle)");
+				mImageView.setImageBitmap(null);
+				mImageView.setVisibility(View.VISIBLE);
+				mVideoView.setVisibility(View.GONE);
+			}
 		}
 		if (playNow) {
 			this.recordUserEvent("loadMainVideo", fileName);
@@ -426,6 +437,7 @@ public class DatumDetailFragment extends Fragment {
 		return true;
 	}
 
+	@SuppressLint("NewApi")
 	private void loadMainImage() {
 		File image = new File(Config.DEFAULT_OUTPUT_DIRECTORY + "/"
 				+ mItem.getMainImageFile());
@@ -439,10 +451,17 @@ public class DatumDetailFragment extends Fragment {
 		}
 		int nh = (int) (d.getHeight() * (512.0 / d.getWidth()));
 		Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
-		// mImageView.setImageBitmap(scaled);
-		// mImageView.setVisibility(View.VISIBLE);
-		// mVideoView.setVisibility(View.GONE);
-		mVideoView.setBackground(new BitmapDrawable(getResources(), scaled));
+		int sdk = android.os.Build.VERSION.SDK_INT;
+		if (sdk >= 16) {
+			mVideoView
+					.setBackground(new BitmapDrawable(getResources(), scaled));
+		} else {
+			Log.e(Config.TAG,
+					"Couldnt set the video background. (this might be a kindle)");
+			mImageView.setImageBitmap(scaled);
+			mImageView.setVisibility(View.VISIBLE);
+			mVideoView.setVisibility(View.GONE);
+		}
 
 	}
 
