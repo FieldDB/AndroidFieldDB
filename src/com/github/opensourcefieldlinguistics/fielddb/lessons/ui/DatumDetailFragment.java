@@ -8,8 +8,10 @@ import java.util.Map;
 import org.acra.ACRA;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -17,6 +19,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -30,7 +33,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.VideoView;
-
 import ca.ilanguage.oprime.datacollection.AudioRecorder;
 import ca.ilanguage.oprime.datacollection.TakePicture;
 import ca.ilanguage.oprime.datacollection.VideoRecorder;
@@ -59,6 +61,7 @@ public class DatumDetailFragment extends Fragment {
 	 */
 	private Datum mItem;
 	private Uri mUri;
+	public boolean mTwoPane = false;
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -367,11 +370,50 @@ public class DatumDetailFragment extends Fragment {
 		case R.id.action_videos:
 			return this.captureVideo();
 		case R.id.action_images:
-
 			return this.captureImage();
+		case R.id.action_delete:
+			return this.delete();
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	private boolean delete() {
+		AlertDialog deleteConfirmationDialog = new AlertDialog.Builder(
+				getActivity())
+				.setTitle("Are you sure?")
+				.setMessage(
+						"Are you sure you want to put this "
+								+ Config.USER_FRIENDLY_DATA_NAME
+								+ " in the trash?")
+				.setPositiveButton(android.R.string.ok,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								getActivity().getContentResolver()
+										.delete(mUri, null, null);
+								dialog.dismiss();
+								
+								if(mTwoPane){
+									getActivity().getSupportFragmentManager().popBackStack();
+								}else{
+									NavUtils.navigateUpTo(getActivity(), new Intent(getActivity(),
+											DatumListActivity.class));
+								}
+								
+							}
+						})
+				.setNegativeButton(android.R.string.cancel,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								dialog.dismiss();
+							}
+						}).create();
+		deleteConfirmationDialog.show();
+		return true;
 	}
 
 	private void loadVisuals(boolean playImmediately) {

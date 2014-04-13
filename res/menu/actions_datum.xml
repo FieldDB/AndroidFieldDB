@@ -55,5 +55,10 @@
         android:icon="@android:drawable/ic_menu_info_details"
         android:showAsAction="ifRoom"
         android:title="Comment(s)"/>
+    <item
+        android:id="@+id/action_delete"
+        android:icon="@android:drawable/ic_delete"
+        android:showAsAction="ifRoom"
+        android:title="Delete"/>
 
 </menu>
