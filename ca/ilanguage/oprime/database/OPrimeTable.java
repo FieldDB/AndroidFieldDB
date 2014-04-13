@@ -13,7 +13,7 @@ public abstract class OPrimeTable {
 	public static final String COLUMN_REV = "_rev";
 	public static final String COLUMN_TRASHED = "trashed";
 	public static final String COLUMN_UPDATED_AT = "updated_at";
-	
+
 	public static ArrayList<String> columns;
 
 	public static String generateCreateTableSQLStatement(String TABLE_NAME)
@@ -23,14 +23,15 @@ public abstract class OPrimeTable {
 					"Columns have not been defined, please define the columns first.");
 		}
 
-		String preamble = "create table " + TABLE_NAME + "(" + COLUMN_ANDROID_ID
-				+ " INTEGER primary key AUTOINCREMENT, ";
+		String preamble = "create table " + TABLE_NAME + "("
+				+ COLUMN_ANDROID_ID + " INTEGER primary key AUTOINCREMENT, ";
 		String postamble = ");";
 		final StringBuilder sb = new StringBuilder(preamble);
 		boolean isFirst = true;
 		for (String column : columns) {
 			/* Primary key and actualJSON get special treatment */
-			if (COLUMN_ANDROID_ID.equals(column) || COLUMN_ACTUAL_JSON.equals(column)) {
+			if (COLUMN_ANDROID_ID.equals(column)
+					|| COLUMN_ACTUAL_JSON.equals(column)) {
 				continue;
 			}
 			if (!isFirst) {
