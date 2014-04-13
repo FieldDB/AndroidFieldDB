@@ -11,6 +11,7 @@ import org.acra.ACRA;
 
 import ca.ilanguage.oprime.database.UserContentProvider.UserTable;
 import ca.ilanguage.oprime.datacollection.NotifyingIntentService;
+import ca.ilanguage.oprime.model.DeviceDetails;
 
 import com.github.opensourcefieldlinguistics.fielddb.database.FieldDBUserContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
@@ -239,6 +240,16 @@ public class RegisterUserService extends NotifyingIntentService {
 		jsonParam.addProperty("appVersionsWhenModified",
 				appVersionsWhenModified);
 		jsonParam.addProperty("appVersionWhenCreated", appVersionsWhenModified);
+
+		try {
+			DeviceDetails device = new DeviceDetails(getApplicationContext(),
+					Config.D, Config.TAG);
+			jsonParam.addProperty("device", device.getCurrentDeviceDetails());
+		} catch (Exception e) {
+			Log.e(Config.TAG,
+					"Wasn't able to attach device details to the user registration");
+		}
+
 		DataOutputStream printout;
 		try {
 			printout = new DataOutputStream(urlConnection.getOutputStream());
