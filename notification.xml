@@ -9,7 +9,7 @@
         android:id="@+id/notifiation_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_oprime" />
+        android:src="@drawable/ic_launcher" />
 
     <TextView
         android:id="@+id/notification_title"
