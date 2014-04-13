@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 
 /**
  * An activity representing a list of Datums. This activity has different
@@ -76,11 +77,12 @@ public class DatumListActivity extends FragmentActivity implements
             // adding or replacing the detail fragment using a
             // fragment transaction.
             DatumDetailFragment fragment = new DatumDetailFragment();
+            fragment.mTwoPane = mTwoPane;
             fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.datum_detail_container, fragment, Config.TAG)
-                    .commit();
-
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.datum_detail_container, fragment, Config.TAG);
+            transaction.addToBackStack(null);
+            transaction.commit();
         } else {
             // In single-pane mode, simply start the detail activity
             // for the selected item ID.
