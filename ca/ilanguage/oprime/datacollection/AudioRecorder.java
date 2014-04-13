@@ -130,7 +130,12 @@ public class AudioRecorder extends Service {
     }
     this.mAudioResultsFile = this.mAudioResultsFile.replace(Config.DEFAULT_VIDEO_EXTENSION, Config.DEFAULT_AUDIO_EXTENSION);
     
-    (new File(mAudioResultsFile).getParentFile()).mkdirs();
+    Uri uri = Uri.parse(mAudioResultsFile);
+    String fileName = uri.getLastPathSegment();
+    if(fileName != null){
+    	String parentDir = mAudioResultsFile.replaceAll(fileName+"$", "");
+    	(new File(parentDir)).mkdirs();
+    }
     /*
      * turn on the recorder
      */
