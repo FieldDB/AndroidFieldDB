@@ -32,7 +32,7 @@ public class DatumContentProvider extends ContentProvider {
 	private static final int ITEM_ID = 20;
 
 	private static final String AUTHORITY = "com.github.opensourcefieldlinguistics.fielddb."
-			+ Config.DATA_IS_ABOUT_LANGUAGE_NAME.toLowerCase()
+			+ Config.DATA_IS_ABOUT_LANGUAGE_NAME_ASCII.toLowerCase()
 			+ "."
 			+ DatumTable.TABLE_NAME;
 	private static final String BASE_PATH = DatumTable.TABLE_NAME + "s";

@@ -78,17 +78,17 @@
 
         <provider
             android:name="com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider"
-            android:authorities="com.github.opensourcefieldlinguistics.fielddb.datum"
+            android:authorities="com.github.opensourcefieldlinguistics.fielddb.kartuli.datum"
             android:exported="false" >
         </provider>
         <provider
             android:name="com.github.opensourcefieldlinguistics.fielddb.database.AudioVideoContentProvider"
-            android:authorities="com.github.opensourcefieldlinguistics.fielddb.audiovideo"
+            android:authorities="com.github.opensourcefieldlinguistics.fielddb.kartuli.audiovideo"
             android:exported="false" >
         </provider>
         <provider
             android:name="com.github.opensourcefieldlinguistics.fielddb.database.FieldDBUserContentProvider"
-            android:authorities="com.github.opensourcefieldlinguistics.fielddb.user"
+            android:authorities="com.github.opensourcefieldlinguistics.fielddb.kartuli.user"
             android:exported="false" >
         </provider>
     </application>
