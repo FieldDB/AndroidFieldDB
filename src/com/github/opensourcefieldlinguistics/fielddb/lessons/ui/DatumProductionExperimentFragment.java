@@ -32,7 +32,14 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
 			if (mImageView == null) {
 				mImageView = (ImageView) rootView.findViewById(R.id.image_view);
 			}
-			mImageView.setImageResource(R.drawable.search_default);
+			String tags = mItem.getTagsString();
+			if (tags.contains("WebSearch")) {
+				mImageView.setImageResource(R.drawable.search_selected);
+			} else if (tags.contains("LegalSearch")) {
+				mImageView.setImageResource(R.drawable.legal_search_selected);
+			} else if (tags.contains("SMS")) {
+				mImageView.setImageResource(R.drawable.sms_selected);
+			}
 
 			this.playPromptContext();
 		}

@@ -94,11 +94,12 @@ public class DatumDetailFragment extends Fragment {
 			String[] selectionArgs = null;
 			String sortOrder = null;
 
-			String[] datumProjection = { DatumTable.COLUMN_ORTHOGRAPHY,
+			String[] datumProjection = {DatumTable.COLUMN_ORTHOGRAPHY,
 					DatumTable.COLUMN_MORPHEMES, DatumTable.COLUMN_GLOSS,
 					DatumTable.COLUMN_TRANSLATION, DatumTable.COLUMN_CONTEXT,
 					DatumTable.COLUMN_IMAGE_FILES,
-					DatumTable.COLUMN_AUDIO_VIDEO_FILES };
+					DatumTable.COLUMN_AUDIO_VIDEO_FILES, 
+					DatumTable.COLUMN_TAGS};
 			mUri = Uri.withAppendedPath(DatumContentProvider.CONTENT_URI, id);
 			CursorLoader cursorLoader = new CursorLoader(getActivity(), mUri,
 					datumProjection, selection, selectionArgs, sortOrder);
@@ -119,9 +120,11 @@ public class DatumDetailFragment extends Fragment {
 								.getColumnIndexOrThrow(DatumTable.COLUMN_CONTEXT)));
 				datum.addMediaFiles(cursor.getString(cursor
 						.getColumnIndexOrThrow(DatumTable.COLUMN_IMAGE_FILES)));
-
 				datum.addMediaFiles((cursor.getString(cursor
 						.getColumnIndexOrThrow(DatumTable.COLUMN_AUDIO_VIDEO_FILES))));
+				
+				datum.setTagsFromSting(cursor.getString(cursor
+						.getColumnIndexOrThrow(DatumTable.COLUMN_TAGS)));
 				cursor.close();
 
 				mItem = datum;
@@ -336,45 +339,46 @@ public class DatumDetailFragment extends Fragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// handle item selection
 		switch (item.getItemId()) {
-		case R.id.action_speak:
-			if (!this.mRecordingAudio) {
-				String audioFileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/"
-						+ mItem.getBaseFilename()
-						+ Config.DEFAULT_AUDIO_EXTENSION;
-				Intent intent;
-				intent = new Intent(getActivity(), AudioRecorder.class);
-				intent.putExtra(Config.EXTRA_RESULT_FILENAME, audioFileName);
-				mItem.addAudioFile(audioFileName.replace(
-						Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
-				getActivity().startService(intent);
-				ContentValues values = new ContentValues();
-				values.put(DatumTable.COLUMN_AUDIO_VIDEO_FILES,
-						mItem.getMediaFilesAsCSV(mItem.getAudioVideoFiles()));
-				getActivity().getContentResolver().update(mUri, values, null,
-						null);
-				Log.d(TAG, "Recording audio " + audioFileName);
-				this.mRecordingAudio = true;
-				item.setIcon(R.drawable.ic_action_stop);
-				this.recordUserEvent("captureAudio", audioFileName);
+			case R.id.action_speak :
+				if (!this.mRecordingAudio) {
+					String audioFileName = Config.DEFAULT_OUTPUT_DIRECTORY
+							+ "/" + mItem.getBaseFilename()
+							+ Config.DEFAULT_AUDIO_EXTENSION;
+					Intent intent;
+					intent = new Intent(getActivity(), AudioRecorder.class);
+					intent.putExtra(Config.EXTRA_RESULT_FILENAME, audioFileName);
+					mItem.addAudioFile(audioFileName.replace(
+							Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
+					getActivity().startService(intent);
+					ContentValues values = new ContentValues();
+					values.put(DatumTable.COLUMN_AUDIO_VIDEO_FILES, mItem
+							.getMediaFilesAsCSV(mItem.getAudioVideoFiles()));
+					getActivity().getContentResolver().update(mUri, values,
+							null, null);
+					Log.d(TAG, "Recording audio " + audioFileName);
+					this.mRecordingAudio = true;
+					item.setIcon(R.drawable.ic_action_stop);
+					this.recordUserEvent("captureAudio", audioFileName);
 
-			} else {
-				Intent audio = new Intent(getActivity(), AudioRecorder.class);
-				getActivity().stopService(audio);
-				this.mRecordingAudio = false;
-				item.setIcon(R.drawable.ic_action_mic);
-				this.recordUserEvent("stopAudio", "");
-			}
-			return true;
-		case R.id.action_play:
-			return this.loadMainVideo(true);
-		case R.id.action_videos:
-			return this.captureVideo();
-		case R.id.action_images:
-			return this.captureImage();
-		case R.id.action_delete:
-			return this.delete();
-		default:
-			return super.onOptionsItemSelected(item);
+				} else {
+					Intent audio = new Intent(getActivity(),
+							AudioRecorder.class);
+					getActivity().stopService(audio);
+					this.mRecordingAudio = false;
+					item.setIcon(R.drawable.ic_action_mic);
+					this.recordUserEvent("stopAudio", "");
+				}
+				return true;
+			case R.id.action_play :
+				return this.loadMainVideo(true);
+			case R.id.action_videos :
+				return this.captureVideo();
+			case R.id.action_images :
+				return this.captureImage();
+			case R.id.action_delete :
+				return this.delete();
+			default :
+				return super.onOptionsItemSelected(item);
 		}
 	}
 
@@ -391,17 +395,19 @@ public class DatumDetailFragment extends Fragment {
 							@Override
 							public void onClick(DialogInterface dialog,
 									int which) {
-								getActivity().getContentResolver()
-										.delete(mUri, null, null);
+								getActivity().getContentResolver().delete(mUri,
+										null, null);
 								dialog.dismiss();
-								
-								if(mTwoPane){
-									getActivity().getSupportFragmentManager().popBackStack();
-								}else{
-									NavUtils.navigateUpTo(getActivity(), new Intent(getActivity(),
-											DatumListActivity.class));
+
+								if (mTwoPane) {
+									getActivity().getSupportFragmentManager()
+											.popBackStack();
+								} else {
+									NavUtils.navigateUpTo(getActivity(),
+											new Intent(getActivity(),
+													DatumListActivity.class));
 								}
-								
+
 							}
 						})
 				.setNegativeButton(android.R.string.cancel,
@@ -514,47 +520,49 @@ public class DatumDetailFragment extends Fragment {
 		// }
 		String resultFile;
 		switch (requestCode) {
-		case Config.CODE_EXPERIMENT_COMPLETED:
-			if (data != null && data.hasExtra(Config.EXTRA_RESULT_FILENAME)) {
-				resultFile = data.getExtras().getString(
-						Config.EXTRA_RESULT_FILENAME);
-				if (resultFile != null) {
-					// if (resultFile != null && new File(resultFile).exists())
-					// {
-					if (resultFile.endsWith(Config.DEFAULT_AUDIO_EXTENSION)) {
-						mItem.addAudioFile(resultFile.replace(
-								Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
-					} else {
-						mItem.addVideoFile(resultFile.replace(
-								Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
+			case Config.CODE_EXPERIMENT_COMPLETED :
+				if (data != null && data.hasExtra(Config.EXTRA_RESULT_FILENAME)) {
+					resultFile = data.getExtras().getString(
+							Config.EXTRA_RESULT_FILENAME);
+					if (resultFile != null) {
+						// if (resultFile != null && new
+						// File(resultFile).exists())
+						// {
+						if (resultFile.endsWith(Config.DEFAULT_AUDIO_EXTENSION)) {
+							mItem.addAudioFile(resultFile.replace(
+									Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
+						} else {
+							mItem.addVideoFile(resultFile.replace(
+									Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
+						}
+						ContentValues values = new ContentValues();
+						values.put(DatumTable.COLUMN_AUDIO_VIDEO_FILES, mItem
+								.getMediaFilesAsCSV(mItem.getAudioVideoFiles()));
+						getActivity().getContentResolver().update(mUri, values,
+								null, null);
+						this.loadMainVideo(false);
 					}
-					ContentValues values = new ContentValues();
-					values.put(DatumTable.COLUMN_AUDIO_VIDEO_FILES, mItem
-							.getMediaFilesAsCSV(mItem.getAudioVideoFiles()));
-					getActivity().getContentResolver().update(mUri, values,
-							null, null);
-					this.loadMainVideo(false);
 				}
-			}
-			break;
-		case Config.CODE_PICTURE_TAKEN:
-			if (data != null && data.hasExtra(Config.EXTRA_RESULT_FILENAME)) {
-				resultFile = data.getExtras().getString(
-						Config.EXTRA_RESULT_FILENAME);
-				if (resultFile != null) {
-					// if (resultFile != null && new File(resultFile).exists())
-					// {
-					mItem.addImageFile(resultFile.replace(
-							Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
-					ContentValues values = new ContentValues();
-					values.put(DatumTable.COLUMN_IMAGE_FILES,
-							mItem.getMediaFilesAsCSV(mItem.getImageFiles()));
-					getActivity().getContentResolver().update(mUri, values,
-							null, null);
-					this.loadMainImage();
+				break;
+			case Config.CODE_PICTURE_TAKEN :
+				if (data != null && data.hasExtra(Config.EXTRA_RESULT_FILENAME)) {
+					resultFile = data.getExtras().getString(
+							Config.EXTRA_RESULT_FILENAME);
+					if (resultFile != null) {
+						// if (resultFile != null && new
+						// File(resultFile).exists())
+						// {
+						mItem.addImageFile(resultFile.replace(
+								Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
+						ContentValues values = new ContentValues();
+						values.put(DatumTable.COLUMN_IMAGE_FILES,
+								mItem.getMediaFilesAsCSV(mItem.getImageFiles()));
+						getActivity().getContentResolver().update(mUri, values,
+								null, null);
+						this.loadMainImage();
+					}
 				}
-			}
-			break;
+				break;
 		}
 		super.onActivityResult(requestCode, requestCode, data);
 	}

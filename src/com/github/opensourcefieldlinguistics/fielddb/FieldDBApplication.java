@@ -20,7 +20,9 @@ import com.github.opensourcefieldlinguistics.fielddb.database.FieldDBUserContent
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
 import com.github.opensourcefieldlinguistics.fielddb.service.DownloadDatumsService;
+import com.github.opensourcefieldlinguistics.fielddb.service.KartuliLegalSearchCorpusService;
 import com.github.opensourcefieldlinguistics.fielddb.service.KartuliSMSCorpusService;
+import com.github.opensourcefieldlinguistics.fielddb.service.KartuliWebSearchCorpusService;
 import com.github.opensourcefieldlinguistics.fielddb.service.RegisterUserService;
 
 import android.app.Application;
@@ -161,9 +163,19 @@ public class FieldDBApplication extends Application {
 		if (Config.APP_TYPE.equals("speechrec")) {
 			Log.d(Config.TAG,
 					"Not downloading samples, they are included in the training app");
-			Intent updateSamples = new Intent(getApplicationContext(),
+			
+			Intent updateSMSSamples = new Intent(getApplicationContext(),
 					KartuliSMSCorpusService.class);
-			getApplicationContext().startService(updateSamples);
+			getApplicationContext().startService(updateSMSSamples);
+			
+			Intent updateWebSearchSamples = new Intent(getApplicationContext(),
+					KartuliWebSearchCorpusService.class);
+			getApplicationContext().startService(updateWebSearchSamples);
+			
+			Intent updateLegalSearchSamples = new Intent(getApplicationContext(),
+					KartuliLegalSearchCorpusService.class);
+			getApplicationContext().startService(updateLegalSearchSamples);
+			
 		} else {
 			if (wifi.isConnected() || Config.D) {
 				Intent updateSamples = new Intent(getApplicationContext(),
