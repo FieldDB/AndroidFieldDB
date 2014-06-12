@@ -32,6 +32,8 @@ public class DatumContentProvider extends ContentProvider {
 	private static final int ITEM_ID = 20;
 
 	private static final String AUTHORITY = "com.github.opensourcefieldlinguistics.fielddb."
+			+ Config.APP_TYPE.toLowerCase()
+			+ "."
 			+ Config.DATA_IS_ABOUT_LANGUAGE_NAME_ASCII.toLowerCase()
 			+ "."
 			+ DatumTable.TABLE_NAME;
@@ -112,17 +114,19 @@ public class DatumContentProvider extends ContentProvider {
 
 		int uriType = sURIMatcher.match(uri);
 		switch (uriType) {
-		case ITEMS:
-//			 queryBuilder.appendWhere(DatumTable.COLUMN_TRASHED + " LIKE 'deleted'");
-			 queryBuilder.appendWhere(DatumTable.COLUMN_TRASHED + " IS NULL");
-			break;
-		case ITEM_ID:
-			// Adding the ID to the original query
-			queryBuilder.appendWhere(DatumTable.COLUMN_ID + "='"
-					+ uri.getLastPathSegment() + "'");
-			break;
-		default:
-			throw new IllegalArgumentException("Unknown URI: " + uri);
+			case ITEMS :
+				// queryBuilder.appendWhere(DatumTable.COLUMN_TRASHED +
+				// " LIKE 'deleted'");
+				queryBuilder
+						.appendWhere(DatumTable.COLUMN_TRASHED + " IS NULL");
+				break;
+			case ITEM_ID :
+				// Adding the ID to the original query
+				queryBuilder.appendWhere(DatumTable.COLUMN_ID + "='"
+						+ uri.getLastPathSegment() + "'");
+				break;
+			default :
+				throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
 
 		SQLiteDatabase db = database.getWritableDatabase();
@@ -142,24 +146,23 @@ public class DatumContentProvider extends ContentProvider {
 		SQLiteDatabase sqlDB = database.getWritableDatabase();
 		int rowsUpdated = 0;
 		switch (uriType) {
-		case ITEMS:
-			rowsUpdated = sqlDB.update(DatumTable.TABLE_NAME, values,
-					selection, selectionArgs);
-			break;
-		case ITEM_ID:
-			String id = uri.getLastPathSegment();
-			if (TextUtils.isEmpty(selection)) {
+			case ITEMS :
 				rowsUpdated = sqlDB.update(DatumTable.TABLE_NAME, values,
-						DatumTable.COLUMN_ID + "='" + id + "'", null);
-			} else {
-				rowsUpdated = sqlDB
-						.update(DatumTable.TABLE_NAME, values,
-								DatumTable.COLUMN_ID + "='" + id + "' and "
-										+ selection, selectionArgs);
-			}
-			break;
-		default:
-			throw new IllegalArgumentException("Unknown Update URI: " + uri);
+						selection, selectionArgs);
+				break;
+			case ITEM_ID :
+				String id = uri.getLastPathSegment();
+				if (TextUtils.isEmpty(selection)) {
+					rowsUpdated = sqlDB.update(DatumTable.TABLE_NAME, values,
+							DatumTable.COLUMN_ID + "='" + id + "'", null);
+				} else {
+					rowsUpdated = sqlDB.update(DatumTable.TABLE_NAME, values,
+							DatumTable.COLUMN_ID + "='" + id + "' and "
+									+ selection, selectionArgs);
+				}
+				break;
+			default :
+				throw new IllegalArgumentException("Unknown Update URI: " + uri);
 		}
 		getContext().getContentResolver().notifyChange(uri, null);
 		return rowsUpdated;
@@ -277,12 +280,12 @@ public class DatumContentProvider extends ContentProvider {
 		public static final String COLUMN_ENTERED_BY_USER = "enteredByUser";
 		public static final String COLUMN_MODIFIED_BY_USER = "modifiedByUser";
 
-		public static String[] version1Columns = { COLUMN_UTTERANCE,
+		public static String[] version1Columns = {COLUMN_UTTERANCE,
 				COLUMN_MORPHEMES, COLUMN_GLOSS, COLUMN_TRANSLATION,
 				COLUMN_ORTHOGRAPHY, COLUMN_CONTEXT, COLUMN_IMAGE_FILES,
 				COLUMN_AUDIO_VIDEO_FILES, COLUMN_LOCATIONS, COLUMN_REMINDERS,
 				COLUMN_TAGS, COLUMN_COMMENTS, COLUMN_VALIDATION_STATUS,
-				COLUMN_ENTERED_BY_USER, COLUMN_MODIFIED_BY_USER };
+				COLUMN_ENTERED_BY_USER, COLUMN_MODIFIED_BY_USER};
 
 		public static String[] currentColumns = version1Columns;
 

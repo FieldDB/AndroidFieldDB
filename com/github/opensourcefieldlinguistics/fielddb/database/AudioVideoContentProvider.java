@@ -27,6 +27,8 @@ public class AudioVideoContentProvider extends ContentProvider {
 	private static final int ITEM_ID = 20;
 
 	private static final String AUTHORITY = "com.github.opensourcefieldlinguistics.fielddb."
+			+ Config.APP_TYPE.toLowerCase()
+			+ "."
 			+ Config.DATA_IS_ABOUT_LANGUAGE_NAME_ASCII.toLowerCase()
 			+ "."
 			+ AudioVideoTable.TABLE_NAME;
@@ -89,15 +91,15 @@ public class AudioVideoContentProvider extends ContentProvider {
 
 		int uriType = sURIMatcher.match(uri);
 		switch (uriType) {
-		case ITEMS:
-			break;
-		case ITEM_ID:
-			// Adding the ID to the original query
-			queryBuilder.appendWhere(AudioVideoTable.COLUMN_FILENAME + "='"
-					+ uri.getLastPathSegment() + "'");
-			break;
-		default:
-			throw new IllegalArgumentException("Unknown URI: " + uri);
+			case ITEMS :
+				break;
+			case ITEM_ID :
+				// Adding the ID to the original query
+				queryBuilder.appendWhere(AudioVideoTable.COLUMN_FILENAME + "='"
+						+ uri.getLastPathSegment() + "'");
+				break;
+			default :
+				throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
 
 		SQLiteDatabase db = database.getWritableDatabase();
@@ -117,23 +119,24 @@ public class AudioVideoContentProvider extends ContentProvider {
 		SQLiteDatabase sqlDB = database.getWritableDatabase();
 		int rowsUpdated = 0;
 		switch (uriType) {
-		case ITEMS:
-			rowsUpdated = sqlDB.update(AudioVideoTable.TABLE_NAME, values,
-					selection, selectionArgs);
-			break;
-		case ITEM_ID:
-			String id = uri.getLastPathSegment();
-			if (TextUtils.isEmpty(selection)) {
+			case ITEMS :
 				rowsUpdated = sqlDB.update(AudioVideoTable.TABLE_NAME, values,
-						AudioVideoTable.COLUMN_ID + "='" + id + "'", null);
-			} else {
-				rowsUpdated = sqlDB.update(AudioVideoTable.TABLE_NAME, values,
-						AudioVideoTable.COLUMN_ID + "='" + id + "' and "
-								+ selection, selectionArgs);
-			}
-			break;
-		default:
-			throw new IllegalArgumentException("Unknown Update URI: " + uri);
+						selection, selectionArgs);
+				break;
+			case ITEM_ID :
+				String id = uri.getLastPathSegment();
+				if (TextUtils.isEmpty(selection)) {
+					rowsUpdated = sqlDB.update(AudioVideoTable.TABLE_NAME,
+							values,
+							AudioVideoTable.COLUMN_ID + "='" + id + "'", null);
+				} else {
+					rowsUpdated = sqlDB.update(AudioVideoTable.TABLE_NAME,
+							values, AudioVideoTable.COLUMN_ID + "='" + id
+									+ "' and " + selection, selectionArgs);
+				}
+				break;
+			default :
+				throw new IllegalArgumentException("Unknown Update URI: " + uri);
 		}
 		getContext().getContentResolver().notifyChange(uri, null);
 		return rowsUpdated;
@@ -222,8 +225,8 @@ public class AudioVideoContentProvider extends ContentProvider {
 		public static final String COLUMN_URL = "url";
 		public static final String COLUMN_DESCRIPTION = "description";
 
-		public static String[] version1Columns = { COLUMN_FILENAME, COLUMN_URL,
-				COLUMN_DESCRIPTION };
+		public static String[] version1Columns = {COLUMN_FILENAME, COLUMN_URL,
+				COLUMN_DESCRIPTION};
 
 		public static String[] currentColumns = version1Columns;
 

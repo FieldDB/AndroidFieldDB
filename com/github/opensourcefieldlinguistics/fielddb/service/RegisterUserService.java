@@ -15,7 +15,7 @@ import ca.ilanguage.oprime.model.DeviceDetails;
 
 import com.github.opensourcefieldlinguistics.fielddb.database.FieldDBUserContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
-import com.github.opensourcefieldlinguistics.fielddb.lessons.georgian.R;
+import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
 import com.google.gson.JsonObject;
 
 import android.app.NotificationManager;
@@ -138,14 +138,14 @@ public class RegisterUserService extends NotifyingIntentService {
 	}
 
 	public String registerUsers(Uri uri) {
-		String[] userProjection = { UserTable.COLUMN_REV,
+		String[] userProjection = {UserTable.COLUMN_REV,
 				UserTable.COLUMN_USERNAME, UserTable.COLUMN_FIRSTNAME,
 				UserTable.COLUMN_LASTNAME, UserTable.COLUMN_EMAIL,
 				UserTable.COLUMN_GRAVATAR, UserTable.COLUMN_AFFILIATION,
 				UserTable.COLUMN_RESEARCH_INTEREST,
 				UserTable.COLUMN_DESCRIPTION, UserTable.COLUMN_SUBTITLE,
 				UserTable.COLUMN_GENERATED_PASSWORD,
-				UserTable.COLUMN_APP_VERSIONS_WHEN_MODIFIED };
+				UserTable.COLUMN_APP_VERSIONS_WHEN_MODIFIED};
 		if (uri == null) {
 			uri = FieldDBUserContentProvider.CONTENT_URI;
 		}
@@ -264,15 +264,15 @@ public class RegisterUserService extends NotifyingIntentService {
 			return null;
 		}
 		String JSONResponse = this.processResponse(url, urlConnection);
+		if (JSONResponse == null) {
+			this.userFriendlyErrorMessage = "Unknown error reading sample data from server";
+			return null;
+		}
 		if (JSONResponse.contains("name already exists")) {
 			JSONResponse = this.loginUser(username, generatedPassword,
 					Config.DEFAULT_AUTH_LOGIN_URL);
 		}
 		if (!"".equals(this.userFriendlyErrorMessage)) {
-			return null;
-		}
-		if (JSONResponse == null) {
-			this.userFriendlyErrorMessage = "Unknown error reading sample data from server";
 			return null;
 		}
 		return JSONResponse;
