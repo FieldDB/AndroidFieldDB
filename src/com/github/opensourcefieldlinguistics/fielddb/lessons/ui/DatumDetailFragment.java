@@ -59,8 +59,8 @@ public class DatumDetailFragment extends Fragment {
 	/**
 	 * The content this fragment is presenting.
 	 */
-	private Datum mItem;
-	private Uri mUri;
+	protected Datum mItem;
+	protected Uri mUri;
 	public boolean mTwoPane = false;
 
 	/**
@@ -70,11 +70,11 @@ public class DatumDetailFragment extends Fragment {
 	public DatumDetailFragment() {
 	}
 
-	private String TAG = "FieldDB";
-	private boolean mRecordingAudio = false;
-	private VideoView mVideoView;
-	private ImageView mImageView;
-	private MediaController mMediaController;
+	protected String TAG = "FieldDB";
+	protected boolean mRecordingAudio = false;
+	protected VideoView mVideoView;
+	protected ImageView mImageView;
+	protected MediaController mMediaController;
 	protected DeviceDetails mDeviceDetails;
 	protected HashMap<String, Integer> mDatumEditCounts;
 
@@ -326,7 +326,7 @@ public class DatumDetailFragment extends Fragment {
 	 * or changes, you must update the share intent by again calling
 	 * mShareActionProvider.setShareIntent()
 	 */
-	private Intent getDefaultIntent() {
+	protected Intent getDefaultIntent() {
 		Intent intent = new Intent(Intent.ACTION_SEND);
 		intent.setType("image/*");
 		return intent;
@@ -378,7 +378,7 @@ public class DatumDetailFragment extends Fragment {
 		}
 	}
 
-	private boolean delete() {
+	protected boolean delete() {
 		AlertDialog deleteConfirmationDialog = new AlertDialog.Builder(
 				getActivity())
 				.setTitle("Are you sure?")
@@ -416,7 +416,7 @@ public class DatumDetailFragment extends Fragment {
 		return true;
 	}
 
-	private void loadVisuals(boolean playImmediately) {
+	protected void loadVisuals(boolean playImmediately) {
 		loadMainVideo(playImmediately);
 	}
 
@@ -480,7 +480,7 @@ public class DatumDetailFragment extends Fragment {
 	}
 
 	@SuppressLint("NewApi")
-	private void loadMainImage() {
+	protected void loadMainImage() {
 		File image = new File(Config.DEFAULT_OUTPUT_DIRECTORY + "/"
 				+ mItem.getMainImageFile());
 		if (!image.exists()) {
@@ -559,7 +559,7 @@ public class DatumDetailFragment extends Fragment {
 		super.onActivityResult(requestCode, requestCode, data);
 	}
 
-	private boolean captureVideo() {
+	protected boolean captureVideo() {
 		String videoFileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/"
 				+ mItem.getBaseFilename() + Config.DEFAULT_VIDEO_EXTENSION;
 		Intent intent = new Intent(getActivity(), VideoRecorder.class);
@@ -576,7 +576,7 @@ public class DatumDetailFragment extends Fragment {
 		return true;
 	}
 
-	private boolean captureImage() {
+	protected boolean captureImage() {
 		String imageFileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/"
 				+ mItem.getBaseFilename() + Config.DEFAULT_IMAGE_EXTENSION;
 		Intent intent = new Intent(getActivity(), TakePicture.class);
@@ -606,7 +606,7 @@ public class DatumDetailFragment extends Fragment {
 		super.onPause();
 	}
 
-	private void recordUserEvent(String eventType, String eventValue) {
+	protected void recordUserEvent(String eventType, String eventValue) {
 		if ("editDatum".equals(eventType)) {
 			if (this.mDatumEditCounts == null) {
 				this.mDatumEditCounts = new HashMap<String, Integer>();

@@ -1,6 +1,7 @@
 package com.github.opensourcefieldlinguistics.fielddb.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import android.util.Log;
 
@@ -253,6 +254,21 @@ public class Datum {
 
 	public ArrayList<String> getTags() {
 		return tags;
+	}
+
+	public String getTagsString() {
+		String result = "";
+		for (String tag : this.tags) {
+			if (!"".equals(result)) {
+				result += ",";
+			}
+			result += tag;
+		}
+		return result;
+	}
+
+	public void setTagsFromSting(String tags) {
+		this.tags = new ArrayList<String>(Arrays.asList(tags.split(",")));
 	}
 
 	public void setTags(ArrayList<String> tags) {
