@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">ქართული  ერთად</string>
+    <string name="speech_app_name">ქართული speech</string>
     <string name="title_datum_detail">ფრაზა</string>
 
 </resources>
