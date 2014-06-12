@@ -18,7 +18,7 @@ import ca.ilanguage.oprime.database.UserContentProvider.UserTable;
 
 import com.github.opensourcefieldlinguistics.fielddb.database.FieldDBUserContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
-import com.github.opensourcefieldlinguistics.fielddb.lessons.georgian.R;
+import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
 import com.github.opensourcefieldlinguistics.fielddb.service.DownloadDatumsService;
 import com.github.opensourcefieldlinguistics.fielddb.service.RegisterUserService;
 
@@ -93,24 +93,25 @@ public class FieldDBApplication extends Application {
 		ACRA.init(this);
 
 		// Get the user from the db
-		String[] userProjection = { UserTable.COLUMN_ID, UserTable.COLUMN_REV,
+		String[] userProjection = {UserTable.COLUMN_ID, UserTable.COLUMN_REV,
 				UserTable.COLUMN_USERNAME, UserTable.COLUMN_FIRSTNAME,
 				UserTable.COLUMN_LASTNAME, UserTable.COLUMN_EMAIL,
 				UserTable.COLUMN_GRAVATAR, UserTable.COLUMN_AFFILIATION,
 				UserTable.COLUMN_RESEARCH_INTEREST,
-				UserTable.COLUMN_DESCRIPTION, UserTable.COLUMN_SUBTITLE };
+				UserTable.COLUMN_DESCRIPTION, UserTable.COLUMN_SUBTITLE};
 		CursorLoader cursorLoader = new CursorLoader(getApplicationContext(),
 				FieldDBUserContentProvider.CONTENT_URI, userProjection, null,
 				null, null);
 		Cursor cursor = cursorLoader.loadInBackground();
 		cursor.moveToFirst();
 		String _id = "";
+		String username = "default";
 		if (cursor.getCount() > 0) {
 			_id = cursor.getString(cursor
 					.getColumnIndexOrThrow(UserTable.COLUMN_ID));
 			String _rev = cursor.getString(cursor
 					.getColumnIndexOrThrow(UserTable.COLUMN_REV));
-			String username = cursor.getString(cursor
+			username = cursor.getString(cursor
 					.getColumnIndexOrThrow(UserTable.COLUMN_USERNAME));
 			String firstname = cursor.getString(cursor
 					.getColumnIndexOrThrow(UserTable.COLUMN_FIRSTNAME));
@@ -138,7 +139,11 @@ public class FieldDBApplication extends Application {
 					"There is no user... this is a problme the app wont work.");
 			ACRA.getErrorReporter().putCustomData("username", "unknown");
 		}
-		ACRA.getErrorReporter().putCustomData("dbname", Config.DEFAULT_CORPUS);
+		/* Make the default corpus point to the user's own corpus */
+		Config.DEFAULT_CORPUS = Config.DEFAULT_CORPUS.replace("username",
+				username);
+		ACRA.getErrorReporter().putCustomData("dbname",
+				Config.DEFAULT_CORPUS.replace("username", username));
 		Log.d(Config.TAG, cursor.getString(cursor
 				.getColumnIndexOrThrow(UserTable.COLUMN_USERNAME)));
 		cursor.close();
@@ -152,11 +157,15 @@ public class FieldDBApplication extends Application {
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo wifi = connManager
 				.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-		if (wifi.isConnected()) {
-			Intent updateSamples = new Intent(getApplicationContext(),
-					DownloadDatumsService.class);
-			getApplicationContext().startService(updateSamples);
-
+		if (Config.APP_TYPE.equals("speechrec")) {
+			Log.d(Config.TAG,
+					"Not downloading samples, they are included in the training app");
+		} else {
+			if (wifi.isConnected() || Config.D) {
+				Intent updateSamples = new Intent(getApplicationContext(),
+						DownloadDatumsService.class);
+				getApplicationContext().startService(updateSamples);
+			}
 		}
 		if (mUser.get_rev() == null || "".equals(mUser.get_rev())) {
 			Intent registerUser = new Intent(getApplicationContext(),

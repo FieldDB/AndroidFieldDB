@@ -1,20 +1,23 @@
 package com.github.opensourcefieldlinguistics.fielddb.lessons;
 
 public class Config extends ca.ilanguage.oprime.Config {
-	public static final boolean D = false;
+	public static final boolean D = true;
 	public static final String ACRA_PASS = PrivateConstants.ACRA_PASS;
 	public static final String ACRA_SERVER_URL = PrivateConstants.ACRA_SERVER_URL;
 	public static final String ACRA_USER = PrivateConstants.ACRA_USER;
 	public static final String DATA_IS_ABOUT_LANGUAGE_ISO = "ka";
 	public static final String DATA_IS_ABOUT_LANGUAGE_NAME_ASCII = "kartuli";
-//	public static final String DATA_IS_ABOUT_LANGUAGE_NAME = "ქართული";
+	public static final String APP_TYPE = "speechrec";
+	// public static final String DATA_IS_ABOUT_LANGUAGE_NAME = "ქართული";
 
-	public static final String DEFAULT_CORPUS = "community-georgian";
+	public static String DEFAULT_CORPUS = "username-"
+			+ DATA_IS_ABOUT_LANGUAGE_NAME_ASCII;
 	public static final String DEFAULT_DATA_LOGIN = PrivateConstants.DEFAULT_DATA_SERVER_URL
 			+ "/_session";
 	public static final String DEFAULT_AUTH_LOGIN_URL = PrivateConstants.DEFAULT_AUTH_LOGIN_URL;
 	public static final String DEFAULT_DATA_SERVER_URL = PrivateConstants.DEFAULT_DATA_SERVER_URL;
-	public static final String DEFAULT_OUTPUT_DIRECTORY = "/sdcard/"+DEFAULT_CORPUS;
+	public static final String DEFAULT_OUTPUT_DIRECTORY = "/sdcard/"
+			+ DEFAULT_CORPUS;
 	public static final String DEFAULT_PUBLIC_USER_PASS = PrivateConstants.DEFAULT_PUBLIC_USER_PASS;
 	public static final String DEFAULT_PUBLIC_USERNAME = PrivateConstants.DEFAULT_PUBLIC_USERNAME;
 	public static final String DEFAULT_REGISTER_USER_URL = PrivateConstants.DEFAULT_REGISTER_USER_URL;
@@ -23,4 +26,7 @@ public class Config extends ca.ilanguage.oprime.Config {
 
 	public static final String KEYSTORE_PASS = PrivateConstants.KEYSTORE_PASS;
 	public static final String USER_FRIENDLY_DATA_NAME = "ფრაზა";
+	public static final String ANONYMOUS_USER_PREFIX = "anonymous"
+			+ DATA_IS_ABOUT_LANGUAGE_NAME_ASCII + APP_TYPE;
+
 }
