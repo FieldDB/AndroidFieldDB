@@ -268,7 +268,9 @@ public class Datum {
 	}
 
 	public void setTagsFromSting(String tags) {
-		this.tags = new ArrayList<String>(Arrays.asList(tags.split(",")));
+		if(tags != null && !"".equals(tags)){
+			this.tags = new ArrayList<String>(Arrays.asList(tags.split(",")));
+		}
 	}
 
 	public void setTags(ArrayList<String> tags) {
