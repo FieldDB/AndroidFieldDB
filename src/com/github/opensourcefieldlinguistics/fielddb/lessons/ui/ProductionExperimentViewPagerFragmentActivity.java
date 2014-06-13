@@ -18,6 +18,7 @@ import android.util.Log;
 public class ProductionExperimentViewPagerFragmentActivity
 		extends
 			FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+	
 	private DatumFragmentPagerAdapter mPagerAdapter;
 
 	@Override
