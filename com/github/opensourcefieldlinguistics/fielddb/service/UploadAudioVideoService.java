@@ -3,22 +3,35 @@ package com.github.opensourcefieldlinguistics.fielddb.service;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.security.KeyStore;
 
 import org.acra.ACRA;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.SingleClientConnManager;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 
 import ca.ilanguage.oprime.datacollection.NotifyingIntentService;
 
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
+import com.github.opensourcefieldlinguistics.fielddb.lessons.PrivateConstants;
 import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.BuildConfig;
 import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
 import com.google.gson.JsonObject;
@@ -145,45 +158,56 @@ public class UploadAudioVideoService extends NotifyingIntentService {
 					uri.getLastPathSegment());
 		String urlStringAuthenticationSession = Config.DEFAULT_UPLOAD_AUDIO_VIDEO_URL;
 
-		// http://stackoverflow.com/questions/18964288/upload-a-file-through-an-http-form-via-multipartentitybuilder-with-a-progress
-		HttpClient client = new DefaultHttpClient();
-		HttpPost post = new HttpPost(urlStringAuthenticationSession);
-		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-		builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-		builder.addPart("file", new FileBody(new File(filePath)));
-		builder.addTextBody("userName", username);
-		builder.addTextBody("token", Config.DEFAULT_UPLOAD_TOKEN);
-		builder.addTextBody("dbname", Config.DEFAULT_CORPUS);
-		builder.addTextBody("returnTextGrid", "true");
+		/* Actually uploads the video */
+		HttpClient httpClient = new SecureHttpClient(getApplicationContext());
+		// HttpClient httpClient = new DefaultHttpClient();
 
-		post.setEntity(builder.build());
-		HttpResponse response;
-		String JSONResponse = "";
+		HttpContext localContext = new BasicHttpContext();
+		String url = Config.DEFAULT_UPLOAD_AUDIO_VIDEO_URL;
+		HttpPost httpPost = new HttpPost(url);
+
+		MultipartEntity entity = new MultipartEntity(
+				HttpMultipartMode.BROWSER_COMPATIBLE, null,
+				Charset.forName("UTF-8"));
+
 		try {
-			response = client.execute(post);
-			HttpEntity entity = response.getEntity();
-			int status = response.getStatusLine().getStatusCode();
-			if (status >= 500) {
-				this.userFriendlyErrorMessage = "Server error, please report this error.";
-			} else if (status >= 400) {
-				this.userFriendlyErrorMessage = "Something was wrong with this file. It could not be processed.";
-			} else {
-				JSONResponse = "";
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(
-								response.getEntity().getContent(), "UTF-8"));
 
-				String newLine;
-				do {
-					newLine = reader.readLine();
-					if (newLine != null) {
-						JSONResponse += newLine;
-					}
-				} while (newLine != null);
+			entity.addPart("file", new FileBody(new File(filePath)));
 
-			}
-			entity.consumeContent();
-			client.getConnectionManager().shutdown();
+			entity.addPart("token", new StringBody(Config.DEFAULT_UPLOAD_TOKEN,
+					"text/plain", Charset.forName("UTF-8")));
+
+			entity.addPart("username", new StringBody(username, "text/plain",
+					Charset.forName("UTF-8")));
+
+			entity.addPart("dbname", new StringBody(Config.DEFAULT_CORPUS,
+					"text/plain", Charset.forName("UTF-8")));
+
+			entity.addPart("returnTextGrid", new StringBody("true",
+					"text/plain", Charset.forName("UTF-8")));
+
+		} catch (UnsupportedEncodingException e) {
+			Log.d(Config.TAG,
+					"Failed to add entity parts due to string encodinuserFriendlyMessageg UTF-8");
+			e.printStackTrace();
+		}
+
+		httpPost.setEntity(entity);
+		String userFriendlyErrorMessage = "";
+		String JSONResponse = "";
+
+		try {
+			HttpResponse response = httpClient.execute(httpPost, localContext);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					response.getEntity().getContent(), "UTF-8"));
+			String newLine;
+			do {
+				newLine = reader.readLine();
+				if (newLine != null) {
+					JSONResponse += newLine;
+				}
+			} while (newLine != null);
+
 		} catch (ClientProtocolException e1) {
 			this.userFriendlyErrorMessage = "Problem using POST, please report this error.";
 			e1.printStackTrace();
@@ -193,7 +217,7 @@ public class UploadAudioVideoService extends NotifyingIntentService {
 		}
 
 		if ("".equals(JSONResponse)) {
-			this.userFriendlyErrorMessage = "Unknown error reading sample data from server";
+			this.userFriendlyErrorMessage = "Unknown error uploading data to server";
 			return null;
 		}
 
@@ -202,6 +226,55 @@ public class UploadAudioVideoService extends NotifyingIntentService {
 		}
 		return JSONResponse;
 	}
+
+	public class SecureHttpClient extends DefaultHttpClient {
+
+		final Context context;
+
+		public SecureHttpClient(Context context) {
+			this.context = context;
+		}
+
+		@Override
+		protected ClientConnectionManager createClientConnectionManager() {
+			try {
+				// Get an instance of the Bouncy Castle KeyStore format
+				KeyStore trusted = KeyStore.getInstance("BKS");
+				// Get the raw resource, which contains the keystore with
+				// your trusted certificates (root and any intermediate certs)
+				InputStream in = getApplicationContext().getResources()
+						.openRawResource(R.raw.sslkeystore);
+				try {
+					// Initialize the keystore with the provided trusted
+					// certificates
+					// Also provide the password of the keystore
+					trusted.load(in,
+							PrivateConstants.KEYSTORE_PASS.toCharArray());
+				} finally {
+					in.close();
+				}
+				// Pass the keystore to the SSLSocketFactory. The factory is
+				// responsible
+				// for the verification of the server certificate.
+				SSLSocketFactory sf = new SSLSocketFactory(trusted);
+				// Hostname verification from certificate
+				// http://hc.apache.org/httpcomponents-client-ga/tutorial/html/connmgmt.html#d4e506
+				// sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+				sf.setHostnameVerifier(SSLSocketFactory.STRICT_HOSTNAME_VERIFIER);
+
+				SchemeRegistry registry = new SchemeRegistry();
+				registry.register(new Scheme("http", PlainSocketFactory
+						.getSocketFactory(), 80));
+				// Register for port 443 our SSLSocketFactory with our keystore
+				// to the ConnectionManager
+				registry.register(new Scheme("https", sf, 443));
+				return new SingleClientConnManager(getParams(), registry);
+			} catch (Exception e) {
+				throw new AssertionError(e);
+			}
+		}
+	}
+
 	public int processUploadResponse(Uri uri, String jsonResponse) {
 		JsonObject json = (JsonObject) NotifyingIntentService.jsonParser
 				.parse(jsonResponse);
