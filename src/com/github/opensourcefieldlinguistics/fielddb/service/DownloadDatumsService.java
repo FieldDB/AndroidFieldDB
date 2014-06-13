@@ -19,6 +19,7 @@ import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvid
 import com.github.opensourcefieldlinguistics.fielddb.database.AudioVideoContentProvider.AudioVideoTable;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
+import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.BuildConfig;
 import  com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -46,6 +47,11 @@ public class DownloadDatumsService extends NotifyingIntentService {
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
+		
+		if(Config.D){
+			return;
+		}
+		
 		this.D = Config.D;
 		this.statusMessage = "Downloading samples "
 				+ Config.USER_FRIENDLY_DATA_NAME;
@@ -55,6 +61,7 @@ public class DownloadDatumsService extends NotifyingIntentService {
 			Log.d(Config.TAG, "Inside DownloadDatumsService intent");
 		}
 
+		
 		this.datumTagToDownload = "SampleData";
 		this.urlStringSampleDataDownload = Config.DEFAULT_SAMPLE_DATA_URL
 				+ "?key=%22" + datumTagToDownload + "%22";
@@ -62,16 +69,16 @@ public class DownloadDatumsService extends NotifyingIntentService {
 			Log.d(Config.TAG, this.urlStringSampleDataDownload);
 		}
 
-		ACRA.getErrorReporter().putCustomData("action",
+		if (!BuildConfig.DEBUG) ACRA.getErrorReporter().putCustomData("action",
 				"downloadDatums:::" + datumTagToDownload);
-		ACRA.getErrorReporter().putCustomData("urlString",
+		if (!BuildConfig.DEBUG) ACRA.getErrorReporter().putCustomData("urlString",
 				this.urlStringSampleDataDownload);
 		super.onHandleIntent(intent);
 
 		if (!"".equals(this.userFriendlyErrorMessage)) {
 			this.notifyUser(" " + this.userFriendlyErrorMessage, this.noti,
 					this.notificationId, true);
-			ACRA.getErrorReporter().handleException(
+			if (!BuildConfig.DEBUG) ACRA.getErrorReporter().handleException(
 					new Exception(this.userFriendlyErrorMessage));
 			return;
 		}
@@ -81,7 +88,7 @@ public class DownloadDatumsService extends NotifyingIntentService {
 		if (!"".equals(this.userFriendlyErrorMessage)) {
 			this.notifyUser(" " + this.userFriendlyErrorMessage, this.noti,
 					this.notificationId, true);
-			ACRA.getErrorReporter().handleException(
+			if (!BuildConfig.DEBUG) ACRA.getErrorReporter().handleException(
 					new Exception(this.userFriendlyErrorMessage));
 			return;
 		}
@@ -90,7 +97,7 @@ public class DownloadDatumsService extends NotifyingIntentService {
 		if (!"".equals(this.userFriendlyErrorMessage)) {
 			this.notifyUser(" " + this.userFriendlyErrorMessage, this.noti,
 					this.notificationId, true);
-			ACRA.getErrorReporter().handleException(
+			if (!BuildConfig.DEBUG) ACRA.getErrorReporter().handleException(
 					new Exception(this.userFriendlyErrorMessage));
 			return;
 		}
@@ -99,7 +106,7 @@ public class DownloadDatumsService extends NotifyingIntentService {
 		if (!"".equals(this.userFriendlyErrorMessage)) {
 			this.notifyUser(" " + this.userFriendlyErrorMessage, this.noti,
 					this.notificationId, true);
-			ACRA.getErrorReporter().handleException(
+			if (!BuildConfig.DEBUG) ACRA.getErrorReporter().handleException(
 					new Exception(this.userFriendlyErrorMessage));
 			return;
 		}
@@ -107,11 +114,11 @@ public class DownloadDatumsService extends NotifyingIntentService {
 		/* Success: remove the notification */
 		((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
 				.cancel(this.notificationId);
-		ACRA.getErrorReporter().putCustomData("action",
+		if (!BuildConfig.DEBUG) ACRA.getErrorReporter().putCustomData("action",
 				"downloadDatums:::" + datumTagToDownload);
-		ACRA.getErrorReporter().putCustomData("urlString",
+		if (!BuildConfig.DEBUG) ACRA.getErrorReporter().putCustomData("urlString",
 				this.urlStringSampleDataDownload);
-		ACRA.getErrorReporter().handleException(
+		if (!BuildConfig.DEBUG) ACRA.getErrorReporter().handleException(
 				new Exception("*** Downloaded data sucessfully ***"));
 	}
 
@@ -244,7 +251,7 @@ public class DownloadDatumsService extends NotifyingIntentService {
 			Log.d(Config.TAG,
 					"TODO download the image and audio files through a filter that makes them smaller... ");
 		}
-		// ACRA.getErrorReporter().handleException(
+		// if (!BuildConfig.DEBUG) ACRA.getErrorReporter().handleException(
 		// new Exception("*** Download Data Completed ***"));
 		return;
 	}
@@ -323,11 +330,11 @@ public class DownloadDatumsService extends NotifyingIntentService {
 				}
 				output.close();
 				this.statusMessage = "Downloaded " + filename;
-				ACRA.getErrorReporter().putCustomData("action",
+				if (!BuildConfig.DEBUG) ACRA.getErrorReporter().putCustomData("action",
 						"downloadMedia:::" + filename);
-				ACRA.getErrorReporter()
+				if (!BuildConfig.DEBUG) ACRA.getErrorReporter()
 						.putCustomData("urlString", mediaFileUrl);
-				ACRA.getErrorReporter().handleException(
+				if (!BuildConfig.DEBUG) ACRA.getErrorReporter().handleException(
 						new Exception(
 								"*** Downloaded media file sucessfully ***"));
 			} else {

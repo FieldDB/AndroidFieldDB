@@ -1,6 +1,8 @@
 package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,8 @@ import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
 
 public class DatumProductionExperimentFragment extends DatumDetailFragment {
 
+	private int mAudioPromptResource;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -20,6 +24,8 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
 				container, false);
 
 		if (mItem != null) {
+			this.prepareSpeechRecognitionButton(rootView);
+			this.prepareVideoAndImages(rootView);
 
 			final TextView orthographyTextView = ((TextView) rootView
 					.findViewById(R.id.orthography));
@@ -41,13 +47,72 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
 				mImageView.setImageResource(R.drawable.sms_selected);
 			}
 
-			this.playPromptContext();
+			if ("instructions".equals(mItem.getId())) {
+				mAudioPromptResource = R.raw.instructions;
+			} else {
+				mAudioPromptResource = R.raw.prompt;
+			}
+
 		}
 
 		return rootView;
 	}
 
-	protected void playPromptContext() {
-		Log.d(Config.TAG, "Playing prompting context");
+	@Override
+	public void setUserVisibleHint(boolean isVisibleToUser) {
+		super.setUserVisibleHint(isVisibleToUser);
+		if (this.isVisible() && !this.isPlaying) {
+			playPromptContext();
+		}
 	}
+
+	public void onToggleAudioRecording(View view) {
+		this.toggleAudioRecording(null);
+	}
+
+	protected void playPromptContext() {
+		isPlaying = true;
+
+		Log.d(Config.TAG, "Playing prompting context");
+		mAudioPlayer = MediaPlayer.create(getActivity(), mAudioPromptResource);
+		if (mAudioPlayer != null) {
+			mAudioPlayer
+					.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+						@Override
+						public void onCompletion(MediaPlayer mp) {
+							Handler mainHandler = new Handler(getActivity()
+									.getMainLooper());
+							Runnable myRunnable = new Runnable() {
+								@Override
+								public void run() {
+									toggleAudioRecording(null);
+								}
+							};
+							mainHandler.post(myRunnable);
+							mp.release();
+						}
+					});
+			mAudioPlayer
+					.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+
+						@Override
+						public void onBufferingUpdate(MediaPlayer arg0, int arg1) {
+							Log.d(Config.TAG, "Buffering " + arg1);
+						}
+					});
+			mAudioPlayer
+					.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+						@Override
+						public void onPrepared(MediaPlayer mp) {
+							mp.start();
+						}
+					});
+
+			if (mSpeechRecognizerInstructions != null) {
+				mSpeechRecognizerInstructions.setText("Speak now");
+			}
+		}
+	}
+
 }
