@@ -87,6 +87,8 @@
         </service>
         <service android:name="com.github.opensourcefieldlinguistics.fielddb.service.RegisterUserService" >
         </service>
+        <service android:name="com.github.opensourcefieldlinguistics.fielddb.service.UploadAudioVideoService" >
+        </service>
         <service android:name="com.github.opensourcefieldlinguistics.fielddb.service.KartuliSMSCorpusService" >
         </service>
         <service android:name="com.github.opensourcefieldlinguistics.fielddb.service.KartuliWebSearchCorpusService" >

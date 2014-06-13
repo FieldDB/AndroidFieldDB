@@ -140,6 +140,7 @@ public class FieldDBApplication extends Application {
 					subtitle, null, actualJSON);
 			if (!BuildConfig.DEBUG)
 				ACRA.getErrorReporter().putCustomData("username", username);
+			Config.CURRENT_USERNAME = username;
 		} else {
 			Log.e(Config.TAG,
 					"There is no user... this is a problme the app wont work.");
@@ -149,6 +150,7 @@ public class FieldDBApplication extends Application {
 		/* Make the default corpus point to the user's own corpus */
 		Config.DEFAULT_CORPUS = Config.DEFAULT_CORPUS.replace("username",
 				username);
+		Config.CURRENT_USERNAME = username;
 		Config.DEFAULT_OUTPUT_DIRECTORY = "/sdcard/"
 				+ Config.DATA_IS_ABOUT_LANGUAGE_NAME_ASCII + "-"
 				+ Config.APP_TYPE + "/" + Config.DEFAULT_CORPUS;
