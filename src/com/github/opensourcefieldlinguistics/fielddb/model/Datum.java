@@ -76,7 +76,7 @@ public class Datum {
 	public Datum(String orthography, String morphemes, String gloss,
 			String translation) {
 		super();
-		this._id = System.currentTimeMillis() + translation;
+		this._id = System.currentTimeMillis() + "";
 		this.utterance = new DatumField("utterance", orthography);
 		this.morphemes = new DatumField("morphemes", morphemes);
 		this.gloss = new DatumField("gloss", gloss);
@@ -96,7 +96,7 @@ public class Datum {
 	public Datum(String orthography, String morphemes, String gloss,
 			String translation, String context) {
 		super();
-		this._id = System.currentTimeMillis() + translation;
+		this._id = System.currentTimeMillis() + "";
 		this.utterance = new DatumField("utterance", orthography);
 		this.morphemes = new DatumField("morphemes", morphemes);
 		this.gloss = new DatumField("gloss", gloss);

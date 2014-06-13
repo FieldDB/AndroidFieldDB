@@ -16,7 +16,8 @@ public class Config extends ca.ilanguage.oprime.Config {
 			+ "/_session";
 	public static final String DEFAULT_AUTH_LOGIN_URL = PrivateConstants.DEFAULT_AUTH_LOGIN_URL;
 	public static final String DEFAULT_DATA_SERVER_URL = PrivateConstants.DEFAULT_DATA_SERVER_URL;
-	public static final String DEFAULT_OUTPUT_DIRECTORY = "/sdcard/"
+	public static String DEFAULT_OUTPUT_DIRECTORY = "/sdcard/"
+			+ DATA_IS_ABOUT_LANGUAGE_NAME_ASCII + "-" + APP_TYPE + "/"
 			+ DEFAULT_CORPUS;
 	public static final String DEFAULT_PUBLIC_USER_PASS = PrivateConstants.DEFAULT_PUBLIC_USER_PASS;
 	public static final String DEFAULT_PUBLIC_USERNAME = PrivateConstants.DEFAULT_PUBLIC_USERNAME;

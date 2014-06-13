@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -16,7 +18,11 @@ import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
 public class DatumProductionExperimentFragment extends DatumDetailFragment {
 
 	private int mAudioPromptResource;
-
+	private boolean isInstructions = false;
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		//no menu
+	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -45,10 +51,18 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
 				mImageView.setImageResource(R.drawable.legal_search_selected);
 			} else if (tags.contains("SMS")) {
 				mImageView.setImageResource(R.drawable.sms_selected);
+			} else {
+				mImageView.setImageResource(R.drawable.instructions);
 			}
-
-			if ("instructions".equals(mItem.getId())) {
+			String id = mItem.getId();
+			Log.d(Config.TAG, "Prompt for this datum will be " + id);
+			if ("instructions".equals(id)) {
+				this.isInstructions = true;
 				mAudioPromptResource = R.raw.instructions;
+				mImageView.setImageResource(R.drawable.instructions);
+				mSpeechRecognizerFeedback.setVisibility(View.GONE);
+				mSpeechRecognizerInstructions.setText("Swipe to begin...");
+				playPromptContext();
 			} else {
 				mAudioPromptResource = R.raw.prompt;
 			}
@@ -86,7 +100,9 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
 							Runnable myRunnable = new Runnable() {
 								@Override
 								public void run() {
-									toggleAudioRecording(null);
+									if(!isInstructions){
+										toggleAudioRecording(null);
+									}
 								}
 							};
 							mainHandler.post(myRunnable);
@@ -109,7 +125,7 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
 						}
 					});
 
-			if (mSpeechRecognizerInstructions != null) {
+			if (mSpeechRecognizerInstructions != null && !isInstructions ) {
 				mSpeechRecognizerInstructions.setText("Speak now");
 			}
 		}

@@ -16,14 +16,14 @@ import org.acra.annotation.ReportsCrashes;
 import ca.ilanguage.oprime.database.User;
 import ca.ilanguage.oprime.database.UserContentProvider.UserTable;
 
+import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.FieldDBUserContentProvider;
+import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.BuildConfig;
 import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
 import com.github.opensourcefieldlinguistics.fielddb.service.DownloadDatumsService;
-import com.github.opensourcefieldlinguistics.fielddb.service.KartuliLegalSearchCorpusService;
 import com.github.opensourcefieldlinguistics.fielddb.service.KartuliSMSCorpusService;
-import com.github.opensourcefieldlinguistics.fielddb.service.KartuliWebSearchCorpusService;
 import com.github.opensourcefieldlinguistics.fielddb.service.RegisterUserService;
 
 import android.app.Application;
@@ -44,7 +44,7 @@ public class FieldDBApplication extends Application {
 	public final void onCreate() {
 		super.onCreate();
 
-		(new File(Config.DEFAULT_OUTPUT_DIRECTORY)).mkdirs();
+		// (new File(Config.DEFAULT_OUTPUT_DIRECTORY)).mkdirs();
 
 		ACRAConfiguration config = ACRA.getNewDefaultConfig(this);
 		config.setFormUri(Config.ACRA_SERVER_URL);
@@ -94,8 +94,8 @@ public class FieldDBApplication extends Application {
 
 		ACRA.setConfig(config);
 
-		if (!BuildConfig.DEBUG) 
-	    	ACRA.init(this);
+		if (!BuildConfig.DEBUG)
+			ACRA.init(this);
 
 		// Get the user from the db
 		String[] userProjection = {UserTable.COLUMN_ID, UserTable.COLUMN_REV,
@@ -138,17 +138,25 @@ public class FieldDBApplication extends Application {
 			mUser = new User(_id, _rev, username, firstname, lastname, email,
 					gravatar, affiliation, researchInterest, description,
 					subtitle, null, actualJSON);
-			if (!BuildConfig.DEBUG) ACRA.getErrorReporter().putCustomData("username", username);
+			if (!BuildConfig.DEBUG)
+				ACRA.getErrorReporter().putCustomData("username", username);
 		} else {
 			Log.e(Config.TAG,
 					"There is no user... this is a problme the app wont work.");
-			if (!BuildConfig.DEBUG) ACRA.getErrorReporter().putCustomData("username", "unknown");
+			if (!BuildConfig.DEBUG)
+				ACRA.getErrorReporter().putCustomData("username", "unknown");
 		}
 		/* Make the default corpus point to the user's own corpus */
 		Config.DEFAULT_CORPUS = Config.DEFAULT_CORPUS.replace("username",
 				username);
-		if (!BuildConfig.DEBUG) ACRA.getErrorReporter().putCustomData("dbname",
-				Config.DEFAULT_CORPUS.replace("username", username));
+		Config.DEFAULT_OUTPUT_DIRECTORY = "/sdcard/"
+				+ Config.DATA_IS_ABOUT_LANGUAGE_NAME_ASCII + "-"
+				+ Config.APP_TYPE + "/" + Config.DEFAULT_CORPUS;
+		(new File(Config.DEFAULT_OUTPUT_DIRECTORY)).mkdirs();
+
+		if (!BuildConfig.DEBUG)
+			ACRA.getErrorReporter().putCustomData("dbname",
+					Config.DEFAULT_CORPUS.replace("username", username));
 		Log.d(Config.TAG, cursor.getString(cursor
 				.getColumnIndexOrThrow(UserTable.COLUMN_USERNAME)));
 		cursor.close();
@@ -165,19 +173,20 @@ public class FieldDBApplication extends Application {
 		if (Config.APP_TYPE.equals("speechrec")) {
 			Log.d(Config.TAG,
 					"Not downloading samples, they are included in the training app");
-			
-			Intent updateSMSSamples = new Intent(getApplicationContext(),
-					KartuliSMSCorpusService.class);
-			getApplicationContext().startService(updateSMSSamples);
-			
-			Intent updateWebSearchSamples = new Intent(getApplicationContext(),
-					KartuliWebSearchCorpusService.class);
-			getApplicationContext().startService(updateWebSearchSamples);
-			
-			Intent updateLegalSearchSamples = new Intent(getApplicationContext(),
-					KartuliLegalSearchCorpusService.class);
-			getApplicationContext().startService(updateLegalSearchSamples);
-			
+
+			String[] datumProjection = {UserTable.COLUMN_ID};
+			CursorLoader loader = new CursorLoader(getApplicationContext(),
+					DatumContentProvider.CONTENT_URI, datumProjection, null,
+					null, null);
+			Cursor datumCursor = loader.loadInBackground();
+			if (datumCursor.getCount() == 0) {
+				getContentResolver().insert(DatumContentProvider.CONTENT_URI,
+						DatumTable.sampleData());
+				Intent updateSMSSamples = new Intent(getApplicationContext(),
+						KartuliSMSCorpusService.class);
+				getApplicationContext().startService(updateSMSSamples);
+			}
+			datumCursor.close();
 		} else {
 			if (wifi.isConnected() || Config.D) {
 				Intent updateSamples = new Intent(getApplicationContext(),
