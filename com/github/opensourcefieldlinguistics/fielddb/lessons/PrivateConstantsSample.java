@@ -18,6 +18,7 @@ public class PrivateConstantsSample {
 	public static final String DEFAULT_PUBLIC_USER_PASS = "ausername";
 	public static final String DEFAULT_PUBLIC_USERNAME = "apassword";
 	public static final String DEFAULT_REGISTER_USER_URL = "http://10.0.2.2:3183/register";
+	public static final String DEFAULT_UPLOAD_AUDIO_VIDEO_URL = "http://10.0.2.2:3184/upload/extract/utterances";
 
 	/*
 	 * Example on how to support self signed ssl certificates by creating a

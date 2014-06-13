@@ -12,6 +12,7 @@ public class Config extends ca.ilanguage.oprime.Config {
 
 	public static String DEFAULT_CORPUS = "username-"
 			+ DATA_IS_ABOUT_LANGUAGE_NAME_ASCII;
+	public static String CURRENT_USERNAME = "default";
 	public static final String DEFAULT_DATA_LOGIN = PrivateConstants.DEFAULT_DATA_SERVER_URL
 			+ "/_session";
 	public static final String DEFAULT_AUTH_LOGIN_URL = PrivateConstants.DEFAULT_AUTH_LOGIN_URL;
@@ -21,7 +22,9 @@ public class Config extends ca.ilanguage.oprime.Config {
 			+ DEFAULT_CORPUS;
 	public static final String DEFAULT_PUBLIC_USER_PASS = PrivateConstants.DEFAULT_PUBLIC_USER_PASS;
 	public static final String DEFAULT_PUBLIC_USERNAME = PrivateConstants.DEFAULT_PUBLIC_USERNAME;
+	public static final String DEFAULT_UPLOAD_TOKEN = PrivateConstants.DEFAULT_UPLOAD_TOKEN;
 	public static final String DEFAULT_REGISTER_USER_URL = PrivateConstants.DEFAULT_REGISTER_USER_URL;
+	public static final String DEFAULT_UPLOAD_AUDIO_VIDEO_URL = PrivateConstants.DEFAULT_UPLOAD_AUDIO_VIDEO_URL;
 	public static final String DEFAULT_SAMPLE_DATA_URL = PrivateConstants.DEFAULT_DATA_SERVER_URL
 			+ "/" + DEFAULT_CORPUS + "/_design/learnx/_view/byTag";
 

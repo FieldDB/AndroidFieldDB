@@ -19,6 +19,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
@@ -43,8 +44,11 @@ import ca.ilanguage.oprime.datacollection.VideoRecorder;
 import ca.ilanguage.oprime.model.DeviceDetails;
 
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
+import com.github.opensourcefieldlinguistics.fielddb.database.FieldDBUserContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
+import com.github.opensourcefieldlinguistics.fielddb.service.RegisterUserService;
+import com.github.opensourcefieldlinguistics.fielddb.service.UploadAudioVideoService;
 import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.BuildConfig;
 import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
 import com.github.opensourcefieldlinguistics.fielddb.model.Datum;
@@ -91,6 +95,8 @@ public class DatumDetailFragment extends Fragment {
 	protected ViewPager mDatumPager;
 
 	protected int mLastDatumIndex;
+
+	private String mAudioFileName;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -446,6 +452,7 @@ public class DatumDetailFragment extends Fragment {
 		if (!this.mRecordingAudio) {
 			String audioFileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/"
 					+ mItem.getBaseFilename() + Config.DEFAULT_AUDIO_EXTENSION;
+			this.mAudioFileName = audioFileName;
 			Intent intent;
 			intent = new Intent(getActivity(), AudioRecorder.class);
 			intent.putExtra(Config.EXTRA_RESULT_FILENAME, audioFileName);
@@ -475,6 +482,22 @@ public class DatumDetailFragment extends Fragment {
 		} else {
 			Intent audio = new Intent(getActivity(), AudioRecorder.class);
 			getActivity().stopService(audio);
+
+			Handler mainHandler = new Handler(getActivity().getMainLooper());
+			Runnable launchUploadAudioService = new Runnable() {
+
+				@Override
+				public void run() {
+					Intent uploadAudioFile = new Intent(getActivity(),
+							UploadAudioVideoService.class);
+					uploadAudioFile.setData(Uri.parse(mAudioFileName));
+					uploadAudioFile.putExtra(Config.EXTRA_PARTICIPANT_ID,
+							Config.CURRENT_USERNAME);
+					getActivity().startService(uploadAudioFile);
+				}
+			};
+			mainHandler.postDelayed(launchUploadAudioService, 1000);
+
 			this.mRecordingAudio = false;
 			if (item != null) {
 				item.setIcon(R.drawable.ic_action_mic);
