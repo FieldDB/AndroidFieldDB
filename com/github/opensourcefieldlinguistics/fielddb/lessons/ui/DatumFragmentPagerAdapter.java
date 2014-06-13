@@ -67,6 +67,8 @@ public class DatumFragmentPagerAdapter extends FragmentPagerAdapter {
 		arguments.putParcelable(DatumContentProvider.CONTENT_ITEM_TYPE,
 				mVisibleDatumUri);
 		arguments.putString(DatumDetailFragment.ARG_ITEM_ID, id);
+		arguments.putInt(DatumDetailFragment.ARG_TOTAL_DATUM_IN_LIST,
+				mDatumsIds.size() - 1);
 
 		fragment.mTwoPane = false;
 		fragment.setArguments(arguments);

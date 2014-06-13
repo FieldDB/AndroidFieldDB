@@ -18,10 +18,12 @@ import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
 public class DatumProductionExperimentFragment extends DatumDetailFragment {
 
 	private int mAudioPromptResource;
-	private boolean isInstructions = false;
+	private boolean mIsInstructions = false;
+	private long WAIT_TO_RECORD_AFTER_PROMPT_START = 300;
+
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		//no menu
+		// no menu
 	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,7 +59,7 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
 			String id = mItem.getId();
 			Log.d(Config.TAG, "Prompt for this datum will be " + id);
 			if ("instructions".equals(id)) {
-				this.isInstructions = true;
+				this.mIsInstructions = true;
 				mAudioPromptResource = R.raw.instructions;
 				mImageView.setImageResource(R.drawable.instructions);
 				mSpeechRecognizerFeedback.setVisibility(View.GONE);
@@ -95,17 +97,6 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
 
 						@Override
 						public void onCompletion(MediaPlayer mp) {
-							Handler mainHandler = new Handler(getActivity()
-									.getMainLooper());
-							Runnable myRunnable = new Runnable() {
-								@Override
-								public void run() {
-									if(!isInstructions){
-										toggleAudioRecording(null);
-									}
-								}
-							};
-							mainHandler.post(myRunnable);
 							mp.release();
 						}
 					});
@@ -125,10 +116,25 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
 						}
 					});
 
-			if (mSpeechRecognizerInstructions != null && !isInstructions ) {
-				mSpeechRecognizerInstructions.setText("Speak now");
+			if (mSpeechRecognizerInstructions != null && !mIsInstructions) {
+				mSpeechRecognizerInstructions.setText("Speak after beep");
 			}
 		}
+		/*
+		 * begin recording almost immediately so that the user wont speak too
+		 * early
+		 */
+		Handler mainHandler = new Handler(getActivity().getMainLooper());
+		Runnable myRunnable = new Runnable() {
+
+			@Override
+			public void run() {
+				if (!mIsInstructions) {
+					toggleAudioRecording(null);
+				}
+			}
+		};
+		mainHandler.postDelayed(myRunnable, WAIT_TO_RECORD_AFTER_PROMPT_START);
 	}
 
 }

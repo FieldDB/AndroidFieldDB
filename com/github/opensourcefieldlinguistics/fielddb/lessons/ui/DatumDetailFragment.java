@@ -22,6 +22,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
+import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -61,6 +62,8 @@ public class DatumDetailFragment extends Fragment {
 	 */
 	public static final String ARG_ITEM_ID = "item_id";
 
+	public static final String ARG_TOTAL_DATUM_IN_LIST = "total_datum_count_in_list";
+
 	/**
 	 * The content this fragment is presenting.
 	 */
@@ -80,12 +83,16 @@ public class DatumDetailFragment extends Fragment {
 	protected VideoView mVideoView;
 	protected ImageView mImageView;
 	protected MediaController mMediaController;
-	MediaPlayer mAudioPlayer;
+	protected MediaPlayer mAudioPlayer;
 	protected DeviceDetails mDeviceDetails;
 	protected HashMap<String, Integer> mDatumEditCounts;
 	protected ImageButton mSpeechRecognizerFeedback;
 	protected TextView mSpeechRecognizerInstructions;
 	protected boolean isPlaying = false;
+
+	protected ViewPager mDatumPager;
+
+	private int mLastDatumIndex;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -98,15 +105,17 @@ public class DatumDetailFragment extends Fragment {
 
 		if (getArguments().containsKey(ARG_ITEM_ID)) {
 			String id = getArguments().getString(ARG_ITEM_ID);
+			this.mLastDatumIndex = getArguments().getInt(
+					ARG_TOTAL_DATUM_IN_LIST);
 			Log.d(Config.TAG, "Will get id " + id);
 			String selection = null;
 			String[] selectionArgs = null;
 			String sortOrder = null;
 
 			String[] datumProjection = {DatumTable.COLUMN_ORTHOGRAPHY,
-					DatumTable.COLUMN_MORPHEMES, DatumTable.COLUMN_GLOSS,
-					DatumTable.COLUMN_TRANSLATION, DatumTable.COLUMN_CONTEXT,
-					DatumTable.COLUMN_IMAGE_FILES,
+					DatumTable.COLUMN_UTTERANCE, DatumTable.COLUMN_MORPHEMES,
+					DatumTable.COLUMN_GLOSS, DatumTable.COLUMN_TRANSLATION,
+					DatumTable.COLUMN_CONTEXT, DatumTable.COLUMN_IMAGE_FILES,
 					DatumTable.COLUMN_AUDIO_VIDEO_FILES, DatumTable.COLUMN_TAGS};
 			mUri = Uri.withAppendedPath(DatumContentProvider.CONTENT_URI, id);
 			CursorLoader cursorLoader = new CursorLoader(getActivity(), mUri,
@@ -127,6 +136,8 @@ public class DatumDetailFragment extends Fragment {
 						cursor.getString(cursor
 								.getColumnIndexOrThrow(DatumTable.COLUMN_CONTEXT)));
 				datum.setId(id);
+				datum.setUtterance(cursor.getString(cursor
+						.getColumnIndexOrThrow(DatumTable.COLUMN_UTTERANCE)));
 				datum.addMediaFiles(cursor.getString(cursor
 						.getColumnIndexOrThrow(DatumTable.COLUMN_IMAGE_FILES)));
 				datum.addMediaFiles((cursor.getString(cursor
@@ -344,6 +355,8 @@ public class DatumDetailFragment extends Fragment {
 			mSpeechRecognizerInstructions.setText("");
 		}
 
+		this.mDatumPager = (ViewPager) getActivity().findViewById(
+				R.id.viewpager);
 	}
 
 	@Override
@@ -443,7 +456,26 @@ public class DatumDetailFragment extends Fragment {
 			}
 
 			if (mSpeechRecognizerInstructions != null) {
-				mSpeechRecognizerInstructions.setText("Tap to speak");
+				mSpeechRecognizerInstructions.setText("Tap to speak again");
+			}
+			if (Config.APP_TYPE.equals("speechrec")) {
+				autoAdvanceAfterRecordingAudio();
+			}
+
+		}
+		return true;
+	}
+
+	protected boolean autoAdvanceAfterRecordingAudio() {
+		if (this.mDatumPager != null) {
+			int currentStimulusIndex = this.mDatumPager.getCurrentItem();
+			if (currentStimulusIndex == this.mLastDatumIndex) {
+				Intent openTrainer = new Intent(getActivity(),
+						DatumListActivity.class);
+				startActivity(openTrainer);
+			} else {
+				this.mDatumPager.setCurrentItem(this.mDatumPager
+						.getCurrentItem() + 1);
 			}
 		}
 		return true;
