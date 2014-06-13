@@ -46,17 +46,20 @@ public class RegisterUserService extends NotifyingIntentService {
 		if (Config.D) {
 			Log.d(Config.TAG, "Inside RegisterUserService intent");
 		}
-		if (!BuildConfig.DEBUG) ACRA.getErrorReporter().putCustomData("action", "registerUser:::");
-		if (!BuildConfig.DEBUG) ACRA.getErrorReporter().putCustomData("urlString",
-				Config.DEFAULT_REGISTER_USER_URL);
+		if (!BuildConfig.DEBUG)
+			ACRA.getErrorReporter().putCustomData("action", "registerUser:::");
+		if (!BuildConfig.DEBUG)
+			ACRA.getErrorReporter().putCustomData("urlString",
+					Config.DEFAULT_REGISTER_USER_URL);
 
 		super.onHandleIntent(intent);
 
 		if (!"".equals(this.userFriendlyErrorMessage)) {
 			this.notifyUser(" " + this.userFriendlyErrorMessage, this.noti,
 					this.notificationId, true);
-			if (!BuildConfig.DEBUG) ACRA.getErrorReporter().handleException(
-					new Exception(this.userFriendlyErrorMessage));
+			if (!BuildConfig.DEBUG)
+				ACRA.getErrorReporter().handleException(
+						new Exception(this.userFriendlyErrorMessage));
 			return;
 		}
 
@@ -67,8 +70,9 @@ public class RegisterUserService extends NotifyingIntentService {
 		if (!"".equals(this.userFriendlyErrorMessage)) {
 			this.notifyUser(" " + this.userFriendlyErrorMessage, this.noti,
 					this.notificationId, true);
-			if (!BuildConfig.DEBUG) ACRA.getErrorReporter().handleException(
-					new Exception(this.userFriendlyErrorMessage));
+			if (!BuildConfig.DEBUG)
+				ACRA.getErrorReporter().handleException(
+						new Exception(this.userFriendlyErrorMessage));
 			return;
 		}
 
@@ -76,8 +80,9 @@ public class RegisterUserService extends NotifyingIntentService {
 		if (!"".equals(this.userFriendlyErrorMessage)) {
 			this.notifyUser(" " + this.userFriendlyErrorMessage, this.noti,
 					this.notificationId, true);
-			if (!BuildConfig.DEBUG) ACRA.getErrorReporter().handleException(
-					new Exception(this.userFriendlyErrorMessage));
+			if (!BuildConfig.DEBUG)
+				ACRA.getErrorReporter().handleException(
+						new Exception(this.userFriendlyErrorMessage));
 			return;
 		}
 
@@ -88,8 +93,9 @@ public class RegisterUserService extends NotifyingIntentService {
 		/* Success: remove the notification */
 		((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
 				.cancel(this.notificationId);
-		if (!BuildConfig.DEBUG) ACRA.getErrorReporter().handleException(
-				new Exception("*** Registered user ssucessfully ***"));
+		if (!BuildConfig.DEBUG)
+			ACRA.getErrorReporter().handleException(
+					new Exception("*** Registered user ssucessfully ***"));
 	}
 
 	public String loginUser(String username, String password, String loginUrl) {
@@ -153,6 +159,11 @@ public class RegisterUserService extends NotifyingIntentService {
 		CursorLoader cursorLoader = new CursorLoader(getApplicationContext(),
 				uri, userProjection, null, null, null);
 		Cursor cursor = cursorLoader.loadInBackground();
+		if (cursor == null) {
+			Log.e(Config.TAG,
+					"There is no user... this is not supposed to happen.");
+			return null;
+		}
 		cursor.moveToFirst();
 		if (cursor.getCount() == 0) {
 			Log.e(Config.TAG,
@@ -198,7 +209,8 @@ public class RegisterUserService extends NotifyingIntentService {
 		cursor.close();
 
 		this.statusMessage = "Registering user " + username;
-		if (!BuildConfig.DEBUG) ACRA.getErrorReporter().putCustomData("registerUser", username);
+		if (!BuildConfig.DEBUG)
+			ACRA.getErrorReporter().putCustomData("registerUser", username);
 		String urlStringAuthenticationSession = Config.DEFAULT_REGISTER_USER_URL;
 		URL url;
 		HttpURLConnection urlConnection;
