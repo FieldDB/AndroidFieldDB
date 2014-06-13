@@ -161,6 +161,10 @@ public class DatumDetailFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_datum_detail,
 				container, false);
+		if (Config.APP_TYPE.equals("speechrec")) {
+			rootView = inflater.inflate(R.layout.fragment_datum_detail_simple,
+					container, false);
+		}
 
 		if (mItem != null) {
 			this.prepareEditTextListeners(rootView);
@@ -306,7 +310,36 @@ public class DatumDetailFragment extends Fragment {
 					values.put(DatumTable.COLUMN_CONTEXT, currentText);
 					getActivity().getContentResolver().update(mUri, values,
 							null, null);
-					recordUserEvent("editDatum", "translation");
+					recordUserEvent("editDatum", "context");
+				}
+			});
+		}
+
+		final EditText tagsEditText = ((EditText) rootView
+				.findViewById(R.id.tags));
+		if (tagsEditText != null) {
+			tagsEditText.setText(mItem.getTagsString());
+			tagsEditText.addTextChangedListener(new TextWatcher() {
+
+				@Override
+				public void afterTextChanged(Editable arg0) {
+				}
+
+				@Override
+				public void beforeTextChanged(CharSequence arg0, int arg1,
+						int arg2, int arg3) {
+				}
+
+				@Override
+				public void onTextChanged(CharSequence arg0, int arg1,
+						int arg2, int arg3) {
+					String currentText = tagsEditText.getText().toString();
+					mItem.setTagsFromSting(currentText);
+					ContentValues values = new ContentValues();
+					values.put(DatumTable.COLUMN_TAGS, currentText);
+					getActivity().getContentResolver().update(mUri, values,
+							null, null);
+					recordUserEvent("editDatum", "tags");
 				}
 			});
 		}
@@ -606,6 +639,12 @@ public class DatumDetailFragment extends Fragment {
 		File image = new File(Config.DEFAULT_OUTPUT_DIRECTORY + "/"
 				+ mItem.getMainImageFile());
 		if (!image.exists()) {
+			if (mVideoView != null) {
+				mVideoView.setVisibility(View.GONE);
+			}
+			if (mImageView != null) {
+				mImageView.setVisibility(View.VISIBLE);
+			}
 			return;
 		}
 		Bitmap d = new BitmapDrawable(this.getResources(),
