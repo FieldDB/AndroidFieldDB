@@ -43,9 +43,6 @@ public class DatumDetailActivity extends FragmentActivity {
 			arguments.putString(DatumDetailFragment.ARG_ITEM_ID, getIntent()
 					.getStringExtra(DatumDetailFragment.ARG_ITEM_ID));
 			DatumDetailFragment fragment = new DatumDetailFragment();
-			if (Config.APP_TYPE.equals("speechrec")) {
-				fragment = new DatumProductionExperimentFragment();
-			}
 			fragment.setArguments(arguments);
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.datum_detail_container, fragment).commit();

@@ -76,9 +76,6 @@ public class DatumListActivity extends FragmentActivity implements
             // adding or replacing the detail fragment using a
             // fragment transaction.
             DatumDetailFragment fragment = new DatumDetailFragment();
-            if (Config.APP_TYPE.equals("speechrec")) {
-				fragment = new DatumProductionExperimentFragment();
-			}
             fragment.mTwoPane = mTwoPane;
             fragment.setArguments(arguments);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

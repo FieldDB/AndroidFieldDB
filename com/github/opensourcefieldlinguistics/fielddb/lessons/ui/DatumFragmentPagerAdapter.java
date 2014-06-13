@@ -55,11 +55,11 @@ public class DatumFragmentPagerAdapter extends FragmentPagerAdapter {
 			id = mDatumsIds.get(position);
 		}
 		Bundle arguments = new Bundle();
-		DatumProductionExperimentFragment fragment = new DatumProductionExperimentFragment();
+		DatumDetailFragment fragment = new DatumProductionExperimentFragment();
 		if (Config.APP_TYPE.equals("speechrec")) {
-			fragment = new DatumProductionExperimentFragment();
+//			fragment = new DatumProductionExperimentFragment();
 		} else {
-			// fragment = new DatumDetailFragment();
+			 fragment = new DatumDetailFragment();
 		}
 		mVisibleDatumUri = Uri.parse(DatumContentProvider.CONTENT_URI + "/"
 				+ id);
@@ -72,7 +72,7 @@ public class DatumFragmentPagerAdapter extends FragmentPagerAdapter {
 
 		fragment.mTwoPane = false;
 		fragment.setArguments(arguments);
-		if (mFragments.size() == position) {
+		if (mFragments.size() == position ||mFragments.size() < position) {
 			mFragments.add(fragment);
 		} else {
 			mFragments.set(position, fragment);
