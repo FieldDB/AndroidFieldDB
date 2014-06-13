@@ -20,7 +20,7 @@
         android:background="@drawable/ic_launcher"
         android:gravity="center"
         android:visibility="gone" />
-    
+
     <ScrollView
         android:id="@+id/video_controls_padding"
         android:layout_width="fill_parent"
@@ -66,7 +66,16 @@
                 android:text=" "
                 android:textColor="#CCCCCC"
                 android:textSize="25sp" />
-            
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:scrollHorizontally="false"
+                android:text=" "
+                android:textColor="#CCCCCC"
+                android:textSize="25sp" />
+
             <ImageButton
                 android:id="@+id/speech_recognizer_feedback"
                 android:layout_width="wrap_content"
