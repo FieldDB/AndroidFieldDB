@@ -1,7 +1,6 @@
 package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -78,7 +77,6 @@ public class DatumDetailFragment extends Fragment {
 	public DatumDetailFragment() {
 	}
 
-	protected String TAG = "FieldDB";
 	protected boolean mRecordingAudio = false;
 	protected VideoView mVideoView;
 	protected ImageView mImageView;
@@ -92,7 +90,7 @@ public class DatumDetailFragment extends Fragment {
 
 	protected ViewPager mDatumPager;
 
-	private int mLastDatumIndex;
+	protected int mLastDatumIndex;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -100,7 +98,7 @@ public class DatumDetailFragment extends Fragment {
 		setHasOptionsMenu(true);
 		if (this.mDeviceDetails == null) {
 			this.mDeviceDetails = new DeviceDetails(getActivity(), Config.D,
-					this.TAG);
+					Config.TAG);
 		}
 
 		if (getArguments().containsKey(ARG_ITEM_ID)) {
@@ -425,7 +423,7 @@ public class DatumDetailFragment extends Fragment {
 			values.put(DatumTable.COLUMN_AUDIO_VIDEO_FILES,
 					mItem.getMediaFilesAsCSV(mItem.getAudioVideoFiles()));
 			getActivity().getContentResolver().update(mUri, values, null, null);
-			Log.d(TAG, "Recording audio " + audioFileName);
+			Log.d(Config.TAG, "Recording audio " + audioFileName);
 			this.mRecordingAudio = true;
 			if (item != null) {
 				item.setIcon(R.drawable.ic_action_stop);
@@ -470,9 +468,9 @@ public class DatumDetailFragment extends Fragment {
 		if (this.mDatumPager != null) {
 			int currentStimulusIndex = this.mDatumPager.getCurrentItem();
 			if (currentStimulusIndex == this.mLastDatumIndex) {
-				Intent openTrainer = new Intent(getActivity(),
+				Intent openDataList = new Intent(getActivity(),
 						DatumListActivity.class);
-				startActivity(openTrainer);
+				startActivity(openDataList);
 			} else {
 				this.mDatumPager.setCurrentItem(this.mDatumPager
 						.getCurrentItem() + 1);
