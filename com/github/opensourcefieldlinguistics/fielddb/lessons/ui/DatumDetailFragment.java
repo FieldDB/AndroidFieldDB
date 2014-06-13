@@ -126,6 +126,7 @@ public class DatumDetailFragment extends Fragment {
 								.getColumnIndexOrThrow(DatumTable.COLUMN_TRANSLATION)),
 						cursor.getString(cursor
 								.getColumnIndexOrThrow(DatumTable.COLUMN_CONTEXT)));
+				datum.setId(id);
 				datum.addMediaFiles(cursor.getString(cursor
 						.getColumnIndexOrThrow(DatumTable.COLUMN_IMAGE_FILES)));
 				datum.addMediaFiles((cursor.getString(cursor

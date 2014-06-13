@@ -197,8 +197,7 @@ public class DatumContentProvider extends ContentProvider {
 					getContext().startService(downloadSamples);
 				} else {
 					// Otherwise, insert offline data
-					db.insert(DatumTable.TABLE_NAME, null,
-							DatumTable.sampleData());
+					insert(null, DatumTable.sampleData());
 				}
 
 			} catch (SQLException e) {
@@ -290,7 +289,7 @@ public class DatumContentProvider extends ContentProvider {
 		public static String[] currentColumns = version1Columns;
 
 		// Offline Sample data
-		private static ContentValues sampleData() {
+		public static ContentValues sampleData() {
 			// ContentValues values = new ContentValues();
 			// values.put(COLUMN_ID, "sample12345");
 			// values.put(COLUMN_MORPHEMES, "e'sig");
@@ -306,20 +305,11 @@ public class DatumContentProvider extends ContentProvider {
 					COLUMN_UTTERANCE,
 					"You need to read a few sentences to train the recognizer to your voice and your words.");
 			values.put(
-					COLUMN_MORPHEMES,
-					"You need to read a few sentences to train the recognizer to your voice and your words.");
-			values.put(
-					COLUMN_GLOSS,
-					"You need to read a few sentences to train the recognizer to your voice and your words.");
-			values.put(
-					COLUMN_TRANSLATION,
-					"You need to read a few sentences to train the recognizer to your voice and your words.");
-			values.put(
 					COLUMN_ORTHOGRAPHY,
-					"You need to read a few sentences to train the recognizer to your voice and your words.");
+					"შენ უნდა წაიკითხო რამოდენიმე წინადადება, რათა გადაამზადო აპლიკაცია შენს ხმაზე და შენს სიტყვებზე");
 			values.put(
 					COLUMN_CONTEXT,
-					"Recognition in the Georgian language is too complex to do with yout being speaker specific.");
+					"The Georgian language is very complex and very different from other languages which were used to build Speech Recognition systems. This means each person should have their own recognizer.");
 			return values;
 		}
 

@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
 
 public class DatumFragmentPagerAdapter extends FragmentPagerAdapter {
 	private ArrayList<String> mDatumsIds;
@@ -27,24 +28,29 @@ public class DatumFragmentPagerAdapter extends FragmentPagerAdapter {
 
 	public void swapCursor(Cursor cursor) {
 		this.mDatumsIds = new ArrayList<String>();
+		this.mDatumsIds.add("instructions");
 		if (cursor != null && cursor.getCount() > 0) {
 			cursor.moveToFirst();
 			while (cursor.moveToNext()) {
-				this.mDatumsIds.add(cursor.getString(cursor
-						.getColumnIndexOrThrow(UserTable.COLUMN_ID)));
+				String id = cursor.getString(cursor
+						.getColumnIndexOrThrow(UserTable.COLUMN_ID));
+				if (!"instructions".equals(id)) {
+					this.mDatumsIds.add(id);
+				}
 			}
 			cursor.close();
 		}
 	}
 	@Override
 	public Fragment getItem(int position) {
+		Log.d(Config.TAG, "Displaying datum in position " + position);
 		if (mFragments.size() > position) {
 			if (mFragments.get(position) != null) {
 				return mFragments.get(position);
 			}
 		}
 
-		String id = "sms1";
+		String id = "instructions";
 		if (mDatumsIds.size() > position) {
 			id = mDatumsIds.get(position);
 		}
@@ -57,6 +63,7 @@ public class DatumFragmentPagerAdapter extends FragmentPagerAdapter {
 		}
 		mVisibleDatumUri = Uri.parse(DatumContentProvider.CONTENT_URI + "/"
 				+ id);
+		Log.d(Config.TAG, mVisibleDatumUri + "");
 		arguments.putParcelable(DatumContentProvider.CONTENT_ITEM_TYPE,
 				mVisibleDatumUri);
 		arguments.putString(DatumDetailFragment.ARG_ITEM_ID, id);
