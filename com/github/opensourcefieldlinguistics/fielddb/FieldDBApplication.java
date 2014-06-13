@@ -18,6 +18,7 @@ import ca.ilanguage.oprime.database.UserContentProvider.UserTable;
 
 import com.github.opensourcefieldlinguistics.fielddb.database.FieldDBUserContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
+import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.BuildConfig;
 import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
 import com.github.opensourcefieldlinguistics.fielddb.service.DownloadDatumsService;
 import com.github.opensourcefieldlinguistics.fielddb.service.KartuliLegalSearchCorpusService;
@@ -93,7 +94,8 @@ public class FieldDBApplication extends Application {
 
 		ACRA.setConfig(config);
 
-		ACRA.init(this);
+		if (!BuildConfig.DEBUG) 
+	    	ACRA.init(this);
 
 		// Get the user from the db
 		String[] userProjection = {UserTable.COLUMN_ID, UserTable.COLUMN_REV,
@@ -136,16 +138,16 @@ public class FieldDBApplication extends Application {
 			mUser = new User(_id, _rev, username, firstname, lastname, email,
 					gravatar, affiliation, researchInterest, description,
 					subtitle, null, actualJSON);
-			ACRA.getErrorReporter().putCustomData("username", username);
+			if (!BuildConfig.DEBUG) ACRA.getErrorReporter().putCustomData("username", username);
 		} else {
 			Log.e(Config.TAG,
 					"There is no user... this is a problme the app wont work.");
-			ACRA.getErrorReporter().putCustomData("username", "unknown");
+			if (!BuildConfig.DEBUG) ACRA.getErrorReporter().putCustomData("username", "unknown");
 		}
 		/* Make the default corpus point to the user's own corpus */
 		Config.DEFAULT_CORPUS = Config.DEFAULT_CORPUS.replace("username",
 				username);
-		ACRA.getErrorReporter().putCustomData("dbname",
+		if (!BuildConfig.DEBUG) ACRA.getErrorReporter().putCustomData("dbname",
 				Config.DEFAULT_CORPUS.replace("username", username));
 		Log.d(Config.TAG, cursor.getString(cursor
 				.getColumnIndexOrThrow(UserTable.COLUMN_USERNAME)));

@@ -1,12 +1,10 @@
 package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import ca.ilanguage.oprime.database.UserContentProvider.UserTable;
 
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
-import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 
 import android.database.Cursor;
@@ -17,11 +15,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 public class DatumFragmentPagerAdapter extends FragmentPagerAdapter {
-	private String[] datumsIds;
+	private ArrayList<String> mDatumsIds;
 	private ArrayList<Fragment> mFragments;
 
 	Uri mVisibleDatumUri;
-	Cursor mCursor;
 
 	public DatumFragmentPagerAdapter(FragmentManager fm) {
 		super(fm);
@@ -29,9 +26,16 @@ public class DatumFragmentPagerAdapter extends FragmentPagerAdapter {
 	}
 
 	public void swapCursor(Cursor cursor) {
-		this.mCursor = cursor;
+		this.mDatumsIds = new ArrayList<String>();
+		if (cursor != null && cursor.getCount() > 0) {
+			cursor.moveToFirst();
+			while (cursor.moveToNext()) {
+				this.mDatumsIds.add(cursor.getString(cursor
+						.getColumnIndexOrThrow(UserTable.COLUMN_ID)));
+			}
+			cursor.close();
+		}
 	}
-
 	@Override
 	public Fragment getItem(int position) {
 		if (mFragments.size() > position) {
@@ -41,10 +45,8 @@ public class DatumFragmentPagerAdapter extends FragmentPagerAdapter {
 		}
 
 		String id = "sms1";
-		if (mCursor.getCount() > position) {
-			mCursor.moveToPosition(position);
-			id = mCursor.getString(mCursor
-					.getColumnIndexOrThrow(UserTable.COLUMN_ID));
+		if (mDatumsIds.size() > position) {
+			id = mDatumsIds.get(position);
 		}
 		Bundle arguments = new Bundle();
 		DatumProductionExperimentFragment fragment = new DatumProductionExperimentFragment();
@@ -71,9 +73,10 @@ public class DatumFragmentPagerAdapter extends FragmentPagerAdapter {
 
 	@Override
 	public int getCount() {
-		if (mCursor != null) {
-			return mCursor.getCount();
+		if (mDatumsIds != null) {
+			return mDatumsIds.size();
 		}
 		return 0;
 	}
+
 }

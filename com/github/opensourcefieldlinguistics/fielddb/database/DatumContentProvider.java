@@ -291,13 +291,35 @@ public class DatumContentProvider extends ContentProvider {
 
 		// Offline Sample data
 		private static ContentValues sampleData() {
+			// ContentValues values = new ContentValues();
+			// values.put(COLUMN_ID, "sample12345");
+			// values.put(COLUMN_MORPHEMES, "e'sig");
+			// values.put(COLUMN_GLOSS, "clam");
+			// values.put(COLUMN_TRANSLATION, "Clam");
+			// values.put(COLUMN_ORTHOGRAPHY, "e'sig");
+			// values.put(COLUMN_CONTEXT, " ");
+			// return values;
+
 			ContentValues values = new ContentValues();
-			values.put(COLUMN_ID, "sample12345");
-			values.put(COLUMN_MORPHEMES, "e'sig");
-			values.put(COLUMN_GLOSS, "clam");
-			values.put(COLUMN_TRANSLATION, "Clam");
-			values.put(COLUMN_ORTHOGRAPHY, "e'sig");
-			values.put(COLUMN_CONTEXT, " ");
+			values.put(COLUMN_ID, "instructions");
+			values.put(
+					COLUMN_UTTERANCE,
+					"You need to read a few sentences to train the recognizer to your voice and your words.");
+			values.put(
+					COLUMN_MORPHEMES,
+					"You need to read a few sentences to train the recognizer to your voice and your words.");
+			values.put(
+					COLUMN_GLOSS,
+					"You need to read a few sentences to train the recognizer to your voice and your words.");
+			values.put(
+					COLUMN_TRANSLATION,
+					"You need to read a few sentences to train the recognizer to your voice and your words.");
+			values.put(
+					COLUMN_ORTHOGRAPHY,
+					"You need to read a few sentences to train the recognizer to your voice and your words.");
+			values.put(
+					COLUMN_CONTEXT,
+					"Recognition in the Georgian language is too complex to do with yout being speaker specific.");
 			return values;
 		}
 
