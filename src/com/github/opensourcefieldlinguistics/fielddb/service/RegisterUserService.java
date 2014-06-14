@@ -278,7 +278,7 @@ public class RegisterUserService extends NotifyingIntentService {
 		}
 		String JSONResponse = this.processResponse(url, urlConnection);
 		if (JSONResponse == null) {
-			this.userFriendlyErrorMessage = "Unknown error reading sample data from server";
+			this.userFriendlyErrorMessage = "Unknown error registering user";
 			return null;
 		}
 		if (JSONResponse.contains("name already exists")) {
