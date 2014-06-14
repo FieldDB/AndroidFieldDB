@@ -189,7 +189,7 @@ public class DatumContentProvider extends ContentProvider {
 				NetworkInfo mWifi = connManager
 						.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-				if (mWifi.isConnected()) {
+				if (!Config.APP_TYPE.equals("speechrec") && mWifi.isConnected()) {
 					// if the user has a wifi connection we can download some
 					// real sample data
 					Intent downloadSamples = new Intent(getContext(),
