@@ -1,21 +1,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="#ffffffff" >
 
     <ImageView
         android:id="@+id/image_view"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:contentDescription="This is the main image representing this example."
         android:gravity="center"
         android:src="@drawable/ic_launcher" />
 
     <VideoView
         android:id="@+id/video_view"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:background="@drawable/ic_launcher"
         android:gravity="center"
@@ -23,8 +23,8 @@
 
     <ScrollView
         android:id="@+id/video_controls_padding"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_alignBottom="@+id/image_view"
         android:layout_alignLeft="@+id/image_view"
         android:layout_alignRight="@+id/image_view"
@@ -65,16 +65,7 @@
                 android:scrollHorizontally="false"
                 android:text=" "
                 android:textColor="#CCCCCC"
-                android:textSize="25sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:scrollHorizontally="false"
-                android:text=" "
-                android:textColor="#CCCCCC"
-                android:textSize="25sp" />
+                android:textSize="30sp" />
 
             <ImageButton
                 android:id="@+id/speech_recognizer_feedback"
