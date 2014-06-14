@@ -1,7 +1,7 @@
 package com.github.opensourcefieldlinguistics.fielddb.lessons;
 
 public class Config extends ca.ilanguage.oprime.Config {
-	public static final boolean D = true;
+	public static final boolean D = false;
 	public static final String ACRA_PASS = PrivateConstants.ACRA_PASS;
 	public static final String ACRA_SERVER_URL = PrivateConstants.ACRA_SERVER_URL;
 	public static final String ACRA_USER = PrivateConstants.ACRA_USER;
