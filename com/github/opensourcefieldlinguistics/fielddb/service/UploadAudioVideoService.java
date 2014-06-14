@@ -45,8 +45,8 @@ import android.net.Uri;
 import android.util.Log;
 
 public class UploadAudioVideoService extends NotifyingIntentService {
-
-	protected String username = "default";
+	protected String mDeviceDetails = "{}";
+	protected String mUsername = "default";
 	public UploadAudioVideoService(String name) {
 		super(name);
 	}
@@ -111,8 +111,12 @@ public class UploadAudioVideoService extends NotifyingIntentService {
 		}
 
 		if (intent.hasExtra(Config.EXTRA_PARTICIPANT_ID)) {
-			username = intent.getExtras()
-					.getString(Config.EXTRA_PARTICIPANT_ID);
+			mUsername = intent.getExtras().getString(
+					Config.EXTRA_PARTICIPANT_ID);
+		}
+		if (intent.hasExtra(Config.EXTRA_EXPERIMENT_TRIAL_INFORMATION)) {
+			mDeviceDetails = intent.getExtras().getString(
+					Config.EXTRA_EXPERIMENT_TRIAL_INFORMATION);
 		}
 
 		String JSONResponse = this.upload(intent.getData());
@@ -147,7 +151,8 @@ public class UploadAudioVideoService extends NotifyingIntentService {
 				.cancel(this.notificationId);
 		if (!BuildConfig.DEBUG)
 			ACRA.getErrorReporter().handleException(
-					new Exception("*** Uploadinged user ssucessfully ***"));
+					new Exception("*** Uploaded audio sucessfully ***"));
+
 	}
 
 	public String upload(Uri uri) {
@@ -172,12 +177,12 @@ public class UploadAudioVideoService extends NotifyingIntentService {
 
 		try {
 
-			entity.addPart("file", new FileBody(new File(filePath)));
+			entity.addPart("videoFile", new FileBody(new File(filePath)));
 
 			entity.addPart("token", new StringBody(Config.DEFAULT_UPLOAD_TOKEN,
 					"text/plain", Charset.forName("UTF-8")));
 
-			entity.addPart("username", new StringBody(username, "text/plain",
+			entity.addPart("username", new StringBody(mUsername, "text/plain",
 					Charset.forName("UTF-8")));
 
 			entity.addPart("dbname", new StringBody(Config.DEFAULT_CORPUS,
@@ -259,8 +264,8 @@ public class UploadAudioVideoService extends NotifyingIntentService {
 				SSLSocketFactory sf = new SSLSocketFactory(trusted);
 				// Hostname verification from certificate
 				// http://hc.apache.org/httpcomponents-client-ga/tutorial/html/connmgmt.html#d4e506
-				// sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-				sf.setHostnameVerifier(SSLSocketFactory.STRICT_HOSTNAME_VERIFIER);
+				sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+				// sf.setHostnameVerifier(SSLSocketFactory.STRICT_HOSTNAME_VERIFIER);
 
 				SchemeRegistry registry = new SchemeRegistry();
 				registry.register(new Scheme("http", PlainSocketFactory
@@ -276,6 +281,9 @@ public class UploadAudioVideoService extends NotifyingIntentService {
 	}
 
 	public int processUploadResponse(Uri uri, String jsonResponse) {
+		if (jsonResponse != null && this.D) {
+			Log.d(Config.TAG, jsonResponse);
+		}
 		JsonObject json = (JsonObject) NotifyingIntentService.jsonParser
 				.parse(jsonResponse);
 		if (json.has("userFriendlyErrors")) {
@@ -283,9 +291,22 @@ public class UploadAudioVideoService extends NotifyingIntentService {
 					.getAsString();
 			return 0;
 		}
-		if (!json.has("user")) {
+		if (!json.has("files")) {
 			this.userFriendlyErrorMessage = "The server response is very strange, please report this.";
 			return 0;
+		} else {
+			String eventType = "uploadAudio";
+			String eventValue = jsonResponse;
+			if (!BuildConfig.DEBUG) {
+				ACRA.getErrorReporter().putCustomData("action",
+						"{" + eventType + " : " + eventValue + "}");
+				ACRA.getErrorReporter().putCustomData("androidTimestamp",
+						System.currentTimeMillis() + "");
+				ACRA.getErrorReporter().putCustomData("deviceDetails",
+						mDeviceDetails);
+				ACRA.getErrorReporter().handleException(
+						new Exception("*** User event " + eventType + " ***"));
+			}
 		}
 
 		return 0;

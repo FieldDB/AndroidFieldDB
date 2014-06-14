@@ -44,10 +44,8 @@ import ca.ilanguage.oprime.datacollection.VideoRecorder;
 import ca.ilanguage.oprime.model.DeviceDetails;
 
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
-import com.github.opensourcefieldlinguistics.fielddb.database.FieldDBUserContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
-import com.github.opensourcefieldlinguistics.fielddb.service.RegisterUserService;
 import com.github.opensourcefieldlinguistics.fielddb.service.UploadAudioVideoService;
 import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.BuildConfig;
 import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
@@ -493,6 +491,9 @@ public class DatumDetailFragment extends Fragment {
 					uploadAudioFile.setData(Uri.parse(mAudioFileName));
 					uploadAudioFile.putExtra(Config.EXTRA_PARTICIPANT_ID,
 							Config.CURRENT_USERNAME);
+					uploadAudioFile.putExtra(
+							Config.EXTRA_EXPERIMENT_TRIAL_INFORMATION,
+							mDeviceDetails.getCurrentDeviceDetails());
 					getActivity().startService(uploadAudioFile);
 				}
 			};
@@ -812,17 +813,15 @@ public class DatumDetailFragment extends Fragment {
 			this.mDatumEditCounts.put(eventValue, count);
 			return;
 		}
-		if (!BuildConfig.DEBUG)
+		if (!BuildConfig.DEBUG) {
 			ACRA.getErrorReporter().putCustomData("action",
 					"{" + eventType + " : " + eventValue + "}");
-		if (!BuildConfig.DEBUG)
 			ACRA.getErrorReporter().putCustomData("androidTimestamp",
 					System.currentTimeMillis() + "");
-		if (!BuildConfig.DEBUG)
 			ACRA.getErrorReporter().putCustomData("deviceDetails",
 					this.mDeviceDetails.getCurrentDeviceDetails());
-		if (!BuildConfig.DEBUG)
 			ACRA.getErrorReporter().handleException(
 					new Exception("*** User event " + eventType + " ***"));
+		}
 	}
 }
