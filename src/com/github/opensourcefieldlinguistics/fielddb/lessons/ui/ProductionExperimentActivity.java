@@ -15,7 +15,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 
-public class ProductionExperimentViewPagerFragmentActivity
+public class ProductionExperimentActivity
 		extends
 			FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 	

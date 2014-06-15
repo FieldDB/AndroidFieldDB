@@ -86,10 +86,6 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
 		}
 	}
 
-	public void onToggleAudioRecording(View view) {
-		this.toggleAudioRecording(null);
-	}
-
 	protected void playPromptContext() {
 		isPlaying = true;
 

@@ -18,7 +18,7 @@ public class WelcomeActivity extends Activity {
 
 	public void onTrainClick(View view) {
 		Intent openTrainer = new Intent(this,
-				ProductionExperimentViewPagerFragmentActivity.class);
+				ProductionExperimentActivity.class);
 		startActivity(openTrainer);
 	}
 
