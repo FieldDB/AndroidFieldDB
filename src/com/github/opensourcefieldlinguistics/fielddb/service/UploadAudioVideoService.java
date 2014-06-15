@@ -159,7 +159,7 @@ public class UploadAudioVideoService extends NotifyingIntentService {
 		String filePath = uri.getPath();
 		this.statusMessage = "Uploading audio " + uri.getLastPathSegment();
 		if (!BuildConfig.DEBUG)
-			ACRA.getErrorReporter().putCustomData("registerUser",
+			ACRA.getErrorReporter().putCustomData("uploadAudio",
 					uri.getLastPathSegment());
 		String urlStringAuthenticationSession = Config.DEFAULT_UPLOAD_AUDIO_VIDEO_URL;
 

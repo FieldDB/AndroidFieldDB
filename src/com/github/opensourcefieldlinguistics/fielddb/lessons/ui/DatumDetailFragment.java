@@ -815,7 +815,7 @@ public class DatumDetailFragment extends Fragment {
 		}
 		if (!BuildConfig.DEBUG) {
 			ACRA.getErrorReporter().putCustomData("action",
-					"{" + eventType + " : " + eventValue + "}");
+					"{\"" + eventType + "\" : \"" + eventValue + "\"}");
 			ACRA.getErrorReporter().putCustomData("androidTimestamp",
 					System.currentTimeMillis() + "");
 			ACRA.getErrorReporter().putCustomData("deviceDetails",

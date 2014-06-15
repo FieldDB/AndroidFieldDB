@@ -156,9 +156,11 @@ public class FieldDBApplication extends Application {
 				+ Config.APP_TYPE + "/" + Config.DEFAULT_CORPUS;
 		(new File(Config.DEFAULT_OUTPUT_DIRECTORY)).mkdirs();
 
-		if (!BuildConfig.DEBUG)
+		if (!BuildConfig.DEBUG) {
 			ACRA.getErrorReporter().putCustomData("dbname",
-					Config.DEFAULT_CORPUS.replace("username", username));
+					Config.DEFAULT_CORPUS);
+		}
+
 		Log.d(Config.TAG, cursor.getString(cursor
 				.getColumnIndexOrThrow(UserTable.COLUMN_USERNAME)));
 		cursor.close();
