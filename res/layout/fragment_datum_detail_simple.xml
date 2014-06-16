@@ -6,8 +6,8 @@
 
     <ImageView
         android:id="@+id/image_view"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:contentDescription="This is the main image representing this example."
         android:gravity="center"
         android:src="@drawable/speech_bubbles"
@@ -15,16 +15,16 @@
 
     <VideoView
         android:id="@+id/video_view"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:background="@drawable/speech_bubbles"
         android:gravity="center" />
 
     <ScrollView
         android:id="@+id/video_controls_padding"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_alignBottom="@+id/image_view"
         android:layout_alignLeft="@+id/image_view"
         android:layout_alignRight="@+id/image_view"
