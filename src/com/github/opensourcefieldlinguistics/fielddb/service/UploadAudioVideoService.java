@@ -57,6 +57,9 @@ public class UploadAudioVideoService extends NotifyingIntentService {
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
+		if (Config.D) {
+			return;
+		}
 
 		/* only upload files when connected to wifi */
 		ConnectivityManager connManager = (ConnectivityManager) getApplicationContext()

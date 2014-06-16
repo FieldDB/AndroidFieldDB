@@ -22,9 +22,9 @@ import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
 
 public class DatumProductionExperimentFragment extends DatumDetailFragment {
 
-	private int mAudioPromptResource;
-	private boolean mIsInstructions = false;
-	private long WAIT_TO_RECORD_AFTER_PROMPT_START = 400;
+	protected int mAudioPromptResource;
+	protected boolean mIsInstructions = false;
+	protected long WAIT_TO_RECORD_AFTER_PROMPT_START = 400;
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
