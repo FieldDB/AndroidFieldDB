@@ -1,7 +1,14 @@
 package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
 
+import org.acra.ACRA;
+
+import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
+import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
+import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.BuildConfig;
 import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
 
+import android.content.ContentValues;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
@@ -24,9 +31,21 @@ public class SpeechRecognitionActivity extends FragmentActivity {
 		if (savedInstanceState == null) {
 			// Create the detail fragment and add it to the activity
 			// using a fragment transaction.
+			ContentValues values = new ContentValues();
+			values.put(DatumTable.COLUMN_VALIDATION_STATUS,
+					"ToBeChecked,AutomaticallyRecognized");
+			Uri newDatum = this.getContentResolver().insert(
+					DatumContentProvider.CONTENT_URI, values);
+			if (newDatum == null) {
+				if (!BuildConfig.DEBUG)
+					ACRA.getErrorReporter()
+							.handleException(
+									new Exception(
+											"*** Error inserting a speech recognition datum in DB ***"));
+			}
 			Bundle arguments = new Bundle();
-			arguments.putString(DatumDetailFragment.ARG_ITEM_ID, getIntent()
-					.getStringExtra(DatumDetailFragment.ARG_ITEM_ID));
+			arguments.putString(DatumDetailFragment.ARG_ITEM_ID,
+					newDatum.getLastPathSegment());
 			DatumSpeechRecognitionHypothesesFragment fragment = new DatumSpeechRecognitionHypothesesFragment();
 			fragment.setArguments(arguments);
 			getSupportFragmentManager().beginTransaction()

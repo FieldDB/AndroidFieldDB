@@ -1,0 +1,181 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffffff" >
+
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="This is the main image representing this example."
+        android:src="@drawable/ic_launcher"
+        android:visibility="gone" />
+
+    <VideoView
+        android:id="@+id/video_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:background="@drawable/ic_launcher"
+        android:visibility="gone" />
+
+    <ScrollView
+        android:id="@+id/video_controls_padding"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/image_view"
+        android:layout_alignLeft="@+id/image_view"
+        android:layout_alignRight="@+id/image_view"
+        android:layout_alignTop="@+id/image_view" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TableLayout
+                android:id="@+id/datumArea"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone" >
+
+                <TableRow android:layout_width="match_parent" >
+
+                    <EditText
+                        android:id="@+id/orthography"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="100"
+                        android:inputType="textMultiLine"
+                        android:scrollHorizontally="false"
+                        android:text="" />
+                </TableRow>
+
+                <TableRow android:layout_width="match_parent" >
+
+                    <EditText
+                        android:id="@+id/context"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="100"
+                        android:hint="@string/context"
+                        android:inputType="textMultiLine"
+                        android:scrollHorizontally="false"
+                        android:text=""
+                        android:visibility="gone" />
+                </TableRow>
+
+                <TableRow android:layout_width="match_parent" >
+
+                    <EditText
+                        android:id="@+id/tags"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="100"
+                        android:hint="@string/tag_hint"
+                        android:inputType="textMultiLine"
+                        android:scrollHorizontally="false"
+                        android:text=""
+                        android:visibility="gone" />
+                </TableRow>
+            </TableLayout>
+
+            <TableLayout
+                android:id="@+id/hypothesesArea"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical" >
+
+                <TableRow android:layout_width="match_parent" >
+
+                    <EditText
+                        android:id="@+id/hypothesis1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="80"
+                        android:inputType="textMultiLine"
+                        android:scrollHorizontally="false"
+                        android:text="first hypothesis" />
+
+                    <ImageButton
+                        android:id="@+id/removeHypothesis1"
+                        android:contentDescription="@string/remove"
+                        android:src="@drawable/ic_action_cancel" />
+                </TableRow>
+
+                <TableRow android:layout_width="match_parent" >
+
+                    <EditText
+                        android:id="@+id/hypothesis2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="80"
+                        android:inputType="textMultiLine"
+                        android:scrollHorizontally="false"
+                        android:text="second hypothesis" />
+
+                    <ImageButton
+                        android:id="@+id/removeHypothesis2"
+                        android:contentDescription="@string/remove"
+                        android:src="@drawable/ic_action_cancel" />
+                </TableRow>
+
+                <TableRow android:layout_width="match_parent" >
+
+                    <EditText
+                        android:id="@+id/hypothesis3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="80"
+                        android:inputType="textMultiLine"
+                        android:scrollHorizontally="false"
+                        android:text="third hypothesis" />
+
+                    <ImageButton
+                        android:id="@+id/removeHypothesis3"
+                        android:contentDescription="@string/remove"
+                        android:src="@drawable/ic_action_cancel" />
+                </TableRow>
+
+                <TableRow android:layout_width="match_parent" >
+
+                    <EditText
+                        android:id="@+id/hypothesis4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="80"
+                        android:inputType="textMultiLine"
+                        android:scrollHorizontally="false"
+                        android:text="fourth hypothesis" />
+
+                    <ImageButton
+                        android:id="@+id/removeHypothesis4"
+                        android:contentDescription="@string/remove"
+                        android:src="@drawable/ic_action_cancel" />
+                </TableRow>
+
+                <TableRow android:layout_width="match_parent" >
+
+                    <EditText
+                        android:id="@+id/hypothesis5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="80"
+                        android:inputType="textMultiLine"
+                        android:scrollHorizontally="false"
+                        android:text="fifth hypothesis" />
+
+                    <ImageButton
+                        android:id="@+id/removeHypothesis5"
+                        android:contentDescription="@string/remove"
+                        android:src="@drawable/ic_action_cancel" />
+                </TableRow>
+            </TableLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

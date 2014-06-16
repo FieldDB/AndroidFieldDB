@@ -24,6 +24,7 @@ public class Datum {
 	protected ArrayList<String> related;
 	protected ArrayList<String> reminders;
 	protected ArrayList<String> tags;
+	protected ArrayList<String> validationStati;
 	protected ArrayList<String> coments;
 	protected String actualJSON;
 
@@ -34,7 +35,8 @@ public class Datum {
 			ArrayList<AudioVideo> audioVideoFiles,
 			ArrayList<AudioVideo> videoFiles, ArrayList<String> locations,
 			ArrayList<String> related, ArrayList<String> reminders,
-			ArrayList<String> tags, ArrayList<String> coments, String actualJSON) {
+			ArrayList<String> tags, ArrayList<String> validationStati,
+			ArrayList<String> coments, String actualJSON) {
 		super();
 		this._id = id;
 		this._rev = rev;
@@ -50,6 +52,7 @@ public class Datum {
 		this.related = related;
 		this.reminders = reminders;
 		this.tags = tags;
+		this.validationStati = validationStati;
 		this.coments = coments;
 		this.actualJSON = actualJSON;
 	}
@@ -69,6 +72,7 @@ public class Datum {
 		this.related = new ArrayList<String>();
 		this.reminders = new ArrayList<String>();
 		this.tags = new ArrayList<String>();
+		this.validationStati = new ArrayList<String>();
 		this.coments = new ArrayList<String>();
 		this.actualJSON = "";
 	}
@@ -89,6 +93,7 @@ public class Datum {
 		this.related = new ArrayList<String>();
 		this.reminders = new ArrayList<String>();
 		this.tags = new ArrayList<String>();
+		this.validationStati = new ArrayList<String>();
 		this.coments = new ArrayList<String>();
 		this.actualJSON = "";
 	}
@@ -109,6 +114,7 @@ public class Datum {
 		this.related = new ArrayList<String>();
 		this.reminders = new ArrayList<String>();
 		this.tags = new ArrayList<String>();
+		this.validationStati = new ArrayList<String>();
 		this.coments = new ArrayList<String>();
 		this.actualJSON = "";
 	}
@@ -128,6 +134,7 @@ public class Datum {
 		this.related = new ArrayList<String>();
 		this.reminders = new ArrayList<String>();
 		this.tags = new ArrayList<String>();
+		this.validationStati = new ArrayList<String>();
 		this.coments = new ArrayList<String>();
 		this.actualJSON = "";
 	}
@@ -268,13 +275,39 @@ public class Datum {
 	}
 
 	public void setTagsFromSting(String tags) {
-		if(tags != null && !"".equals(tags)){
+		if (tags != null && !"".equals(tags)) {
 			this.tags = new ArrayList<String>(Arrays.asList(tags.split(",")));
 		}
 	}
 
 	public void setTags(ArrayList<String> tags) {
 		this.tags = tags;
+	}
+
+	public ArrayList<String> getValidationStati() {
+		return validationStati;
+	}
+
+	public String getValidationStatiString() {
+		String result = "";
+		for (String validationStatus : this.validationStati) {
+			if (!"".equals(result)) {
+				result += ",";
+			}
+			result += validationStatus;
+		}
+		return result;
+	}
+
+	public void setValidationStatiFromSting(String validationStati) {
+		if (validationStati != null && !"".equals(validationStati)) {
+			this.validationStati = new ArrayList<String>(
+					Arrays.asList(validationStati.split(",")));
+		}
+	}
+
+	public void setValidationStati(ArrayList<String> validationStati) {
+		this.validationStati = validationStati;
 	}
 
 	public ArrayList<String> getComents() {
