@@ -99,7 +99,7 @@
                         android:layout_weight="80"
                         android:inputType="textMultiLine"
                         android:scrollHorizontally="false"
-                        android:text="first hypothesis" />
+                        android:text="" />
 
                     <ImageButton
                         android:id="@+id/removeHypothesis1"
@@ -116,7 +116,7 @@
                         android:layout_weight="80"
                         android:inputType="textMultiLine"
                         android:scrollHorizontally="false"
-                        android:text="second hypothesis" />
+                        android:text="" />
 
                     <ImageButton
                         android:id="@+id/removeHypothesis2"
@@ -133,7 +133,7 @@
                         android:layout_weight="80"
                         android:inputType="textMultiLine"
                         android:scrollHorizontally="false"
-                        android:text="third hypothesis" />
+                        android:text="" />
 
                     <ImageButton
                         android:id="@+id/removeHypothesis3"
@@ -150,7 +150,7 @@
                         android:layout_weight="80"
                         android:inputType="textMultiLine"
                         android:scrollHorizontally="false"
-                        android:text="fourth hypothesis" />
+                        android:text="" />
 
                     <ImageButton
                         android:id="@+id/removeHypothesis4"
@@ -167,7 +167,7 @@
                         android:layout_weight="80"
                         android:inputType="textMultiLine"
                         android:scrollHorizontally="false"
-                        android:text="fifth hypothesis" />
+                        android:text="" />
 
                     <ImageButton
                         android:id="@+id/removeHypothesis5"
