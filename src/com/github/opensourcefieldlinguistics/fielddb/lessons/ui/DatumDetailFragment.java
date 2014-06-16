@@ -478,45 +478,50 @@ public class DatumDetailFragment extends Fragment {
 			}
 
 		} else {
-			Intent audio = new Intent(getActivity(), AudioRecorder.class);
-			getActivity().stopService(audio);
+			this.turnOffRecorder(item);
+		}
+		return true;
+	}
+	protected boolean turnOffRecorder(MenuItem item) {
+		if (mAudioFileName == null) {
+			return false;
+		}
+		Intent audio = new Intent(getActivity(), AudioRecorder.class);
+		getActivity().stopService(audio);
+		Handler mainHandler = new Handler(getActivity().getMainLooper());
+		Runnable launchUploadAudioService = new Runnable() {
 
-			Handler mainHandler = new Handler(getActivity().getMainLooper());
-			Runnable launchUploadAudioService = new Runnable() {
-
-				@Override
-				public void run() {
-					Intent uploadAudioFile = new Intent(getActivity(),
-							UploadAudioVideoService.class);
-					uploadAudioFile.setData(Uri.parse(mAudioFileName));
-					uploadAudioFile.putExtra(Config.EXTRA_PARTICIPANT_ID,
-							Config.CURRENT_USERNAME);
-					uploadAudioFile.putExtra(
-							Config.EXTRA_EXPERIMENT_TRIAL_INFORMATION,
-							mDeviceDetails.getCurrentDeviceDetails());
-					getActivity().startService(uploadAudioFile);
-				}
-			};
-			mainHandler.postDelayed(launchUploadAudioService, 1000);
-
-			this.mRecordingAudio = false;
-			if (item != null) {
-				item.setIcon(R.drawable.ic_action_mic);
+			@Override
+			public void run() {
+				Intent uploadAudioFile = new Intent(getActivity(),
+						UploadAudioVideoService.class);
+				uploadAudioFile.setData(Uri.parse(mAudioFileName));
+				uploadAudioFile.putExtra(Config.EXTRA_PARTICIPANT_ID,
+						Config.CURRENT_USERNAME);
+				uploadAudioFile.putExtra(
+						Config.EXTRA_EXPERIMENT_TRIAL_INFORMATION,
+						mDeviceDetails.getCurrentDeviceDetails());
+				getActivity().startService(uploadAudioFile);
 			}
-			this.recordUserEvent("stopAudio", "");
+		};
+		mainHandler.postDelayed(launchUploadAudioService, 1000);
 
-			if (mSpeechRecognizerFeedback != null) {
-				mSpeechRecognizerFeedback
-						.setImageResource(R.drawable.speech_recognizer_waiting);
-			}
+		this.mRecordingAudio = false;
+		if (item != null) {
+			item.setIcon(R.drawable.ic_action_mic);
+		}
+		this.recordUserEvent("stopAudio", "");
 
-			if (mSpeechRecognizerInstructions != null) {
-				mSpeechRecognizerInstructions.setText("Tap to speak again");
-			}
-			if (Config.APP_TYPE.equals("speechrec")) {
-				autoAdvanceAfterRecordingAudio();
-			}
+		if (mSpeechRecognizerFeedback != null) {
+			mSpeechRecognizerFeedback
+					.setImageResource(R.drawable.speech_recognizer_waiting);
+		}
 
+		if (mSpeechRecognizerInstructions != null) {
+			mSpeechRecognizerInstructions.setText("Tap to speak again");
+		}
+		if (Config.APP_TYPE.equals("speechrec")) {
+			autoAdvanceAfterRecordingAudio();
 		}
 		return true;
 	}

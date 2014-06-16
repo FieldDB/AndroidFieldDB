@@ -58,8 +58,8 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
 				mImageView.setImageResource(R.drawable.legal_search_selected);
 			} else if (tags.contains("SMS")) {
 				mImageView.setImageResource(R.drawable.sms_selected);
-			} 
-			
+			}
+
 			String id = mItem.getId();
 			Log.d(Config.TAG, "Prompt for this datum will be " + id);
 			if ("instructions".equals(id)) {
@@ -83,6 +83,9 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
 		super.setUserVisibleHint(isVisibleToUser);
 		if (this.isVisible() && !this.isPlaying) {
 			playPromptContext();
+		}
+		if (!this.isVisible()) {
+			turnOffRecorder(null);
 		}
 	}
 
@@ -178,7 +181,7 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
 										int id) {
 									Intent openRecognizer = new Intent(
 											getActivity(),
-											ListenAndRepeat.class);
+											SpeechRecognitionActivity.class);
 									startActivity(openRecognizer);
 								}
 							});
