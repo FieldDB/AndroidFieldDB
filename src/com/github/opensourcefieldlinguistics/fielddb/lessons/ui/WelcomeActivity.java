@@ -23,7 +23,7 @@ public class WelcomeActivity extends Activity {
 	}
 
 	public void onRecognizeClick(View view) {
-		Intent openRecognizer = new Intent(this, ListenAndRepeat.class);
+		Intent openRecognizer = new Intent(this, SpeechRecognitionActivity.class);
 		startActivity(openRecognizer);
 	}
 	
