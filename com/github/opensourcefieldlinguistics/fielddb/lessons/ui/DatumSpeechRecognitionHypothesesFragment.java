@@ -1,7 +1,12 @@
 package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
 
+import java.util.ArrayList;
+
+import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -18,9 +23,17 @@ import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
 
 public class DatumSpeechRecognitionHypothesesFragment
 		extends
-			DatumDetailFragment {
+			DatumProductionExperimentFragment {
 
-	private boolean isRecognizing;
+	private boolean mHasRecognized;
+	private boolean mIsRecognizing;
+	private static final int RETURN_FROM_VOICE_RECOGNITION_REQUEST_CODE = 341;
+	EditText hypothesis1EditText;
+	EditText hypothesis2EditText;
+	EditText hypothesis3EditText;
+	EditText hypothesis4EditText;
+	EditText hypothesis5EditText;
+
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		// no menu
@@ -35,13 +48,16 @@ public class DatumSpeechRecognitionHypothesesFragment
 
 		if (mItem != null) {
 			this.prepareEditTextListeners(rootView);
+			playSpeechRecognitionPrompt();
 		}
 
 		return rootView;
 	}
 
 	protected void showOrthographyOnly(View rootView) {
-
+		if (mHasRecognized == false) {
+			return;
+		}
 		TableLayout datumArea = (TableLayout) rootView
 				.findViewById(R.id.datumArea);
 		if (datumArea != null) {
@@ -110,6 +126,8 @@ public class DatumSpeechRecognitionHypothesesFragment
 				.findViewById(R.id.orthography));
 		if (orthographyEditText != null) {
 			orthographyEditText.setText(mItem.getOrthography());
+			int textLength = mItem.getOrthography().length();
+			orthographyEditText.setSelection(textLength, textLength);
 			orthographyEditText.addTextChangedListener(new TextWatcher() {
 				@Override
 				public void afterTextChanged(Editable arg0) {
@@ -137,7 +155,7 @@ public class DatumSpeechRecognitionHypothesesFragment
 	}
 
 	protected void prepareEditTextListeners(final View rootView) {
-		final EditText hypothesis1EditText = ((EditText) rootView
+		hypothesis1EditText = ((EditText) rootView
 				.findViewById(R.id.hypothesis1));
 		if (hypothesis1EditText != null) {
 			// hypothesis1EditText.setText(mItem.getOrthography());
@@ -152,6 +170,9 @@ public class DatumSpeechRecognitionHypothesesFragment
 				@Override
 				public void onTextChanged(CharSequence arg0, int arg1,
 						int arg2, int arg3) {
+					if (mHasRecognized == false) {
+						return;
+					}
 					String currentText = hypothesis1EditText.getText()
 							.toString();
 					mItem.setOrthography(currentText);
@@ -183,7 +204,7 @@ public class DatumSpeechRecognitionHypothesesFragment
 					});
 		}
 
-		final EditText hypothesis2EditText = ((EditText) rootView
+		hypothesis2EditText = ((EditText) rootView
 				.findViewById(R.id.hypothesis2));
 		if (hypothesis2EditText != null) {
 			// hypothesis2EditText.setText(mItem.getOrthography());
@@ -198,6 +219,9 @@ public class DatumSpeechRecognitionHypothesesFragment
 				@Override
 				public void onTextChanged(CharSequence arg0, int arg1,
 						int arg2, int arg3) {
+					if (mHasRecognized == false) {
+						return;
+					}
 					String currentText = hypothesis2EditText.getText()
 							.toString();
 					mItem.setOrthography(currentText);
@@ -229,7 +253,7 @@ public class DatumSpeechRecognitionHypothesesFragment
 					});
 		}
 
-		final EditText hypothesis3EditText = ((EditText) rootView
+		hypothesis3EditText = ((EditText) rootView
 				.findViewById(R.id.hypothesis3));
 		if (hypothesis3EditText != null) {
 			// hypothesis3EditText.setText(mItem.getOrthography());
@@ -244,6 +268,9 @@ public class DatumSpeechRecognitionHypothesesFragment
 				@Override
 				public void onTextChanged(CharSequence arg0, int arg1,
 						int arg2, int arg3) {
+					if (mHasRecognized == false) {
+						return;
+					}
 					String currentText = hypothesis3EditText.getText()
 							.toString();
 					mItem.setOrthography(currentText);
@@ -275,7 +302,7 @@ public class DatumSpeechRecognitionHypothesesFragment
 					});
 		}
 
-		final EditText hypothesis4EditText = ((EditText) rootView
+		hypothesis4EditText = ((EditText) rootView
 				.findViewById(R.id.hypothesis4));
 		if (hypothesis4EditText != null) {
 			// hypothesis4EditText.setText(mItem.getOrthography());
@@ -290,6 +317,9 @@ public class DatumSpeechRecognitionHypothesesFragment
 				@Override
 				public void onTextChanged(CharSequence arg0, int arg1,
 						int arg2, int arg3) {
+					if (mHasRecognized == false) {
+						return;
+					}
 					String currentText = hypothesis4EditText.getText()
 							.toString();
 					mItem.setOrthography(currentText);
@@ -321,7 +351,7 @@ public class DatumSpeechRecognitionHypothesesFragment
 					});
 		}
 
-		final EditText hypothesis5EditText = ((EditText) rootView
+		hypothesis5EditText = ((EditText) rootView
 				.findViewById(R.id.hypothesis5));
 		if (hypothesis5EditText != null) {
 			// hypothesis5EditText.setText(mItem.getOrthography());
@@ -336,6 +366,9 @@ public class DatumSpeechRecognitionHypothesesFragment
 				@Override
 				public void onTextChanged(CharSequence arg0, int arg1,
 						int arg2, int arg3) {
+					if (mHasRecognized == false) {
+						return;
+					}
 					String currentText = hypothesis5EditText.getText()
 							.toString();
 					mItem.setOrthography(currentText);
@@ -369,15 +402,106 @@ public class DatumSpeechRecognitionHypothesesFragment
 
 	}
 	public void playSpeechRecognitionPrompt() {
-		this.isRecognizing = true;
+		this.mIsRecognizing = true;
+		mAudioPromptResource = R.raw.im_listening;
+		playPromptContext();
+		// Handler mainHandler = new Handler(getActivity().getMainLooper());
+		// Runnable myRunnable = new Runnable() {
+		// @Override
+		// public void run() {
+		// }
+		// };
+		// mainHandler.postDelayed(myRunnable, 200);
+		startVoiceRecognitionActivity();
 	}
 
 	@Override
 	public void setUserVisibleHint(boolean isVisibleToUser) {
 		super.setUserVisibleHint(isVisibleToUser);
-		if (this.isVisible() && !this.isRecognizing) {
-			playSpeechRecognitionPrompt();
+		if (this.isVisible() && !this.mIsRecognizing) {
+			// playSpeechRecognitionPrompt();
 		}
+	}
+
+	/**
+	 * Fire an intent to start the voice recognition activity.
+	 */
+	private void startVoiceRecognitionActivity() {
+		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+				RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+		intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+				getString(R.string.im_listening));
+		startActivityForResult(intent,
+				RETURN_FROM_VOICE_RECOGNITION_REQUEST_CODE);
+	}
+
+	/**
+	 * Handle the results from the voice recognition activity.
+	 */
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		getActivity();
+		if (requestCode == RETURN_FROM_VOICE_RECOGNITION_REQUEST_CODE
+				&& resultCode == Activity.RESULT_OK) {
+			turnOffRecorder(null);
+			/*
+			 * Populate the wordsList with the String values the recognition
+			 * engine thought it heard, and then Toast them to the user and say
+			 * them out loud.
+			 */
+			ArrayList<String> matches = data
+					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+			if (hypothesis1EditText != null) {
+				if (matches.size() > 0 && matches.get(0) != null) {
+					hypothesis1EditText.setText(matches.get(0));
+				} else {
+					hypothesis1EditText.setVisibility(View.GONE);
+				}
+			}
+
+			if (hypothesis2EditText != null) {
+				if (matches.size() > 1 && matches.get(1) != null) {
+					hypothesis2EditText.setText(matches.get(1));
+				} else {
+					hypothesis2EditText.setVisibility(View.GONE);
+				}
+			}
+			if (hypothesis3EditText != null) {
+				if (matches.size() > 2 && matches.get(2) != null) {
+					hypothesis3EditText.setText(matches.get(2));
+				} else {
+					hypothesis3EditText.setVisibility(View.GONE);
+				}
+			}
+			if (hypothesis4EditText != null) {
+				if (matches.size() > 3 && matches.get(3) != null) {
+					hypothesis4EditText.setText(matches.get(3));
+				} else {
+					hypothesis4EditText.setVisibility(View.GONE);
+				}
+			}
+			if (hypothesis5EditText != null) {
+				if (matches.size() > 4 && matches.get(4) != null) {
+					hypothesis5EditText.setText(matches.get(4));
+				} else {
+					hypothesis5EditText.setVisibility(View.GONE);
+				}
+			}
+
+			if (matches.size() > 0) {
+				this.mHasRecognized = true;
+			}
+
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	public void onPause() {
+		turnOffRecorder(null);
+		super.onPause();
 	}
 
 }

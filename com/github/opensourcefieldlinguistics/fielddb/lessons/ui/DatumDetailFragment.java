@@ -493,6 +493,9 @@ public class DatumDetailFragment extends Fragment {
 
 			@Override
 			public void run() {
+				if(getActivity() == null){
+					return;
+				}
 				Intent uploadAudioFile = new Intent(getActivity(),
 						UploadAudioVideoService.class);
 				uploadAudioFile.setData(Uri.parse(mAudioFileName));
