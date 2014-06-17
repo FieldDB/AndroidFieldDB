@@ -20,7 +20,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -40,6 +39,7 @@ public class DatumSpeechRecognitionHypothesesFragment
 
 	private boolean mHasRecognized;
 	private boolean mIsRecognizing;
+	private boolean mPerfectMatch;
 	private static final int RETURN_FROM_VOICE_RECOGNITION_REQUEST_CODE = 341;
 	EditText hypothesis1EditText;
 	EditText hypothesis2EditText;
@@ -47,10 +47,12 @@ public class DatumSpeechRecognitionHypothesesFragment
 	EditText hypothesis4EditText;
 	EditText hypothesis5EditText;
 	TableLayout hypothesesArea;
+	protected long WAIT_TO_RECORD_AFTER_PROMPT_START = 100;
 
 	private static final String[] TAGS = new String[]{"WebSearch", "SMS",
 			"EMail"};
 
+	
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.actions_datum_speech_recognition, menu);
@@ -160,7 +162,11 @@ public class DatumSpeechRecognitionHypothesesFragment
 		if (orthographyEditText != null) {
 			orthographyEditText.setText(mItem.getOrthography());
 			int textLength = mItem.getOrthography().length();
-			orthographyEditText.setSelection(textLength, textLength);
+			if (this.mPerfectMatch) {
+				orthographyEditText.setSelection(0, textLength);
+			} else {
+				orthographyEditText.setSelection(textLength, textLength);
+			}
 			orthographyEditText.addTextChangedListener(new TextWatcher() {
 				@Override
 				public void afterTextChanged(Editable arg0) {
@@ -212,6 +218,7 @@ public class DatumSpeechRecognitionHypothesesFragment
 					String currentText = hypothesis1EditText.getText()
 							.toString();
 					mItem.setOrthography(currentText);
+					showOrthographyOnly(rootView);
 					ContentValues values = new ContentValues();
 					values.put(DatumTable.COLUMN_ORTHOGRAPHY, currentText);
 					getActivity().getContentResolver().update(mUri, values,
@@ -219,19 +226,19 @@ public class DatumSpeechRecognitionHypothesesFragment
 					recordUserEvent("editDatum", "hypothesis1");
 				}
 			});
-			hypothesis1EditText
-					.setOnFocusChangeListener(new OnFocusChangeListener() {
-						@Override
-						public void onFocusChange(View v, boolean hasFocus) {
-							if (!hasFocus) {
-								return;
-							}
-							showOrthographyOnly(rootView);
-							String currentText = hypothesis1EditText.getText()
-									.toString();
-							mItem.setOrthography(currentText);
-						}
-					});
+			// hypothesis1EditText
+			// .setOnFocusChangeListener(new OnFocusChangeListener() {
+			// @Override
+			// public void onFocusChange(View v, boolean hasFocus) {
+			// if (!hasFocus) {
+			// return;
+			// }
+			// showOrthographyOnly(rootView);
+			// String currentText = hypothesis1EditText.getText()
+			// .toString();
+			// mItem.setOrthography(currentText);
+			// }
+			// });
 		}
 
 		final ImageButton removeHypothesis1Button = (ImageButton) rootView
@@ -281,19 +288,19 @@ public class DatumSpeechRecognitionHypothesesFragment
 					recordUserEvent("editDatum", "hypothesis2");
 				}
 			});
-			hypothesis2EditText
-					.setOnFocusChangeListener(new OnFocusChangeListener() {
-						@Override
-						public void onFocusChange(View v, boolean hasFocus) {
-							if (!hasFocus) {
-								return;
-							}
-							showOrthographyOnly(rootView);
-							String currentText = hypothesis2EditText.getText()
-									.toString();
-							mItem.setOrthography(currentText);
-						}
-					});
+			// hypothesis2EditText
+			// .setOnFocusChangeListener(new OnFocusChangeListener() {
+			// @Override
+			// public void onFocusChange(View v, boolean hasFocus) {
+			// if (!hasFocus) {
+			// return;
+			// }
+			// showOrthographyOnly(rootView);
+			// String currentText = hypothesis2EditText.getText()
+			// .toString();
+			// mItem.setOrthography(currentText);
+			// }
+			// });
 		}
 
 		final ImageButton removeHypothesis2Button = (ImageButton) rootView
@@ -343,19 +350,19 @@ public class DatumSpeechRecognitionHypothesesFragment
 					recordUserEvent("editDatum", "hypothesis3");
 				}
 			});
-			hypothesis3EditText
-					.setOnFocusChangeListener(new OnFocusChangeListener() {
-						@Override
-						public void onFocusChange(View v, boolean hasFocus) {
-							if (!hasFocus) {
-								return;
-							}
-							showOrthographyOnly(rootView);
-							String currentText = hypothesis3EditText.getText()
-									.toString();
-							mItem.setOrthography(currentText);
-						}
-					});
+			// hypothesis3EditText
+			// .setOnFocusChangeListener(new OnFocusChangeListener() {
+			// @Override
+			// public void onFocusChange(View v, boolean hasFocus) {
+			// if (!hasFocus) {
+			// return;
+			// }
+			// showOrthographyOnly(rootView);
+			// String currentText = hypothesis3EditText.getText()
+			// .toString();
+			// mItem.setOrthography(currentText);
+			// }
+			// });
 		}
 
 		final ImageButton removeHypothesis3Button = (ImageButton) rootView
@@ -405,19 +412,19 @@ public class DatumSpeechRecognitionHypothesesFragment
 					recordUserEvent("editDatum", "hypothesis4");
 				}
 			});
-			hypothesis4EditText
-					.setOnFocusChangeListener(new OnFocusChangeListener() {
-						@Override
-						public void onFocusChange(View v, boolean hasFocus) {
-							if (!hasFocus) {
-								return;
-							}
-							showOrthographyOnly(rootView);
-							String currentText = hypothesis4EditText.getText()
-									.toString();
-							mItem.setOrthography(currentText);
-						}
-					});
+			// hypothesis4EditText
+			// .setOnFocusChangeListener(new OnFocusChangeListener() {
+			// @Override
+			// public void onFocusChange(View v, boolean hasFocus) {
+			// if (!hasFocus) {
+			// return;
+			// }
+			// showOrthographyOnly(rootView);
+			// String currentText = hypothesis4EditText.getText()
+			// .toString();
+			// mItem.setOrthography(currentText);
+			// }
+			// });
 		}
 
 		final ImageButton removeHypothesis4Button = (ImageButton) rootView
@@ -467,19 +474,19 @@ public class DatumSpeechRecognitionHypothesesFragment
 					recordUserEvent("editDatum", "hypothesis5");
 				}
 			});
-			hypothesis5EditText
-					.setOnFocusChangeListener(new OnFocusChangeListener() {
-						@Override
-						public void onFocusChange(View v, boolean hasFocus) {
-							if (!hasFocus) {
-								return;
-							}
-							showOrthographyOnly(rootView);
-							String currentText = hypothesis5EditText.getText()
-									.toString();
-							mItem.setOrthography(currentText);
-						}
-					});
+			// hypothesis5EditText
+			// .setOnFocusChangeListener(new OnFocusChangeListener() {
+			// @Override
+			// public void onFocusChange(View v, boolean hasFocus) {
+			// if (!hasFocus) {
+			// return;
+			// }
+			// showOrthographyOnly(rootView);
+			// String currentText = hypothesis5EditText.getText()
+			// .toString();
+			// mItem.setOrthography(currentText);
+			// }
+			// });
 		}
 
 		final ImageButton removeHypothesis5Button = (ImageButton) rootView
@@ -513,7 +520,10 @@ public class DatumSpeechRecognitionHypothesesFragment
 				startVoiceRecognitionActivity();
 			}
 		};
-		mainHandler.postDelayed(myRunnable, 200);
+		mainHandler.postDelayed(myRunnable, 1000);/*
+												 * make delay long to get some
+												 * idea of what they will say
+												 */
 	}
 
 	@Override
@@ -593,41 +603,41 @@ public class DatumSpeechRecognitionHypothesesFragment
 				if (matches.size() > 0 && matches.get(0) != null) {
 					hypothesis1EditText.setText(matches.get(0));
 				} else {
-					hypothesis1EditText.setVisibility(View.GONE);
+					// hypothesis1EditText.setVisibility(View.GONE);
 				}
-				hypothesis1EditText.clearFocus();
+				// hypothesis1EditText.clearFocus();
 			}
 			if (hypothesis2EditText != null) {
 				if (matches.size() > 1 && matches.get(1) != null) {
 					hypothesis2EditText.setText(matches.get(1));
 				} else {
-					hypothesis2EditText.setVisibility(View.GONE);
+					// hypothesis2EditText.setVisibility(View.GONE);
 				}
-				hypothesis2EditText.clearFocus();
+				// hypothesis2EditText.clearFocus();
 			}
 			if (hypothesis3EditText != null) {
 				if (matches.size() > 2 && matches.get(2) != null) {
 					hypothesis3EditText.setText(matches.get(2));
 				} else {
-					hypothesis3EditText.setVisibility(View.GONE);
+					// hypothesis3EditText.setVisibility(View.GONE);
 				}
-				hypothesis3EditText.clearFocus();
+				// hypothesis3EditText.clearFocus();
 			}
 			if (hypothesis4EditText != null) {
 				if (matches.size() > 3 && matches.get(3) != null) {
 					hypothesis4EditText.setText(matches.get(3));
 				} else {
-					hypothesis4EditText.setVisibility(View.GONE);
+					// hypothesis4EditText.setVisibility(View.GONE);
 				}
-				hypothesis4EditText.clearFocus();
+				// hypothesis4EditText.clearFocus();
 			}
 			if (hypothesis5EditText != null) {
 				if (matches.size() > 4 && matches.get(4) != null) {
 					hypothesis5EditText.setText(matches.get(4));
 				} else {
-					hypothesis5EditText.setVisibility(View.GONE);
+					// hypothesis5EditText.setVisibility(View.GONE);
 				}
-				hypothesis5EditText.clearFocus();
+				// hypothesis5EditText.clearFocus();
 			}
 
 			if (matches.size() > 0) {
@@ -640,7 +650,10 @@ public class DatumSpeechRecognitionHypothesesFragment
 			if (matches.size() == 1) {
 				// Trigger hypothesis 1 to be the orthography
 				hypothesis1EditText.setText(matches.get(0));
+				this.mPerfectMatch = true;
+
 			}
+			recordUserEvent("recognizedHypotheses", matches.toString());
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
