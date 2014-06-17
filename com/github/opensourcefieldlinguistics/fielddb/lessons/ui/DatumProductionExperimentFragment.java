@@ -106,14 +106,14 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
 							}
 						}
 					});
-			mAudioPlayer
-					.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
-
-						@Override
-						public void onBufferingUpdate(MediaPlayer arg0, int arg1) {
-							Log.d(Config.TAG, "Buffering " + arg1);
-						}
-					});
+//			mAudioPlayer
+//					.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+//
+//						@Override
+//						public void onBufferingUpdate(MediaPlayer arg0, int arg1) {
+//							Log.d(Config.TAG, "Buffering " + arg1);
+//						}
+//					});
 			mAudioPlayer
 					.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 						@Override
