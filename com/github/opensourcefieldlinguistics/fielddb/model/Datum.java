@@ -581,7 +581,7 @@ public class Datum {
 		}
 		if (filenameBasedOnMorphemesOrWhateverIsAvailable == null
 				|| "".equals(filenameBasedOnMorphemesOrWhateverIsAvailable)) {
-			filenameBasedOnMorphemesOrWhateverIsAvailable = "unknown";
+			filenameBasedOnMorphemesOrWhateverIsAvailable = "audio";
 		}
 		filenameBasedOnMorphemesOrWhateverIsAvailable = Config
 				.getSafeUri(filenameBasedOnMorphemesOrWhateverIsAvailable);
