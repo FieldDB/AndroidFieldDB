@@ -493,7 +493,7 @@ public class DatumDetailFragment extends Fragment {
 
 			@Override
 			public void run() {
-				if(getActivity() == null){
+				if (getActivity() == null) {
 					return;
 				}
 				Intent uploadAudioFile = new Intent(getActivity(),
@@ -547,11 +547,11 @@ public class DatumDetailFragment extends Fragment {
 	protected boolean delete() {
 		AlertDialog deleteConfirmationDialog = new AlertDialog.Builder(
 				getActivity())
-				.setTitle("Are you sure?")
+				.setTitle(R.string.are_you_sure)
 				.setMessage(
-						"Are you sure you want to put this "
-								+ Config.USER_FRIENDLY_DATA_NAME
-								+ " in the trash?")
+						getString(R.string.are_you_sure_put_in_trash).replace(
+								"datum", Config.USER_FRIENDLY_DATA_NAME))
+
 				.setPositiveButton(android.R.string.ok,
 						new DialogInterface.OnClickListener() {
 							@Override
@@ -583,7 +583,6 @@ public class DatumDetailFragment extends Fragment {
 		deleteConfirmationDialog.show();
 		return true;
 	}
-
 	protected void loadVisuals(boolean playImmediately) {
 		loadMainVideo(playImmediately);
 	}
@@ -796,6 +795,9 @@ public class DatumDetailFragment extends Fragment {
 				it.remove(); // avoids a ConcurrentModificationException
 			}
 			edits = "[" + edits + "]";
+			if (Config.D) {
+				Log.d(Config.TAG, "edits: " + edits);
+			}
 			recordUserEvent("totalDatumEditsOnPause", edits);
 		}
 
@@ -808,7 +810,6 @@ public class DatumDetailFragment extends Fragment {
 
 		super.onPause();
 	}
-
 	protected void recordUserEvent(String eventType, String eventValue) {
 		if ("editDatum".equals(eventType)) {
 			if (this.mDatumEditCounts == null) {
