@@ -178,7 +178,7 @@ public class FieldDBApplication extends Application {
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo wifi = connManager
 				.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-		if (Config.APP_TYPE.equals("speechrec")) {
+		if (Config.APP_TYPE.equals("speechrecognition")) {
 			Log.d(Config.TAG,
 					"Not downloading samples, they are included in the training app");
 

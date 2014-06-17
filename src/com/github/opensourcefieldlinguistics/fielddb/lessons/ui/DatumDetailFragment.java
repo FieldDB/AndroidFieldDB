@@ -165,7 +165,7 @@ public class DatumDetailFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_datum_detail,
 				container, false);
-		if (Config.APP_TYPE.equals("speechrec")) {
+		if (Config.APP_TYPE.equals("speechrecognition")) {
 			rootView = inflater.inflate(R.layout.fragment_datum_detail_simple,
 					container, false);
 		}
@@ -513,7 +513,7 @@ public class DatumDetailFragment extends Fragment {
 		if (item != null) {
 			item.setIcon(R.drawable.ic_action_mic);
 		}
-		this.recordUserEvent("stopAudio", "");
+		this.recordUserEvent("stopAudio", this.mAudioFileName);
 
 		if (mSpeechRecognizerFeedback != null) {
 			mSpeechRecognizerFeedback
@@ -523,7 +523,7 @@ public class DatumDetailFragment extends Fragment {
 		if (mSpeechRecognizerInstructions != null) {
 			mSpeechRecognizerInstructions.setText("Tap to speak again");
 		}
-		if (Config.APP_TYPE.equals("speechrec")) {
+		if (Config.APP_TYPE.equals("speechrecognition")) {
 			autoAdvanceAfterRecordingAudio();
 		}
 		return true;

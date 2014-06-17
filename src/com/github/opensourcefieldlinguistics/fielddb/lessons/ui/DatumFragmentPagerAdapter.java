@@ -56,7 +56,7 @@ public class DatumFragmentPagerAdapter extends FragmentPagerAdapter {
 		}
 		Bundle arguments = new Bundle();
 		DatumDetailFragment fragment = new DatumProductionExperimentFragment();
-		if (Config.APP_TYPE.equals("speechrec")) {
+		if (Config.APP_TYPE.equals("speechrecognition")) {
 //			fragment = new DatumProductionExperimentFragment();
 		} else {
 			 fragment = new DatumDetailFragment();
