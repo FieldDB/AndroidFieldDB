@@ -8,6 +8,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.Locale;
 
 import org.acra.ACRA;
 import org.acra.ACRAConfiguration;
@@ -30,6 +31,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -43,6 +45,8 @@ public class FieldDBApplication extends Application {
 	@Override
 	public final void onCreate() {
 		super.onCreate();
+		String language = forceLocale(Config.DATA_IS_ABOUT_LANGUAGE_ISO);
+		Log.d(Config.TAG, "Forced the locale to " + language);
 
 		// (new File(Config.DEFAULT_OUTPUT_DIRECTORY)).mkdirs();
 
@@ -206,5 +210,39 @@ public class FieldDBApplication extends Application {
 			getApplicationContext().startService(registerUser);
 		}
 
+	}
+
+	/**
+	 * Forces the locale for the duration of the app to the language needed for
+	 * that version of the Experiment. It accepts a variable in the form en or
+	 * en-US containing just the language code, or the language code followed by
+	 * a - and the co
+	 * 
+	 * @param lang
+	 * @return
+	 */
+	public String forceLocale(String lang) {
+		if (lang.equals(Locale.getDefault().getLanguage())) {
+			return Locale.getDefault().getDisplayLanguage();
+		}
+		Configuration config = this.getBaseContext().getResources()
+				.getConfiguration();
+		Locale locale;
+		if (lang.contains("-")) {
+			String[] langCountrycode = lang.split("-");
+			locale = new Locale(langCountrycode[0], langCountrycode[1]);
+		} else {
+			locale = new Locale(lang);
+		}
+		Locale.setDefault(locale);
+		config.locale = locale;
+		this.getBaseContext()
+				.getResources()
+				.updateConfiguration(
+						config,
+						this.getBaseContext().getResources()
+								.getDisplayMetrics());
+
+		return Locale.getDefault().getDisplayLanguage();
 	}
 }
