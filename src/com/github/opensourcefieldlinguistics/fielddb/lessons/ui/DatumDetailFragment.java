@@ -94,7 +94,7 @@ public class DatumDetailFragment extends Fragment {
 
 	protected int mLastDatumIndex;
 
-	private String mAudioFileName;
+	protected String mAudioFileName;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
