@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,17 +30,18 @@ import android.widget.TableLayout;
 
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
-import com.github.opensourcefieldlinguistics.fielddb.service.PocketSphinxRecognizerService;
+import com.github.opensourcefieldlinguistics.fielddb.service.PocketSphinxRecognitionService;
 import com.github.opensourcefieldlinguistics.fielddb.service.UploadAudioVideoService;
 import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
 
 public class DatumSpeechRecognitionHypothesesFragment extends
-        DatumProductionExperimentFragment{
+        DatumProductionExperimentFragment {
 
     private boolean mHasRecognized;
     private boolean mIsRecognizing;
     private boolean mPerfectMatch;
     private static final int RETURN_FROM_VOICE_RECOGNITION_REQUEST_CODE = 341;
+    EditText orthographyEditText;
     EditText hypothesis1EditText;
     EditText hypothesis2EditText;
     EditText hypothesis3EditText;
@@ -50,6 +52,8 @@ public class DatumSpeechRecognitionHypothesesFragment extends
 
     private static final String[] TAGS = new String[] { "WebSearch", "SMS",
             "EMail" };
+    private RecognitionReceiver mRecognitionReceiver;
+
     private HashMap<String, Integer> captions;
 
     @Override
@@ -79,18 +83,27 @@ public class DatumSpeechRecognitionHypothesesFragment extends
                 container, false);
 
         captions = new HashMap<String, Integer>();
-        captions.put(PocketSphinxRecognizerService.KWS_SEARCH,
+        captions.put(PocketSphinxRecognitionService.KWS_SEARCH,
                 R.string.kws_caption);
-        captions.put(PocketSphinxRecognizerService.MENU_SEARCH,
+        captions.put(PocketSphinxRecognitionService.MENU_SEARCH,
                 R.string.menu_caption);
-        captions.put(PocketSphinxRecognizerService.DIGITS_SEARCH,
+        captions.put(PocketSphinxRecognitionService.DIGITS_SEARCH,
                 R.string.digits_caption);
-        captions.put(PocketSphinxRecognizerService.FORECAST_SEARCH,
+        captions.put(PocketSphinxRecognitionService.FORECAST_SEARCH,
                 R.string.forecast_caption);
 
         if (mItem != null) {
             this.prepareEditTextListeners(rootView);
             this.playSpeechRecognitionPrompt();
+            if (this.mRecognitionReceiver == null) {
+                this.mRecognitionReceiver = new RecognitionReceiver();
+            }
+
+            IntentFilter intentPartialRecognitionResult = new IntentFilter(
+                    Config.INTENT_PARTIAL_SPEECH_RECOGNITION_RESULT);
+            getActivity().registerReceiver(this.mRecognitionReceiver,
+                    intentPartialRecognitionResult);
+
         }
 
         return rootView;
@@ -100,6 +113,7 @@ public class DatumSpeechRecognitionHypothesesFragment extends
         if (mHasRecognized == false) {
             return;
         }
+        turnOffRecorder(null);
         TableLayout datumArea = (TableLayout) rootView
                 .findViewById(R.id.datumArea);
         if (datumArea != null) {
@@ -170,8 +184,6 @@ public class DatumSpeechRecognitionHypothesesFragment extends
             });
         }
 
-        final EditText orthographyEditText = ((EditText) rootView
-                .findViewById(R.id.orthography));
         if (orthographyEditText != null) {
             orthographyEditText.setText(mItem.getOrthography());
             int textLength = mItem.getOrthography().length();
@@ -211,6 +223,9 @@ public class DatumSpeechRecognitionHypothesesFragment extends
     protected void prepareEditTextListeners(final View rootView) {
         hypothesesArea = (TableLayout) rootView
                 .findViewById(R.id.hypothesesArea);
+
+        orthographyEditText = ((EditText) rootView
+                .findViewById(R.id.orthography));
 
         hypothesis1EditText = ((EditText) rootView
                 .findViewById(R.id.hypothesis1));
@@ -544,18 +559,20 @@ public class DatumSpeechRecognitionHypothesesFragment extends
     @Override
     public boolean toggleAudioRecording(MenuItem item) {
         if (!this.mRecordingAudio) {
+            this.mRecordingAudio = true;
+
             String audioFileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/"
                     + mItem.getBaseFilename() + Config.DEFAULT_AUDIO_EXTENSION;
             this.mAudioFileName = audioFileName;
 
             String caption = getResources().getString(
-                    captions.get(PocketSphinxRecognizerService.KWS_SEARCH));
+                    captions.get(PocketSphinxRecognitionService.KWS_SEARCH));
             hypothesis5EditText.setText(caption);
 
             hypothesis5EditText.setText(getString(R.string.im_listening));
 
             Intent intent = new Intent(getActivity(),
-                    PocketSphinxRecognizerService.class);
+                    PocketSphinxRecognitionService.class);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                     RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
             intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
@@ -567,11 +584,11 @@ public class DatumSpeechRecognitionHypothesesFragment extends
                 @Override
                 public void run() {
                     Intent recognize = new Intent(getActivity(),
-                            PocketSphinxRecognizerService.class);
+                            PocketSphinxRecognitionService.class);
                     getActivity().stopService(recognize);
                 }
             };
-            mainHandler.postDelayed(myRunnable, 2000);
+            // mainHandler.postDelayed(myRunnable, 2000);
 
             mItem.addAudioFile(audioFileName.replace(
                     Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
@@ -580,7 +597,6 @@ public class DatumSpeechRecognitionHypothesesFragment extends
                     mItem.getMediaFilesAsCSV(mItem.getAudioVideoFiles()));
             getActivity().getContentResolver().update(mUri, values, null, null);
             Log.d(Config.TAG, "Recording audio " + audioFileName);
-            this.mRecordingAudio = true;
             if (item != null) {
                 item.setIcon(R.drawable.ic_action_stop);
             }
@@ -607,7 +623,7 @@ public class DatumSpeechRecognitionHypothesesFragment extends
             return false;
         }
         Intent recognize = new Intent(getActivity(),
-                PocketSphinxRecognizerService.class);
+                PocketSphinxRecognitionService.class);
         getActivity().stopService(recognize);
 
         Handler mainHandler = new Handler(getActivity().getMainLooper());
@@ -674,6 +690,23 @@ public class DatumSpeechRecognitionHypothesesFragment extends
     }
 
     public void processRecognitionPartialHypothesis(Intent data) {
+        hypothesesArea.setVisibility(View.VISIBLE);
+        ArrayList<String> matches = data
+                .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+        if (hypothesis1EditText != null) {
+            if (matches.size() > 0 && matches.get(0) != null) {
+                hypothesis1EditText.setText(matches.get(0));
+                this.mHasRecognized = true;
+            } else {
+                // hypothesis1EditText.setVisibility(View.GONE);
+            }
+            // hypothesis1EditText.clearFocus();
+        }
+        recordUserEvent("recognizedPartialHypotheses", matches.toString());
+    }
+
+    public void processRecognitionHypotheses(Intent data) {
         turnOffRecorder(null);
         hypothesesArea.setVisibility(View.VISIBLE);
         /*
@@ -736,7 +769,6 @@ public class DatumSpeechRecognitionHypothesesFragment extends
             // Trigger hypothesis 1 to be the orthography
             hypothesis1EditText.setText(matches.get(0));
             this.mPerfectMatch = true;
-
         }
         recordUserEvent("recognizedHypotheses", matches.toString());
     }
@@ -744,13 +776,30 @@ public class DatumSpeechRecognitionHypothesesFragment extends
     @Override
     public void onPause() {
         turnOffRecorder(null);
+//        if (this.mRecognitionReceiver != null && getActivity() != null) {
+//            getActivity().unregisterReceiver(this.mRecognitionReceiver);
+//        }
         super.onPause();
     }
 
-    public class RecordingReceiver extends BroadcastReceiver {
+    @Override
+    public void onDestroy() {
+        if (this.mRecognitionReceiver != null && getActivity() != null) {
+            getActivity().unregisterReceiver(this.mRecognitionReceiver);
+        }
+        super.onDestroy();
+
+    }
+
+    public class RecognitionReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            processRecognitionPartialHypothesis(intent);
+            if (!"".equals(intent
+                    .getStringExtra(Config.EXTRA_RECOGNITION_COMPLETED))) {
+                processRecognitionPartialHypothesis(intent);
+            } else {
+                processRecognitionHypotheses(intent);
+            }
         }
 
     }
