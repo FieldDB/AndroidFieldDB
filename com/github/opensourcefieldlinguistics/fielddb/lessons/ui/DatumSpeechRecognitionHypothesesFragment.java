@@ -724,6 +724,9 @@ public class DatumSpeechRecognitionHypothesesFragment extends
                 // hypothesis1EditText.setVisibility(View.GONE);
             }
             // hypothesis1EditText.clearFocus();
+        } else {
+            Log.w(Config.TAG,
+                    "hypothesis1EditText is null, cant show user results!");
         }
         if (hypothesis2EditText != null) {
             if (matches.size() > 1 && matches.get(1) != null) {
@@ -769,16 +772,19 @@ public class DatumSpeechRecognitionHypothesesFragment extends
             // Trigger hypothesis 1 to be the orthography
             hypothesis1EditText.setText(matches.get(0));
             this.mPerfectMatch = true;
+        } else if (matches.size() > 1) {
+            this.mPerfectMatch = false;
         }
+        Log.d(Config.TAG, "showing hypotheses: " + matches.toString());
         recordUserEvent("recognizedHypotheses", matches.toString());
     }
 
     @Override
     public void onPause() {
         turnOffRecorder(null);
-//        if (this.mRecognitionReceiver != null && getActivity() != null) {
-//            getActivity().unregisterReceiver(this.mRecognitionReceiver);
-//        }
+        // if (this.mRecognitionReceiver != null && getActivity() != null) {
+        // getActivity().unregisterReceiver(this.mRecognitionReceiver);
+        // }
         super.onPause();
     }
 
@@ -794,8 +800,8 @@ public class DatumSpeechRecognitionHypothesesFragment extends
     public class RecognitionReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (!"".equals(intent
-                    .getStringExtra(Config.EXTRA_RECOGNITION_COMPLETED))) {
+            if (intent.getBooleanExtra(Config.EXTRA_RECOGNITION_COMPLETED,
+                    false)) {
                 processRecognitionPartialHypothesis(intent);
             } else {
                 processRecognitionHypotheses(intent);

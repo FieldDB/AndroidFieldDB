@@ -13,6 +13,7 @@ import edu.cmu.pocketsphinx.Hypothesis;
 import edu.cmu.pocketsphinx.RecognitionListener;
 import edu.cmu.pocketsphinx.SpeechRecognizer;
 import android.content.Intent;
+import android.os.Handler;
 import android.speech.RecognitionService;
 import android.speech.RecognizerIntent;
 import android.util.Log;
@@ -33,6 +34,10 @@ public class PocketSphinxRecognitionService extends RecognitionService
     public static final String KEYPHRASE = "okay android";
     public static final String LANGUAGE_MODEL_SMS = "recognizesms";
     public static final String LANGUAGE_MODEL_LEGAL_SEARCH = "recognizelegalsearch";
+    public static final int TIME_TO_STOP_LISTENING = 1000;
+
+    protected ArrayList<String> mPreviousPartialHypotheses;
+    protected long mLastPartialHypothesisChangeTimestamp;
 
     public PocketSphinxRecognitionService() {
         super();
@@ -169,7 +174,6 @@ public class PocketSphinxRecognitionService extends RecognitionService
         }
 
         String text = hypothesis.getHypstr();
-        Log.d(Config.TAG, "Partial Hypothesis result recieved: " + text);
         if (text.equals(KEYPHRASE)) {
             switchSearch(MENU_SEARCH);
         } else if (text.equals(DIGITS_SEARCH)) {
@@ -178,7 +182,7 @@ public class PocketSphinxRecognitionService extends RecognitionService
             switchSearch(FORECAST_SEARCH);
         } else {
             if (hypothesis != null) {
-                broadcast(hypothesis.getHypstr());
+                broadcast(text);
             }
         }
     }
@@ -192,13 +196,49 @@ public class PocketSphinxRecognitionService extends RecognitionService
     }
 
     public void broadcast(String text) {
-        ArrayList<String> hypotheses = new ArrayList<String>();
         if (text == null || "".equals(text)) {
             return;
         }
         Intent i = new Intent(Config.INTENT_PARTIAL_SPEECH_RECOGNITION_RESULT);
-        hypotheses.add(text);
-        i.putStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS, hypotheses);
+        // If the guess is not in the top, insert at the top
+        if (mPreviousPartialHypotheses == null) {
+            mPreviousPartialHypotheses = new ArrayList<String>();
+        }
+        if (mPreviousPartialHypotheses.size() == 0
+                || !mPreviousPartialHypotheses.get(0).equals(text)) {
+            mLastPartialHypothesisChangeTimestamp = System.currentTimeMillis();
+            mPreviousPartialHypotheses.add(0, text);
+            Log.d(Config.TAG, "Partial Hypothesis result recieved: " + text);
+            /*
+             * If it has been a while since the last hypothesis, send all of
+             * them as completed
+             */
+            Handler mainHandler = new Handler(getApplicationContext()
+                    .getMainLooper());
+            Runnable myRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    if (System.currentTimeMillis()
+                            - mLastPartialHypothesisChangeTimestamp > TIME_TO_STOP_LISTENING) {
+                        Intent i = new Intent(
+                                Config.INTENT_PARTIAL_SPEECH_RECOGNITION_RESULT);
+                        i.putExtra(Config.EXTRA_RECOGNITION_COMPLETED, true);
+                        i.putStringArrayListExtra(
+                                RecognizerIntent.EXTRA_RESULTS,
+                                mPreviousPartialHypotheses);
+                        getApplication().sendBroadcast(i);
+                        Log.d(Config.TAG, "Partial results have stopped.");
+                        // mPreviousPartialHypotheses = null;
+                    } else {
+                        Log.d(Config.TAG,
+                                "Partial results still seem to be running.");
+                    }
+                }
+            };
+            mainHandler.postDelayed(myRunnable, TIME_TO_STOP_LISTENING);
+        }
+        i.putStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS,
+                mPreviousPartialHypotheses);
         getApplication().sendBroadcast(i);
 
     }
