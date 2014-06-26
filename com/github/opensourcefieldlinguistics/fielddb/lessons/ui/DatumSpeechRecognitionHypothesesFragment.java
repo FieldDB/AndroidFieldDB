@@ -48,7 +48,7 @@ public class DatumSpeechRecognitionHypothesesFragment extends
     EditText hypothesis4EditText;
     EditText hypothesis5EditText;
     TableLayout hypothesesArea;
-    protected long WAIT_TO_RECORD_AFTER_PROMPT_START = 100;
+    protected long WAIT_TO_RECORD_AFTER_PROMPT_START = 10;
 
     private static final String[] TAGS = new String[] { "WebSearch", "SMS",
             "EMail" };
@@ -579,15 +579,15 @@ public class DatumSpeechRecognitionHypothesesFragment extends
                     getString(R.string.im_listening));
             getActivity().startService(intent);
 
-            Handler mainHandler = new Handler(getActivity().getMainLooper());
-            Runnable myRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    Intent recognize = new Intent(getActivity(),
-                            PocketSphinxRecognitionService.class);
-                    getActivity().stopService(recognize);
-                }
-            };
+//            Handler mainHandler = new Handler(getActivity().getMainLooper());
+//            Runnable myRunnable = new Runnable() {
+//                @Override
+//                public void run() {
+//                    Intent recognize = new Intent(getActivity(),
+//                            PocketSphinxRecognitionService.class);
+//                    getActivity().stopService(recognize);
+//                }
+//            };
             // mainHandler.postDelayed(myRunnable, 2000);
 
             mItem.addAudioFile(audioFileName.replace(
@@ -718,7 +718,8 @@ public class DatumSpeechRecognitionHypothesesFragment extends
                 .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
         if (hypothesis1EditText != null) {
-            if (matches.size() > 0 && matches.get(0) != null) {
+            if (matches.size() > 0 && matches.get(0) != null
+                    && !"".equals(matches.get(0))) {
                 hypothesis1EditText.setText(matches.get(0));
             } else {
                 // hypothesis1EditText.setVisibility(View.GONE);
@@ -729,7 +730,8 @@ public class DatumSpeechRecognitionHypothesesFragment extends
                     "hypothesis1EditText is null, cant show user results!");
         }
         if (hypothesis2EditText != null) {
-            if (matches.size() > 1 && matches.get(1) != null) {
+            if (matches.size() > 1 && matches.get(1) != null
+                    && !"".equals(matches.get(1))) {
                 hypothesis2EditText.setText(matches.get(1));
             } else {
                 // hypothesis2EditText.setVisibility(View.GONE);
@@ -737,7 +739,8 @@ public class DatumSpeechRecognitionHypothesesFragment extends
             // hypothesis2EditText.clearFocus();
         }
         if (hypothesis3EditText != null) {
-            if (matches.size() > 2 && matches.get(2) != null) {
+            if (matches.size() > 2 && matches.get(2) != null
+                    && !"".equals(matches.get(2))) {
                 hypothesis3EditText.setText(matches.get(2));
             } else {
                 // hypothesis3EditText.setVisibility(View.GONE);
@@ -745,7 +748,8 @@ public class DatumSpeechRecognitionHypothesesFragment extends
             // hypothesis3EditText.clearFocus();
         }
         if (hypothesis4EditText != null) {
-            if (matches.size() > 3 && matches.get(3) != null) {
+            if (matches.size() > 3 && matches.get(3) != null
+                    && !"".equals(matches.get(3))) {
                 hypothesis4EditText.setText(matches.get(3));
             } else {
                 // hypothesis4EditText.setVisibility(View.GONE);
@@ -753,7 +757,8 @@ public class DatumSpeechRecognitionHypothesesFragment extends
             // hypothesis4EditText.clearFocus();
         }
         if (hypothesis5EditText != null) {
-            if (matches.size() > 4 && matches.get(4) != null) {
+            if (matches.size() > 4 && matches.get(4) != null
+                    && !"".equals(matches.get(4))) {
                 hypothesis5EditText.setText(matches.get(4));
             } else {
                 // hypothesis5EditText.setVisibility(View.GONE);
@@ -802,9 +807,9 @@ public class DatumSpeechRecognitionHypothesesFragment extends
         public void onReceive(Context context, Intent intent) {
             if (intent.getBooleanExtra(Config.EXTRA_RECOGNITION_COMPLETED,
                     false)) {
-                processRecognitionPartialHypothesis(intent);
-            } else {
                 processRecognitionHypotheses(intent);
+            } else {
+                processRecognitionPartialHypothesis(intent);
             }
         }
 
