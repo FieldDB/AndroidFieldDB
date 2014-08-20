@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +29,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
+import android.widget.Toast;
 
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
@@ -40,6 +43,7 @@ public class DatumSpeechRecognitionHypothesesFragment extends
     private boolean mHasRecognized;
     private boolean mIsRecognizing;
     private boolean mPerfectMatch;
+    protected String mPromptFromCaller;
     private static final int RETURN_FROM_VOICE_RECOGNITION_REQUEST_CODE = 341;
     EditText orthographyEditText;
     EditText hypothesis1EditText;
@@ -49,6 +53,8 @@ public class DatumSpeechRecognitionHypothesesFragment extends
     EditText hypothesis5EditText;
     TableLayout hypothesesArea;
     protected long WAIT_TO_RECORD_AFTER_PROMPT_START = 10;
+    protected ArrayList<String> mHypotheses;
+    protected ArrayList<String> mHypothesesConfidences;
 
     private static final String[] TAGS = new String[] { "WebSearch", "SMS",
             "EMail" };
@@ -143,6 +149,11 @@ public class DatumSpeechRecognitionHypothesesFragment extends
                         int arg2, int arg3) {
                     String currentText = contextEditText.getText().toString();
                     mItem.setContext(currentText);
+
+                    // Use this edit to return to caller
+                    mHypotheses.set(0, currentText);
+                    setIntentResult();
+
                     ContentValues values = new ContentValues();
                     values.put(DatumTable.COLUMN_CONTEXT, currentText);
                     getActivity().getContentResolver().update(mUri, values,
@@ -569,7 +580,12 @@ public class DatumSpeechRecognitionHypothesesFragment extends
                     captions.get(PocketSphinxRecognitionService.KWS_SEARCH));
             hypothesis5EditText.setText(caption);
 
-            hypothesis5EditText.setText(getString(R.string.im_listening));
+            mPromptFromCaller = getActivity().getIntent().getStringExtra(
+                    RecognizerIntent.EXTRA_PROMPT);
+            if (mPromptFromCaller == null) {
+                mPromptFromCaller = getString(R.string.im_listening);
+            }
+            hypothesis5EditText.setText(mPromptFromCaller);
 
             Intent intent = new Intent(getActivity(),
                     PocketSphinxRecognitionService.class);
@@ -579,15 +595,15 @@ public class DatumSpeechRecognitionHypothesesFragment extends
                     getString(R.string.im_listening));
             getActivity().startService(intent);
 
-//            Handler mainHandler = new Handler(getActivity().getMainLooper());
-//            Runnable myRunnable = new Runnable() {
-//                @Override
-//                public void run() {
-//                    Intent recognize = new Intent(getActivity(),
-//                            PocketSphinxRecognitionService.class);
-//                    getActivity().stopService(recognize);
-//                }
-//            };
+            // Handler mainHandler = new Handler(getActivity().getMainLooper());
+            // Runnable myRunnable = new Runnable() {
+            // @Override
+            // public void run() {
+            // Intent recognize = new Intent(getActivity(),
+            // PocketSphinxRecognitionService.class);
+            // getActivity().stopService(recognize);
+            // }
+            // };
             // mainHandler.postDelayed(myRunnable, 2000);
 
             mItem.addAudioFile(audioFileName.replace(
@@ -691,19 +707,19 @@ public class DatumSpeechRecognitionHypothesesFragment extends
 
     public void processRecognitionPartialHypothesis(Intent data) {
         hypothesesArea.setVisibility(View.VISIBLE);
-        ArrayList<String> matches = data
+        mHypotheses = data
                 .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
         if (hypothesis1EditText != null) {
-            if (matches.size() > 0 && matches.get(0) != null) {
-                hypothesis1EditText.setText(matches.get(0));
+            if (mHypotheses.size() > 0 && mHypotheses.get(0) != null) {
+                hypothesis1EditText.setText(mHypotheses.get(0));
                 this.mHasRecognized = true;
             } else {
                 // hypothesis1EditText.setVisibility(View.GONE);
             }
             // hypothesis1EditText.clearFocus();
         }
-        recordUserEvent("recognizedPartialHypotheses", matches.toString());
+        recordUserEvent("recognizedPartialHypotheses", mHypotheses.toString());
     }
 
     public void processRecognitionHypotheses(Intent data) {
@@ -714,13 +730,16 @@ public class DatumSpeechRecognitionHypothesesFragment extends
          * thought it heard, and then Toast them to the user and say them out
          * loud.
          */
-        ArrayList<String> matches = data
+        mHypotheses = data
                 .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+        mHypothesesConfidences = data
+                .getStringArrayListExtra(RecognizerIntent.EXTRA_CONFIDENCE_SCORES);
 
         if (hypothesis1EditText != null) {
-            if (matches.size() > 0 && matches.get(0) != null
-                    && !"".equals(matches.get(0))) {
-                hypothesis1EditText.setText(matches.get(0));
+            if (mHypotheses.size() > 0 && mHypotheses.get(0) != null
+                    && !"".equals(mHypotheses.get(0))) {
+                hypothesis1EditText.setText(mHypotheses.get(0));
+                setIntentResult();
             } else {
                 // hypothesis1EditText.setVisibility(View.GONE);
             }
@@ -730,58 +749,58 @@ public class DatumSpeechRecognitionHypothesesFragment extends
                     "hypothesis1EditText is null, cant show user results!");
         }
         if (hypothesis2EditText != null) {
-            if (matches.size() > 1 && matches.get(1) != null
-                    && !"".equals(matches.get(1))) {
-                hypothesis2EditText.setText(matches.get(1));
+            if (mHypotheses.size() > 1 && mHypotheses.get(1) != null
+                    && !"".equals(mHypotheses.get(1))) {
+                hypothesis2EditText.setText(mHypotheses.get(1));
             } else {
                 // hypothesis2EditText.setVisibility(View.GONE);
             }
             // hypothesis2EditText.clearFocus();
         }
         if (hypothesis3EditText != null) {
-            if (matches.size() > 2 && matches.get(2) != null
-                    && !"".equals(matches.get(2))) {
-                hypothesis3EditText.setText(matches.get(2));
+            if (mHypotheses.size() > 2 && mHypotheses.get(2) != null
+                    && !"".equals(mHypotheses.get(2))) {
+                hypothesis3EditText.setText(mHypotheses.get(2));
             } else {
                 // hypothesis3EditText.setVisibility(View.GONE);
             }
             // hypothesis3EditText.clearFocus();
         }
         if (hypothesis4EditText != null) {
-            if (matches.size() > 3 && matches.get(3) != null
-                    && !"".equals(matches.get(3))) {
-                hypothesis4EditText.setText(matches.get(3));
+            if (mHypotheses.size() > 3 && mHypotheses.get(3) != null
+                    && !"".equals(mHypotheses.get(3))) {
+                hypothesis4EditText.setText(mHypotheses.get(3));
             } else {
                 // hypothesis4EditText.setVisibility(View.GONE);
             }
             // hypothesis4EditText.clearFocus();
         }
         if (hypothesis5EditText != null) {
-            if (matches.size() > 4 && matches.get(4) != null
-                    && !"".equals(matches.get(4))) {
-                hypothesis5EditText.setText(matches.get(4));
+            if (mHypotheses.size() > 4 && mHypotheses.get(4) != null
+                    && !"".equals(mHypotheses.get(4))) {
+                hypothesis5EditText.setText(mHypotheses.get(4));
             } else {
                 // hypothesis5EditText.setVisibility(View.GONE);
             }
             // hypothesis5EditText.clearFocus();
         }
 
-        if (matches.size() > 0) {
+        if (mHypotheses.size() > 0) {
             this.mHasRecognized = true;
         } else {
             /* make it possible for the user to create a datum anyway. */
             this.mHasRecognized = true;
         }
 
-        if (matches.size() == 1) {
+        if (mHypotheses.size() == 1) {
             // Trigger hypothesis 1 to be the orthography
-            hypothesis1EditText.setText(matches.get(0));
+            hypothesis1EditText.setText(mHypotheses.get(0));
             this.mPerfectMatch = true;
-        } else if (matches.size() > 1) {
+        } else if (mHypotheses.size() > 1) {
             this.mPerfectMatch = false;
         }
-        Log.d(Config.TAG, "showing hypotheses: " + matches.toString());
-        recordUserEvent("recognizedHypotheses", matches.toString());
+        Log.d(Config.TAG, "showing hypotheses: " + mHypotheses.toString());
+        recordUserEvent("recognizedHypotheses", mHypotheses.toString());
     }
 
     @Override
@@ -815,4 +834,33 @@ public class DatumSpeechRecognitionHypothesesFragment extends
 
     }
 
+    /**
+     * Copy first hypothesis to clip board and set as result for activity (if
+     * there was a calling activity)
+     */
+    public void setIntentResult() {
+        Bundle results = new Bundle();
+        String result = getString(R.string.no_recognized_result);
+        if (mHypotheses != null && mHypotheses.size() > 0
+                && mHypotheses.get(0) != null) {
+            result = mHypotheses.get(0);
+            results.putStringArrayList(RecognizerIntent.EXTRA_RESULTS,
+                    mHypotheses);
+            results.putStringArrayList(
+                    RecognizerIntent.EXTRA_CONFIDENCE_SCORES,
+                    mHypothesesConfidences);
+            Toast.makeText(getActivity(),
+                    "Copied " + result + " to your clibboard.",
+                    Toast.LENGTH_LONG).show();
+
+            ClipboardManager clipboard = (ClipboardManager) getActivity()
+                    .getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("recognized", result);
+            clipboard.setPrimaryClip(clip);
+        }
+        results.putString("result", result);
+        Intent returnToCaller = new Intent();
+        returnToCaller.putExtras(results);
+        getActivity().setResult(Activity.RESULT_OK, returnToCaller);
+    }
 }
