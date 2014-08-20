@@ -40,27 +40,28 @@ import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
 public class DatumSpeechRecognitionHypothesesFragment extends
         DatumProductionExperimentFragment {
 
-    private boolean mHasRecognized;
-    private boolean mIsRecognizing;
-    private boolean mPerfectMatch;
+    protected boolean mHasRecognized;
+    protected boolean mIsRecognizing;
+    protected boolean mPerfectMatch;
     protected String mPromptFromCaller;
-    private static final int RETURN_FROM_VOICE_RECOGNITION_REQUEST_CODE = 341;
-    EditText orthographyEditText;
-    EditText hypothesis1EditText;
-    EditText hypothesis2EditText;
-    EditText hypothesis3EditText;
-    EditText hypothesis4EditText;
-    EditText hypothesis5EditText;
-    TableLayout hypothesesArea;
+    protected static final int RETURN_FROM_VOICE_RECOGNITION_REQUEST_CODE = 341;
+    protected EditText orthographyEditText;
+    protected EditText hypothesis1EditText;
+    protected EditText hypothesis2EditText;
+    protected EditText hypothesis3EditText;
+    protected EditText hypothesis4EditText;
+    protected EditText hypothesis5EditText;
+    protected TableLayout hypothesesArea;
     protected long WAIT_TO_RECORD_AFTER_PROMPT_START = 10;
     protected ArrayList<String> mHypotheses;
     protected ArrayList<String> mHypothesesConfidences;
+    protected String mPreviousActivityResult;
 
-    private static final String[] TAGS = new String[] { "WebSearch", "SMS",
+    protected static final String[] TAGS = new String[] { "WebSearch", "SMS",
             "EMail" };
-    private RecognitionReceiver mRecognitionReceiver;
+    protected RecognitionReceiver mRecognitionReceiver;
 
-    private HashMap<String, Integer> captions;
+    protected HashMap<String, Integer> captions;
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -707,19 +708,24 @@ public class DatumSpeechRecognitionHypothesesFragment extends
 
     public void processRecognitionPartialHypothesis(Intent data) {
         hypothesesArea.setVisibility(View.VISIBLE);
-        mHypotheses = data
+        ArrayList<String> partialResults = data
                 .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
         if (hypothesis1EditText != null) {
-            if (mHypotheses.size() > 0 && mHypotheses.get(0) != null) {
-                hypothesis1EditText.setText(mHypotheses.get(0));
-                this.mHasRecognized = true;
+            if (partialResults.size() > 0
+                    && partialResults.get(0) != null
+                    && !"".equals(partialResults.get(0))
+                    && !hypothesis1EditText.getText().equals(
+                            partialResults.get(0))) {
+                hypothesis1EditText.setText(partialResults.get(0));
+                // this.mHasRecognized = true;
             } else {
                 // hypothesis1EditText.setVisibility(View.GONE);
             }
             // hypothesis1EditText.clearFocus();
         }
-        recordUserEvent("recognizedPartialHypotheses", mHypotheses.toString());
+        recordUserEvent("recognizedPartialHypotheses",
+                partialResults.toString());
     }
 
     public void processRecognitionHypotheses(Intent data) {
@@ -727,11 +733,17 @@ public class DatumSpeechRecognitionHypothesesFragment extends
         hypothesesArea.setVisibility(View.VISIBLE);
         /*
          * Populate the wordsList with the String values the recognition engine
-         * thought it heard, and then Toast them to the user and say them out
-         * loud.
+         * thought it heard, and then show them in the UI hypotheses areas
          */
-        mHypotheses = data
+        ArrayList<String> thesesHypotheses = data
                 .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+        if (thesesHypotheses == null || thesesHypotheses.size() == 0
+                || thesesHypotheses.get(0) == null
+                || "".equals(thesesHypotheses.get(0))) {
+            return;
+        }
+        mHypotheses = thesesHypotheses;
+
         mHypothesesConfidences = data
                 .getStringArrayListExtra(RecognizerIntent.EXTRA_CONFIDENCE_SCORES);
 
@@ -792,7 +804,8 @@ public class DatumSpeechRecognitionHypothesesFragment extends
             this.mHasRecognized = true;
         }
 
-        if (mHypotheses.size() == 1) {
+        if (mHypotheses.size() == 1 && mHypotheses.get(0) != null
+                && !"".equals(mHypotheses.get(0))) {
             // Trigger hypothesis 1 to be the orthography
             hypothesis1EditText.setText(mHypotheses.get(0));
             this.mPerfectMatch = true;
@@ -839,26 +852,38 @@ public class DatumSpeechRecognitionHypothesesFragment extends
      * there was a calling activity)
      */
     public void setIntentResult() {
-        Bundle results = new Bundle();
-        String result = getString(R.string.no_recognized_result);
-        if (mHypotheses != null && mHypotheses.size() > 0
-                && mHypotheses.get(0) != null) {
-            result = mHypotheses.get(0);
-            results.putStringArrayList(RecognizerIntent.EXTRA_RESULTS,
-                    mHypotheses);
-            results.putStringArrayList(
-                    RecognizerIntent.EXTRA_CONFIDENCE_SCORES,
-                    mHypothesesConfidences);
-            Toast.makeText(getActivity(),
-                    "Copied " + result + " to your clibboard.",
-                    Toast.LENGTH_LONG).show();
-
-            ClipboardManager clipboard = (ClipboardManager) getActivity()
-                    .getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clip = ClipData.newPlainText("recognized", result);
-            clipboard.setPrimaryClip(clip);
+        if (mHypotheses == null || mHypotheses.size() == 0
+                || mHypotheses.get(0) == null || "".equals(mHypotheses.get(0))) {
+            return;
         }
-        results.putString("result", result);
+
+        String firstGuessOrEditedGuess = mHypotheses.get(0);
+        if (mPreviousActivityResult != null
+                && mPreviousActivityResult.equals(firstGuessOrEditedGuess)) {
+            return;
+        }
+        if (mPreviousActivityResult != null
+                && "".equals(firstGuessOrEditedGuess)) {
+            // Don't use empty message if you already have one
+            return;
+        }
+        mPreviousActivityResult = firstGuessOrEditedGuess;
+
+        Bundle results = new Bundle();
+        results.putStringArrayList(RecognizerIntent.EXTRA_RESULTS, mHypotheses);
+        results.putStringArrayList(RecognizerIntent.EXTRA_CONFIDENCE_SCORES,
+                mHypothesesConfidences);
+
+        ClipboardManager clipboard = (ClipboardManager) getActivity()
+                .getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("recognized",
+                firstGuessOrEditedGuess);
+        clipboard.setPrimaryClip(clip);
+        Toast.makeText(getActivity(),
+                "Copied " + firstGuessOrEditedGuess + " to your clibboard.",
+                Toast.LENGTH_LONG).show();
+
+        results.putString("result", firstGuessOrEditedGuess);
         Intent returnToCaller = new Intent();
         returnToCaller.putExtras(results);
         getActivity().setResult(Activity.RESULT_OK, returnToCaller);
