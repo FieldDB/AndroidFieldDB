@@ -183,8 +183,11 @@ public class PocketSphinxRecognitionService extends Service implements
 
     @Override
     public void onEndOfSpeech() {
-        Log.d(Config.TAG,
-                "   End of speech: " + mPreviousPartialHypotheses.toString());
+        if (mPreviousPartialHypotheses != null) {
+            Log.d(Config.TAG,
+                    "   End of speech: "
+                            + mPreviousPartialHypotheses.toString());
+        }
         onCancel(null);
         // TODO why?
         // if (DIGITS_SEARCH.equals(recognizer.getSearchName())
