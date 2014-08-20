@@ -62,7 +62,9 @@ public class PocketSphinxRecognitionService extends Service implements
     // @Override
     protected void onCancel(Callback arg0) {
         recognizer.stop();
-        broadcast("recognitionCompleted");
+        Hypothesis completedHypoth = new Hypothesis("recognitionCancelled",
+                "cancelled", 0);
+        broadcast(completedHypoth, true);
     }
 
     @Override
@@ -201,49 +203,64 @@ public class PocketSphinxRecognitionService extends Service implements
             return;
         }
 
-        String text = hypothesis.getHypstr();
-        if (text.equals(KEYPHRASE)) {
-            switchSearch(MENU_SEARCH);
-        } else if (text.equals(DIGITS_SEARCH)) {
-            switchSearch(DIGITS_SEARCH);
-        } else if (text.equals(FORECAST_SEARCH)) {
-            switchSearch(FORECAST_SEARCH);
-        } else {
-            if (hypothesis != null) {
-                broadcast(text);
-            }
-        }
+        // if (text.equals(KEYPHRASE)) {
+        // switchSearch(MENU_SEARCH);
+        // } else if (text.equals(DIGITS_SEARCH)) {
+        // switchSearch(DIGITS_SEARCH);
+        // } else if (text.equals(FORECAST_SEARCH)) {
+        // switchSearch(FORECAST_SEARCH);
+        // } else {
+
+        broadcast(hypothesis, false);
+        // }
     }
 
     @Override
     public void onResult(Hypothesis hypothesis) {
         Log.d(Config.TAG, "Hypothesis result recieved");
-        if (hypothesis != null) {
-            broadcast(hypothesis.getHypstr());
-        }
+        broadcast(hypothesis, true);
     }
 
-    public void broadcast(String text) {
+    public void broadcast(Hypothesis hypothesis, boolean completedResult) {
+        if (hypothesis == null) {
+            return;
+        }
+
+        String text = hypothesis.getHypstr();
         if (text == null || "".equals(text)) {
             return;
         }
+
+        ArrayList<String> confidences = new ArrayList<String>();
+        confidences.add(hypothesis.getBestScore() + "");
+
         Intent i = new Intent(Config.INTENT_PARTIAL_SPEECH_RECOGNITION_RESULT);
-        // If the guess is not in the top, insert at the top
-        if (mPreviousPartialHypotheses == null) {
-            mPreviousPartialHypotheses = new ArrayList<String>();
-        }
-        if ("recognitionCompleted".equals(text)) {
+        if ("recognitionCancelled".equals(text)) {
             text = "";
-            i.putExtra(Config.EXTRA_RECOGNITION_COMPLETED, true);
+            completedResult = true;
         }
-        if (mPreviousPartialHypotheses.size() == 0
-                || !mPreviousPartialHypotheses.get(0).equals(text)) {
-            mLastPartialHypothesisChangeTimestamp = System.currentTimeMillis();
-            if (!"".equals(text)) {
-                // mPreviousPartialHypotheses.add(0, text);
-                mPreviousPartialHypotheses.add(text);
+        if (!completedResult) {
+            if (mPreviousPartialHypotheses == null) {
+                mPreviousPartialHypotheses = new ArrayList<String>();
             }
-            Log.d(Config.TAG, "Partial Hypothesis result recieved: " + text);
+            // If the guess is not in the top, append the previous info and
+            // insert
+            // at the top
+
+            mLastPartialHypothesisChangeTimestamp = System.currentTimeMillis();
+            // String newText = "";
+            // if (mPreviousPartialHypotheses.size() > 0
+            // && mPreviousPartialHypotheses.get(0) != null
+            // && !"".equals(mPreviousPartialHypotheses.get(0))) {
+            // newText = mPreviousPartialHypotheses.get(0) + " ";
+            // }
+            // if (!newText.equals(text)) {
+            // newText = newText + text;
+            // }
+            mPreviousPartialHypotheses.add(0, text);
+            // mPreviousPartialHypotheses.add(text);
+
+            Log.d(Config.TAG, "Partial Hypothesis continued: " + text);
             /*
              * If it has been a while since the last hypothesis, send all of
              * them as completed
@@ -269,11 +286,35 @@ public class PocketSphinxRecognitionService extends Service implements
             // };
             // mainHandler.postDelayed(myRunnable, TIME_TO_STOP_LISTENING);
             // }
+            ArrayList<String> partialHypothesis = new ArrayList<String>();
+            partialHypothesis.add(text);
+
+            partialHypothesis.add("");
+            confidences.add(0 + "");
+
+            partialHypothesis.add("");
+            confidences.add(0 + "");
+
+            partialHypothesis.add("");
+            confidences.add(0 + "");
+
+            partialHypothesis.add("");
+            confidences.add(0 + "");
+
+            // partialHypothesis.add(mPreviousPartialHypotheses.toString());
+            i.putStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS,
+                    partialHypothesis);
+        } else {
+            i.putExtra(Config.EXTRA_RECOGNITION_COMPLETED, true);
+            ArrayList<String> completedHypothesis = new ArrayList<String>();
+            completedHypothesis.add(text);
+            i.putStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS,
+                    completedHypothesis);
         }
-        i.putStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS,
-                mPreviousPartialHypotheses);
+
+        i.putStringArrayListExtra(RecognizerIntent.EXTRA_CONFIDENCE_SCORES,
+                confidences);
         getApplication().sendBroadcast(i);
 
     }
-
 }
