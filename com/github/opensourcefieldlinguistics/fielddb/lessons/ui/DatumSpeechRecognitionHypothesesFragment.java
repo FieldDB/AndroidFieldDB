@@ -869,11 +869,6 @@ public class DatumSpeechRecognitionHypothesesFragment extends
         }
         mPreviousActivityResult = firstGuessOrEditedGuess;
 
-        Bundle results = new Bundle();
-        results.putStringArrayList(RecognizerIntent.EXTRA_RESULTS, mHypotheses);
-        results.putStringArrayList(RecognizerIntent.EXTRA_CONFIDENCE_SCORES,
-                mHypothesesConfidences);
-
         ClipboardManager clipboard = (ClipboardManager) getActivity()
                 .getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("recognized",
@@ -883,9 +878,12 @@ public class DatumSpeechRecognitionHypothesesFragment extends
                 "Copied " + firstGuessOrEditedGuess + " to your clibboard.",
                 Toast.LENGTH_LONG).show();
 
-        results.putString("result", firstGuessOrEditedGuess);
         Intent returnToCaller = new Intent();
-        returnToCaller.putExtras(results);
+        returnToCaller.putStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS,
+                mHypotheses);
+        returnToCaller.putStringArrayListExtra(
+                RecognizerIntent.EXTRA_CONFIDENCE_SCORES,
+                mHypothesesConfidences);
         getActivity().setResult(Activity.RESULT_OK, returnToCaller);
     }
 }
