@@ -58,6 +58,7 @@ public class UploadAudioVideoService extends NotifyingIntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		if (Config.D) {
+		    Log.d(Config.TAG, " we are in debug mode, not uploading audio/video file");
 			return;
 		}
 
@@ -67,6 +68,7 @@ public class UploadAudioVideoService extends NotifyingIntentService {
 		NetworkInfo wifi = connManager
 				.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 		if (!wifi.isConnected()) {
+	          Log.d(Config.TAG, " we are not using wifi, not uploading audio/video file");
 			return;
 		}
 

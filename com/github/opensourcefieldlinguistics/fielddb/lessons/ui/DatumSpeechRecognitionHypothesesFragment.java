@@ -832,6 +832,23 @@ public class DatumSpeechRecognitionHypothesesFragment extends
         if (this.mRecognitionReceiver != null && getActivity() != null) {
             getActivity().unregisterReceiver(this.mRecognitionReceiver);
         }
+        if (this.mAudioFiles != null) {
+            String[] files = this.mAudioFiles.split(", ");
+            for (String filename : files) {
+                Log.d(Config.TAG,
+                        "Requesting upload of recognition audio file "
+                                + filename);
+                Intent uploadAudioFile = new Intent(getActivity(),
+                        UploadAudioVideoService.class);
+                uploadAudioFile.setData(Uri.parse(filename));
+                uploadAudioFile.putExtra(Config.EXTRA_PARTICIPANT_ID,
+                        Config.CURRENT_USERNAME);
+                uploadAudioFile.putExtra(
+                        Config.EXTRA_EXPERIMENT_TRIAL_INFORMATION,
+                        mDeviceDetails.getCurrentDeviceDetails());
+                getActivity().startService(uploadAudioFile);
+            }
+        }
         super.onDestroy();
 
     }
@@ -897,8 +914,8 @@ public class DatumSpeechRecognitionHypothesesFragment extends
 
     public void addAudioFile(String filename) {
 
-        String recognizerAudioFileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/"
-                + filename;
+        final String recognizerAudioFileName = Config.DEFAULT_OUTPUT_DIRECTORY
+                + "/" + filename;
 
         String datumAudioFileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/"
                 + mItem.getBaseFilename() + Config.DEFAULT_AUDIO_EXTENSION;
