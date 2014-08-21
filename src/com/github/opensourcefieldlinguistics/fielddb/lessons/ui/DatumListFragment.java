@@ -27,6 +27,7 @@ import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvid
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.georgian.R;
+import com.github.opensourcefieldlinguistics.fielddb.lessons.georgian.BuildConfig;
 
 /**
  * A list fragment representing a list of Datums. This fragment also supports
@@ -250,7 +251,7 @@ public class DatumListFragment extends ListFragment
 				android.R.layout.simple_list_item_activated_1, null, from, to,
 				0);
 		setListAdapter(adapter);
-		ACRA.getErrorReporter().handleException(
+		if (!BuildConfig.DEBUG) ACRA.getErrorReporter().handleException(
 				new Exception("*** User load datum list ***"));
 	}
 
@@ -292,7 +293,7 @@ public class DatumListFragment extends ListFragment
 				if (newDatum != null) {
 					mCallbacks.onItemSelected(newDatum.getLastPathSegment());
 				} else {
-					ACRA.getErrorReporter().handleException(
+					if (!BuildConfig.DEBUG) ACRA.getErrorReporter().handleException(
 							new Exception(
 									"*** Error inserting a datum in DB ***"));
 				}

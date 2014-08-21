@@ -16,10 +16,13 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
+import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -30,8 +33,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.MediaController;
+import android.widget.TextView;
 import android.widget.VideoView;
 import ca.ilanguage.oprime.datacollection.AudioRecorder;
 import ca.ilanguage.oprime.datacollection.TakePicture;
@@ -41,7 +46,9 @@ import ca.ilanguage.oprime.model.DeviceDetails;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
-import com.github.opensourcefieldlinguistics.fielddb.lessons.georgian.R;
+import com.github.opensourcefieldlinguistics.fielddb.service.UploadAudioVideoService;
+import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.BuildConfig;
+import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
 import com.github.opensourcefieldlinguistics.fielddb.model.Datum;
 
 /**
@@ -56,11 +63,13 @@ public class DatumDetailFragment extends Fragment {
 	 */
 	public static final String ARG_ITEM_ID = "item_id";
 
+	public static final String ARG_TOTAL_DATUM_IN_LIST = "total_datum_count_in_list";
+
 	/**
 	 * The content this fragment is presenting.
 	 */
-	private Datum mItem;
-	private Uri mUri;
+	protected Datum mItem;
+	protected Uri mUri;
 	public boolean mTwoPane = false;
 
 	/**
@@ -70,13 +79,22 @@ public class DatumDetailFragment extends Fragment {
 	public DatumDetailFragment() {
 	}
 
-	private String TAG = "FieldDB";
-	private boolean mRecordingAudio = false;
-	private VideoView mVideoView;
-	private ImageView mImageView;
-	private MediaController mMediaController;
+	protected boolean mRecordingAudio = false;
+	protected VideoView mVideoView;
+	protected ImageView mImageView;
+	protected MediaController mMediaController;
+	protected MediaPlayer mAudioPlayer;
 	protected DeviceDetails mDeviceDetails;
 	protected HashMap<String, Integer> mDatumEditCounts;
+	protected ImageButton mSpeechRecognizerFeedback;
+	protected TextView mSpeechRecognizerInstructions;
+	protected boolean isPlaying = false;
+
+	protected ViewPager mDatumPager;
+
+	protected int mLastDatumIndex;
+
+	private String mAudioFileName;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -84,21 +102,23 @@ public class DatumDetailFragment extends Fragment {
 		setHasOptionsMenu(true);
 		if (this.mDeviceDetails == null) {
 			this.mDeviceDetails = new DeviceDetails(getActivity(), Config.D,
-					this.TAG);
+					Config.TAG);
 		}
 
 		if (getArguments().containsKey(ARG_ITEM_ID)) {
 			String id = getArguments().getString(ARG_ITEM_ID);
+			this.mLastDatumIndex = getArguments().getInt(
+					ARG_TOTAL_DATUM_IN_LIST);
 			Log.d(Config.TAG, "Will get id " + id);
 			String selection = null;
 			String[] selectionArgs = null;
 			String sortOrder = null;
 
-			String[] datumProjection = { DatumTable.COLUMN_ORTHOGRAPHY,
-					DatumTable.COLUMN_MORPHEMES, DatumTable.COLUMN_GLOSS,
-					DatumTable.COLUMN_TRANSLATION, DatumTable.COLUMN_CONTEXT,
-					DatumTable.COLUMN_IMAGE_FILES,
-					DatumTable.COLUMN_AUDIO_VIDEO_FILES };
+			String[] datumProjection = {DatumTable.COLUMN_ORTHOGRAPHY,
+					DatumTable.COLUMN_UTTERANCE, DatumTable.COLUMN_MORPHEMES,
+					DatumTable.COLUMN_GLOSS, DatumTable.COLUMN_TRANSLATION,
+					DatumTable.COLUMN_CONTEXT, DatumTable.COLUMN_IMAGE_FILES,
+					DatumTable.COLUMN_AUDIO_VIDEO_FILES, DatumTable.COLUMN_TAGS};
 			mUri = Uri.withAppendedPath(DatumContentProvider.CONTENT_URI, id);
 			CursorLoader cursorLoader = new CursorLoader(getActivity(), mUri,
 					datumProjection, selection, selectionArgs, sortOrder);
@@ -117,17 +137,24 @@ public class DatumDetailFragment extends Fragment {
 								.getColumnIndexOrThrow(DatumTable.COLUMN_TRANSLATION)),
 						cursor.getString(cursor
 								.getColumnIndexOrThrow(DatumTable.COLUMN_CONTEXT)));
+				datum.setId(id);
+				datum.setUtterance(cursor.getString(cursor
+						.getColumnIndexOrThrow(DatumTable.COLUMN_UTTERANCE)));
 				datum.addMediaFiles(cursor.getString(cursor
 						.getColumnIndexOrThrow(DatumTable.COLUMN_IMAGE_FILES)));
-
 				datum.addMediaFiles((cursor.getString(cursor
 						.getColumnIndexOrThrow(DatumTable.COLUMN_AUDIO_VIDEO_FILES))));
+
+				datum.setTagsFromSting(cursor.getString(cursor
+						.getColumnIndexOrThrow(DatumTable.COLUMN_TAGS)));
 				cursor.close();
 
 				mItem = datum;
 				this.recordUserEvent("loadDatum", mUri.getLastPathSegment());
-				ACRA.getErrorReporter().putCustomData("urlString",
-						mUri.toString());
+				if (!BuildConfig.DEBUG)
+					ACRA.getErrorReporter().putCustomData("urlString",
+							mUri.toString());
+
 			}
 
 		}
@@ -138,23 +165,33 @@ public class DatumDetailFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_datum_detail,
 				container, false);
+		if (Config.APP_TYPE.equals("speechrecognition")) {
+			rootView = inflater.inflate(R.layout.fragment_datum_detail_simple,
+					container, false);
+		}
 
 		if (mItem != null) {
+			this.prepareEditTextListeners(rootView);
+			this.prepareVideoAndImages(rootView);
+			this.prepareSpeechRecognitionButton(rootView);
+		}
 
-			final EditText orthographyEditText = ((EditText) rootView
-					.findViewById(R.id.orthography));
+		return rootView;
+	}
+
+	protected void prepareEditTextListeners(View rootView) {
+		final EditText orthographyEditText = ((EditText) rootView
+				.findViewById(R.id.orthography));
+		if (orthographyEditText != null) {
 			orthographyEditText.setText(mItem.getOrthography());
 			orthographyEditText.addTextChangedListener(new TextWatcher() {
-
 				@Override
 				public void afterTextChanged(Editable arg0) {
 				}
-
 				@Override
 				public void beforeTextChanged(CharSequence arg0, int arg1,
 						int arg2, int arg3) {
 				}
-
 				@Override
 				public void onTextChanged(CharSequence arg0, int arg1,
 						int arg2, int arg3) {
@@ -168,21 +205,21 @@ public class DatumDetailFragment extends Fragment {
 					recordUserEvent("editDatum", "orthography");
 				}
 			});
+		}
 
-			final EditText morphemesEditText = ((EditText) rootView
-					.findViewById(R.id.morphemes));
+		final EditText morphemesEditText = ((EditText) rootView
+				.findViewById(R.id.morphemes));
+		if (morphemesEditText != null) {
+
 			morphemesEditText.setText(mItem.getMorphemes());
 			morphemesEditText.addTextChangedListener(new TextWatcher() {
-
 				@Override
 				public void afterTextChanged(Editable arg0) {
 				}
-
 				@Override
 				public void beforeTextChanged(CharSequence arg0, int arg1,
 						int arg2, int arg3) {
 				}
-
 				@Override
 				public void onTextChanged(CharSequence arg0, int arg1,
 						int arg2, int arg3) {
@@ -195,21 +232,20 @@ public class DatumDetailFragment extends Fragment {
 					recordUserEvent("editDatum", "morphemes");
 				}
 			});
+		}
 
-			final EditText glossEditText = ((EditText) rootView
-					.findViewById(R.id.gloss));
+		final EditText glossEditText = ((EditText) rootView
+				.findViewById(R.id.gloss));
+		if (glossEditText != null) {
 			glossEditText.setText(mItem.getGloss());
 			glossEditText.addTextChangedListener(new TextWatcher() {
-
 				@Override
 				public void afterTextChanged(Editable arg0) {
 				}
-
 				@Override
 				public void beforeTextChanged(CharSequence arg0, int arg1,
 						int arg2, int arg3) {
 				}
-
 				@Override
 				public void onTextChanged(CharSequence arg0, int arg1,
 						int arg2, int arg3) {
@@ -222,12 +258,11 @@ public class DatumDetailFragment extends Fragment {
 					recordUserEvent("editDatum", "gloss");
 				}
 			});
+		}
 
-			((EditText) rootView.findViewById(R.id.gloss)).setText(mItem
-					.getGloss());
-
-			final EditText translationEditText = ((EditText) rootView
-					.findViewById(R.id.translation));
+		final EditText translationEditText = ((EditText) rootView
+				.findViewById(R.id.translation));
+		if (translationEditText != null) {
 			translationEditText.setText(mItem.getTranslation());
 			translationEditText.addTextChangedListener(new TextWatcher() {
 
@@ -253,11 +288,11 @@ public class DatumDetailFragment extends Fragment {
 					recordUserEvent("editDatum", "translation");
 				}
 			});
-			((EditText) rootView.findViewById(R.id.translation)).setText(mItem
-					.getTranslation());
+		}
 
-			final EditText contextEditText = ((EditText) rootView
-					.findViewById(R.id.context));
+		final EditText contextEditText = ((EditText) rootView
+				.findViewById(R.id.context));
+		if (contextEditText != null) {
 			contextEditText.setText(mItem.getContext());
 			contextEditText.addTextChangedListener(new TextWatcher() {
 
@@ -279,28 +314,84 @@ public class DatumDetailFragment extends Fragment {
 					values.put(DatumTable.COLUMN_CONTEXT, currentText);
 					getActivity().getContentResolver().update(mUri, values,
 							null, null);
-					recordUserEvent("editDatum", "translation");
+					recordUserEvent("editDatum", "context");
 				}
 			});
-			((EditText) rootView.findViewById(R.id.context)).setText(mItem
-					.getContext());
-			if (mImageView == null) {
-				mImageView = (ImageView) rootView.findViewById(R.id.image_view);
-			}
-			if (mMediaController == null) {
-				mMediaController = new MediaController(getActivity());
-				mMediaController.setAnchorView((VideoView) rootView
-						.findViewById(R.id.video_view));
-				// mMediaController.setPadding(0, 0, 0, 200);
-			}
-			if (mVideoView == null) {
-				mVideoView = (VideoView) rootView.findViewById(R.id.video_view);
-				mVideoView.setMediaController(mMediaController);
-			}
-			this.loadVisuals(false);
 		}
 
-		return rootView;
+		final EditText tagsEditText = ((EditText) rootView
+				.findViewById(R.id.tags));
+		if (tagsEditText != null) {
+			tagsEditText.setText(mItem.getTagsString());
+			tagsEditText.addTextChangedListener(new TextWatcher() {
+
+				@Override
+				public void afterTextChanged(Editable arg0) {
+				}
+
+				@Override
+				public void beforeTextChanged(CharSequence arg0, int arg1,
+						int arg2, int arg3) {
+				}
+
+				@Override
+				public void onTextChanged(CharSequence arg0, int arg1,
+						int arg2, int arg3) {
+					String currentText = tagsEditText.getText().toString();
+					mItem.setTagsFromSting(currentText);
+					ContentValues values = new ContentValues();
+					values.put(DatumTable.COLUMN_TAGS, currentText);
+					getActivity().getContentResolver().update(mUri, values,
+							null, null);
+					recordUserEvent("editDatum", "tags");
+				}
+			});
+		}
+	}
+
+	protected void prepareVideoAndImages(View rootView) {
+		if (mImageView == null) {
+			mImageView = (ImageView) rootView.findViewById(R.id.image_view);
+		}
+		if (mMediaController == null) {
+			mMediaController = new MediaController(getActivity());
+			mMediaController.setAnchorView((VideoView) rootView
+					.findViewById(R.id.video_view));
+			// mMediaController.setPadding(0, 0, 0, 200);
+		}
+		if (mVideoView == null) {
+			mVideoView = (VideoView) rootView.findViewById(R.id.video_view);
+			if (mVideoView != null) {
+				mVideoView.setMediaController(mMediaController);
+			}
+		}
+		this.loadVisuals(false);
+	}
+
+	protected void prepareSpeechRecognitionButton(View rootView) {
+
+		mSpeechRecognizerFeedback = (ImageButton) rootView
+				.findViewById(R.id.speech_recognizer_feedback);
+		if (mSpeechRecognizerFeedback != null) {
+			mSpeechRecognizerFeedback
+					.setImageResource(R.drawable.speech_recognizer_listening);
+			mSpeechRecognizerFeedback
+					.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							toggleAudioRecording(null);
+						}
+					});
+		}
+
+		mSpeechRecognizerInstructions = (TextView) rootView
+				.findViewById(R.id.speech_recognizer_instructions);
+		if (mSpeechRecognizerInstructions != null) {
+			mSpeechRecognizerInstructions.setText("");
+		}
+
+		this.mDatumPager = (ViewPager) getActivity().findViewById(
+				R.id.viewpager);
 	}
 
 	@Override
@@ -326,7 +417,7 @@ public class DatumDetailFragment extends Fragment {
 	 * or changes, you must update the share intent by again calling
 	 * mShareActionProvider.setShareIntent()
 	 */
-	private Intent getDefaultIntent() {
+	protected Intent getDefaultIntent() {
 		Intent intent = new Intent(Intent.ACTION_SEND);
 		intent.setType("image/*");
 		return intent;
@@ -336,72 +427,149 @@ public class DatumDetailFragment extends Fragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// handle item selection
 		switch (item.getItemId()) {
-		case R.id.action_speak:
-			if (!this.mRecordingAudio) {
-				String audioFileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/"
-						+ mItem.getBaseFilename()
-						+ Config.DEFAULT_AUDIO_EXTENSION;
-				Intent intent;
-				intent = new Intent(getActivity(), AudioRecorder.class);
-				intent.putExtra(Config.EXTRA_RESULT_FILENAME, audioFileName);
-				mItem.addAudioFile(audioFileName.replace(
-						Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
-				getActivity().startService(intent);
-				ContentValues values = new ContentValues();
-				values.put(DatumTable.COLUMN_AUDIO_VIDEO_FILES,
-						mItem.getMediaFilesAsCSV(mItem.getAudioVideoFiles()));
-				getActivity().getContentResolver().update(mUri, values, null,
-						null);
-				Log.d(TAG, "Recording audio " + audioFileName);
-				this.mRecordingAudio = true;
-				item.setIcon(R.drawable.ic_action_stop);
-				this.recordUserEvent("captureAudio", audioFileName);
-
-			} else {
-				Intent audio = new Intent(getActivity(), AudioRecorder.class);
-				getActivity().stopService(audio);
-				this.mRecordingAudio = false;
-				item.setIcon(R.drawable.ic_action_mic);
-				this.recordUserEvent("stopAudio", "");
-			}
-			return true;
-		case R.id.action_play:
-			return this.loadMainVideo(true);
-		case R.id.action_videos:
-			return this.captureVideo();
-		case R.id.action_images:
-			return this.captureImage();
-		case R.id.action_delete:
-			return this.delete();
-		default:
-			return super.onOptionsItemSelected(item);
+			case R.id.action_speak :
+				return this.toggleAudioRecording(item);
+			case R.id.action_play :
+				return this.loadMainVideo(true);
+			case R.id.action_videos :
+				return this.captureVideo();
+			case R.id.action_images :
+				return this.captureImage();
+			case R.id.action_delete :
+				return this.delete();
+			default :
+				return super.onOptionsItemSelected(item);
 		}
 	}
 
-	private boolean delete() {
+	public void onToggleAudioRecording(View view) {
+		this.toggleAudioRecording(null);
+	}
+
+	public boolean toggleAudioRecording(MenuItem item) {
+		if (!this.mRecordingAudio) {
+			String audioFileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/"
+					+ mItem.getBaseFilename() + Config.DEFAULT_AUDIO_EXTENSION;
+			this.mAudioFileName = audioFileName;
+			Intent intent;
+			intent = new Intent(getActivity(), AudioRecorder.class);
+			intent.putExtra(Config.EXTRA_RESULT_FILENAME, audioFileName);
+			mItem.addAudioFile(audioFileName.replace(
+					Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
+			getActivity().startService(intent);
+			ContentValues values = new ContentValues();
+			values.put(DatumTable.COLUMN_AUDIO_VIDEO_FILES,
+					mItem.getMediaFilesAsCSV(mItem.getAudioVideoFiles()));
+			getActivity().getContentResolver().update(mUri, values, null, null);
+			Log.d(Config.TAG, "Recording audio " + audioFileName);
+			this.mRecordingAudio = true;
+			if (item != null) {
+				item.setIcon(R.drawable.ic_action_stop);
+			}
+			this.recordUserEvent("captureAudio", audioFileName);
+
+			if (mSpeechRecognizerFeedback != null) {
+				mSpeechRecognizerFeedback
+						.setImageResource(R.drawable.speech_recognizer_recognizing);
+			}
+
+			if (mSpeechRecognizerInstructions != null) {
+				mSpeechRecognizerInstructions.setText("Tap to end");
+			}
+
+		} else {
+			this.turnOffRecorder(item);
+		}
+		return true;
+	}
+	protected boolean turnOffRecorder(MenuItem item) {
+		if (mAudioFileName == null) {
+			return false;
+		}
+		Intent audio = new Intent(getActivity(), AudioRecorder.class);
+		getActivity().stopService(audio);
+		Handler mainHandler = new Handler(getActivity().getMainLooper());
+		Runnable launchUploadAudioService = new Runnable() {
+
+			@Override
+			public void run() {
+				if (getActivity() == null) {
+					return;
+				}
+				Intent uploadAudioFile = new Intent(getActivity(),
+						UploadAudioVideoService.class);
+				uploadAudioFile.setData(Uri.parse(mAudioFileName));
+				uploadAudioFile.putExtra(Config.EXTRA_PARTICIPANT_ID,
+						Config.CURRENT_USERNAME);
+				uploadAudioFile.putExtra(
+						Config.EXTRA_EXPERIMENT_TRIAL_INFORMATION,
+						mDeviceDetails.getCurrentDeviceDetails());
+				getActivity().startService(uploadAudioFile);
+			}
+		};
+		mainHandler.postDelayed(launchUploadAudioService, 1000);
+
+		this.mRecordingAudio = false;
+		if (item != null) {
+			item.setIcon(R.drawable.ic_action_mic);
+		}
+		this.recordUserEvent("stopAudio", this.mAudioFileName);
+
+		if (mSpeechRecognizerFeedback != null) {
+			mSpeechRecognizerFeedback
+					.setImageResource(R.drawable.speech_recognizer_waiting);
+		}
+
+		if (mSpeechRecognizerInstructions != null) {
+			mSpeechRecognizerInstructions.setText("Tap to speak again");
+		}
+		if (Config.APP_TYPE.equals("speechrecognition")) {
+			autoAdvanceAfterRecordingAudio();
+		}
+		return true;
+	}
+
+	protected boolean autoAdvanceAfterRecordingAudio() {
+		if (this.mDatumPager != null) {
+			int currentStimulusIndex = this.mDatumPager.getCurrentItem();
+			if (currentStimulusIndex == this.mLastDatumIndex) {
+				Intent openDataList = new Intent(getActivity(),
+						DatumListActivity.class);
+				startActivity(openDataList);
+			} else {
+				this.mDatumPager.setCurrentItem(this.mDatumPager
+						.getCurrentItem() + 1);
+			}
+		}
+		return true;
+	}
+
+	protected boolean delete() {
 		AlertDialog deleteConfirmationDialog = new AlertDialog.Builder(
 				getActivity())
-				.setTitle("Are you sure?")
+				.setTitle(R.string.are_you_sure)
 				.setMessage(
-						"Are you sure you want to put this "
-								+ Config.USER_FRIENDLY_DATA_NAME
-								+ " in the trash?")
+						getString(R.string.are_you_sure_put_in_trash).replace(
+								"datum", Config.USER_FRIENDLY_DATA_NAME))
+
 				.setPositiveButton(android.R.string.ok,
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog,
 									int which) {
-								getActivity().getContentResolver()
-										.delete(mUri, null, null);
+								getActivity().getContentResolver().delete(mUri,
+										null, null);
 								dialog.dismiss();
-								
-								if(mTwoPane){
-									getActivity().getSupportFragmentManager().popBackStack();
-								}else{
-									NavUtils.navigateUpTo(getActivity(), new Intent(getActivity(),
-											DatumListActivity.class));
+
+								if (mTwoPane) {
+									getActivity().getSupportFragmentManager()
+											.popBackStack();
+								} else {
+									NavUtils.navigateUpTo(getActivity(),
+											new Intent(getActivity(),
+													DatumListActivity.class));
 								}
-								
+
 							}
 						})
 				.setNegativeButton(android.R.string.cancel,
@@ -415,8 +583,7 @@ public class DatumDetailFragment extends Fragment {
 		deleteConfirmationDialog.show();
 		return true;
 	}
-
-	private void loadVisuals(boolean playImmediately) {
+	protected void loadVisuals(boolean playImmediately) {
 		loadMainVideo(playImmediately);
 	}
 
@@ -429,61 +596,86 @@ public class DatumDetailFragment extends Fragment {
 			this.loadMainImage();
 			return false;
 		}
-		mVideoView.setVideoPath(fileName);
-		if (fileName.endsWith(Config.DEFAULT_AUDIO_EXTENSION)) {
-			loadMainImage();
-		} else {
-			int sdk = android.os.Build.VERSION.SDK_INT;
-			if (sdk >= 16) {
-				mVideoView.setBackground(null);
+		if (mVideoView != null) {
+			mVideoView.setVideoPath(fileName);
+			if (fileName.endsWith(Config.DEFAULT_AUDIO_EXTENSION)) {
+				loadMainImage();
 			} else {
-				Log.e(Config.TAG,
-						"Couldnt set the video background. (this might be a kindle)");
-				mImageView.setImageBitmap(null);
-				mImageView.setVisibility(View.VISIBLE);
-				mVideoView.setVisibility(View.GONE);
+				int sdk = android.os.Build.VERSION.SDK_INT;
+				if (sdk >= 16) {
+					mVideoView.setBackground(null);
+				} else {
+					Log.e(Config.TAG,
+							"Couldnt set the video background. (this might be a kindle)");
+					mImageView.setImageBitmap(null);
+					mImageView.setVisibility(View.VISIBLE);
+					mVideoView.setVisibility(View.GONE);
+				}
 			}
-		}
-		if (playNow) {
-			this.recordUserEvent("loadMainVideo", fileName);
+			if (playNow) {
+				this.recordUserEvent("loadMainVideo", fileName);
 
-			mVideoView.start();
-			mMediaController.setPrevNextListeners(new View.OnClickListener() {
+				mVideoView.start();
+				mMediaController.setPrevNextListeners(
+						new View.OnClickListener() {
 
-				@Override
-				public void onClick(View v) {
-					String filename = mItem.getPrevNextMediaFile("audio",
-							mItem.getAudioVideoFiles(), "next");
-					if (filename != null) {
-						mVideoView.stopPlayback();
-						mVideoView.setVideoPath(Config.DEFAULT_OUTPUT_DIRECTORY
-								+ "/" + filename);
-						mVideoView.start();
-					}
-				}
-			}, new View.OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								String filename = mItem.getPrevNextMediaFile(
+										"audio", mItem.getAudioVideoFiles(),
+										"next");
+								if (filename != null) {
+									mVideoView.stopPlayback();
+									mVideoView
+											.setVideoPath(Config.DEFAULT_OUTPUT_DIRECTORY
+													+ "/" + filename);
+									mVideoView.start();
+								}
+							}
+						}, new View.OnClickListener() {
 
-				@Override
-				public void onClick(View v) {
-					String filename = mItem.getPrevNextMediaFile("audio",
-							mItem.getAudioVideoFiles(), "prev");
-					if (filename != null) {
-						mVideoView.stopPlayback();
-						mVideoView.setVideoPath(Config.DEFAULT_OUTPUT_DIRECTORY
-								+ "/" + filename);
-						mVideoView.start();
-					}
-				}
-			});
+							@Override
+							public void onClick(View v) {
+								String filename = mItem.getPrevNextMediaFile(
+										"audio", mItem.getAudioVideoFiles(),
+										"prev");
+								if (filename != null) {
+									mVideoView.stopPlayback();
+									mVideoView
+											.setVideoPath(Config.DEFAULT_OUTPUT_DIRECTORY
+													+ "/" + filename);
+									mVideoView.start();
+								}
+							}
+						});
+			}
+		} else {
+			Log.d(Config.TAG, "Playing audio only (no video)");
+			mAudioPlayer = MediaPlayer.create(
+					getActivity(),
+					Uri.parse("file://" + Config.DEFAULT_OUTPUT_DIRECTORY + "/"
+							+ fileName));
+			mAudioPlayer
+					.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+						@Override
+						public void onPrepared(MediaPlayer mp) {
+							mp.start();
+						}
+					});
 		}
 		return true;
 	}
 
-	@SuppressLint("NewApi")
-	private void loadMainImage() {
+	protected void loadMainImage() {
 		File image = new File(Config.DEFAULT_OUTPUT_DIRECTORY + "/"
 				+ mItem.getMainImageFile());
 		if (!image.exists()) {
+			if (mVideoView != null) {
+				mVideoView.setVisibility(View.GONE);
+			}
+			if (mImageView != null) {
+				mImageView.setVisibility(View.VISIBLE);
+			}
 			return;
 		}
 		Bitmap d = new BitmapDrawable(this.getResources(),
@@ -493,17 +685,17 @@ public class DatumDetailFragment extends Fragment {
 		}
 		int nh = (int) (d.getHeight() * (512.0 / d.getWidth()));
 		Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
-		int sdk = android.os.Build.VERSION.SDK_INT;
-		if (sdk >= 16) {
-			mVideoView
-					.setBackground(new BitmapDrawable(getResources(), scaled));
-		} else {
-			Log.e(Config.TAG,
-					"Couldnt set the video background. (this might be a kindle)");
-			mImageView.setImageBitmap(scaled);
-			mImageView.setVisibility(View.VISIBLE);
-			mVideoView.setVisibility(View.GONE);
-		}
+		// int sdk = android.os.Build.VERSION.SDK_INT;
+		// if (falssdk >= 16) {
+		// mVideoView
+		// .setBackground(new BitmapDrawable(getResources(), scaled));
+		// } else {
+		// Log.e(Config.TAG,
+		// "Couldnt set the video background. (this might be a kindle)");
+		mImageView.setImageBitmap(scaled);
+		mImageView.setVisibility(View.VISIBLE);
+		mVideoView.setVisibility(View.GONE);
+		// }
 
 	}
 
@@ -514,52 +706,54 @@ public class DatumDetailFragment extends Fragment {
 		// }
 		String resultFile;
 		switch (requestCode) {
-		case Config.CODE_EXPERIMENT_COMPLETED:
-			if (data != null && data.hasExtra(Config.EXTRA_RESULT_FILENAME)) {
-				resultFile = data.getExtras().getString(
-						Config.EXTRA_RESULT_FILENAME);
-				if (resultFile != null) {
-					// if (resultFile != null && new File(resultFile).exists())
-					// {
-					if (resultFile.endsWith(Config.DEFAULT_AUDIO_EXTENSION)) {
-						mItem.addAudioFile(resultFile.replace(
-								Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
-					} else {
-						mItem.addVideoFile(resultFile.replace(
-								Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
+			case Config.CODE_EXPERIMENT_COMPLETED :
+				if (data != null && data.hasExtra(Config.EXTRA_RESULT_FILENAME)) {
+					resultFile = data.getExtras().getString(
+							Config.EXTRA_RESULT_FILENAME);
+					if (resultFile != null) {
+						// if (resultFile != null && new
+						// File(resultFile).exists())
+						// {
+						if (resultFile.endsWith(Config.DEFAULT_AUDIO_EXTENSION)) {
+							mItem.addAudioFile(resultFile.replace(
+									Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
+						} else {
+							mItem.addVideoFile(resultFile.replace(
+									Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
+						}
+						ContentValues values = new ContentValues();
+						values.put(DatumTable.COLUMN_AUDIO_VIDEO_FILES, mItem
+								.getMediaFilesAsCSV(mItem.getAudioVideoFiles()));
+						getActivity().getContentResolver().update(mUri, values,
+								null, null);
+						this.loadMainVideo(false);
 					}
-					ContentValues values = new ContentValues();
-					values.put(DatumTable.COLUMN_AUDIO_VIDEO_FILES, mItem
-							.getMediaFilesAsCSV(mItem.getAudioVideoFiles()));
-					getActivity().getContentResolver().update(mUri, values,
-							null, null);
-					this.loadMainVideo(false);
 				}
-			}
-			break;
-		case Config.CODE_PICTURE_TAKEN:
-			if (data != null && data.hasExtra(Config.EXTRA_RESULT_FILENAME)) {
-				resultFile = data.getExtras().getString(
-						Config.EXTRA_RESULT_FILENAME);
-				if (resultFile != null) {
-					// if (resultFile != null && new File(resultFile).exists())
-					// {
-					mItem.addImageFile(resultFile.replace(
-							Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
-					ContentValues values = new ContentValues();
-					values.put(DatumTable.COLUMN_IMAGE_FILES,
-							mItem.getMediaFilesAsCSV(mItem.getImageFiles()));
-					getActivity().getContentResolver().update(mUri, values,
-							null, null);
-					this.loadMainImage();
+				break;
+			case Config.CODE_PICTURE_TAKEN :
+				if (data != null && data.hasExtra(Config.EXTRA_RESULT_FILENAME)) {
+					resultFile = data.getExtras().getString(
+							Config.EXTRA_RESULT_FILENAME);
+					if (resultFile != null) {
+						// if (resultFile != null && new
+						// File(resultFile).exists())
+						// {
+						mItem.addImageFile(resultFile.replace(
+								Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
+						ContentValues values = new ContentValues();
+						values.put(DatumTable.COLUMN_IMAGE_FILES,
+								mItem.getMediaFilesAsCSV(mItem.getImageFiles()));
+						getActivity().getContentResolver().update(mUri, values,
+								null, null);
+						this.loadMainImage();
+					}
 				}
-			}
-			break;
+				break;
 		}
 		super.onActivityResult(requestCode, requestCode, data);
 	}
 
-	private boolean captureVideo() {
+	protected boolean captureVideo() {
 		String videoFileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/"
 				+ mItem.getBaseFilename() + Config.DEFAULT_VIDEO_EXTENSION;
 		Intent intent = new Intent(getActivity(), VideoRecorder.class);
@@ -576,7 +770,7 @@ public class DatumDetailFragment extends Fragment {
 		return true;
 	}
 
-	private boolean captureImage() {
+	protected boolean captureImage() {
 		String imageFileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/"
 				+ mItem.getBaseFilename() + Config.DEFAULT_IMAGE_EXTENSION;
 		Intent intent = new Intent(getActivity(), TakePicture.class);
@@ -601,12 +795,22 @@ public class DatumDetailFragment extends Fragment {
 				it.remove(); // avoids a ConcurrentModificationException
 			}
 			edits = "[" + edits + "]";
+			if (Config.D) {
+				Log.d(Config.TAG, "edits: " + edits);
+			}
 			recordUserEvent("totalDatumEditsOnPause", edits);
 		}
+
+		if (mAudioPlayer != null) {
+			// if (mPrompt.isPlaying()) {
+			// mPrompt.stop();
+			// }
+			mAudioPlayer.release();
+		}
+
 		super.onPause();
 	}
-
-	private void recordUserEvent(String eventType, String eventValue) {
+	protected void recordUserEvent(String eventType, String eventValue) {
 		if ("editDatum".equals(eventType)) {
 			if (this.mDatumEditCounts == null) {
 				this.mDatumEditCounts = new HashMap<String, Integer>();
@@ -618,13 +822,15 @@ public class DatumDetailFragment extends Fragment {
 			this.mDatumEditCounts.put(eventValue, count);
 			return;
 		}
-		ACRA.getErrorReporter().putCustomData("action",
-				"{" + eventType + " : " + eventValue + "}");
-		ACRA.getErrorReporter().putCustomData("androidTimestamp",
-				System.currentTimeMillis() + "");
-		ACRA.getErrorReporter().putCustomData("deviceDetails",
-				this.mDeviceDetails.getCurrentDeviceDetails());
-		ACRA.getErrorReporter().handleException(
-				new Exception("*** User event " + eventType + " ***"));
+		if (!BuildConfig.DEBUG) {
+			ACRA.getErrorReporter().putCustomData("action",
+					"{\"" + eventType + "\" : \"" + eventValue + "\"}");
+			ACRA.getErrorReporter().putCustomData("androidTimestamp",
+					System.currentTimeMillis() + "");
+			ACRA.getErrorReporter().putCustomData("deviceDetails",
+					this.mDeviceDetails.getCurrentDeviceDetails());
+			ACRA.getErrorReporter().handleException(
+					new Exception("*** User event " + eventType + " ***"));
+		}
 	}
 }

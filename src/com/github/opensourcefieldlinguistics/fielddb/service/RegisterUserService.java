@@ -15,7 +15,8 @@ import ca.ilanguage.oprime.model.DeviceDetails;
 
 import com.github.opensourcefieldlinguistics.fielddb.database.FieldDBUserContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
-import com.github.opensourcefieldlinguistics.fielddb.lessons.georgian.R;
+import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.BuildConfig;
+import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
 import com.google.gson.JsonObject;
 
 import android.app.NotificationManager;
@@ -45,17 +46,20 @@ public class RegisterUserService extends NotifyingIntentService {
 		if (Config.D) {
 			Log.d(Config.TAG, "Inside RegisterUserService intent");
 		}
-		ACRA.getErrorReporter().putCustomData("action", "registerUser:::");
-		ACRA.getErrorReporter().putCustomData("urlString",
-				Config.DEFAULT_REGISTER_USER_URL);
+		if (!BuildConfig.DEBUG)
+			ACRA.getErrorReporter().putCustomData("action", "registerUser:::");
+		if (!BuildConfig.DEBUG)
+			ACRA.getErrorReporter().putCustomData("urlString",
+					Config.DEFAULT_REGISTER_USER_URL);
 
 		super.onHandleIntent(intent);
 
 		if (!"".equals(this.userFriendlyErrorMessage)) {
 			this.notifyUser(" " + this.userFriendlyErrorMessage, this.noti,
 					this.notificationId, true);
-			ACRA.getErrorReporter().handleException(
-					new Exception(this.userFriendlyErrorMessage));
+			if (!BuildConfig.DEBUG)
+				ACRA.getErrorReporter().handleException(
+						new Exception(this.userFriendlyErrorMessage));
 			return;
 		}
 
@@ -66,8 +70,9 @@ public class RegisterUserService extends NotifyingIntentService {
 		if (!"".equals(this.userFriendlyErrorMessage)) {
 			this.notifyUser(" " + this.userFriendlyErrorMessage, this.noti,
 					this.notificationId, true);
-			ACRA.getErrorReporter().handleException(
-					new Exception(this.userFriendlyErrorMessage));
+			if (!BuildConfig.DEBUG)
+				ACRA.getErrorReporter().handleException(
+						new Exception(this.userFriendlyErrorMessage));
 			return;
 		}
 
@@ -75,8 +80,9 @@ public class RegisterUserService extends NotifyingIntentService {
 		if (!"".equals(this.userFriendlyErrorMessage)) {
 			this.notifyUser(" " + this.userFriendlyErrorMessage, this.noti,
 					this.notificationId, true);
-			ACRA.getErrorReporter().handleException(
-					new Exception(this.userFriendlyErrorMessage));
+			if (!BuildConfig.DEBUG)
+				ACRA.getErrorReporter().handleException(
+						new Exception(this.userFriendlyErrorMessage));
 			return;
 		}
 
@@ -87,8 +93,9 @@ public class RegisterUserService extends NotifyingIntentService {
 		/* Success: remove the notification */
 		((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
 				.cancel(this.notificationId);
-		ACRA.getErrorReporter().handleException(
-				new Exception("*** Registered user ssucessfully ***"));
+		if (!BuildConfig.DEBUG)
+			ACRA.getErrorReporter().handleException(
+					new Exception("*** Registered user ssucessfully ***"));
 	}
 
 	public String loginUser(String username, String password, String loginUrl) {
@@ -138,20 +145,25 @@ public class RegisterUserService extends NotifyingIntentService {
 	}
 
 	public String registerUsers(Uri uri) {
-		String[] userProjection = { UserTable.COLUMN_REV,
+		String[] userProjection = {UserTable.COLUMN_REV,
 				UserTable.COLUMN_USERNAME, UserTable.COLUMN_FIRSTNAME,
 				UserTable.COLUMN_LASTNAME, UserTable.COLUMN_EMAIL,
 				UserTable.COLUMN_GRAVATAR, UserTable.COLUMN_AFFILIATION,
 				UserTable.COLUMN_RESEARCH_INTEREST,
 				UserTable.COLUMN_DESCRIPTION, UserTable.COLUMN_SUBTITLE,
 				UserTable.COLUMN_GENERATED_PASSWORD,
-				UserTable.COLUMN_APP_VERSIONS_WHEN_MODIFIED };
+				UserTable.COLUMN_APP_VERSIONS_WHEN_MODIFIED};
 		if (uri == null) {
 			uri = FieldDBUserContentProvider.CONTENT_URI;
 		}
 		CursorLoader cursorLoader = new CursorLoader(getApplicationContext(),
 				uri, userProjection, null, null, null);
 		Cursor cursor = cursorLoader.loadInBackground();
+		if (cursor == null) {
+			Log.e(Config.TAG,
+					"There is no user... this is not supposed to happen.");
+			return null;
+		}
 		cursor.moveToFirst();
 		if (cursor.getCount() == 0) {
 			Log.e(Config.TAG,
@@ -197,7 +209,8 @@ public class RegisterUserService extends NotifyingIntentService {
 		cursor.close();
 
 		this.statusMessage = "Registering user " + username;
-		ACRA.getErrorReporter().putCustomData("registerUser", username);
+		if (!BuildConfig.DEBUG)
+			ACRA.getErrorReporter().putCustomData("registerUser", username);
 		String urlStringAuthenticationSession = Config.DEFAULT_REGISTER_USER_URL;
 		URL url;
 		HttpURLConnection urlConnection;
@@ -264,15 +277,15 @@ public class RegisterUserService extends NotifyingIntentService {
 			return null;
 		}
 		String JSONResponse = this.processResponse(url, urlConnection);
+		if (JSONResponse == null) {
+			this.userFriendlyErrorMessage = "Unknown error registering user";
+			return null;
+		}
 		if (JSONResponse.contains("name already exists")) {
 			JSONResponse = this.loginUser(username, generatedPassword,
 					Config.DEFAULT_AUTH_LOGIN_URL);
 		}
 		if (!"".equals(this.userFriendlyErrorMessage)) {
-			return null;
-		}
-		if (JSONResponse == null) {
-			this.userFriendlyErrorMessage = "Unknown error reading sample data from server";
 			return null;
 		}
 		return JSONResponse;

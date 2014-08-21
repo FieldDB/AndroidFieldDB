@@ -44,7 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:hint="Noqata tusunayawanmi"
+                android:hint="@string/orthography"
                 android:inputType="textMultiLine"
                 android:scrollHorizontally="false"
                 android:text=""
@@ -52,49 +52,28 @@
                 android:textSize="25sp" />
 
             <EditText
-                android:id="@+id/morphemes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:hint="noqa-ta tusu-nay-wa-n-mi"
-                android:inputType="textMultiLine"
-                android:scrollHorizontally="false"
-                android:text=""
-                android:textColor="#FFFFFF" />
-
-            <EditText
-                android:id="@+id/gloss"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:hint="I-ACC dance-IMP-wan"
-                android:inputType="textMultiLine"
-                android:scrollHorizontally="false"
-                android:text=""
-                android:textColor="#FFFFFF" />
-
-            <EditText
                 android:id="@+id/translation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:hint="I feel like dancing."
+                android:hint="@string/translation_hint"
                 android:inputType="textMultiLine"
                 android:scrollHorizontally="false"
                 android:text=""
-                android:textColor="#FFFFFF" />
+                android:textColor="#FFFFFF"
+                android:textSize="25sp" />
 
             <EditText
                 android:id="@+id/context"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:hint="(like when you cant keep your feet from tapping)"
+                android:hint="@string/context"
                 android:inputType="textMultiLine"
                 android:scrollHorizontally="false"
                 android:text=""
                 android:textColor="#CCCCCC" />
-            
+
             <EditText
                 android:id="@+id/tags"
                 android:layout_width="wrap_content"

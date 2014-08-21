@@ -8,6 +8,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.Locale;
 
 import org.acra.ACRA;
 import org.acra.ACRAConfiguration;
@@ -16,16 +17,21 @@ import org.acra.annotation.ReportsCrashes;
 import ca.ilanguage.oprime.database.User;
 import ca.ilanguage.oprime.database.UserContentProvider.UserTable;
 
+import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.FieldDBUserContentProvider;
+import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
-import com.github.opensourcefieldlinguistics.fielddb.lessons.georgian.R;
+import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.BuildConfig;
+import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
 import com.github.opensourcefieldlinguistics.fielddb.service.DownloadDatumsService;
+import com.github.opensourcefieldlinguistics.fielddb.service.KartuliSMSCorpusService;
 import com.github.opensourcefieldlinguistics.fielddb.service.RegisterUserService;
 
 import android.app.Application;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -39,8 +45,10 @@ public class FieldDBApplication extends Application {
 	@Override
 	public final void onCreate() {
 		super.onCreate();
+		String language = forceLocale(Config.DATA_IS_ABOUT_LANGUAGE_ISO);
+		Log.d(Config.TAG, "Forced the locale to " + language);
 
-		(new File(Config.DEFAULT_OUTPUT_DIRECTORY)).mkdirs();
+		// (new File(Config.DEFAULT_OUTPUT_DIRECTORY)).mkdirs();
 
 		ACRAConfiguration config = ACRA.getNewDefaultConfig(this);
 		config.setFormUri(Config.ACRA_SERVER_URL);
@@ -90,27 +98,29 @@ public class FieldDBApplication extends Application {
 
 		ACRA.setConfig(config);
 
-		ACRA.init(this);
+		if (!BuildConfig.DEBUG)
+			ACRA.init(this);
 
 		// Get the user from the db
-		String[] userProjection = { UserTable.COLUMN_ID, UserTable.COLUMN_REV,
+		String[] userProjection = {UserTable.COLUMN_ID, UserTable.COLUMN_REV,
 				UserTable.COLUMN_USERNAME, UserTable.COLUMN_FIRSTNAME,
 				UserTable.COLUMN_LASTNAME, UserTable.COLUMN_EMAIL,
 				UserTable.COLUMN_GRAVATAR, UserTable.COLUMN_AFFILIATION,
 				UserTable.COLUMN_RESEARCH_INTEREST,
-				UserTable.COLUMN_DESCRIPTION, UserTable.COLUMN_SUBTITLE };
+				UserTable.COLUMN_DESCRIPTION, UserTable.COLUMN_SUBTITLE};
 		CursorLoader cursorLoader = new CursorLoader(getApplicationContext(),
 				FieldDBUserContentProvider.CONTENT_URI, userProjection, null,
 				null, null);
 		Cursor cursor = cursorLoader.loadInBackground();
 		cursor.moveToFirst();
 		String _id = "";
+		String username = "default";
 		if (cursor.getCount() > 0) {
 			_id = cursor.getString(cursor
 					.getColumnIndexOrThrow(UserTable.COLUMN_ID));
 			String _rev = cursor.getString(cursor
 					.getColumnIndexOrThrow(UserTable.COLUMN_REV));
-			String username = cursor.getString(cursor
+			username = cursor.getString(cursor
 					.getColumnIndexOrThrow(UserTable.COLUMN_USERNAME));
 			String firstname = cursor.getString(cursor
 					.getColumnIndexOrThrow(UserTable.COLUMN_FIRSTNAME));
@@ -132,13 +142,29 @@ public class FieldDBApplication extends Application {
 			mUser = new User(_id, _rev, username, firstname, lastname, email,
 					gravatar, affiliation, researchInterest, description,
 					subtitle, null, actualJSON);
-			ACRA.getErrorReporter().putCustomData("username", username);
+			if (!BuildConfig.DEBUG)
+				ACRA.getErrorReporter().putCustomData("username", username);
+			Config.CURRENT_USERNAME = username;
 		} else {
 			Log.e(Config.TAG,
 					"There is no user... this is a problme the app wont work.");
-			ACRA.getErrorReporter().putCustomData("username", "unknown");
+			if (!BuildConfig.DEBUG)
+				ACRA.getErrorReporter().putCustomData("username", "unknown");
 		}
-		ACRA.getErrorReporter().putCustomData("dbname", Config.DEFAULT_CORPUS);
+		/* Make the default corpus point to the user's own corpus */
+		Config.DEFAULT_CORPUS = Config.DEFAULT_CORPUS.replace("username",
+				username);
+		Config.CURRENT_USERNAME = username;
+		Config.DEFAULT_OUTPUT_DIRECTORY = "/sdcard/"
+				+ Config.DATA_IS_ABOUT_LANGUAGE_NAME_ASCII + "-"
+				+ Config.APP_TYPE + "/" + Config.DEFAULT_CORPUS;
+		(new File(Config.DEFAULT_OUTPUT_DIRECTORY)).mkdirs();
+
+		if (!BuildConfig.DEBUG) {
+			ACRA.getErrorReporter().putCustomData("dbname",
+					Config.DEFAULT_CORPUS);
+		}
+
 		Log.d(Config.TAG, cursor.getString(cursor
 				.getColumnIndexOrThrow(UserTable.COLUMN_USERNAME)));
 		cursor.close();
@@ -152,11 +178,29 @@ public class FieldDBApplication extends Application {
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo wifi = connManager
 				.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-		if (wifi.isConnected()) {
-			Intent updateSamples = new Intent(getApplicationContext(),
-					DownloadDatumsService.class);
-			getApplicationContext().startService(updateSamples);
+		if (Config.APP_TYPE.equals("speechrecognition")) {
+			Log.d(Config.TAG,
+					"Not downloading samples, they are included in the training app");
 
+			String[] datumProjection = {UserTable.COLUMN_ID};
+			CursorLoader loader = new CursorLoader(getApplicationContext(),
+					DatumContentProvider.CONTENT_URI, datumProjection, null,
+					null, null);
+			Cursor datumCursor = loader.loadInBackground();
+			if (datumCursor.getCount() == 0) {
+				getContentResolver().insert(DatumContentProvider.CONTENT_URI,
+						DatumTable.sampleData());
+				Intent updateSMSSamples = new Intent(getApplicationContext(),
+						KartuliSMSCorpusService.class);
+				getApplicationContext().startService(updateSMSSamples);
+			}
+			datumCursor.close();
+		} else {
+			if (wifi.isConnected() || Config.D) {
+				Intent updateSamples = new Intent(getApplicationContext(),
+						DownloadDatumsService.class);
+				getApplicationContext().startService(updateSamples);
+			}
 		}
 		if (mUser.get_rev() == null || "".equals(mUser.get_rev())) {
 			Intent registerUser = new Intent(getApplicationContext(),
@@ -166,5 +210,39 @@ public class FieldDBApplication extends Application {
 			getApplicationContext().startService(registerUser);
 		}
 
+	}
+
+	/**
+	 * Forces the locale for the duration of the app to the language needed for
+	 * that version of the Experiment. It accepts a variable in the form en or
+	 * en-US containing just the language code, or the language code followed by
+	 * a - and the co
+	 * 
+	 * @param lang
+	 * @return
+	 */
+	public String forceLocale(String lang) {
+		if (lang.equals(Locale.getDefault().getLanguage())) {
+			return Locale.getDefault().getDisplayLanguage();
+		}
+		Configuration config = this.getBaseContext().getResources()
+				.getConfiguration();
+		Locale locale;
+		if (lang.contains("-")) {
+			String[] langCountrycode = lang.split("-");
+			locale = new Locale(langCountrycode[0], langCountrycode[1]);
+		} else {
+			locale = new Locale(lang);
+		}
+		Locale.setDefault(locale);
+		config.locale = locale;
+		this.getBaseContext()
+				.getResources()
+				.updateConfiguration(
+						config,
+						this.getBaseContext().getResources()
+								.getDisplayMetrics());
+
+		return Locale.getDefault().getDisplayLanguage();
 	}
 }
