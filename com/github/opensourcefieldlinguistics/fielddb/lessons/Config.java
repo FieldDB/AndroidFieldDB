@@ -13,6 +13,7 @@ public class Config extends ca.ilanguage.oprime.Config {
 	public static String DEFAULT_CORPUS = "username-"
 			+ DATA_IS_ABOUT_LANGUAGE_NAME_ASCII;
 	public static String CURRENT_USERNAME = "default";
+	public static final String DEFAULT_RECOGNIZER_AUDIO_EXTENSION = ".raw";
 	public static final String DEFAULT_DATA_LOGIN = PrivateConstants.DEFAULT_DATA_SERVER_URL
 			+ "/_session";
 	public static final String DEFAULT_AUTH_LOGIN_URL = PrivateConstants.DEFAULT_AUTH_LOGIN_URL;

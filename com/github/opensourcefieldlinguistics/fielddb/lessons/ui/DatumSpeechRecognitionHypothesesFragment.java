@@ -56,6 +56,7 @@ public class DatumSpeechRecognitionHypothesesFragment extends
     protected ArrayList<String> mHypotheses;
     protected ArrayList<String> mHypothesesConfidences;
     protected String mPreviousActivityResult;
+    protected String mAudioFiles;
 
     protected static final String[] TAGS = new String[] { "WebSearch", "SMS",
             "EMail" };
@@ -751,6 +752,7 @@ public class DatumSpeechRecognitionHypothesesFragment extends
             if (mHypotheses.size() > 0 && mHypotheses.get(0) != null
                     && !"".equals(mHypotheses.get(0))) {
                 hypothesis1EditText.setText(mHypotheses.get(0));
+                mItem.setOrthography(mHypotheses.get(0));
                 setIntentResult();
             } else {
                 // hypothesis1EditText.setVisibility(View.GONE);
@@ -837,6 +839,13 @@ public class DatumSpeechRecognitionHypothesesFragment extends
     public class RecognitionReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+
+            String thisResultsAudioFile = intent
+                    .getStringExtra(PocketSphinxRecognitionService.EXTRA_RESULT_AUDIO_FILE);
+            if (thisResultsAudioFile != null) {
+                addAudioFile(thisResultsAudioFile);
+            }
+
             if (intent.getBooleanExtra(Config.EXTRA_RECOGNITION_COMPLETED,
                     false)) {
                 processRecognitionHypotheses(intent);
@@ -868,7 +877,6 @@ public class DatumSpeechRecognitionHypothesesFragment extends
             return;
         }
         mPreviousActivityResult = firstGuessOrEditedGuess;
-
         ClipboardManager clipboard = (ClipboardManager) getActivity()
                 .getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("recognized",
@@ -885,5 +893,44 @@ public class DatumSpeechRecognitionHypothesesFragment extends
                 RecognizerIntent.EXTRA_CONFIDENCE_SCORES,
                 mHypothesesConfidences);
         getActivity().setResult(Activity.RESULT_OK, returnToCaller);
+    }
+
+    public void addAudioFile(String filename) {
+
+        String recognizerAudioFileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/"
+                + filename;
+
+        String datumAudioFileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/"
+                + mItem.getBaseFilename() + Config.DEFAULT_AUDIO_EXTENSION;
+
+        // this.mAudioFileName = recognizerAudioFileName;// should we use this?
+        if (mAudioFiles == null) {
+            mAudioFiles = recognizerAudioFileName;
+        } else {
+            if (mAudioFiles.contains(recognizerAudioFileName)) {
+                Log.d(Config.TAG,
+                        "Already added audio file " + recognizerAudioFileName
+                                + " to the datum " + mItem.getBaseFilename());
+                return;
+            }
+        }
+        mAudioFiles = mAudioFiles + ", " + recognizerAudioFileName;
+        Log.d(Config.TAG, "TODO copy file to datum file name "
+                + datumAudioFileName + " instead original name:"
+                + recognizerAudioFileName);
+
+        mItem.addAudioFile(recognizerAudioFileName.replace(
+                Config.DEFAULT_OUTPUT_DIRECTORY + "/", ""));
+        Log.d(Config.TAG,
+                "Datum now has audio files : "
+                        + mItem.getMediaFilesAsCSV(mItem.getAudioVideoFiles()));
+        ContentValues values = new ContentValues();
+        values.put(DatumTable.COLUMN_AUDIO_VIDEO_FILES,
+                mItem.getMediaFilesAsCSV(mItem.getAudioVideoFiles()));
+        getActivity().getContentResolver().update(mUri, values, null, null);
+
+        Log.d(Config.TAG, "Recorded audio " + recognizerAudioFileName);
+        this.recordUserEvent("captureAudio", recognizerAudioFileName);
+
     }
 }
