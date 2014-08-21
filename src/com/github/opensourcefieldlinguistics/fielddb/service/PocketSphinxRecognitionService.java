@@ -35,6 +35,7 @@ public class PocketSphinxRecognitionService extends Service implements
     public static final String KEYPHRASE = "okay android";
     public static final String LANGUAGE_MODEL_SMS = "recognizesms";
     public static final String LANGUAGE_MODEL_LEGAL_SEARCH = "recognizelegalsearch";
+    public static final String EXTRA_RESULT_AUDIO_FILE = "extra_result_audio_file";
     public static final int TIME_TO_STOP_LISTENING = 1000;
 
     protected ArrayList<String> mPreviousPartialHypotheses;
@@ -234,6 +235,9 @@ public class PocketSphinxRecognitionService extends Service implements
         ArrayList<String> confidences = new ArrayList<String>();
         confidences.add(hypothesis.getBestScore() + "");
 
+        String audioFile = "sync/" + hypothesis.getUttid()
+                + Config.DEFAULT_RECOGNIZER_AUDIO_EXTENSION;
+
         Intent i = new Intent(Config.INTENT_PARTIAL_SPEECH_RECOGNITION_RESULT);
         if ("recognitionCancelled".equals(text)) {
             text = "";
@@ -314,6 +318,9 @@ public class PocketSphinxRecognitionService extends Service implements
 
         i.putStringArrayListExtra(RecognizerIntent.EXTRA_CONFIDENCE_SCORES,
                 confidences);
+        if (!audioFile.contains("cancelled")) {
+            i.putExtra(EXTRA_RESULT_AUDIO_FILE, audioFile);
+        }
         getApplication().sendBroadcast(i);
 
     }
