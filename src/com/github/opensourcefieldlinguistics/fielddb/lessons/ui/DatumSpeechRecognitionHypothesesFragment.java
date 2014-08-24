@@ -1,7 +1,6 @@
 package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -62,7 +61,6 @@ public class DatumSpeechRecognitionHypothesesFragment extends
             "EMail" };
     protected RecognitionReceiver mRecognitionReceiver;
 
-    protected HashMap<String, Integer> captions;
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -89,16 +87,6 @@ public class DatumSpeechRecognitionHypothesesFragment extends
         View rootView = inflater.inflate(
                 R.layout.fragment_datum_speech_recognition_hypotheses,
                 container, false);
-
-        captions = new HashMap<String, Integer>();
-        captions.put(PocketSphinxRecognitionService.KWS_SEARCH,
-                R.string.kws_caption);
-        captions.put(PocketSphinxRecognitionService.MENU_SEARCH,
-                R.string.menu_caption);
-        captions.put(PocketSphinxRecognitionService.DIGITS_SEARCH,
-                R.string.digits_caption);
-        captions.put(PocketSphinxRecognitionService.FORECAST_SEARCH,
-                R.string.forecast_caption);
 
         if (mItem != null) {
             this.prepareEditTextListeners(rootView);
@@ -578,9 +566,7 @@ public class DatumSpeechRecognitionHypothesesFragment extends
                     + mItem.getBaseFilename() + Config.DEFAULT_AUDIO_EXTENSION;
             this.mAudioFileName = audioFileName;
 
-            String caption = getResources().getString(
-                    captions.get(PocketSphinxRecognitionService.KWS_SEARCH));
-            hypothesis5EditText.setText(caption);
+            hypothesis5EditText.setText(getText(R.string.im_listening));
 
             mPromptFromCaller = getActivity().getIntent().getStringExtra(
                     RecognizerIntent.EXTRA_PROMPT);
