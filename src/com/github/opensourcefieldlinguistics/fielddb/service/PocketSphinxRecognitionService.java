@@ -5,6 +5,7 @@ import static edu.cmu.pocketsphinx.SpeechRecognizerSetup.defaultSetup;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 
@@ -139,7 +140,7 @@ public class PocketSphinxRecognitionService extends Service implements
             File modelsDir = new File(assetDir, "models");
             recognizer = defaultSetup()
                     .setAcousticModel(new File(modelsDir, "hmm/en-us-semi"))
-                    .setDictionary(new File(modelsDir, "dict/cmu07a.dic"))
+                    .setDictionary(new File(modelsDir, "dict/sms_corpus.dic"))
                     .setRawLogDir(assetDir).setKeywordThreshold(1e-40f)
                     .getRecognizer();
             recognizer.addListener(this);
@@ -149,7 +150,8 @@ public class PocketSphinxRecognitionService extends Service implements
             // File freeformLanguageModel = new File(modelsDir,
             // "lm/free_form_corpus.dmp");
             recognizer.addNgramSearch(FREEFORM_SPEECH, smsLanguageModel);
-            // File webLanguageModel = new File(modelsDir, "lm/web_search_corpus.dmp");
+            // File webLanguageModel = new File(modelsDir,
+            // "lm/web_search_corpus.dmp");
             recognizer.addNgramSearch(WEB_SEARCH, smsLanguageModel);
             // File legalLanguageModel = new File(modelsDir,
             // "lm/legal_search_corpus.dmp");
@@ -233,6 +235,13 @@ public class PocketSphinxRecognitionService extends Service implements
         if ("recognitionCancelled".equals(text)) {
             text = "";
             completedResult = true;
+        }
+
+        // Make first character upper case, and the rest lower case (this is
+        // because the SMS corpus is uppercase)s
+        if (text.length() > 1) {
+            text = text.substring(0, 1).toUpperCase(Locale.getDefault())
+                    + text.substring(1).toLowerCase(Locale.getDefault());
         }
         if (!completedResult) {
             if (mPreviousPartialHypotheses == null) {
