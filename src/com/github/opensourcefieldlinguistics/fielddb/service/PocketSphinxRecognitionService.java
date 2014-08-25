@@ -160,7 +160,7 @@ public class PocketSphinxRecognitionService extends Service implements
             e.printStackTrace();
             Toast.makeText(
                     getApplicationContext(),
-                    "Your voice model is not ready, using the default recognition for your system.",
+                    "თქვენი sdcard არ არის მზად. Your voice model can't be loaded, please make sure your SDCARD is not in use.",
                     Toast.LENGTH_LONG).show();
             return;
         }
