@@ -117,8 +117,8 @@ public class AudioRecorder extends Service {
 
     String state = Environment.getExternalStorageState();
     if (!Environment.MEDIA_MOUNTED.equals(state)) {
-      Log.d(Config.TAG, "SDCARD was not writeable so refusing to record audio.");
-      return 0;
+      Log.d(Config.TAG, "SDCARD was not mounted: " + state);
+//      return 0;
     }
     this.startForeground(startId, this.mNotification);
     /*
