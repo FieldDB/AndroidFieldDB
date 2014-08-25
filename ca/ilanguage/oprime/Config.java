@@ -36,6 +36,7 @@ public class Config {
 	public static final String EXTRA_OUTPUT_DIR = "outputdir";
 	public static final String EXTRA_PARTICIPANT_ID = "participant";
 	public static final String EXTRA_PLEASE_PREPARE_EXPERIMENT = "pleaseprepareexperiment";
+	public static final String EXTRA_RECOGNITION_COMPLETED = "recognitioncompleted";
 	public static final String EXTRA_RESULT_FILENAME = "resultfilename";
 	public static final String EXTRA_STIMULI = "stimuli";
 	public static final String EXTRA_STIMULI_IMAGE_ID = "stimuliimageid";
@@ -44,9 +45,9 @@ public class Config {
 	public static final String EXTRA_TAG = "tag";
 	public static final String EXTRA_TAKE_PICTURE_AT_END = "takepictureatend";
 	public static final String EXTRA_TWO_PAGE_STORYBOOK = "twopagebook";
-	public static final String EXTRA_USE_FRONT_FACING_CAMERA = "usefrontfacingcamera";
+    public static final String EXTRA_USE_FRONT_FACING_CAMERA = "usefrontfacingcamera";
 
-	public static final String FRENCH = "fr";
+    public static final String FRENCH = "fr";
 
 	/*
 	 * Intents and Extras to call activities and services
@@ -61,7 +62,8 @@ public class Config {
 	public static final String INTENT_START_TWO_IMAGE_SUB_EXPERIMENT = "ca.ilanguage.oprime.intent.action.START_TWO_IMAGE_SUB_EXPERIMENT";
 	public static final String INTENT_START_VIDEO_RECORDING = "ca.ilanguage.oprime.intent.action.START_VIDEO_RECORDING_SERVICE";
 	public static final String INTENT_STOP_AUDIO_RECORDING = "ca.ilanguage.oprime.intent.action.BROADCAST_STOP_AUDIO_RECORDING_SERVICE";
-	public static final String INTENT_STOP_VIDEO_RECORDING = "ca.ilanguage.oprime.intent.action.BROADCAST_STOP_VIDEO_RECORDING_SERVICE";
+    public static final String INTENT_STOP_VIDEO_RECORDING = "ca.ilanguage.oprime.intent.action.BROADCAST_STOP_VIDEO_RECORDING_SERVICE";
+    public static final String INTENT_PARTIAL_SPEECH_RECOGNITION_RESULT = "ca.ilanguage.oprime.intent.action.BROADCAST_PARTIAL_SPEECH_RECOGNITION_RESULT";
 	public static final String INTENT_TAKE_PICTURE = "ca.ilanguage.oprime.intent.action.TAKE_PICTURE";
 
 	
