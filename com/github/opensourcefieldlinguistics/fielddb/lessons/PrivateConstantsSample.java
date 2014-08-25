@@ -28,7 +28,7 @@ public class PrivateConstantsSample {
 	 * keytool -importcert -v -trustcacerts -file ../acorpusserver.crt -alias
 	 * acorpusserver -keystore "sslkeystore.bks" -provider
 	 * org.bouncycastle.jce.provider.BouncyCastleProvider -providerpath
-	 * bcprov-jdk15on-150.jar -storetype BKS -storepass
+	 * bcprov-jdk15on-146.jar -storetype BKS -storepass
 	 * "apasswordforyourkeystore"
 	 */
 	public static final String KEYSTORE_PASS = "apasswordforyourkeystore";
