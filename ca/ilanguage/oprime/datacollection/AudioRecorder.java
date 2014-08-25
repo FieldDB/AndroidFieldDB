@@ -1,4 +1,4 @@
-package ca.ilanguage.oprime.datacollection;
+    package ca.ilanguage.oprime.datacollection;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +16,7 @@ import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 import ca.ilanguage.oprime.Config;
@@ -114,6 +115,11 @@ public class AudioRecorder extends Service {
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
 
+    String state = Environment.getExternalStorageState();
+    if (!Environment.MEDIA_MOUNTED.equals(state)) {
+      Log.d(Config.TAG, "SDCARD was not writeable so refusing to record audio.");
+      return 0;
+    }
     this.startForeground(startId, this.mNotification);
     /*
      * get data from extras bundle, store it in the member variables
@@ -162,10 +168,17 @@ public class AudioRecorder extends Service {
       this.mRecorder.prepare();
       this.mRecorder.start();
     } catch (IllegalStateException e) {
-      Log.d(TAG, "IllegalStateException in audio recorder");
+      Log.d(TAG, "IllegalStateException in starting audio recorder");
     } catch (IOException e) {
-      Log.d(TAG, "IOException in audio recorder");
-    }
+       Log.d(TAG, "IOException in starting audio recorder");
+       e.printStackTrace();
+    } catch (RuntimeException e) {
+       Log.d(TAG, "RuntimeException in starting audio recorder");
+       e.printStackTrace();
+    } catch (Exception e) {
+        Log.d(TAG, "Exception in starting audio recorder");
+        e.printStackTrace();
+     }
 
     // autofilled by eclipsereturn super.onStartCommand(intent, flags, startId);
     // We want this service to continue running until it is explicitly
