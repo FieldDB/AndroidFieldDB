@@ -338,7 +338,9 @@ public class Datum {
 	}
 
 	public void addAudioFile(String audioFileName) {
-		this.audioVideoFiles.add(new AudioVideo(audioFileName));
+        if (!this.audioVideoFiles.contains(audioFileName)) {
+            this.audioVideoFiles.add(new AudioVideo(audioFileName));
+        }
 	}
 
 	public String getMainAudioVideoFile() {
