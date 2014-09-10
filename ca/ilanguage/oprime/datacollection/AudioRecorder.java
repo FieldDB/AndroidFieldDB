@@ -1,4 +1,4 @@
-    package ca.ilanguage.oprime.datacollection;
+package ca.ilanguage.oprime.datacollection;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,10 +15,10 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.media.MediaRecorder;
-import android.net.Uri;
 import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 import ca.ilanguage.oprime.Config;
 import ca.ilanguage.oprime.R;
 
@@ -35,7 +35,7 @@ public class AudioRecorder extends Service {
 
   protected static String     TAG               = "OPrime";
   private RecordingReceiver   mAudioFileUpdateReceiver;
-  private int                 mAuBlogIconId     = android.R.drawable.ic_btn_speak_now;
+  private int                 mAudioIconId      = android.R.drawable.ic_btn_speak_now;
   private String              mAudioResultsFile = "";
   private PendingIntent       mContentIntent;
 
@@ -53,6 +53,7 @@ public class AudioRecorder extends Service {
     return null;
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   public void onCreate() {
     super.onCreate();
@@ -75,16 +76,20 @@ public class AudioRecorder extends Service {
       // http://stackoverflow.com/questions/6391870/how-exactly-to-use-notificiation-builder
       Notification.Builder builder = new Notification.Builder(this.getApplicationContext());
 
-      builder.setContentIntent(this.mContentIntent).setSmallIcon(this.mAuBlogIconId)
-          .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.ic_launcher))
-          .setTicker(res.getString(R.string.app_name)).setWhen(System.currentTimeMillis()).setAutoCancel(true)
-          .setContentTitle(res.getString(R.string.app_name)).setContentText(res.getString(R.string.app_name));
-      this.mNotification = builder.getNotification();
+      builder.setContentIntent(this.mContentIntent).setSmallIcon(this.mAudioIconId)
+          .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.ic_launcher)).setTicker(res.getString(R.string.app_name))
+          .setWhen(System.currentTimeMillis()).setAutoCancel(true).setContentTitle(res.getString(R.string.app_name))
+          .setContentText(res.getString(R.string.app_name));
+      if (sdk >= 16) {
+        this.mNotification = builder.build();
+      } else {
+        /* below sdk 16 use deprecated methods */
+        this.mNotification = builder.getNotification();
+      }
     } else {
-      this.mNotification = new Notification(this.mAuBlogIconId, res.getString(R.string.app_name),
-          System.currentTimeMillis());
-      this.mNotification
-          .setLatestEventInfo(this, res.getString(R.string.app_name), "Recording...", this.mContentIntent);
+      /* below sdk 11 use deprecated methods */
+      this.mNotification = new Notification(this.mAudioIconId, res.getString(R.string.app_name), System.currentTimeMillis());
+      this.mNotification.setLatestEventInfo(this, res.getString(R.string.app_name), "Recording...", this.mContentIntent);
       this.mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
     }
   }
@@ -118,30 +123,28 @@ public class AudioRecorder extends Service {
     String state = Environment.getExternalStorageState();
     if (!Environment.MEDIA_MOUNTED.equals(state)) {
       Log.d(Config.TAG, "SDCARD was not mounted: " + state);
-//      return 0;
+      // return 0;
     }
     this.startForeground(startId, this.mNotification);
-    /*
-     * get data from extras bundle, store it in the member variables
-     */
-    try {
-      this.mAudioResultsFile = intent.getExtras().getString(Config.EXTRA_RESULT_FILENAME);
 
-    } catch (Exception e) {
-      // Toast.makeText(SRTGeneratorActivity.this,
-      // "Error "+e,Toast.LENGTH_LONG).show();
+    /*
+     * Ensure a result file with path is defined and directories exist
+     */
+    if (intent != null && intent.getStringExtra(Config.EXTRA_RESULT_FILENAME) != null) {
+      this.mAudioResultsFile = intent.getStringExtra(Config.EXTRA_RESULT_FILENAME);
     }
-    if (this.mAudioResultsFile == null) {
-      this.mAudioResultsFile = Config.DEFAULT_OUTPUT_DIRECTORY + "/audio/" + System.currentTimeMillis() +  Config.DEFAULT_AUDIO_EXTENSION;
+    if (this.mAudioResultsFile == null || "".equals(this.mAudioResultsFile)) {
+      this.mAudioResultsFile = Config.DEFAULT_OUTPUT_DIRECTORY + "/audio/OPrime_result_file_" + Config.getHumanReadableTimestamp() + "_"
+          + System.currentTimeMillis() + Config.DEFAULT_AUDIO_EXTENSION;
     }
-    this.mAudioResultsFile = this.mAudioResultsFile.replace(Config.DEFAULT_VIDEO_EXTENSION, Config.DEFAULT_AUDIO_EXTENSION);
-    
-    Uri uri = Uri.parse(mAudioResultsFile);
-    String fileName = uri.getLastPathSegment();
-    if(fileName != null){
-    	String parentDir = mAudioResultsFile.replaceAll(fileName+"$", "");
-    	(new File(parentDir)).mkdirs();
-    }
+    /*
+     * In case this is a call from an attempt to video
+     */
+    this.mAudioResultsFile = this.mAudioResultsFile.replace(Config.DEFAULT_VIDEO_EXTENSION, Config.DEFAULT_AUDIO_EXTENSION).replace(
+        Config.DEFAULT_OUTPUT_DIRECTORY + "/video", Config.DEFAULT_OUTPUT_DIRECTORY + "/audio");
+
+    (new File(this.mAudioResultsFile).getParentFile()).mkdirs();
+
     /*
      * turn on the recorder
      */
@@ -170,15 +173,15 @@ public class AudioRecorder extends Service {
     } catch (IllegalStateException e) {
       Log.d(TAG, "IllegalStateException in starting audio recorder");
     } catch (IOException e) {
-       Log.d(TAG, "IOException in starting audio recorder");
-       e.printStackTrace();
+      Log.d(TAG, "IOException in starting audio recorder");
+      e.printStackTrace();
     } catch (RuntimeException e) {
-       Log.d(TAG, "RuntimeException in starting audio recorder");
-       e.printStackTrace();
+      Log.d(TAG, "RuntimeException in starting audio recorder");
+      e.printStackTrace();
     } catch (Exception e) {
-        Log.d(TAG, "Exception in starting audio recorder");
-        e.printStackTrace();
-     }
+      Log.d(TAG, "Exception in starting audio recorder");
+      e.printStackTrace();
+    }
 
     // autofilled by eclipsereturn super.onStartCommand(intent, flags, startId);
     // We want this service to continue running until it is explicitly
@@ -187,7 +190,6 @@ public class AudioRecorder extends Service {
   }
 
   private void saveRecording() {
-    String appendToContent = "";
     if (this.mRecorder != null) {
       /*
        * if the recorder is running, save everything essentially simulating a
@@ -201,9 +203,11 @@ public class AudioRecorder extends Service {
         try {
           this.mRecorder.stop();
           this.mRecorder.release();
+          Toast.makeText(this.getApplicationContext(), "Saving.", Toast.LENGTH_LONG).show();
           Log.d(TAG, "Turned off the audio recorder.");
         } catch (Exception e) {
           // Do nothing
+          e.printStackTrace();
           Log.d(TAG, "There was an error when off the audio recorder.");
         }
         this.mRecorder = null;
@@ -213,7 +217,7 @@ public class AudioRecorder extends Service {
         this.mRecorder.release(); // this is called in the stop save recording
         this.mRecorder = null;
       }
-    } else{
+    } else {
       Log.d(TAG, "The audio recorder was null, didnt turn it off.");
     }
   }
