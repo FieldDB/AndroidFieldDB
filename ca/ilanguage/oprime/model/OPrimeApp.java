@@ -84,16 +84,11 @@ public abstract class OPrimeApp extends Application {
      */
     ArrayList<TwoImageStimulus> twostimuli = new ArrayList<TwoImageStimulus>();
 
-    twostimuli.add(new TwoImageStimulus(R.drawable.androids_experimenter_kids, R.drawable.androids_experimenter_kids,
-        "Begin"));
-    twostimuli.add(new TwoImageStimulus(R.drawable.androids_experimenter_kids, R.drawable.androids_experimenter_kids,
-        "Practice Item 1"));
-    twostimuli.add(new TwoImageStimulus(R.drawable.androids_experimenter_kids, R.drawable.androids_experimenter_kids,
-        "Practice Item 2"));
-    twostimuli.add(new TwoImageStimulus(R.drawable.androids_experimenter_kids, R.drawable.androids_experimenter_kids,
-        "Item 1"));
-    twostimuli.add(new TwoImageStimulus(R.drawable.androids_experimenter_kids, R.drawable.androids_experimenter_kids,
-        "Item 2"));
+    twostimuli.add(new TwoImageStimulus(R.drawable.androids_experimenter_kids, R.drawable.androids_experimenter_kids, "Begin"));
+    twostimuli.add(new TwoImageStimulus(R.drawable.androids_experimenter_kids, R.drawable.androids_experimenter_kids, "Practice Item 1"));
+    twostimuli.add(new TwoImageStimulus(R.drawable.androids_experimenter_kids, R.drawable.androids_experimenter_kids, "Practice Item 2"));
+    twostimuli.add(new TwoImageStimulus(R.drawable.androids_experimenter_kids, R.drawable.androids_experimenter_kids, "Item 1"));
+    twostimuli.add(new TwoImageStimulus(R.drawable.androids_experimenter_kids, R.drawable.androids_experimenter_kids, "Item 2"));
     this.mExperiments.get(this.mCurrentExperiment).getSubExperiments().get(2).setStimuli(stimuli);
     this.mExperiments.get(this.mCurrentExperiment).getSubExperiments().get(1)
         .setIntentToCallThisSubExperiment(Config.INTENT_START_TWO_IMAGE_SUB_EXPERIMENT);
@@ -115,8 +110,8 @@ public abstract class OPrimeApp extends Application {
           .get(this.mCurrentExperiment)
           .getSubExperiments()
           .add(
-              new SubExperimentBlock(subextitle, languagecode, subextitle, null, Config.EMPTYSTRING,
-                  Config.INTENT_START_SUB_EXPERIMENT, true, autoAdvanceStimuliOnTouch));
+              new SubExperimentBlock(subextitle, languagecode, subextitle, null, Config.EMPTYSTRING, Config.INTENT_START_SUB_EXPERIMENT,
+                  true, autoAdvanceStimuliOnTouch));
     }
     this.addStimuli();
     this.mCurrentSubExperiment = 0;
@@ -148,8 +143,7 @@ public abstract class OPrimeApp extends Application {
     }
     Locale.setDefault(locale);
     config.locale = locale;
-    this.getBaseContext().getResources()
-        .updateConfiguration(config, this.getBaseContext().getResources().getDisplayMetrics());
+    this.getBaseContext().getResources().updateConfiguration(config, this.getBaseContext().getResources().getDisplayMetrics());
     this.mLanguage = Locale.getDefault();
 
     return Locale.getDefault().getDisplayLanguage();
@@ -255,8 +249,8 @@ public abstract class OPrimeApp extends Application {
     this.mLanguage = Locale.getDefault();
     // new File(mOutputDir).mkdirs();
     new File(this.mOutputDir + "video/").mkdirs();
-    // new File(mOutputDir + "audio/").mkdirs();
-    new File(this.mOutputDir + "images/").mkdirs();
+    new File(mOutputDir + "audio/").mkdirs();
+    new File(this.mOutputDir + "image/").mkdirs();
     new File(this.mOutputDir + "touchdata/").mkdirs();
 
     if (this.mExperiments == null) {
