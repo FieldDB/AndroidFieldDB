@@ -49,8 +49,7 @@ public class StoryBookSubExperiment extends Activity {
       Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
       b.eraseColor(0xFFFFFFFF);
       Canvas c = new Canvas(b);
-      Drawable d = StoryBookSubExperiment.this.getResources().getDrawable(
-          StoryBookSubExperiment.this.mStimuli.get(index).getImageFileId());
+      Drawable d = StoryBookSubExperiment.this.getResources().getDrawable(StoryBookSubExperiment.this.mStimuli.get(index).getImageFileId());
 
       int margin = StoryBookSubExperiment.this.mBorderSize;
       int border = StoryBookSubExperiment.this.mBorderSize;
@@ -95,15 +94,14 @@ public class StoryBookSubExperiment extends Activity {
       if (StoryBookSubExperiment.this.mCurrentStimuliIndex >= StoryBookSubExperiment.this.mStimuli.size()) {
         return;
       }
-      int audioStimuliResource = StoryBookSubExperiment.this.mStimuli.get(
-          StoryBookSubExperiment.this.mCurrentStimuliIndex).getImageFileId();
+      int audioStimuliResource = StoryBookSubExperiment.this.mStimuli.get(StoryBookSubExperiment.this.mCurrentStimuliIndex)
+          .getImageFileId();
       try {
         Thread.sleep(StoryBookSubExperiment.this.mDelayAudioMilisecondsAfterImageStimuli);
       } catch (InterruptedException e1) {
         e1.printStackTrace();
       }
-      MediaPlayer mediaPlayer = MediaPlayer.create(StoryBookSubExperiment.this.getApplicationContext(),
-          audioStimuliResource);
+      MediaPlayer mediaPlayer = MediaPlayer.create(StoryBookSubExperiment.this.getApplicationContext(), audioStimuliResource);
       if (mediaPlayer == null) {
         Log.d("OPrime", "Problem opening the audio stimuli");
         return;
@@ -136,9 +134,9 @@ public class StoryBookSubExperiment extends Activity {
 
     @Override
     public void recordTouchPoint(Touch touch, int stimuli) {
-        if(stimuli < StoryBookSubExperiment.this.mStimuli.size()){
-            StoryBookSubExperiment.this.mStimuli.get(stimuli).touches.add(touch);
-        }
+      if (stimuli < StoryBookSubExperiment.this.mStimuli.size()) {
+        StoryBookSubExperiment.this.mStimuli.get(stimuli).touches.add(touch);
+      }
       // Toast.makeText(getApplicationContext(), touch.x + ":" + touch.y,
       // Toast.LENGTH_LONG).show();
     }
@@ -188,8 +186,7 @@ public class StoryBookSubExperiment extends Activity {
     Locale locale = new Locale(lang);
     Locale.setDefault(locale);
     config.locale = locale;
-    this.getBaseContext().getResources()
-        .updateConfiguration(config, this.getBaseContext().getResources().getDisplayMetrics());
+    this.getBaseContext().getResources().updateConfiguration(config, this.getBaseContext().getResources().getDisplayMetrics());
     this.language = Locale.getDefault();
 
     return Locale.getDefault().getDisplayLanguage();
@@ -203,20 +200,22 @@ public class StoryBookSubExperiment extends Activity {
      * Prepare Stimuli
      */
     ArrayList<Stimulus> ids = new ArrayList<Stimulus>();
-    ids.add(new Stimulus(R.drawable.androids_experimenter_kids));
-    this.mStimuli = (ArrayList<Stimulus>) this.getIntent().getExtras().getSerializable(Config.EXTRA_STIMULI);
-    this.mShowTwoPageBook = this.getIntent().getExtras().getBoolean(Config.EXTRA_TWO_PAGE_STORYBOOK, false);
+    ids.add(new Stimulus(R.drawable.androids_experimenter_kids, R.raw.pageflip2));
+    this.mStimuli = (ArrayList<Stimulus>) this.getIntent().getSerializableExtra(Config.EXTRA_STIMULI);
+    this.mShowTwoPageBook = this.getIntent().getBooleanExtra(Config.EXTRA_TWO_PAGE_STORYBOOK, false);
     if (this.mStimuli == null) {
       this.mStimuli = ids;
     }
     /*
      * Prepare language of Stimuli
      */
-    String lang = this.getIntent().getExtras().getString(Config.EXTRA_LANGUAGE);
-    if (lang == null) {
-      lang = Config.ENGLISH;
+    String lang = this.getIntent().getStringExtra(Config.EXTRA_LANGUAGE);
+    if (lang == null || "".equals(lang)) {
+      lang = Config.DEFAULT_LANGUAGE;
     }
-    this.forceLocale(lang);
+    if (Locale.getDefault().getLanguage() != lang) {
+      this.forceLocale(lang);
+    }
 
     int index = 0;
     if (this.getLastNonConfigurationInstance() != null) {
@@ -226,6 +225,9 @@ public class StoryBookSubExperiment extends Activity {
     this.mCurlView.setBitmapProvider(new BitmapProvider());
     this.mCurlView.setSizeChangedObserver(new SizeChangedObserver());
     if (this.mShowTwoPageBook) {
+      if (this.mStimuli.size() % 2 == 1) {
+        ids.add(new Stimulus(R.drawable.androids_experimenter_kids, R.raw.pageflip2));
+      }
       this.mCurlView.setCurrentIndex(index + 1);
     } else {
       this.mCurlView.setCurrentIndex(index);

@@ -14,6 +14,7 @@ import ca.ilanguage.oprime.R;
 import ca.ilanguage.oprime.datacollection.AudioRecorder;
 import ca.ilanguage.oprime.datacollection.TakePicture;
 import ca.ilanguage.oprime.datacollection.VideoRecorder;
+import ca.ilanguage.oprime.storybook.StoryBookSubExperiment;
 
 /**
  * An activity representing a list of Experiments. This activity has different
@@ -149,6 +150,11 @@ public class ExperimentListActivity extends FragmentActivity implements Experime
       // Config.DEFAULT_OUTPUT_DIRECTORY + "/audio/" +
       // System.currentTimeMillis()+ ".mp3");
       this.startService(intent);
+
+    } else if ("Storybook".equals(itemSelectedId)) {
+
+      Intent intent = new Intent(this, StoryBookSubExperiment.class);
+      this.startActivityForResult(intent, Config.CODE_EXPERIMENT_COMPLETED);
 
     } else {
       this.beginDataCollection(itemSelectedId);
