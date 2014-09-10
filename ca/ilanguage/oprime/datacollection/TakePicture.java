@@ -93,10 +93,14 @@ public class TakePicture extends Activity {
           File source = new File(sourceImagePath);
           String destinationImagePath = this.mImageFilename;
           (new File(destinationImagePath).getParentFile()).mkdirs();
-          
-          // Calculate the scale based on the given max picture size, if there
+
+          // Calculate the scale based on the given requested max picture size,
+          // if there
           // is one
-          int maxPictureSize = this.getIntent().getExtras().getInt(Config.EXTRA_MAX_PICTURE_SIZE);
+          int maxPictureSize = 0;
+          if (this.getIntent() != null && this.getIntent().getIntExtra(Config.EXTRA_MAX_PICTURE_SIZE, 0) != 0) {
+            maxPictureSize = this.getIntent().getIntExtra(Config.EXTRA_MAX_PICTURE_SIZE, 0);
+          }
           if (maxPictureSize > 0) {
             // Code from:
             // http://stackoverflow.com/questions/477572/android-strange-out-of-memory-issue-while-loading-an-image-to-a-bitmap-object/823966#answer-3549021
@@ -164,9 +168,9 @@ public class TakePicture extends Activity {
           this.finish();
         }
       } catch (Exception e) {
+        e.printStackTrace();
         Toast.makeText(this.getApplicationContext(),
-            "Result picture wasn't copied, its in the Camera folder: " + this.getPath(this.myPicture),
-            Toast.LENGTH_LONG).show();
+            "Result picture wasn't copied, its in the Camera folder: " + this.getPath(this.myPicture), Toast.LENGTH_LONG).show();
       }
 
     }
@@ -178,25 +182,34 @@ public class TakePicture extends Activity {
     this.setContentView(R.layout.fragment_take_picture);
 
     this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-    this.mImageFilename = this.getIntent().getExtras().getString(Config.EXTRA_RESULT_FILENAME);
-    if (this.mImageFilename != null && this.mImageFilename != "") {
-      if (this.mAppearSeamless) {
-        SharedPreferences prefs = this.getSharedPreferences(Config.PREFERENCE_NAME, MODE_PRIVATE);
-        String picture = prefs.getString(Config.PREFERENCE_LAST_PICTURE_TAKEN, "");
-        if (picture == "") {
-          this.captureImage(null);
-        }
+
+    /*
+     * Ensure a result file with path is defined and directories exist
+     */
+    if (this.getIntent() != null && this.getIntent().getStringExtra(Config.EXTRA_RESULT_FILENAME) != null) {
+      this.mImageFilename = this.getIntent().getStringExtra(Config.EXTRA_RESULT_FILENAME);
+    }
+    if (this.mImageFilename == null || "".equals(this.mImageFilename)) {
+      this.mImageFilename = Config.DEFAULT_OUTPUT_DIRECTORY + "/image/OPrime_result_file_" + Config.getHumanReadableTimestamp() + "_" + System.currentTimeMillis()
+          + Config.DEFAULT_IMAGE_EXTENSION;
+    }
+
+    if (this.mAppearSeamless) {
+      SharedPreferences prefs = this.getSharedPreferences(Config.PREFERENCE_NAME, MODE_PRIVATE);
+      String picture = prefs.getString(Config.PREFERENCE_LAST_PICTURE_TAKEN, "");
+      if (picture == "") {
+        this.captureImage(null);
       }
     }
   }
 
   @Override
-protected void onPause() {
-  this.setResult(Activity.RESULT_OK, new Intent().putExtra(Config.EXTRA_RESULT_FILENAME, this.mImageFilename));
-  super.onPause();
-}
+  protected void onPause() {
+    this.setResult(Activity.RESULT_OK, new Intent().putExtra(Config.EXTRA_RESULT_FILENAME, this.mImageFilename));
+    super.onPause();
+  }
 
-@Override
+  @Override
   protected void onDestroy() {
     this.setResult(Activity.RESULT_OK, new Intent().putExtra(Config.EXTRA_RESULT_FILENAME, this.mImageFilename));
     super.onDestroy();
