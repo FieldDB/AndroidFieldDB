@@ -16,7 +16,6 @@ import android.view.SurfaceHolder;
 import android.widget.Toast;
 import ca.ilanguage.oprime.Config;
 
-
 /**
  * Android video recorder with "no" preview (the preview is a 1x1 pixel which
  * simulates an unobtrusive recording led). Based on Pro Android 2 2010 (Hashimi
@@ -203,10 +202,10 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
 
       this.mVideoRecorder.setOutputFile(this.mVideoResultsFile);
       this.mVideoRecorder.setPreviewDisplay(holder.getSurface());
-      
-      try{
+
+      try {
         this.mVideoRecorder.prepare();
-      }catch(Exception e){
+      } catch (Exception e) {
         Log.d(TAG, "There was a problem preparing the video recorder.");
       }
       Thread.sleep(500);
@@ -274,15 +273,22 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
     if (this.D)
       Log.v(TAG, " onPreExecute");
     TAG = Config.TAG;
-    this.mVideoResultsFile = this.mParentUI.getIntent().getExtras().getString(Config.EXTRA_RESULT_FILENAME);
-    if(mVideoResultsFile == null){
-      mVideoResultsFile = Config.DEFAULT_OUTPUT_DIRECTORY + "/video/Unnamed_result_file_" + System.currentTimeMillis()
-          + "_" + Config.DEFAULT_VIDEO_EXTENSION;
+
+    /*
+     * Ensure a result file with path is defined and directories exist
+     */
+    if (this.mParentUI != null && this.mParentUI.getIntent() != null
+        && this.mParentUI.getIntent().getStringExtra(Config.EXTRA_RESULT_FILENAME) != null) {
+      this.mVideoResultsFile = this.mParentUI.getIntent().getStringExtra(Config.EXTRA_RESULT_FILENAME);
     }
-    (new File(mVideoResultsFile).getParentFile()).mkdirs();
-    
+    if (this.mVideoResultsFile == null || "".equals(this.mVideoResultsFile)) {
+      mVideoResultsFile = Config.DEFAULT_OUTPUT_DIRECTORY + "/video/OPrime_result_file_" + Config.getHumanReadableTimestamp() + "_"
+          + System.currentTimeMillis() + Config.DEFAULT_VIDEO_EXTENSION;
+    }
+    (new File(this.mVideoResultsFile).getParentFile()).mkdirs();
+
     if (this.D)
-      Log.d(TAG, "mAudioResultsFile" + this.mVideoResultsFile);
+      Log.d(TAG, "mVideoResultsFile " + this.mVideoResultsFile);
   }
 
   public void setContext(Context mContext) {
