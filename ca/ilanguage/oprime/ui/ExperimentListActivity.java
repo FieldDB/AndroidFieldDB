@@ -52,9 +52,11 @@ public class ExperimentListActivity extends FragmentActivity implements Experime
     intent.putExtra(Config.EXTRA_USE_FRONT_FACING_CAMERA, true);
     intent.putExtra(Config.EXTRA_LANGUAGE, Config.ENGLISH);
     intent.putExtra(Config.EXTRA_PARTICIPANT_ID, "00000");
-    intent.putExtra(Config.EXTRA_OUTPUT_DIR, Config.DEFAULT_OUTPUT_DIRECTORY);
-    intent.putExtra(Config.EXTRA_RESULT_FILENAME,
-        Config.DEFAULT_OUTPUT_DIRECTORY + "/" + id + System.currentTimeMillis() + "_" + ".3gp");
+    // intent.putExtra(Config.EXTRA_OUTPUT_DIR, Config.DEFAULT_OUTPUT_DIRECTORY+
+    // "/video");
+    // intent.putExtra(Config.EXTRA_RESULT_FILENAME,
+    // Config.DEFAULT_OUTPUT_DIRECTORY + "/" + id + System.currentTimeMillis() +
+    // "_" + ".3gp");
     intent.putExtra(Config.EXTRA_EXPERIMENT_TRIAL_INFORMATION,
         "ParticipantID,FirstName,LastName,WorstLanguage,FirstBat,StartTime,EndTime,ExperimenterID");
 
@@ -70,8 +72,7 @@ public class ExperimentListActivity extends FragmentActivity implements Experime
       arguments.putString(ExperimentFragment.ARG_ITEM_ID, id);
       ExperimentFragment fragment = new ExperimentFragment();
       fragment.setArguments(arguments);
-      this.getSupportFragmentManager().beginTransaction().replace(R.id.experiment_detail_container, fragment)
-          .commitAllowingStateLoss();
+      this.getSupportFragmentManager().beginTransaction().replace(R.id.experiment_detail_container, fragment).commitAllowingStateLoss();
     } else {
       // In single-pane mode, simply start the detail activity
       // for the selected item ID.
@@ -114,8 +115,7 @@ public class ExperimentListActivity extends FragmentActivity implements Experime
 
       // In two-pane mode, list items should be given the
       // 'activated' state when touched.
-      ((ExperimentListFragment) this.getSupportFragmentManager().findFragmentById(R.id.experiment_list))
-          .setActivateOnItemClick(true);
+      ((ExperimentListFragment) this.getSupportFragmentManager().findFragmentById(R.id.experiment_list)).setActivateOnItemClick(true);
     }
 
     // TODO: If exposing deep links into your app, handle intents here.
@@ -131,25 +131,27 @@ public class ExperimentListActivity extends FragmentActivity implements Experime
    * that the item with the given ID was selected.
    */
   @Override
-  public void onItemSelected(final String id) {
-    if ("Photo".equals(id)) {
+  public void onItemSelected(final String itemSelectedId) {
+    if ("Photo".equals(itemSelectedId)) {
 
-      new File(Config.DEFAULT_OUTPUT_DIRECTORY + "/image/").mkdirs();
+      // new File(Config.DEFAULT_OUTPUT_DIRECTORY + "/image/").mkdirs();
       Intent intent = new Intent(this, TakePicture.class);
-      intent.putExtra(Config.EXTRA_RESULT_FILENAME,
-          Config.DEFAULT_OUTPUT_DIRECTORY + "/image/" + System.currentTimeMillis() + ".png");
+      // intent.putExtra(Config.EXTRA_RESULT_FILENAME,
+      // Config.DEFAULT_OUTPUT_DIRECTORY + "/image/" +
+      // System.currentTimeMillis() + ".png");
       this.startActivityForResult(intent, Config.CODE_PICTURE_TAKEN);
 
-    }else if ("Audio".equals(id)) {
+    } else if ("Audio".equals(itemSelectedId)) {
 
-      new File(Config.DEFAULT_OUTPUT_DIRECTORY + "/audio/").mkdirs();
+      // new File(Config.DEFAULT_OUTPUT_DIRECTORY + "/audio/").mkdirs();
       Intent intent = new Intent(this, AudioRecorder.class);
-      intent.putExtra(Config.EXTRA_RESULT_FILENAME,
-          Config.DEFAULT_OUTPUT_DIRECTORY + "/audio/" + System.currentTimeMillis()+ ".mp3");
+      // intent.putExtra(Config.EXTRA_RESULT_FILENAME,
+      // Config.DEFAULT_OUTPUT_DIRECTORY + "/audio/" +
+      // System.currentTimeMillis()+ ".mp3");
       this.startService(intent);
-    
+
     } else {
-      this.beginDataCollection(id);
+      this.beginDataCollection(itemSelectedId);
 
       /*
        * Wait two seconds so that the video activity has time to load the
@@ -158,7 +160,7 @@ public class ExperimentListActivity extends FragmentActivity implements Experime
       new Handler().postDelayed(new Runnable() {
         @Override
         public void run() {
-          ExperimentListActivity.this.launchExperiment(id);
+          ExperimentListActivity.this.launchExperiment(itemSelectedId);
         }
       }, 3000);
     }
