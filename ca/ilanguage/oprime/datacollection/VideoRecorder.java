@@ -24,7 +24,8 @@ import android.widget.VideoView;
  * intent.putExtra(Config.EXTRA_PARTICIPANT_ID, "00000");
  * intent.putExtra(Config.EXTRA_OUTPUT_DIR, Config.DEFAULT_OUTPUT_DIRECTORY);
  * intent.putExtra(Config.EXTRA_RESULT_FILENAME, Config.DEFAULT_OUTPUT_DIRECTORY
- * + "/" +id+ System.currentTimeMillis() + "_" + Config.DEFAULT_VIDEO_EXTENSION);
+ * + "/" +id+ System.currentTimeMillis() + "_" +
+ * Config.DEFAULT_VIDEO_EXTENSION);
  * intent.putExtra(Config.EXTRA_EXPERIMENT_TRIAL_INFORMATION,
  * "ParticipantID,FirstName,LastName,WorstLanguage,FirstBat,StartTime,EndTime,ExperimenterID"
  * );
@@ -37,12 +38,13 @@ public class VideoRecorder extends Activity implements SurfaceHolder.Callback {
   protected VideoRecorderAsyncTask mRecordVideoTask;
   protected Boolean                mRecording = false;
   protected VideoStatusReceiver    mVideoStatusReceiver;
+  protected int                    mLayout    = R.layout.fragment_fixation_video_recorder;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    this.setContentView(R.layout.fragment_fixation_video_recorder);
-    
+    this.setContentView(mLayout);
+
     /*
      * Set up the video recording
      */
@@ -73,7 +75,7 @@ public class VideoRecorder extends Activity implements SurfaceHolder.Callback {
     this.mRecordVideoTask.setHolder(holder);
 
     setResult(Activity.RESULT_OK, getIntent());
-    
+
     if (Config.D)
       Log.d(Config.TAG, "Telling recorder asyc to execute. ");
     this.mRecordVideoTask.execute();
@@ -121,8 +123,8 @@ public class VideoRecorder extends Activity implements SurfaceHolder.Callback {
     }
     /* end the audio recording if it was running */
     Intent audio = new Intent(this, AudioRecorder.class);
-	this.stopService(audio);
-	
+    this.stopService(audio);
+
     super.onDestroy();
   }
 
@@ -178,11 +180,11 @@ public class VideoRecorder extends Activity implements SurfaceHolder.Callback {
   public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
     Log.v(Config.TAG, "Width x Height = " + width + "x" + height);
   }
-  
+
   @Override
   public ComponentName startService(Intent service) {
     setResult(Activity.RESULT_OK, service);
-	return super.startService(service);
+    return super.startService(service);
   }
 
 }

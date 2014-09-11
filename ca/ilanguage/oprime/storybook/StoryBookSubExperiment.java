@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -33,10 +32,11 @@ import android.util.Log;
 import android.view.KeyEvent;
 import ca.ilanguage.oprime.Config;
 import ca.ilanguage.oprime.R;
+import ca.ilanguage.oprime.datacollection.VideoRecorder;
 import ca.ilanguage.oprime.model.Stimulus;
 import ca.ilanguage.oprime.model.Touch;
 
-public class StoryBookSubExperiment extends Activity {
+public class StoryBookSubExperiment extends VideoRecorder {
 
   /**
    * Bitmap provider.
@@ -194,8 +194,9 @@ public class StoryBookSubExperiment extends Activity {
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
+//    this.setContentView(R.layout.fragment_page_curl);
+    this.mLayout = R.layout.fragment_page_curl;
     super.onCreate(savedInstanceState);
-    this.setContentView(R.layout.fragment_page_curl);
     /*
      * Prepare Stimuli
      */
