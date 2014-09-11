@@ -30,13 +30,15 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
 import ca.ilanguage.oprime.Config;
 import ca.ilanguage.oprime.R;
 import ca.ilanguage.oprime.datacollection.VideoRecorder;
 import ca.ilanguage.oprime.model.Stimulus;
 import ca.ilanguage.oprime.model.Touch;
 
-public class StoryBookSubExperiment extends VideoRecorder {
+public class StoryBookSubExperiment extends VideoRecorder implements View.OnTouchListener {
 
   /**
    * Bitmap provider.
@@ -224,6 +226,8 @@ public class StoryBookSubExperiment extends VideoRecorder {
     }
     this.mCurlView = (CurlView) this.findViewById(R.id.curl);
     this.mCurlView.setBitmapProvider(new BitmapProvider());
+//    this.setOnTouchListener(this.mCurlView);
+
     this.mCurlView.setSizeChangedObserver(new SizeChangedObserver());
     if (this.mShowTwoPageBook) {
       if (this.mStimuli.size() % 2 == 1) {
@@ -287,6 +291,11 @@ public class StoryBookSubExperiment extends VideoRecorder {
   @Override
   public Object onRetainNonConfigurationInstance() {
     return this.mCurlView.getCurrentIndex();
+  }
+
+  @Override
+  public boolean onTouch(View view, MotionEvent event) {
+    return this.mCurlView.onTouch(view, event);
   }
 
 }
