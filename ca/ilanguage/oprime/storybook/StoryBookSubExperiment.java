@@ -151,20 +151,14 @@ public class StoryBookSubExperiment extends VideoRecorder implements View.OnTouc
     @Override
     public void onSizeChanged(int w, int h) {
       if (w > h && StoryBookSubExperiment.this.mShowTwoPageBook) {
-        StoryBookSubExperiment.this.mCurlView.setViewMode(CurlView.SHOW_TWO_PAGES);
-        StoryBookSubExperiment.this.mCurlView.setMargins(.1f, .05f, .1f, .05f);
       } else {
-        StoryBookSubExperiment.this.mCurlView.setViewMode(CurlView.SHOW_ONE_PAGE);
-        StoryBookSubExperiment.this.mCurlView.setMargins(.1f, .1f, .1f, .1f);
       }
-      StoryBookSubExperiment.this.mCurlView.setMargins(.0f, .0f, .0f, .0f);
 
     }
   }
 
   private Locale              language;
   private int                 mBorderSize                             = 0;
-  private CurlView            mCurlView;
   int                         mCurrentStimuliIndex                    = 0;
   protected int               mDelayAudioMilisecondsAfterImageStimuli = 1000;
 
@@ -196,8 +190,8 @@ public class StoryBookSubExperiment extends VideoRecorder implements View.OnTouc
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
-//    this.setContentView(R.layout.fragment_page_curl);
-    this.mLayout = R.layout.fragment_page_curl;
+    // this.setContentView(R.layout.fragment_page_curl);
+    this.mLayout = R.layout.fragment_storybook;
     super.onCreate(savedInstanceState);
     /*
      * Prepare Stimuli
@@ -224,31 +218,16 @@ public class StoryBookSubExperiment extends VideoRecorder implements View.OnTouc
     if (this.getLastNonConfigurationInstance() != null) {
       index = (Integer) this.getLastNonConfigurationInstance();
     }
-    this.mCurlView = (CurlView) this.findViewById(R.id.curl);
-    this.mCurlView.setBitmapProvider(new BitmapProvider());
-//    this.setOnTouchListener(this.mCurlView);
-
-    this.mCurlView.setSizeChangedObserver(new SizeChangedObserver());
     if (this.mShowTwoPageBook) {
       if (this.mStimuli.size() % 2 == 1) {
         ids.add(new Stimulus(R.drawable.androids_experimenter_kids, R.raw.pageflip2));
       }
-      this.mCurlView.setCurrentIndex(index + 1);
-    } else {
-      this.mCurlView.setCurrentIndex(index);
     }
-    this.mCurlView.setBackgroundColor(0xFF202830);
-    this.mCurlView.setMargins(.0f, .0f, .0f, .0f);
-
     /*
      * Set 1 or 2 page view mode
      */
     if (this.mShowTwoPageBook) {
-      this.mCurlView.setViewMode(CurlView.SHOW_TWO_PAGES);
-      this.mCurlView.setRenderLeftPage(true);
     } else {
-      this.mCurlView.setViewMode(CurlView.SHOW_ONE_PAGE);
-      this.mCurlView.setRenderLeftPage(false);
 
     }
 
@@ -279,23 +258,21 @@ public class StoryBookSubExperiment extends VideoRecorder implements View.OnTouc
   @Override
   public void onPause() {
     super.onPause();
-    this.mCurlView.onPause();
   }
 
   @Override
   public void onResume() {
     super.onResume();
-    this.mCurlView.onResume();
   }
 
   @Override
   public Object onRetainNonConfigurationInstance() {
-    return this.mCurlView.getCurrentIndex();
+    return null;
   }
 
   @Override
   public boolean onTouch(View view, MotionEvent event) {
-    return this.mCurlView.onTouch(view, event);
+    return false;
   }
 
 }
