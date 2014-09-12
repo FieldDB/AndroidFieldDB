@@ -40,122 +40,98 @@ import ca.ilanguage.oprime.model.Touch;
 
 public class StoryBookSubExperiment extends VideoRecorder implements View.OnTouchListener {
 
-  /**
-   * Bitmap provider.
-   */
-  private class BitmapProvider implements CurlView.BitmapProvider {
+  public Bitmap getBitmap(int width, int height, int index) {
 
-    @Override
-    public Bitmap getBitmap(int width, int height, int index) {
+    Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+    b.eraseColor(0xFFFFFFFF);
+    Canvas c = new Canvas(b);
+    Drawable d = StoryBookSubExperiment.this.getResources().getDrawable(StoryBookSubExperiment.this.mStimuli.get(index).getImageFileId());
 
-      Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-      b.eraseColor(0xFFFFFFFF);
-      Canvas c = new Canvas(b);
-      Drawable d = StoryBookSubExperiment.this.getResources().getDrawable(StoryBookSubExperiment.this.mStimuli.get(index).getImageFileId());
+    int margin = StoryBookSubExperiment.this.mBorderSize;
+    int border = StoryBookSubExperiment.this.mBorderSize;
+    Rect r = new Rect(margin, margin, width - margin, height - margin);
 
-      int margin = StoryBookSubExperiment.this.mBorderSize;
-      int border = StoryBookSubExperiment.this.mBorderSize;
-      Rect r = new Rect(margin, margin, width - margin, height - margin);
-
-      int imageWidth = r.width() - (border * 2);
-      int imageHeight = imageWidth * d.getIntrinsicHeight() / d.getIntrinsicWidth();
-      if (imageHeight > r.height() - (border * 2)) {
-        imageHeight = r.height() - (border * 2);
-        imageWidth = imageHeight * d.getIntrinsicWidth() / d.getIntrinsicHeight();
-      }
-
-      r.left += ((r.width() - imageWidth) / 2) - border;
-      r.right = r.left + imageWidth + border + border;
-      r.top += ((r.height() - imageHeight) / 2) - border;
-      r.bottom = r.top + imageHeight + border + border;
-
-      // Paint p = new Paint();
-      // p.setColor(0xFFC0C0C0);
-      // c.drawRect(r, p);
-      // p.setColor(0xFF0000C0);
-      // c.drawText(""+mStimuli.get(index).getLabel(), 50, 40, p);
-
-      r.left += border;
-      r.right -= border;
-      r.top += border;
-      r.bottom -= border;
-
-      d.setBounds(r);
-      d.draw(c);
-
-      return b;
+    int imageWidth = r.width() - (border * 2);
+    int imageHeight = imageWidth * d.getIntrinsicHeight() / d.getIntrinsicWidth();
+    if (imageHeight > r.height() - (border * 2)) {
+      imageHeight = r.height() - (border * 2);
+      imageWidth = imageHeight * d.getIntrinsicWidth() / d.getIntrinsicHeight();
     }
 
-    @Override
-    public int getBitmapCount() {
-      return StoryBookSubExperiment.this.mStimuli.size();
-    }
+    r.left += ((r.width() - imageWidth) / 2) - border;
+    r.right = r.left + imageWidth + border + border;
+    r.top += ((r.height() - imageHeight) / 2) - border;
+    r.bottom = r.top + imageHeight + border + border;
 
-    @Override
-    public void playAudioStimuli() {
-      if (StoryBookSubExperiment.this.mCurrentStimuliIndex >= StoryBookSubExperiment.this.mStimuli.size()) {
-        return;
-      }
-      int audioStimuliResource = StoryBookSubExperiment.this.mStimuli.get(StoryBookSubExperiment.this.mCurrentStimuliIndex)
-          .getImageFileId();
-      try {
-        Thread.sleep(StoryBookSubExperiment.this.mDelayAudioMilisecondsAfterImageStimuli);
-      } catch (InterruptedException e1) {
-        e1.printStackTrace();
-      }
-      MediaPlayer mediaPlayer = MediaPlayer.create(StoryBookSubExperiment.this.getApplicationContext(), audioStimuliResource);
-      if (mediaPlayer == null) {
-        Log.d("OPrime", "Problem opening the audio stimuli");
-        return;
-      }
-      try {
-        mediaPlayer.prepare();
-      } catch (IllegalStateException e) {
-        e.printStackTrace();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      mediaPlayer.start();
-      StoryBookSubExperiment.this.mCurrentStimuliIndex++;
-    }
+    // Paint p = new Paint();
+    // p.setColor(0xFFC0C0C0);
+    // c.drawRect(r, p);
+    // p.setColor(0xFF0000C0);
+    // c.drawText(""+mStimuli.get(index).getLabel(), 50, 40, p);
 
-    @Override
-    public void playSound() {
-      MediaPlayer mediaPlayer = MediaPlayer.create(StoryBookSubExperiment.this.getApplicationContext(), R.raw.ploep);
-      try {
-        mediaPlayer.prepare();
-      } catch (IllegalStateException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-      mediaPlayer.start();
-    }
+    r.left += border;
+    r.right -= border;
+    r.top += border;
+    r.bottom -= border;
 
-    @Override
-    public void recordTouchPoint(Touch touch, int stimuli) {
-      if (stimuli < StoryBookSubExperiment.this.mStimuli.size()) {
-        StoryBookSubExperiment.this.mStimuli.get(stimuli).touches.add(touch);
-      }
-      // Toast.makeText(getApplicationContext(), touch.x + ":" + touch.y,
-      // Toast.LENGTH_LONG).show();
-    }
+    d.setBounds(r);
+    d.draw(c);
+
+    return b;
   }
 
-  /**
-   * CurlView size changed observer.
-   */
-  private class SizeChangedObserver implements CurlView.SizeChangedObserver {
-    @Override
-    public void onSizeChanged(int w, int h) {
-      if (w > h && StoryBookSubExperiment.this.mShowTwoPageBook) {
-      } else {
-      }
-
-    }
+  public int getBitmapCount() {
+    return StoryBookSubExperiment.this.mStimuli.size();
   }
+
+  public void playAudioStimuli() {
+    if (StoryBookSubExperiment.this.mCurrentStimuliIndex >= StoryBookSubExperiment.this.mStimuli.size()) {
+      return;
+    }
+    int audioStimuliResource = StoryBookSubExperiment.this.mStimuli.get(StoryBookSubExperiment.this.mCurrentStimuliIndex).getImageFileId();
+    try {
+      Thread.sleep(StoryBookSubExperiment.this.mDelayAudioMilisecondsAfterImageStimuli);
+    } catch (InterruptedException e1) {
+      e1.printStackTrace();
+    }
+    MediaPlayer mediaPlayer = MediaPlayer.create(StoryBookSubExperiment.this.getApplicationContext(), audioStimuliResource);
+    if (mediaPlayer == null) {
+      Log.d("OPrime", "Problem opening the audio stimuli");
+      return;
+    }
+    try {
+      mediaPlayer.prepare();
+    } catch (IllegalStateException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    mediaPlayer.start();
+    StoryBookSubExperiment.this.mCurrentStimuliIndex++;
+  }
+
+  public void playSound() {
+    MediaPlayer mediaPlayer = MediaPlayer.create(StoryBookSubExperiment.this.getApplicationContext(), R.raw.ploep);
+    try {
+      mediaPlayer.prepare();
+    } catch (IllegalStateException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    mediaPlayer.start();
+  }
+
+  public void recordTouchPoint(Touch touch, int stimuli) {
+    if (stimuli < StoryBookSubExperiment.this.mStimuli.size()) {
+      StoryBookSubExperiment.this.mStimuli.get(stimuli).touches.add(touch);
+    }
+    // Toast.makeText(getApplicationContext(), touch.x + ":" + touch.y,
+    // Toast.LENGTH_LONG).show();
+  }
+
 
   private Locale              language;
   private int                 mBorderSize                             = 0;
