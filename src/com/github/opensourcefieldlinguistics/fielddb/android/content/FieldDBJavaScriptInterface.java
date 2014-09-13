@@ -1,12 +1,12 @@
 package com.github.opensourcefieldlinguistics.fielddb.android.content;
 
 import com.github.opensourcefieldlinguistics.fielddb.android.activity.FieldDBActivity;
+import com.github.opensourcefieldlinguistics.javascript.HTML5ReplicatingActivity;
+import com.github.opensourcefieldlinguistics.javascript.ReplicatingJavaScriptInterface;
 
 import android.content.Context;
 import ca.ilanguage.oprime.activity.HTML5Activity;
 import ca.ilanguage.oprime.content.NonObfuscateable;
-import ca.ilanguage.oprime.offline.activity.HTML5ReplicatingActivity;
-import ca.ilanguage.oprime.offline.content.ReplicatingJavaScriptInterface;
 
 public class FieldDBJavaScriptInterface extends ReplicatingJavaScriptInterface implements
     NonObfuscateable {

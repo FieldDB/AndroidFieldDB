@@ -1,8 +1,8 @@
 package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
 
-import ca.ilanguage.oprime.Config;
-import ca.ilanguage.oprime.datacollection.AudioRecorder;
 
+import com.github.opensourcefieldlinguistics.datacollection.AudioRecorder;
+import com.github.opensourcefieldlinguistics.fielddb.Config;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
 import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;

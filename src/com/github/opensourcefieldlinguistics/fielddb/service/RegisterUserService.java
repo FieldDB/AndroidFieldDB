@@ -9,11 +9,11 @@ import java.net.URL;
 
 import org.acra.ACRA;
 
-import ca.ilanguage.oprime.database.UserContentProvider.UserTable;
-import ca.ilanguage.oprime.datacollection.NotifyingIntentService;
-import ca.ilanguage.oprime.model.DeviceDetails;
 
+import com.github.opensourcefieldlinguistics.datacollection.DeviceDetails;
+import com.github.opensourcefieldlinguistics.datacollection.NotifyingIntentService;
 import com.github.opensourcefieldlinguistics.fielddb.database.FieldDBUserContentProvider;
+import com.github.opensourcefieldlinguistics.fielddb.database.UserContentProvider.UserTable;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.BuildConfig;
 import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;

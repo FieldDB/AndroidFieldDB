@@ -7,10 +7,10 @@ import android.util.Log;
 import android.view.Menu;
 
 import ca.ilanguage.oprime.content.JavaScriptInterface;
-import ca.ilanguage.oprime.offline.activity.HTML5ReplicatingActivity;
 
 import com.github.opensourcefieldlinguistics.fielddb.android.content.FieldDBApp;
 import com.github.opensourcefieldlinguistics.fielddb.android.content.FieldDBJavaScriptInterface;
+import com.github.opensourcefieldlinguistics.javascript.HTML5ReplicatingActivity;
 
 public class FieldDBActivity extends HTML5ReplicatingActivity {
   public static final String PREFERENCE_NAME = "fielddbapppreferences";

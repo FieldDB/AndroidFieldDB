@@ -3,7 +3,6 @@ package com.github.opensourcefieldlinguistics.fielddb.database;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import ca.ilanguage.oprime.database.OPrimeTable;
 
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 import com.github.opensourcefieldlinguistics.fielddb.service.DownloadDatumsService;

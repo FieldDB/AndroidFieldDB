@@ -9,7 +9,7 @@
     <string name="are_you_sure_put_in_trash">Are you sure you want to put this datum in the trash?</string>
 
     <!-- Recognition prompts -->
-    <string name="im_listening">I'm listening</string>
+    <string name="im_listening">I\'m listening</string>
     <string name="i_might_have_heard">I might have heard: </string>
     <string name="or_maybe">Or maybe this: </string>
     <string name="there_were_others">. I\'m pretty funny, ey? There were some other options, but I think I\'ll stop there. </string>

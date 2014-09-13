@@ -28,8 +28,8 @@ import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
-import ca.ilanguage.oprime.datacollection.NotifyingIntentService;
 
+import com.github.opensourcefieldlinguistics.datacollection.NotifyingIntentService;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.PrivateConstants;
 import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.BuildConfig;

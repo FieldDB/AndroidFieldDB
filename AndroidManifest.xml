@@ -71,17 +71,17 @@
                 android:value=".DatumListActivity" />
         </activity>
         <activity
-            android:name="ca.ilanguage.oprime.datacollection.VideoRecorder"
+            android:name="com.github.opensourcefieldlinguistics.datacollection.VideoRecorder"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="ca.ilanguage.oprime.datacollection.TakePicture"
+        com.github.opensourcefieldlinguistics.datacollection.TakePictureection.TakePicture"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name" >
         </activity>
 
-        <service android:name="ca.ilanguage.oprime.datacollection.AudioRecorder" >
+        <servcom.github.opensourcefieldlinguistics.datacollection.AudioRecordertion.AudioRecorder" >
         </service>
         <service android:name="com.github.opensourcefieldlinguistics.fielddb.service.DownloadDatumsService" >
         </service>

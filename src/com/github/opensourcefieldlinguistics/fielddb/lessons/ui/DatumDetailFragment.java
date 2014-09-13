@@ -38,11 +38,11 @@ import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
-import ca.ilanguage.oprime.datacollection.AudioRecorder;
-import ca.ilanguage.oprime.datacollection.TakePicture;
-import ca.ilanguage.oprime.datacollection.VideoRecorder;
-import ca.ilanguage.oprime.model.DeviceDetails;
 
+import com.github.opensourcefieldlinguistics.datacollection.AudioRecorder;
+import com.github.opensourcefieldlinguistics.datacollection.DeviceDetails;
+import com.github.opensourcefieldlinguistics.datacollection.TakePicture;
+import com.github.opensourcefieldlinguistics.datacollection.VideoRecorder;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;

@@ -14,12 +14,12 @@ import org.acra.ACRA;
 import org.acra.ACRAConfiguration;
 import org.acra.annotation.ReportsCrashes;
 
-import ca.ilanguage.oprime.database.User;
-import ca.ilanguage.oprime.database.UserContentProvider.UserTable;
 
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.FieldDBUserContentProvider;
+import com.github.opensourcefieldlinguistics.fielddb.database.User;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
+import com.github.opensourcefieldlinguistics.fielddb.database.UserContentProvider.UserTable;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.BuildConfig;
 import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;

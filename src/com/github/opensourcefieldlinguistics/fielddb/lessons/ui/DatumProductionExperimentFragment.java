@@ -16,8 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.ImageView;
-import ca.ilanguage.oprime.Config;
 
+import com.github.opensourcefieldlinguistics.fielddb.Config;
 import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
 
 public class DatumProductionExperimentFragment extends DatumDetailFragment {

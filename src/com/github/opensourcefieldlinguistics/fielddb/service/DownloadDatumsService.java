@@ -12,8 +12,8 @@ import java.util.ArrayList;
 
 import org.acra.ACRA;
 
-import ca.ilanguage.oprime.datacollection.NotifyingIntentService;
 
+import com.github.opensourcefieldlinguistics.datacollection.NotifyingIntentService;
 import com.github.opensourcefieldlinguistics.fielddb.database.AudioVideoContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.AudioVideoContentProvider.AudioVideoTable;
