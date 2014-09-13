@@ -35,7 +35,7 @@
             android:contentDescription="Fixation image"
             android:layout_weight=".5"
             android:gravity="center"
-            android:src="@drawable/androids_experimenter_kids" />
+            android:src="@drawable/speech_bubbles" />
     </TableRow>
 
 </TableLayout>
