@@ -1,0 +1,41 @@
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tableLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center"
+    android:stretchColumns="field" >
+
+    <TableRow
+        android:id="@+id/tableRow1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:gravity="center_horizontal" >
+
+       
+        <Button
+            android:id="@+id/stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stop"
+            android:onClick="stop" >
+        </Button>
+
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow2"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <ImageView
+            android:id="@+id/onlyimage"
+            android:layout_width="0px"
+            android:layout_height="fill_parent"
+            android:contentDescription="Fixation image"
+            android:layout_weight=".5"
+            android:gravity="center"
+            android:src="@drawable/androids_experimenter_kids" />
+    </TableRow>
+
+</TableLayout>

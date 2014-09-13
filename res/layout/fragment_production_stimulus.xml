@@ -1,0 +1,91 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffffff" >
+
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="This is the main image representing this example."
+        android:gravity="center"
+        android:src="@drawable/ic_launcher" />
+
+    <VideoView
+        android:id="@+id/video_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:background="@drawable/ic_launcher"
+        android:gravity="center"
+        android:visibility="gone" />
+
+    <ScrollView
+        android:id="@+id/video_controls_padding"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/image_view"
+        android:layout_alignLeft="@+id/image_view"
+        android:layout_alignRight="@+id/image_view"
+        android:layout_alignTop="@+id/image_view"
+        android:gravity="center" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="#55000000"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/orthography"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:scrollHorizontally="false"
+                android:text=""
+                android:textColor="#FFFFFF"
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/context"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:scrollHorizontally="false"
+                android:text=""
+                android:textColor="#CCCCCC" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:scrollHorizontally="false"
+                android:text=" "
+                android:textColor="#CCCCCC"
+                android:textSize="30sp" />
+
+            <ImageButton
+                android:id="@+id/speech_recognizer_feedback"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00000000"
+                android:contentDescription="This is the image of the speech recognizer"
+                android:gravity="center"
+                android:src="@drawable/speech_recognizer_waiting" />
+
+            <TextView
+                android:id="@+id/speech_recognizer_instructions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:scrollHorizontally="false"
+                android:text="Tap to speak"
+                android:textColor="#CCCCCC"
+                android:textSize="25sp" />
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
