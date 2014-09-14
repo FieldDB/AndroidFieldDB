@@ -31,7 +31,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
-import ca.ilanguage.oprime.R;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 
 public class SubExperiment extends Activity implements SurfaceHolder.Callback {
   Animation                               animationSlideInRight;
@@ -174,7 +174,7 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
 
   public void loadDefaults() {
     ArrayList<Stimulus> ids = new ArrayList<Stimulus>();
-    ids.add(new Stimulus(R.drawable.androids_experimenter_kids));
+    ids.add(new Stimulus(R.drawable.speech_bubbles));
     this.mStimuli = ids;
   }
 

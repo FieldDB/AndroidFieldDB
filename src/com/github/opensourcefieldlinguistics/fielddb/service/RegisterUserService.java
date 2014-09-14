@@ -15,8 +15,8 @@ import com.github.opensourcefieldlinguistics.datacollection.NotifyingIntentServi
 import com.github.opensourcefieldlinguistics.fielddb.database.FieldDBUserContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.UserContentProvider.UserTable;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
-import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.BuildConfig;
-import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
+import com.github.opensourcefieldlinguistics.fielddb.BuildConfig;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 import com.google.gson.JsonObject;
 
 import android.app.NotificationManager;

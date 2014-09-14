@@ -14,7 +14,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.util.Log;
 import android.widget.Toast;
-import ca.ilanguage.oprime.R;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 
 public abstract class OPrimeApp extends Application {
   public boolean                  D                  = false;
@@ -62,7 +62,7 @@ public abstract class OPrimeApp extends Application {
      * Sample SubExperiment: Spontaneous speech is a timer task of 5 minutes
      */
     ArrayList<Stimulus> stimuli = new ArrayList<Stimulus>();
-    stimuli.add(new Stimulus(R.drawable.androids_experimenter_kids, "5 minutes"));
+    stimuli.add(new Stimulus(R.drawable.speech_bubbles, "5 minutes"));
     this.mExperiments.get(this.mCurrentExperiment).getSubExperiments().get(0).setStimuli(stimuli);
     this.mExperiments.get(this.mCurrentExperiment).getSubExperiments().get(0)
         .setIntentToCallThisSubExperiment(Config.INTENT_START_STOP_WATCH_SUB_EXPERIMENT);
@@ -74,9 +74,9 @@ public abstract class OPrimeApp extends Application {
      */
     stimuli = new ArrayList<Stimulus>();
 
-    stimuli.add(new Stimulus(R.drawable.androids_experimenter_kids, "Begin"));
-    stimuli.add(new Stimulus(R.drawable.androids_experimenter_kids, "Practice Item 2"));
-    stimuli.add(new Stimulus(R.drawable.androids_experimenter_kids, "Item 1"));
+    stimuli.add(new Stimulus(R.drawable.speech_bubbles, "Begin"));
+    stimuli.add(new Stimulus(R.drawable.speech_bubbles, "Practice Item 2"));
+    stimuli.add(new Stimulus(R.drawable.speech_bubbles, "Item 1"));
     this.mExperiments.get(this.mCurrentExperiment).getSubExperiments().get(1).setStimuli(stimuli);
     this.mExperiments.get(this.mCurrentExperiment).getSubExperiments().get(1)
         .setIntentToCallThisSubExperiment(Config.INTENT_START_SUB_EXPERIMENT);
@@ -85,11 +85,11 @@ public abstract class OPrimeApp extends Application {
      */
     ArrayList<TwoImageStimulus> twostimuli = new ArrayList<TwoImageStimulus>();
 
-    twostimuli.add(new TwoImageStimulus(R.drawable.androids_experimenter_kids, R.drawable.androids_experimenter_kids, "Begin"));
-    twostimuli.add(new TwoImageStimulus(R.drawable.androids_experimenter_kids, R.drawable.androids_experimenter_kids, "Practice Item 1"));
-    twostimuli.add(new TwoImageStimulus(R.drawable.androids_experimenter_kids, R.drawable.androids_experimenter_kids, "Practice Item 2"));
-    twostimuli.add(new TwoImageStimulus(R.drawable.androids_experimenter_kids, R.drawable.androids_experimenter_kids, "Item 1"));
-    twostimuli.add(new TwoImageStimulus(R.drawable.androids_experimenter_kids, R.drawable.androids_experimenter_kids, "Item 2"));
+    twostimuli.add(new TwoImageStimulus(R.drawable.speech_bubbles, R.drawable.speech_bubbles, "Begin"));
+    twostimuli.add(new TwoImageStimulus(R.drawable.speech_bubbles, R.drawable.speech_bubbles, "Practice Item 1"));
+    twostimuli.add(new TwoImageStimulus(R.drawable.speech_bubbles, R.drawable.speech_bubbles, "Practice Item 2"));
+    twostimuli.add(new TwoImageStimulus(R.drawable.speech_bubbles, R.drawable.speech_bubbles, "Item 1"));
+    twostimuli.add(new TwoImageStimulus(R.drawable.speech_bubbles, R.drawable.speech_bubbles, "Item 2"));
     this.mExperiments.get(this.mCurrentExperiment).getSubExperiments().get(2).setStimuli(stimuli);
     this.mExperiments.get(this.mCurrentExperiment).getSubExperiments().get(1)
         .setIntentToCallThisSubExperiment(Config.INTENT_START_TWO_IMAGE_SUB_EXPERIMENT);

@@ -5,7 +5,7 @@ import com.github.opensourcefieldlinguistics.datacollection.AudioRecorder;
 import com.github.opensourcefieldlinguistics.fielddb.Config;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
-import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 
 import android.content.Intent;
 import android.database.Cursor;

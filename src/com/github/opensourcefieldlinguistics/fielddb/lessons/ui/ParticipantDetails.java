@@ -4,14 +4,13 @@ import com.github.opensourcefieldlinguistics.fielddb.Config;
 import com.github.opensourcefieldlinguistics.fielddb.model.OPrimeApp;
 import com.github.opensourcefieldlinguistics.javascript.HTML5GameActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.widget.Toast;
-import ca.ilanguage.oprime.R;
 
-public class ParticipantDetails extends PreferenceActivity {
+public class ParticipantDetails extends Activity {
 
   @Override
   public void onBackPressed() {
@@ -44,11 +43,11 @@ public class ParticipantDetails extends PreferenceActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    this.getPreferenceManager().setSharedPreferencesMode(MODE_PRIVATE);
-    this.getPreferenceManager().setSharedPreferencesName(Config.PREFERENCE_NAME);
-
-    // Load the preferences from an XML resource
-    this.addPreferencesFromResource(R.xml.preferences);
+//    this.getPreferenceManager().setSharedPreferencesMode(MODE_PRIVATE);
+//    this.getPreferenceManager().setSharedPreferencesName(Config.PREFERENCE_NAME);
+//
+//    // Load the preferences from an XML resource
+//    this.addPreferencesFromResource(R.xml.preferences);
 
   }
 

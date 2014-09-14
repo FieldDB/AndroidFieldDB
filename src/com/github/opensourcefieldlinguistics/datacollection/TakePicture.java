@@ -25,7 +25,7 @@ import android.provider.MediaStore.MediaColumns;
 import android.support.v4.content.CursorLoader;
 import android.view.View;
 import android.widget.Toast;
-import ca.ilanguage.oprime.R;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 
 public class TakePicture extends Activity {
   boolean mAppearSeamless = true;

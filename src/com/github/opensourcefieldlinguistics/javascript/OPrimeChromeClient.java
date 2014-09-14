@@ -6,7 +6,7 @@ import java.util.Calendar;
 
 import com.github.opensourcefieldlinguistics.fielddb.Config;
 
-import ca.ilanguage.oprime.R;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;

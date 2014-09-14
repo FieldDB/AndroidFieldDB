@@ -19,8 +19,8 @@ import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvid
 import com.github.opensourcefieldlinguistics.fielddb.database.AudioVideoContentProvider.AudioVideoTable;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
-import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.BuildConfig;
-import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
+import com.github.opensourcefieldlinguistics.fielddb.BuildConfig;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 

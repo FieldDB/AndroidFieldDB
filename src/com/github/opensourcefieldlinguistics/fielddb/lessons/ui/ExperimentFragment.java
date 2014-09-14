@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import ca.ilanguage.oprime.R;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 
 /**
  * A fragment representing a single Experiment detail screen. This fragment is

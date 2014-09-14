@@ -3,7 +3,7 @@ package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 
 import android.app.Activity;
 import android.content.Intent;

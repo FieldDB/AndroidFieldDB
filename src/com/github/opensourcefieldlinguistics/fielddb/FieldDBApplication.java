@@ -21,10 +21,9 @@ import com.github.opensourcefieldlinguistics.fielddb.database.User;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
 import com.github.opensourcefieldlinguistics.fielddb.database.UserContentProvider.UserTable;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
-import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.BuildConfig;
-import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
+import com.github.opensourcefieldlinguistics.fielddb.BuildConfig;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 import com.github.opensourcefieldlinguistics.fielddb.service.DownloadDatumsService;
-import com.github.opensourcefieldlinguistics.fielddb.service.KartuliSMSCorpusService;
 import com.github.opensourcefieldlinguistics.fielddb.service.RegisterUserService;
 
 import android.app.Application;
@@ -169,39 +168,6 @@ public class FieldDBApplication extends Application {
 				.getColumnIndexOrThrow(UserTable.COLUMN_USERNAME)));
 		cursor.close();
 
-		/*
-		 * If we are in debug mode, or the user is connected to wifi, download
-		 * updates for samples and also register the user if they weren't
-		 * registered before
-		 */
-		ConnectivityManager connManager = (ConnectivityManager) getApplicationContext()
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo wifi = connManager
-				.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-		if (Config.APP_TYPE.equals("speechrecognition")) {
-			Log.d(Config.TAG,
-					"Not downloading samples, they are included in the training app");
-
-			String[] datumProjection = {UserTable.COLUMN_ID};
-			CursorLoader loader = new CursorLoader(getApplicationContext(),
-					DatumContentProvider.CONTENT_URI, datumProjection, null,
-					null, null);
-			Cursor datumCursor = loader.loadInBackground();
-			if (datumCursor.getCount() == 0) {
-				getContentResolver().insert(DatumContentProvider.CONTENT_URI,
-						DatumTable.sampleData());
-				Intent updateSMSSamples = new Intent(getApplicationContext(),
-						KartuliSMSCorpusService.class);
-				getApplicationContext().startService(updateSMSSamples);
-			}
-			datumCursor.close();
-		} else {
-			if (wifi.isConnected() || Config.D) {
-				Intent updateSamples = new Intent(getApplicationContext(),
-						DownloadDatumsService.class);
-				getApplicationContext().startService(updateSamples);
-			}
-		}
 		if (mUser.get_rev() == null || "".equals(mUser.get_rev())) {
 			Intent registerUser = new Intent(getApplicationContext(),
 					RegisterUserService.class);
@@ -210,7 +176,28 @@ public class FieldDBApplication extends Application {
 			getApplicationContext().startService(registerUser);
 		}
 
+		populateWithSampleOrOnlineData();
 	}
+	
+	/**
+	 * If we are in debug mode, or the user is connected to wifi, download
+	 * updates for samples and also register the user if they weren't registered
+	 * before
+	 * 
+	 * @return
+	 */
+	public boolean populateWithSampleOrOnlineData() {
+    ConnectivityManager connManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+    NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+    if (wifi.isConnected() || Config.D) {
+      Intent updateSamples = new Intent(getApplicationContext(), DownloadDatumsService.class);
+      getApplicationContext().startService(updateSamples);
+      return true;
+    } else {
+      return false;
+    }
+  }
 
 	/**
 	 * Forces the locale for the duration of the app to the language needed for

@@ -11,7 +11,7 @@ import android.view.SurfaceHolder;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
-import ca.ilanguage.oprime.R;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 
 public class TwoImageSubExperiment extends SubExperiment {
 
@@ -41,7 +41,7 @@ public class TwoImageSubExperiment extends SubExperiment {
   @Override
   public void loadDefaults() {
     ArrayList<TwoImageStimulus> ids = new ArrayList<TwoImageStimulus>();
-    ids.add(new TwoImageStimulus(R.drawable.androids_experimenter_kids));
+    ids.add(new TwoImageStimulus(R.drawable.speech_bubbles));
     this.mStimuli = ids;
   }
 

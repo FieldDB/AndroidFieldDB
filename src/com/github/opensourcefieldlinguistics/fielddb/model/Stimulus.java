@@ -3,15 +3,15 @@ package com.github.opensourcefieldlinguistics.fielddb.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import ca.ilanguage.oprime.R;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 
 public class Stimulus implements Serializable {
 
   private static final long serialVersionUID       = -4023355491498842498L;
-  protected int             audioFileId            = R.raw.ploep;
+  protected int             audioFileId            = R.raw.gammatone;
   protected String          audioFilePath          = "";
   protected long            audioOffset            = 0;
-  protected int             imageFileId            = R.drawable.androids_experimenter_kids;
+  protected int             imageFileId            = R.drawable.speech_bubbles;
   protected String          imageFilePath          = "";
 
   protected String          label                  = "";
@@ -25,50 +25,22 @@ public class Stimulus implements Serializable {
 
   public Stimulus() {
     super();
-    this.audioFilePath = "";
-    this.audioFileId = R.raw.ploep;
-    this.imageFilePath = "";
-    this.imageFileId = R.drawable.androids_experimenter_kids;
-    this.videoFilePath = "";
-    this.touches = new ArrayList<Touch>();
-    this.totalReactionTime = 0;
-    this.reactionTimePostOffset = 0;
   }
 
   public Stimulus(int imageid) {
     super();
-    this.audioFilePath = "";
-    this.audioFileId = R.raw.ploep;
-    this.imageFilePath = "";
     this.imageFileId = imageid;
-    this.videoFilePath = "";
-    this.touches = new ArrayList<Touch>();
-    this.totalReactionTime = 0;
-    this.reactionTimePostOffset = 0;
   }
 
   public Stimulus(int imageid, int audioid) {
     super();
-    this.audioFilePath = "";
     this.audioFileId = audioid;
-    this.imageFilePath = "";
     this.imageFileId = imageid;
-    this.videoFilePath = "";
-    this.touches = new ArrayList<Touch>();
-    this.totalReactionTime = 0;
-    this.reactionTimePostOffset = 0;
   }
 
   public Stimulus(int imageid, String label) {
     super();
-    this.audioFilePath = "";
-    this.audioFileId = R.raw.ploep;
-    this.imageFilePath = "";
     this.imageFileId = imageid;
-    this.videoFilePath = "";
-    this.touches = new ArrayList<Touch>();
-    this.totalReactionTime = 0;
-    this.reactionTimePostOffset = 0;
     this.label = label;
   }
 
@@ -77,9 +49,6 @@ public class Stimulus implements Serializable {
     this.audioFilePath = audioFilePath;
     this.imageFilePath = imageFilePath;
     this.videoFilePath = videoFilePath;
-    this.touches = new ArrayList<Touch>();
-    this.totalReactionTime = 0;
-    this.reactionTimePostOffset = 0;
   }
 
   public Stimulus(String audioFilePath, String imageFilePath, String videoFilePath, ArrayList<Touch> touches,

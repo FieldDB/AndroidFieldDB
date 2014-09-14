@@ -2,7 +2,7 @@ package com.github.opensourcefieldlinguistics.fielddb.model;
 
 import java.util.ArrayList;
 
-import ca.ilanguage.oprime.R;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 
 public class TwoImageStimulus extends Stimulus {
   /**
@@ -16,8 +16,8 @@ public class TwoImageStimulus extends Stimulus {
 
   public TwoImageStimulus() {
     super();
-    this.leftImageFileId = R.drawable.androids_experimenter_kids;
-    this.rightImageFileId = R.drawable.androids_experimenter_kids;
+    this.leftImageFileId = R.drawable.speech_bubbles;
+    this.rightImageFileId = R.drawable.speech_bubbles;
   }
 
   public TwoImageStimulus(int imageid) {

@@ -37,7 +37,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import ca.ilanguage.oprime.R;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 
 public class StoryBookSubExperiment extends VideoRecorder implements View.OnTouchListener {
 
@@ -112,7 +112,7 @@ public class StoryBookSubExperiment extends VideoRecorder implements View.OnTouc
   }
 
   public void playSound() {
-    MediaPlayer mediaPlayer = MediaPlayer.create(StoryBookSubExperiment.this.getApplicationContext(), R.raw.ploep);
+    MediaPlayer mediaPlayer = MediaPlayer.create(StoryBookSubExperiment.this.getApplicationContext(), R.raw.recording_end);
     try {
       mediaPlayer.prepare();
     } catch (IllegalStateException e) {
@@ -174,7 +174,7 @@ public class StoryBookSubExperiment extends VideoRecorder implements View.OnTouc
      * Prepare Stimuli
      */
     ArrayList<Stimulus> ids = new ArrayList<Stimulus>();
-    ids.add(new Stimulus(R.drawable.androids_experimenter_kids, R.raw.pageflip2));
+    ids.add(new Stimulus(R.drawable.speech_bubbles, R.raw.recording_start));
     this.mStimuli = (ArrayList<Stimulus>) this.getIntent().getSerializableExtra(Config.EXTRA_STIMULI);
     this.mShowTwoPageBook = this.getIntent().getBooleanExtra(Config.EXTRA_TWO_PAGE_STORYBOOK, false);
     if (this.mStimuli == null) {
@@ -197,7 +197,7 @@ public class StoryBookSubExperiment extends VideoRecorder implements View.OnTouc
     }
     if (this.mShowTwoPageBook) {
       if (this.mStimuli.size() % 2 == 1) {
-        ids.add(new Stimulus(R.drawable.androids_experimenter_kids, R.raw.pageflip2));
+        ids.add(new Stimulus(R.drawable.speech_bubbles, R.raw.recording_start));
       }
     }
     /*

@@ -1,5 +1,7 @@
 package com.github.opensourcefieldlinguistics.fielddb.lessons;
 
+import com.github.opensourcefieldlinguistics.fielddb.PrivateConstants;
+
 public class Config extends com.github.opensourcefieldlinguistics.fielddb.Config {
 	public static final boolean D = false;
 	public static final String ACRA_PASS = PrivateConstants.ACRA_PASS;

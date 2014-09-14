@@ -2,7 +2,7 @@ package com.github.opensourcefieldlinguistics.datacollection;
 
 import com.github.opensourcefieldlinguistics.fielddb.Config;
 
-import ca.ilanguage.oprime.R;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;

@@ -31,9 +31,9 @@ import org.apache.http.protocol.HttpContext;
 
 import com.github.opensourcefieldlinguistics.datacollection.NotifyingIntentService;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
-import com.github.opensourcefieldlinguistics.fielddb.lessons.PrivateConstants;
-import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.BuildConfig;
-import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
+import com.github.opensourcefieldlinguistics.fielddb.PrivateConstants;
+import com.github.opensourcefieldlinguistics.fielddb.BuildConfig;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 import com.google.gson.JsonObject;
 
 import android.app.NotificationManager;

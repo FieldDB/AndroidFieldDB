@@ -42,7 +42,7 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.VideoView;
-import ca.ilanguage.oprime.R;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 
 public class StopWatchSubExperiment extends Activity implements SurfaceHolder.Callback {
   protected static String                 TAG            = "StopWatchSubExperiment";
@@ -170,7 +170,7 @@ public class StopWatchSubExperiment extends Activity implements SurfaceHolder.Ca
 
     if (this.mStimuli == null || this.mStimuli.size() == 0) {
       ArrayList<Stimulus> ids = new ArrayList<Stimulus>();
-      ids.add(new Stimulus(R.drawable.androids_experimenter_kids));
+      ids.add(new Stimulus(R.drawable.speech_bubbles));
       this.mStimuli = ids;
     }
 

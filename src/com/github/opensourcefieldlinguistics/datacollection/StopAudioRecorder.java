@@ -1,6 +1,6 @@
 package com.github.opensourcefieldlinguistics.datacollection;
 
-import ca.ilanguage.oprime.R;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

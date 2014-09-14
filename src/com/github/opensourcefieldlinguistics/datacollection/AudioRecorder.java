@@ -21,7 +21,7 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
-import ca.ilanguage.oprime.R;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 
 @SuppressLint({ "NewApi" })
 public class AudioRecorder extends Service {

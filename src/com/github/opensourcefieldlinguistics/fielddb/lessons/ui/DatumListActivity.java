@@ -1,7 +1,7 @@
 package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
 
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
-import com.github.opensourcefieldlinguistics.fielddb.lessons.georgian.R;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 
 import android.content.Intent;

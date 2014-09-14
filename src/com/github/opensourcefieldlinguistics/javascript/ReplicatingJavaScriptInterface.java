@@ -4,8 +4,6 @@ package com.github.opensourcefieldlinguistics.javascript;
 import android.content.Context;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
-import ca.ilanguage.oprime.activity.HTML5Activity;
-import ca.ilanguage.oprime.content.JavaScriptInterface;
 
 public abstract class ReplicatingJavaScriptInterface extends
     JavaScriptInterface {
