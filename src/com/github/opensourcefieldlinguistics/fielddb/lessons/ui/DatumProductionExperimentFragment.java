@@ -16,9 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.ImageView;
-import ca.ilanguage.oprime.Config;
 
-import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
+import com.github.opensourcefieldlinguistics.fielddb.Config;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 
 public class DatumProductionExperimentFragment extends DatumDetailFragment {
 
@@ -52,25 +52,25 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
 				mImageView = (ImageView) rootView.findViewById(R.id.image_view);
 			}
 			String tags = mItem.getTagsString();
-			if (tags.contains("WebSearch")) {
-				mImageView.setImageResource(R.drawable.search_selected);
-			} else if (tags.contains("LegalSearch")) {
-				mImageView.setImageResource(R.drawable.legal_search_selected);
-			} else if (tags.contains("SMS")) {
-				mImageView.setImageResource(R.drawable.sms_selected);
-			}
+//			if (tags.contains("WebSearch")) {
+//				mImageView.setImageResource(R.drawable.search_selected);
+//			} else if (tags.contains("LegalSearch")) {
+//				mImageView.setImageResource(R.drawable.legal_search_selected);
+//			} else if (tags.contains("SMS")) {
+//				mImageView.setImageResource(R.drawable.sms_selected);
+//			}
 
 			String id = mItem.getId();
 			Log.d(Config.TAG, "Prompt for this datum will be " + id);
 			if ("instructions".equals(id)) {
 				this.mIsInstructions = true;
-				mAudioPromptResource = R.raw.instructions;
-				mImageView.setImageResource(R.drawable.instructions);
+//				mAudioPromptResource = R.raw.instructions;
+//				mImageView.setImageResource(R.drawable.instructions);
 				mSpeechRecognizerFeedback.setVisibility(View.GONE);
 				mSpeechRecognizerInstructions.setText("Swipe to begin...");
 				playPromptContext();
 			} else {
-				mAudioPromptResource = R.raw.prompt;
+//				mAudioPromptResource = R.raw.im_listening;
 			}
 
 		}

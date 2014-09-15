@@ -2,9 +2,9 @@ package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
 
 import java.util.ArrayList;
 
-import ca.ilanguage.oprime.database.UserContentProvider.UserTable;
 
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
+import com.github.opensourcefieldlinguistics.fielddb.database.UserContentProvider.UserTable;
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 
 import android.database.Cursor;

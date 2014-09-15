@@ -87,17 +87,17 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/androids_experimenter_kids" />
+                android:src="@drawable/speech_bubbles" />
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/androids_experimenter_kids" />
+                android:src="@drawable/speech_bubbles" />
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/androids_experimenter_kids" />
+                android:src="@drawable/speech_bubbles" />
         </com.briangriffey.notebook.PageTurnLayout>
     </TableRow>
 

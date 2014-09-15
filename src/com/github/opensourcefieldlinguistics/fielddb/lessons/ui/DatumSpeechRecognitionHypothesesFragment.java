@@ -34,7 +34,7 @@ import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvid
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 import com.github.opensourcefieldlinguistics.fielddb.service.PocketSphinxRecognitionService;
 import com.github.opensourcefieldlinguistics.fielddb.service.UploadAudioVideoService;
-import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 
 public class DatumSpeechRecognitionHypothesesFragment extends
         DatumProductionExperimentFragment {

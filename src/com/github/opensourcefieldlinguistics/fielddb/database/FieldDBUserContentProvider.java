@@ -4,7 +4,6 @@ import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 
 import android.content.UriMatcher;
 import android.net.Uri;
-import ca.ilanguage.oprime.database.UserContentProvider;
 
 public class FieldDBUserContentProvider extends UserContentProvider {
 

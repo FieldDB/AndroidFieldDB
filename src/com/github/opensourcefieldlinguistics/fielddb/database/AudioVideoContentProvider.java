@@ -2,7 +2,6 @@ package com.github.opensourcefieldlinguistics.fielddb.database;
 
 import java.util.ArrayList;
 
-import ca.ilanguage.oprime.database.OPrimeTable;
 
 import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 

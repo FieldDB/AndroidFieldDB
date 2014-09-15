@@ -4,8 +4,8 @@ import org.acra.ACRA;
 
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
-import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.BuildConfig;
-import com.github.opensourcefieldlinguistics.fielddb.speech.kartuli.R;
+import com.github.opensourcefieldlinguistics.fielddb.BuildConfig;
+import com.github.opensourcefieldlinguistics.fielddb.R;
 
 import android.content.ContentValues;
 import android.net.Uri;
