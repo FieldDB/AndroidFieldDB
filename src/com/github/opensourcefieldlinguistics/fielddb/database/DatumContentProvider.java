@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 
-import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
+import com.github.opensourcefieldlinguistics.fielddb.Config;
 import com.github.opensourcefieldlinguistics.fielddb.service.DownloadDatumsService;
 
 import android.content.ContentProvider;

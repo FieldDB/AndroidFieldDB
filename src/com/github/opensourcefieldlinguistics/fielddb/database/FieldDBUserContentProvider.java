@@ -1,6 +1,6 @@
 package com.github.opensourcefieldlinguistics.fielddb.database;
 
-import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
+import com.github.opensourcefieldlinguistics.fielddb.Config;
 
 import android.content.UriMatcher;
 import android.net.Uri;
