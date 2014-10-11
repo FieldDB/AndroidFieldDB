@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.github.opensourcefieldlinguistics.fielddb"
     android:versionCode="5"
-    android:versionName="1.102.3" >
+    android:versionName="2.24.0" >
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -76,7 +76,7 @@
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.github.opensourcefieldlinguistics.datacollection.TakePictureection.TakePicture"
+            android:name="com.github.opensourcefieldlinguistics.datacollection.TakePicture"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name" >
         </activity>
@@ -87,26 +87,20 @@
         </service>
         <service android:name="com.github.opensourcefieldlinguistics.fielddb.service.UploadAudioVideoService" >
         </service>
-        <service android:name="com.github.opensourcefieldlinguistics.fielddb.service.KartuliSMSCorpusService" >
-        </service>
-        <service android:name="com.github.opensourcefieldlinguistics.fielddb.service.KartuliWebSearchCorpusService" >
-        </service>
-        <service android:name="com.github.opensourcefieldlinguistics.fielddb.service.KartuliLegalSearchCorpusService" >
-        </service>
 
         <provider
             android:name="com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider"
-            android:authorities="com.github.opensourcefieldlinguistics.fielddb.kartuli.datum"
+            android:authorities="com.github.opensourcefieldlinguistics.fielddb.default.datum"
             android:exported="false" >
         </provider>
         <provider
             android:name="com.github.opensourcefieldlinguistics.fielddb.database.AudioVideoContentProvider"
-            android:authorities="com.github.opensourcefieldlinguistics.fielddb.kartuli.audiovideo"
+            android:authorities="com.github.opensourcefieldlinguistics.fielddb.default.audiovideo"
             android:exported="false" >
         </provider>
         <provider
             android:name="com.github.opensourcefieldlinguistics.fielddb.database.FieldDBUserContentProvider"
-            android:authorities="com.github.opensourcefieldlinguistics.fielddb.kartuli.user"
+            android:authorities="com.github.opensourcefieldlinguistics.fielddb.default.user"
             android:exported="false" >
         </provider>
     </application>

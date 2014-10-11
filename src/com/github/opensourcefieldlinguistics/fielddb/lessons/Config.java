@@ -8,7 +8,7 @@ public class Config extends com.github.opensourcefieldlinguistics.fielddb.Config
 	public static final String ACRA_SERVER_URL = PrivateConstants.ACRA_SERVER_URL;
 	public static final String ACRA_USER = PrivateConstants.ACRA_USER;
 	public static final String DATA_IS_ABOUT_LANGUAGE_ISO = "ka";
-	public static final String DATA_IS_ABOUT_LANGUAGE_NAME_ASCII = "kartuli";
+	public static final String DATA_IS_ABOUT_LANGUAGE_NAME_ASCII = "default";
 	public static final String APP_TYPE = "speechrecognition";
 	// public static final String DATA_IS_ABOUT_LANGUAGE_NAME = "ქართული";
 
