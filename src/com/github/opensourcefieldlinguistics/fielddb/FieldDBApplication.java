@@ -15,12 +15,9 @@ import org.acra.ACRAConfiguration;
 import org.acra.annotation.ReportsCrashes;
 
 
-import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.FieldDBUserContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.User;
-import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
 import com.github.opensourcefieldlinguistics.fielddb.database.UserContentProvider.UserTable;
-import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 import com.github.opensourcefieldlinguistics.fielddb.BuildConfig;
 import com.github.opensourcefieldlinguistics.fielddb.R;
 import com.github.opensourcefieldlinguistics.fielddb.service.DownloadDatumsService;

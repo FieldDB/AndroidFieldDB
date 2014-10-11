@@ -3,7 +3,7 @@ package com.github.opensourcefieldlinguistics.fielddb.service;
 
 import java.util.ArrayList;
 
-import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
+import com.github.opensourcefieldlinguistics.fielddb.Config;
 
 import android.app.Service;
 import android.content.Intent;

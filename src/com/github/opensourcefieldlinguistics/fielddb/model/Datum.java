@@ -3,9 +3,9 @@ package com.github.opensourcefieldlinguistics.fielddb.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import android.util.Log;
+import com.github.opensourcefieldlinguistics.fielddb.Config;
 
-import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
+import android.util.Log;
 
 public class Datum {
 	protected String _id;

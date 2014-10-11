@@ -14,8 +14,8 @@ import com.github.opensourcefieldlinguistics.datacollection.DeviceDetails;
 import com.github.opensourcefieldlinguistics.datacollection.NotifyingIntentService;
 import com.github.opensourcefieldlinguistics.fielddb.database.FieldDBUserContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.UserContentProvider.UserTable;
-import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 import com.github.opensourcefieldlinguistics.fielddb.BuildConfig;
+import com.github.opensourcefieldlinguistics.fielddb.Config;
 import com.github.opensourcefieldlinguistics.fielddb.R;
 import com.google.gson.JsonObject;
 

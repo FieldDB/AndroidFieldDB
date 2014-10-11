@@ -3,9 +3,9 @@ package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
 import java.util.ArrayList;
 
 
+import com.github.opensourcefieldlinguistics.fielddb.Config;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.UserContentProvider.UserTable;
-import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 
 import android.database.Cursor;
 import android.net.Uri;

@@ -45,9 +45,9 @@ import com.github.opensourcefieldlinguistics.datacollection.TakePicture;
 import com.github.opensourcefieldlinguistics.datacollection.VideoRecorder;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider;
 import com.github.opensourcefieldlinguistics.fielddb.database.DatumContentProvider.DatumTable;
-import com.github.opensourcefieldlinguistics.fielddb.lessons.Config;
 import com.github.opensourcefieldlinguistics.fielddb.service.UploadAudioVideoService;
 import com.github.opensourcefieldlinguistics.fielddb.BuildConfig;
+import com.github.opensourcefieldlinguistics.fielddb.Config;
 import com.github.opensourcefieldlinguistics.fielddb.R;
 import com.github.opensourcefieldlinguistics.fielddb.model.Datum;
 
@@ -423,24 +423,23 @@ public class DatumDetailFragment extends Fragment {
 		return intent;
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// handle item selection
-		switch (item.getItemId()) {
-			case R.id.action_speak :
-				return this.toggleAudioRecording(item);
-			case R.id.action_play :
-				return this.loadMainVideo(true);
-			case R.id.action_videos :
-				return this.captureVideo();
-			case R.id.action_images :
-				return this.captureImage();
-			case R.id.action_delete :
-				return this.delete();
-			default :
-				return super.onOptionsItemSelected(item);
-		}
-	}
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item == null) {
+      return super.onOptionsItemSelected(item);
+    } else if (item.getItemId() == R.id.action_speak) {
+      return this.toggleAudioRecording(item);
+    } else if (item.getItemId() == R.id.action_play) {
+      return this.loadMainVideo(true);
+    } else if (item.getItemId() == R.id.action_videos) {
+      return this.captureVideo();
+    } else if (item.getItemId() == R.id.action_images) {
+      return this.captureImage();
+    } else if (item.getItemId() == R.id.action_delete) {
+      return this.delete();
+    }
+    return super.onOptionsItemSelected(item);
+  }
 
 	public void onToggleAudioRecording(View view) {
 		this.toggleAudioRecording(null);
