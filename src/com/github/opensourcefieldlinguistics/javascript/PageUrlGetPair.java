@@ -1,4 +1,4 @@
-package com.github.opensourcefieldlinguistics.fielddb.model;
+package com.github.opensourcefieldlinguistics.javascript;
 
 public class PageUrlGetPair {
   String delimiter = "#"; // "\\?"

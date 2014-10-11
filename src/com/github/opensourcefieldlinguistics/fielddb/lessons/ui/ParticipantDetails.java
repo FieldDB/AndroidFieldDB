@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
+@Deprecated
 public class ParticipantDetails extends Activity {
 
   @Override

@@ -1,4 +1,4 @@
-package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
+package com.github.opensourcefieldlinguistics.fielddb.experimentation.ui;
 
 import java.io.IOException;
 import java.util.ArrayList;

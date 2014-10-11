@@ -2,7 +2,7 @@ package com.github.opensourcefieldlinguistics.fielddb.database;
 
 import java.util.ArrayList;
 
-public abstract class OPrimeTable {
+public abstract class FieldDBTable {
 	public static final String COLUMN_ACTUAL_JSON = "actualJSON";
 	public static final String COLUMN_ANDROID_ID = "android_id";
 	public static final String COLUMN_APP_VERSIONS_WHEN_MODIFIED = "appVersionsWhenModified";

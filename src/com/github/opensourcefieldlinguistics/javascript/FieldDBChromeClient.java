@@ -23,7 +23,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class OPrimeChromeClient extends WebChromeClient {
+public class FieldDBChromeClient extends WebChromeClient {
 
   @Override
   public boolean onConsoleMessage(ConsoleMessage cm) {

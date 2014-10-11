@@ -194,7 +194,7 @@ public class AudioVideoContentProvider extends ContentProvider {
 				Log.w(Config.TAG,
 						"Problem upgrading, unable to clear sample data." + e);
 			}
-			ArrayList<String> previousColumns = OPrimeTable.getBaseColumns();
+			ArrayList<String> previousColumns = FieldDBTable.getBaseColumns();
 			String[] knownColumns = AudioVideoTable.version1Columns;
 
 			/* Add other versions to this if statement */
@@ -217,7 +217,7 @@ public class AudioVideoContentProvider extends ContentProvider {
 
 	}
 
-	public static class AudioVideoTable extends OPrimeTable {
+	public static class AudioVideoTable extends FieldDBTable {
 		public static final String TABLE_NAME = "audiovideo";
 
 		public static final String COLUMN_FILENAME = "filename";
@@ -240,7 +240,7 @@ public class AudioVideoContentProvider extends ContentProvider {
 		}
 
 		public static void setColumns() {
-			AudioVideoTable.columns = OPrimeTable.getBaseColumns();
+			AudioVideoTable.columns = FieldDBTable.getBaseColumns();
 			for (String column : currentColumns) {
 				AudioVideoTable.columns.add(column);
 			}

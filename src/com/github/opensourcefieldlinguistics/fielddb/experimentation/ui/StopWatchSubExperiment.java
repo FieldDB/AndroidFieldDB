@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.opensourcefieldlinguistics.fielddb.lessons.ui;
+package com.github.opensourcefieldlinguistics.fielddb.experimentation.ui;
 
 // Need the following import to get access to the app resources, since this
 // class is in a sub-package.

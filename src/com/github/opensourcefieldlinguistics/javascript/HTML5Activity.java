@@ -144,7 +144,7 @@ public abstract class HTML5Activity extends Activity {
     this.mWebView = (WebView) this.findViewById(R.id.html5WebView);
     this.mWebView.addJavascriptInterface(this.getJavaScriptInterface(), "Android");
 
-    OPrimeChromeClient customChromeClient = new OPrimeChromeClient();
+    FieldDBChromeClient customChromeClient = new FieldDBChromeClient();
     this.mWebView.setWebChromeClient(customChromeClient);
 
     this.mWebView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
@@ -190,7 +190,7 @@ public abstract class HTML5Activity extends Activity {
      */
     if (android.os.Build.VERSION.SDK_INT >= 16) {
       webSettings.setAllowUniversalAccessFromFileURLs(true);
-      this.mWebView.setWebViewClient(new OPrimeWebViewClient());
+      this.mWebView.setWebViewClient(new FieldDBWebViewClient());
     }
 
     /*
@@ -211,7 +211,7 @@ public abstract class HTML5Activity extends Activity {
      */
     else if (android.os.Build.VERSION.SDK_INT <= 10) {
       Log.w(Config.TAG, "This Android SDK " + android.os.Build.VERSION.SDK_INT + " may or may not be able to display a file if the HTML5 uses a # or ? to set variables.");
-      this.mWebView.setWebViewClient(new OPrimeWebViewClient());
+      this.mWebView.setWebViewClient(new FieldDBWebViewClient());
     }
 
   }

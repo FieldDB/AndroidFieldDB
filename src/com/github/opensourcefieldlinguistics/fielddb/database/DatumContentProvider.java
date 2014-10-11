@@ -237,7 +237,7 @@ public class DatumContentProvider extends ContentProvider {
 						"Problem upgrading, unable to clear sample data." + e);
 			}
 
-			ArrayList<String> previousColumns = OPrimeTable.getBaseColumns();
+			ArrayList<String> previousColumns = FieldDBTable.getBaseColumns();
 			String[] knownColumns = DatumTable.version1Columns;
 
 			/* Add other versions to this if statement */
@@ -259,7 +259,7 @@ public class DatumContentProvider extends ContentProvider {
 		}
 	}
 
-	public static class DatumTable extends OPrimeTable {
+	public static class DatumTable extends FieldDBTable {
 		public static final String TABLE_NAME = "datum";
 
 		public static final String COLUMN_UTTERANCE = "utterance";
@@ -313,7 +313,7 @@ public class DatumContentProvider extends ContentProvider {
 		}
 
 		public static void setColumns() {
-			DatumTable.columns = OPrimeTable.getBaseColumns();
+			DatumTable.columns = FieldDBTable.getBaseColumns();
 			for (String column : currentColumns) {
 				DatumTable.columns.add(column);
 			}

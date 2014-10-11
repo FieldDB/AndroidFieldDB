@@ -27,7 +27,7 @@ public class UserContentProvider extends ContentProvider {
 	protected static final int ITEMS = 10;
 	protected static final int ITEM_ID = 20;
 
-	protected static String AUTHORITY = "ca.ilanguage.oprime."
+	protected static String AUTHORITY = "com.github.opensourcefieldlinguistics.fielddb."
 			+ UserTable.TABLE_NAME;
 	protected static final String BASE_PATH = UserTable.TABLE_NAME + "s";
 	public static Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/"
@@ -199,7 +199,7 @@ public class UserContentProvider extends ContentProvider {
 						"Problem upgrading, unable to clear sample data." + e);
 			}
 
-			ArrayList<String> previousColumns = OPrimeTable.getBaseColumns();
+			ArrayList<String> previousColumns = FieldDBTable.getBaseColumns();
 			String[] knownColumns = UserTable.version1Columns;
 
 			/* Add other versions to this if statement */
@@ -221,7 +221,7 @@ public class UserContentProvider extends ContentProvider {
 		}
 	}
 
-	public static class UserTable extends OPrimeTable {
+	public static class UserTable extends FieldDBTable {
 		public static final String TABLE_NAME = "user";
 		public static String ANONYMOUS_PREFIX = "anonymous";
 
@@ -266,7 +266,7 @@ public class UserContentProvider extends ContentProvider {
 		}
 
 		public static void setColumns() {
-			UserTable.columns = OPrimeTable.getBaseColumns();
+			UserTable.columns = FieldDBTable.getBaseColumns();
 			for (String column : currentColumns) {
 				UserTable.columns.add(column);
 			}
