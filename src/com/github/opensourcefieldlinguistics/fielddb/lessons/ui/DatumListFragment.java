@@ -183,45 +183,47 @@ public class DatumListFragment extends ListFragment
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.action_delete :
-				AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
-						.getMenuInfo();
-				adapter.getCursor().moveToPosition(info.position);
-				String actualId = adapter.getCursor().getString(
-						adapter.getCursor().getColumnIndexOrThrow(
-								DatumTable.COLUMN_ID));
-				final Uri uri = Uri.parse(DatumContentProvider.CONTENT_URI
-						+ "/" + actualId);
-				AlertDialog deleteConfirmationDialog = new AlertDialog.Builder(
-						getActivity())
-						.setTitle("Are you sure?")
-						.setMessage(
-								"Are you sure you want to put this "
-										+ Config.USER_FRIENDLY_DATA_NAME
-										+ " in the trash?")
-						.setPositiveButton(android.R.string.ok,
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										getActivity().getContentResolver()
-												.delete(uri, null, null);
-										fillData();
-										mCallbacks.onItemDeleted(uri);
-										dialog.dismiss();
-									}
-								})
-						.setNegativeButton(android.R.string.cancel,
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										dialog.dismiss();
-									}
-								}).create();
-				deleteConfirmationDialog.show();
-		}
+	  
+	  
+	  if(item.getItemId() == R.id.action_delete){
+	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+          .getMenuInfo();
+      adapter.getCursor().moveToPosition(info.position);
+      String actualId = adapter.getCursor().getString(
+          adapter.getCursor().getColumnIndexOrThrow(
+              DatumTable.COLUMN_ID));
+      final Uri uri = Uri.parse(DatumContentProvider.CONTENT_URI
+          + "/" + actualId);
+      AlertDialog deleteConfirmationDialog = new AlertDialog.Builder(
+          getActivity())
+          .setTitle("Are you sure?")
+          .setMessage(
+              "Are you sure you want to put this "
+                  + Config.USER_FRIENDLY_DATA_NAME
+                  + " in the trash?")
+          .setPositiveButton(android.R.string.ok,
+              new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog,
+                    int which) {
+                  getActivity().getContentResolver()
+                      .delete(uri, null, null);
+                  fillData();
+                  mCallbacks.onItemDeleted(uri);
+                  dialog.dismiss();
+                }
+              })
+          .setNegativeButton(android.R.string.cancel,
+              new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog,
+                    int which) {
+                  dialog.dismiss();
+                }
+              }).create();
+      deleteConfirmationDialog.show();
+	  }
+		
 		return super.onContextItemSelected(item);
 	}
 
@@ -286,8 +288,7 @@ public class DatumListFragment extends ListFragment
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// handle item selection
-		switch (item.getItemId()) {
-			case R.id.action_new :
+		if (item.getItemId() == R.id.action_new){
 				Uri newDatum = getActivity().getContentResolver().insert(
 						DatumContentProvider.CONTENT_URI, new ContentValues());
 				if (newDatum != null) {
@@ -298,7 +299,7 @@ public class DatumListFragment extends ListFragment
 									"*** Error inserting a datum in DB ***"));
 				}
 				return true;
-			default :
+		} else {
 				return super.onOptionsItemSelected(item);
 		}
 	}
