@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-package com.github.opensourcefieldlinguistics.fielddb.experimentation.ui;
+package com.github.opensourcefieldlinguistics.fielddb.storybook.ui;
 
 import java.io.IOException;
 import java.util.ArrayList;
