@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.RecognizerIntent;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -179,9 +180,12 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int id) {
-									Intent openRecognizer = new Intent(
-											getActivity(),
-											SpeechRecognitionActivity.class);
+									
+								  Intent openRecognizer = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+								  openRecognizer.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+					                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+								  openRecognizer.putExtra(RecognizerIntent.EXTRA_PROMPT,
+					                getString(R.string.im_listening));
 									startActivity(openRecognizer);
 								}
 							});
