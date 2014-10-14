@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.widget.VideoView;
@@ -35,7 +36,7 @@ import android.widget.VideoView;
  * 
  * 
  */
-public class VideoRecorder extends Activity implements SurfaceHolder.Callback {
+public class VideoRecorder extends FragmentActivity implements SurfaceHolder.Callback {
   protected VideoRecorderAsyncTask mRecordVideoTask;
   protected Boolean                mRecording = false;
   protected VideoStatusReceiver    mVideoStatusReceiver;
