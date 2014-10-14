@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-import com.briangriffey.notebook.PageTurnFragment;
 import com.briangriffey.notebook.PageTurnPagerAdapter;
 import com.github.opensourcefieldlinguistics.fielddb.model.Stimulus;
 
@@ -28,11 +27,12 @@ public class StoryBookStimuliPagerAdapter extends PageTurnPagerAdapter {
 
   @Override
   public Fragment getItem(int i) {
-    Fragment fragment = new PageTurnFragment();
+    Fragment fragment = new StimulusPageTurnFragment();
     Bundle args = new Bundle();
-    // Our object is just an integer :-P
-    args.putInt(PageTurnFragment.ARG_OBJECT, i + 1);
-    fragment.setArguments(args);
+    if (this.mStimuli != null && this.mStimuli.size() > i) {
+      args.putSerializable(StimulusPageTurnFragment.ARG_OBJECT, this.mStimuli.get(i));
+      fragment.setArguments(args);
+    }
     return fragment;
   }
 
