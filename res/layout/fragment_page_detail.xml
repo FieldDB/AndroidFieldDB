@@ -5,7 +5,7 @@
     android:background="#ff000000" >
 
     <ImageView
-        android:id="@+id/image_view"
+        android:id="@+id/onlyimage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="This is the a background image representing this text"
