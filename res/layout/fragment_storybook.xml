@@ -76,29 +76,13 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
 
-        <com.briangriffey.notebook.PageTurnLayout
+        <android.support.v4.view.ViewPager
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight=".5"
-            android:gravity="center" >
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/speech_bubbles" />
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/speech_bubbles" />
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/speech_bubbles" />
-        </com.briangriffey.notebook.PageTurnLayout>
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+        </android.support.v4.view.ViewPager>
     </TableRow>
 
 </TableLayout>
