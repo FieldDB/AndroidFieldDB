@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import com.briangriffey.notebook.PageTurnPageTransformer;
 import com.github.opensourcefieldlinguistics.datacollection.VideoRecorder;
 import com.github.opensourcefieldlinguistics.fielddb.Config;
 import com.github.opensourcefieldlinguistics.fielddb.model.Stimulus;
@@ -33,13 +34,14 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
 import com.github.opensourcefieldlinguistics.fielddb.R;
 
-public class StoryBookSubExperiment extends VideoRecorder implements View.OnTouchListener {
+public class StoryBookSubExperiment extends VideoRecorder {
+  StoryBookStimuliPagerAdapter mPagerAdapter;
+  ViewPager mViewPager;
 
   public Bitmap getBitmap(int width, int height, int index) {
 
@@ -145,7 +147,7 @@ public class StoryBookSubExperiment extends VideoRecorder implements View.OnTouc
 
   /**
    * Forces the locale for the duration of the app to the language needed for
-   * that version of the Bilingual Aphasia Test
+   * that version of the Test
    * 
    * @param lang
    * @return
@@ -207,7 +209,13 @@ public class StoryBookSubExperiment extends VideoRecorder implements View.OnTouc
     } else {
 
     }
-
+    // ViewPager and its adapters use support library
+    // fragments, so use getSupportFragmentManager.
+    mPagerAdapter = new StoryBookStimuliPagerAdapter(getSupportFragmentManager());
+//    mPagerAdapter.setStimuli(this.mStimuli);
+    mViewPager = (ViewPager) findViewById(R.id.pager);
+    mViewPager.setPageTransformer(true, new PageTurnPageTransformer());
+    mViewPager.setAdapter(mPagerAdapter);
     // This is something somewhat experimental. Before uncommenting next
     // line, please see method comments in CurlView.
     // mCurlView.setEnableTouchPressure(true);
@@ -240,16 +248,6 @@ public class StoryBookSubExperiment extends VideoRecorder implements View.OnTouc
   @Override
   public void onResume() {
     super.onResume();
-  }
-
-  @Override
-  public Object onRetainNonConfigurationInstance() {
-    return null;
-  }
-
-  @Override
-  public boolean onTouch(View view, MotionEvent event) {
-    return false;
   }
 
 }
