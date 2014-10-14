@@ -212,7 +212,7 @@ public class StoryBookSubExperiment extends VideoRecorder {
     // ViewPager and its adapters use support library
     // fragments, so use getSupportFragmentManager.
     mPagerAdapter = new StoryBookStimuliPagerAdapter(getSupportFragmentManager());
-//    mPagerAdapter.setStimuli(this.mStimuli);
+    mPagerAdapter.setStimuli(this.mStimuli);
     mViewPager = (ViewPager) findViewById(R.id.pager);
     mViewPager.setPageTransformer(true, new PageTurnPageTransformer());
     mViewPager.setAdapter(mPagerAdapter);
