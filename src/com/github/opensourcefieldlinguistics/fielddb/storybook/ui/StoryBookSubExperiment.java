@@ -172,23 +172,6 @@ public class StoryBookSubExperiment extends VideoRecorder {
     return Locale.getDefault().getDisplayLanguage();
   }
 
-  public ArrayList<Stimulus> initializeStimuli(int imagesStimuli, int audioStimuli) {
-    ArrayList<Stimulus> ids = new ArrayList<Stimulus>();
-    ids.add(new Stimulus(R.drawable.speech_bubbles, R.raw.recording_start));
-    ArrayList<Stimulus> stimuli = new ArrayList<Stimulus>();
-    TypedArray imgs = getResources().obtainTypedArray(imagesStimuli);
-    TypedArray audio = getResources().obtainTypedArray(audioStimuli);
-
-    if (imgs == null || audio == null) {
-      return ids;
-    }
-    for (int i = 0; i < imgs.length(); i++) {
-      Stimulus s = new Stimulus(imgs.getResourceId(i, -1), audio.getResourceId(i, -1));
-      stimuli.add(s);
-    }
-    return stimuli;
-  }
-
   @Override
   public void onCreate(Bundle savedInstanceState) {
     // this.setContentView(R.layout.fragment_page_curl);
@@ -197,14 +180,13 @@ public class StoryBookSubExperiment extends VideoRecorder {
     /*
      * Prepare Stimuli
      */
-
-    int imagesStimuli = this.getIntent().getIntExtra(Config.EXTRA_STIMULI + "_image", R.array.sample_image_stimuli);
-    int audioStimuli = this.getIntent().getIntExtra(Config.EXTRA_STIMULI + "_audio", R.array.sample_audio_stimuli);
-    if (R.array.sample_image_stimuli == imagesStimuli) {
-      Log.e(Config.TAG, "THe images were not passed to the intent ");
-    }
-    this.mStimuli = initializeStimuli(imagesStimuli, audioStimuli);
+    ArrayList<Stimulus> ids = new ArrayList<Stimulus>();
+    ids.add(new Stimulus(R.drawable.speech_bubbles, R.raw.recording_start));
+    this.mStimuli = (ArrayList<Stimulus>) this.getIntent().getSerializableExtra(Config.EXTRA_STIMULI);
     this.mShowTwoPageBook = this.getIntent().getBooleanExtra(Config.EXTRA_TWO_PAGE_STORYBOOK, false);
+    if (this.mStimuli == null) {
+      this.mStimuli = ids;
+    }
 
     /*
      * Prepare language of Stimuli
