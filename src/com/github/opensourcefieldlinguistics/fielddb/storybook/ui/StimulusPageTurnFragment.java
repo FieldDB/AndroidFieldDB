@@ -24,8 +24,8 @@ public class StimulusPageTurnFragment extends Fragment {
 
     mStimulus = (Stimulus) args.getSerializable(ARG_OBJECT);
     ImageView image = (ImageView) rootView.findViewById(R.id.onlyimage);
-    Drawable d = this.getResources().getDrawable(R.drawable.speech_bubbles);
-//    image.setImageDrawable(d);
+    Drawable d = this.getResources().getDrawable(mStimulus.getImageFileId());
+    image.setImageDrawable(d);
     // ((ImageView)
     // rootView.findViewById(R.id.onlyimage)).setText(Integer.toString(args.getInt(ARG_OBJECT)));
     return rootView;

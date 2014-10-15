@@ -28,6 +28,7 @@ import com.github.opensourcefieldlinguistics.fielddb.model.Touch;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -48,7 +49,8 @@ public class StoryBookSubExperiment extends VideoRecorder {
     Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
     b.eraseColor(0xFFFFFFFF);
     Canvas c = new Canvas(b);
-    Drawable d = StoryBookSubExperiment.this.getResources().getDrawable(StoryBookSubExperiment.this.mStimuli.get(index).getImageFileId());
+    Drawable d = StoryBookSubExperiment.this.getResources().getDrawable(
+        StoryBookSubExperiment.this.mStimuli.get(index).getImageFileId());
 
     int margin = StoryBookSubExperiment.this.mBorderSize;
     int border = StoryBookSubExperiment.this.mBorderSize;
@@ -91,13 +93,15 @@ public class StoryBookSubExperiment extends VideoRecorder {
     if (StoryBookSubExperiment.this.mCurrentStimuliIndex >= StoryBookSubExperiment.this.mStimuli.size()) {
       return;
     }
-    int audioStimuliResource = StoryBookSubExperiment.this.mStimuli.get(StoryBookSubExperiment.this.mCurrentStimuliIndex).getImageFileId();
+    int audioStimuliResource = StoryBookSubExperiment.this.mStimuli.get(
+        StoryBookSubExperiment.this.mCurrentStimuliIndex).getImageFileId();
     try {
       Thread.sleep(StoryBookSubExperiment.this.mDelayAudioMilisecondsAfterImageStimuli);
     } catch (InterruptedException e1) {
       e1.printStackTrace();
     }
-    MediaPlayer mediaPlayer = MediaPlayer.create(StoryBookSubExperiment.this.getApplicationContext(), audioStimuliResource);
+    MediaPlayer mediaPlayer = MediaPlayer.create(StoryBookSubExperiment.this.getApplicationContext(),
+        audioStimuliResource);
     if (mediaPlayer == null) {
       Log.d("OPrime", "Problem opening the audio stimuli");
       return;
@@ -114,7 +118,8 @@ public class StoryBookSubExperiment extends VideoRecorder {
   }
 
   public void playSound() {
-    MediaPlayer mediaPlayer = MediaPlayer.create(StoryBookSubExperiment.this.getApplicationContext(), R.raw.recording_end);
+    MediaPlayer mediaPlayer = MediaPlayer.create(StoryBookSubExperiment.this.getApplicationContext(),
+        R.raw.recording_end);
     try {
       mediaPlayer.prepare();
     } catch (IllegalStateException e) {
@@ -135,13 +140,12 @@ public class StoryBookSubExperiment extends VideoRecorder {
     // Toast.LENGTH_LONG).show();
   }
 
+  private Locale language;
+  private int mBorderSize = 0;
+  int mCurrentStimuliIndex = 0;
+  protected int mDelayAudioMilisecondsAfterImageStimuli = 1000;
 
-  private Locale              language;
-  private int                 mBorderSize                             = 0;
-  int                         mCurrentStimuliIndex                    = 0;
-  protected int               mDelayAudioMilisecondsAfterImageStimuli = 1000;
-
-  private Boolean             mShowTwoPageBook                        = false;
+  private Boolean mShowTwoPageBook = false;
 
   private ArrayList<Stimulus> mStimuli;
 
@@ -161,10 +165,28 @@ public class StoryBookSubExperiment extends VideoRecorder {
     Locale locale = new Locale(lang);
     Locale.setDefault(locale);
     config.locale = locale;
-    this.getBaseContext().getResources().updateConfiguration(config, this.getBaseContext().getResources().getDisplayMetrics());
+    this.getBaseContext().getResources()
+        .updateConfiguration(config, this.getBaseContext().getResources().getDisplayMetrics());
     this.language = Locale.getDefault();
 
     return Locale.getDefault().getDisplayLanguage();
+  }
+
+  public ArrayList<Stimulus> initializeStimuli(int imagesStimuli, int audioStimuli) {
+    ArrayList<Stimulus> ids = new ArrayList<Stimulus>();
+    ids.add(new Stimulus(R.drawable.speech_bubbles, R.raw.recording_start));
+    ArrayList<Stimulus> stimuli = new ArrayList<Stimulus>();
+    TypedArray imgs = getResources().obtainTypedArray(imagesStimuli);
+    TypedArray audio = getResources().obtainTypedArray(audioStimuli);
+
+    if (imgs == null || audio == null) {
+      return ids;
+    }
+    for (int i = 0; i < imgs.length(); i++) {
+      Stimulus s = new Stimulus(imgs.getResourceId(i, -1), audio.getResourceId(i, -1));
+      stimuli.add(s);
+    }
+    return stimuli;
   }
 
   @Override
@@ -175,13 +197,15 @@ public class StoryBookSubExperiment extends VideoRecorder {
     /*
      * Prepare Stimuli
      */
-    ArrayList<Stimulus> ids = new ArrayList<Stimulus>();
-    ids.add(new Stimulus(R.drawable.speech_bubbles, R.raw.recording_start));
-    this.mStimuli = (ArrayList<Stimulus>) this.getIntent().getSerializableExtra(Config.EXTRA_STIMULI);
-    this.mShowTwoPageBook = this.getIntent().getBooleanExtra(Config.EXTRA_TWO_PAGE_STORYBOOK, false);
-    if (this.mStimuli == null) {
-      this.mStimuli = ids;
+
+    int imagesStimuli = this.getIntent().getIntExtra(Config.EXTRA_STIMULI + "_image", R.array.sample_image_stimuli);
+    int audioStimuli = this.getIntent().getIntExtra(Config.EXTRA_STIMULI + "_audio", R.array.sample_audio_stimuli);
+    if (R.array.sample_image_stimuli == imagesStimuli) {
+      Log.e(Config.TAG, "THe images were not passed to the intent ");
     }
+    this.mStimuli = initializeStimuli(imagesStimuli, audioStimuli);
+    this.mShowTwoPageBook = this.getIntent().getBooleanExtra(Config.EXTRA_TWO_PAGE_STORYBOOK, false);
+
     /*
      * Prepare language of Stimuli
      */
@@ -197,9 +221,10 @@ public class StoryBookSubExperiment extends VideoRecorder {
     if (this.getLastNonConfigurationInstance() != null) {
       index = (Integer) this.getLastNonConfigurationInstance();
     }
+    this.mStimuli.add(new Stimulus(android.R.drawable.ic_media_previous, R.raw.recording_start));
     if (this.mShowTwoPageBook) {
       if (this.mStimuli.size() % 2 == 1) {
-        ids.add(new Stimulus(R.drawable.speech_bubbles, R.raw.recording_start));
+        this.mStimuli.add(new Stimulus(R.drawable.speech_bubbles, R.raw.recording_start));
       }
     }
     /*
