@@ -2,14 +2,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#ff000000" >
+    android:background="#ffffffff" >
 
     <ImageView
         android:id="@+id/onlyimage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#ffffffff"
         android:contentDescription="This is the a background image representing this text"
         android:gravity="center"
         android:src="@drawable/ic_launcher" />
+
+    <TextView
+        android:id="@+id/item_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/onlyimage"
+        android:gravity="center"
+        android:text="#"
+        android:textColor="#333399"
+        android:textSize="25sp" >
+    </TextView>
 
 </RelativeLayout>

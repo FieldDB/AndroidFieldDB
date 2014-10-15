@@ -30,7 +30,8 @@ public class StoryBookStimuliPagerAdapter extends PageTurnPagerAdapter {
     Fragment fragment = new StimulusPageTurnFragment();
     Bundle args = new Bundle();
     if (this.mStimuli != null && this.mStimuli.size() > i) {
-      args.putSerializable(StimulusPageTurnFragment.ARG_OBJECT, this.mStimuli.get(i));
+      args.putSerializable(StimulusPageTurnFragment.ARG_STIMULUS, this.mStimuli.get(i));
+      args.putInt(StimulusPageTurnFragment.ARG_STIMULUS_INDEX, i);
       fragment.setArguments(args);
     }
     return fragment;
