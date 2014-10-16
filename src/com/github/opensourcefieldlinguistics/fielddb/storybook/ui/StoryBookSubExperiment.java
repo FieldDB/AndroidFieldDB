@@ -16,7 +16,6 @@
 
 package com.github.opensourcefieldlinguistics.fielddb.storybook.ui;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -24,19 +23,11 @@ import com.briangriffey.notebook.PageTurnPageTransformer;
 import com.github.opensourcefieldlinguistics.datacollection.VideoRecorder;
 import com.github.opensourcefieldlinguistics.fielddb.Config;
 import com.github.opensourcefieldlinguistics.fielddb.model.Stimulus;
-import com.github.opensourcefieldlinguistics.fielddb.model.Touch;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.KeyEvent;
 import com.github.opensourcefieldlinguistics.fielddb.R;
 
@@ -44,106 +35,7 @@ public class StoryBookSubExperiment extends VideoRecorder {
   StoryBookStimuliPagerAdapter mPagerAdapter;
   ViewPager mViewPager;
 
-  public Bitmap getBitmap(int width, int height, int index) {
-
-    Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-    b.eraseColor(0xFFFFFFFF);
-    Canvas c = new Canvas(b);
-    Drawable d = StoryBookSubExperiment.this.getResources().getDrawable(
-        StoryBookSubExperiment.this.mStimuli.get(index).getImageFileId());
-
-    int margin = StoryBookSubExperiment.this.mBorderSize;
-    int border = StoryBookSubExperiment.this.mBorderSize;
-    Rect r = new Rect(margin, margin, width - margin, height - margin);
-
-    int imageWidth = r.width() - (border * 2);
-    int imageHeight = imageWidth * d.getIntrinsicHeight() / d.getIntrinsicWidth();
-    if (imageHeight > r.height() - (border * 2)) {
-      imageHeight = r.height() - (border * 2);
-      imageWidth = imageHeight * d.getIntrinsicWidth() / d.getIntrinsicHeight();
-    }
-
-    r.left += ((r.width() - imageWidth) / 2) - border;
-    r.right = r.left + imageWidth + border + border;
-    r.top += ((r.height() - imageHeight) / 2) - border;
-    r.bottom = r.top + imageHeight + border + border;
-
-    // Paint p = new Paint();
-    // p.setColor(0xFFC0C0C0);
-    // c.drawRect(r, p);
-    // p.setColor(0xFF0000C0);
-    // c.drawText(""+mStimuli.get(index).getLabel(), 50, 40, p);
-
-    r.left += border;
-    r.right -= border;
-    r.top += border;
-    r.bottom -= border;
-
-    d.setBounds(r);
-    d.draw(c);
-
-    return b;
-  }
-
-  public int getBitmapCount() {
-    return StoryBookSubExperiment.this.mStimuli.size();
-  }
-
-  public void playAudioStimuli() {
-    if (StoryBookSubExperiment.this.mCurrentStimuliIndex >= StoryBookSubExperiment.this.mStimuli.size()) {
-      return;
-    }
-    int audioStimuliResource = StoryBookSubExperiment.this.mStimuli.get(
-        StoryBookSubExperiment.this.mCurrentStimuliIndex).getImageFileId();
-    try {
-      Thread.sleep(StoryBookSubExperiment.this.mDelayAudioMilisecondsAfterImageStimuli);
-    } catch (InterruptedException e1) {
-      e1.printStackTrace();
-    }
-    MediaPlayer mediaPlayer = MediaPlayer.create(StoryBookSubExperiment.this.getApplicationContext(),
-        audioStimuliResource);
-    if (mediaPlayer == null) {
-      Log.d("OPrime", "Problem opening the audio stimuli");
-      return;
-    }
-    try {
-      mediaPlayer.prepare();
-    } catch (IllegalStateException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    mediaPlayer.start();
-    StoryBookSubExperiment.this.mCurrentStimuliIndex++;
-  }
-
-  public void playSound() {
-    MediaPlayer mediaPlayer = MediaPlayer.create(StoryBookSubExperiment.this.getApplicationContext(),
-        R.raw.recording_end);
-    try {
-      mediaPlayer.prepare();
-    } catch (IllegalStateException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    mediaPlayer.start();
-  }
-
-  public void recordTouchPoint(Touch touch, int stimuli) {
-    if (stimuli < StoryBookSubExperiment.this.mStimuli.size()) {
-      StoryBookSubExperiment.this.mStimuli.get(stimuli).touches.add(touch);
-    }
-    // Toast.makeText(getApplicationContext(), touch.x + ":" + touch.y,
-    // Toast.LENGTH_LONG).show();
-  }
-
   private Locale language;
-  private int mBorderSize = 0;
-  int mCurrentStimuliIndex = 0;
-  protected int mDelayAudioMilisecondsAfterImageStimuli = 1000;
 
   private Boolean mShowTwoPageBook = false;
 
@@ -203,7 +95,8 @@ public class StoryBookSubExperiment extends VideoRecorder {
     if (this.getLastNonConfigurationInstance() != null) {
       index = (Integer) this.getLastNonConfigurationInstance();
     }
-    this.mStimuli.add(new Stimulus(android.R.drawable.ic_media_previous, R.raw.recording_start));
+    // this.mStimuli.add(new Stimulus(android.R.drawable.ic_media_previous,
+    // R.raw.recording_start));
     if (this.mShowTwoPageBook) {
       if (this.mStimuli.size() % 2 == 1) {
         this.mStimuli.add(new Stimulus(R.drawable.speech_bubbles, R.raw.recording_start));
@@ -221,7 +114,9 @@ public class StoryBookSubExperiment extends VideoRecorder {
     mPagerAdapter = new StoryBookStimuliPagerAdapter(getSupportFragmentManager());
     mPagerAdapter.setStimuli(this.mStimuli);
     mViewPager = (ViewPager) findViewById(R.id.pager);
-    mViewPager.setPageTransformer(true, new PageTurnPageTransformer());
+    PageTurnPageTransformer pageTransformer = new PageTurnPageTransformer();
+    pageTransformer.setContext(this);
+    mViewPager.setPageTransformer(true, pageTransformer);
     mViewPager.setAdapter(mPagerAdapter);
     // This is something somewhat experimental. Before uncommenting next
     // line, please see method comments in CurlView.
