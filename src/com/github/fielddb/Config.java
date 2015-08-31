@@ -21,9 +21,9 @@ public class Config {
   
   public static boolean      D                                           = true;
   
-  public static final String DATA_IS_ABOUT_LANGUAGE_ISO                  = "xx";
-  public static final String DATA_IS_ABOUT_LANGUAGE_NAME_ASCII           = "default";
-  public static final String DATA_IS_ABOUT_LANGUAGE_NAME                 = "default";
+  public static final String DATA_IS_ABOUT_LANGUAGE_ISO                  = PrivateConstants.DATA_IS_ABOUT_LANGUAGE_ISO;
+  public static final String DATA_IS_ABOUT_LANGUAGE_NAME_ASCII           = PrivateConstants.DATA_IS_ABOUT_LANGUAGE_NAME_ASCII;
+  public static final String DATA_IS_ABOUT_LANGUAGE_NAME                 = PrivateConstants.DATA_IS_ABOUT_LANGUAGE_NAME;
   
   public static final String ANONYMOUS_USER_PREFIX                       = "anonymous" + DATA_IS_ABOUT_LANGUAGE_NAME_ASCII + APP_TYPE;
 
@@ -89,7 +89,7 @@ public class Config {
   public static final String INTENT_PARTIAL_SPEECH_RECOGNITION_RESULT    = "ca.ilanguage.oprime.intent.action.BROADCAST_PARTIAL_SPEECH_RECOGNITION_RESULT";
   public static final String INTENT_TAKE_PICTURE                         = "ca.ilanguage.oprime.intent.action.TAKE_PICTURE";
 
-  public static String       KEYSTORE_PASS                               = "notarealpassword";
+  public static String       KEYSTORE_PASS                               = PrivateConstants.KEYSTORE_PASS;
 
   /*
    * Preferences for persisting values
@@ -122,7 +122,7 @@ public class Config {
   public static final String ACRA_SERVER_URL                             = PrivateConstants.ACRA_SERVER_URL;
   public static final String ACRA_USER                                   = PrivateConstants.ACRA_USER;
 
-  public static final String USER_FRIENDLY_DATA_NAME                     = "datum";
+  public static final String USER_FRIENDLY_DATA_NAME                     = PrivateConstants.USER_FRIENDLY_DATA_NAME;
   
   public static String getSafeUri(String input) {
     /** Used to sanitize a string to be {@link Uri} safe. */

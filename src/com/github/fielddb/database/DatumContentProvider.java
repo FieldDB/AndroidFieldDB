@@ -49,41 +49,6 @@ public class DatumContentProvider extends ContentProvider {
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH, ITEMS);
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/*", ITEM_ID);
 	}
-
-  public static String getAppType() {
-    return mAppType;
-  }
-
-  public static void setAppType(String appType) {
-    if (Config.APP_TYPE.equals(mAppType)) {
-      DatumContentProvider.mAppType = appType;
-      intializeAuthority();
-    } else {
-      Log.d(Config.TAG, "Cant change app type after its been set to "+ mAppType);
-    }
-  }
-
-  public static String getDataIsAboutLanguageName() {
-    return mDataIsAboutLanguageName;
-  }
-
-  public static void setDataIsAboutLanguageName(String dataIsAboutLanguageName) {
-    if (Config.DATA_IS_ABOUT_LANGUAGE_NAME_ASCII.equals(mDataIsAboutLanguageName)) {
-      DatumContentProvider.mDataIsAboutLanguageName = dataIsAboutLanguageName;
-      intializeAuthority();
-    } else {
-      Log.d(Config.TAG, "Cant change language data after its been set to "+ mDataIsAboutLanguageName);
-    }
-  }
-
-  private static void intializeAuthority() {
-    AUTHORITY = "com.github.fielddb." + mAppType.toLowerCase() + "." + mDataIsAboutLanguageName.toLowerCase() + "."
-        + DatumTable.TABLE_NAME;
-    CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + BASE_PATH);
-
-    sURIMatcher.addURI(AUTHORITY, BASE_PATH, ITEMS);
-    sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/*", ITEM_ID);
-  }
   
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
