@@ -24,8 +24,8 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.github.fielddb.database.FieldDBUserContentProvider;
-import com.github.fielddb.database.User;
 import com.github.fielddb.database.UserContentProvider.UserTable;
+import com.github.fielddb.model.User;
 import com.github.fielddb.service.RegisterUserService;
 
 /**
@@ -112,7 +112,6 @@ public class FieldDBApplication extends Application {
       // SharedPreferences.Editor editor = prefs.edit();
       // editor.putBoolean(ACRA.PREF_ENABLE_ACRA, false);
       // editor.commit();
-      ACRA.init(this);
       return false;
     } else {
       ACRA.init(this);
