@@ -14,7 +14,8 @@ public class PrivateConstantsSample {
     android:exported="false" >
 </provider>
 */
-  public static final String APP_TYPE = "speechrecognition"; // "leanrnx"
+  public static final String APP_TYPE = "speechrecognition"; // "learnx"
+  public static final String APP_BRAND = "kartulispeechrecognition"; // "lingsync"
 
   public static final String ACRA_PASS = "acouchdbpassword";
   public static final String ACRA_SERVER_URL = "http://10.0.2.2:5984/acra-learnx/_design/acra-storage/_update/report";

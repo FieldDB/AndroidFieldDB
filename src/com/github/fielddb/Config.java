@@ -5,7 +5,8 @@ import java.util.regex.Pattern;
 public class Config {
 
   public static final String APP_TYPE                                    = PrivateConstants.APP_TYPE;
-
+  public static final String APP_BRAND                                   = PrivateConstants.APP_BRAND;
+  
   /*
    * Control Flow constants
    */
@@ -114,7 +115,7 @@ public class Config {
   public static final String PREFERENCE_TESTING_DAY_NUMBER               = "testingdaynumber";
 
   public static final String SHARED_OUTPUT_DIR                           = DEFAULT_OUTPUT_DIRECTORY;
-  public static final String TAG                                         = "OPrime";
+  public static final String TAG                                         = "FieldDB";
   public static final String USER_AGENT_STRING                           = "OfflineAndroidApp";
   public static final String WEB_APP_BASE_DIR                            = "www";
 

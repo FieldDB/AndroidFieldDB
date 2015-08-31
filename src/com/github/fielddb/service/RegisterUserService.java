@@ -225,7 +225,8 @@ public class RegisterUserService extends NotifyingIntentService {
 		}
 
 		JsonObject jsonParam = new JsonObject();
-		jsonParam.addProperty("username", username);
+    jsonParam.addProperty("appbrand", Config.APP_BRAND);
+    jsonParam.addProperty("username", username);
 		jsonParam.addProperty("password", generatedPassword);
 		jsonParam.addProperty("firstname", firstname);
 		jsonParam.addProperty("lastname", lastname);
