@@ -18,6 +18,7 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
@@ -107,11 +108,14 @@ public class FieldDBApplication extends Application {
     }
 
     ACRA.setConfig(config);
-
+    ACRA.init(this);
     if (BuildConfig.DEBUG) {
+      SharedPreferences prefs = this.getSharedPreferences(config.sharedPreferencesName(), MODE_PRIVATE);
+      SharedPreferences.Editor editor = prefs.edit();
+      editor.putBoolean(ACRA.PREF_ENABLE_ACRA, false);
+      editor.commit();
       return false;
     } else {
-      ACRA.init(this);
       return true;
     }
   }
@@ -128,7 +132,7 @@ public class FieldDBApplication extends Application {
     Cursor cursor = cursorLoader.loadInBackground();
     if (cursor == null) {
       Log.e(Config.TAG, "The user cursor is null, why did this happen?");
-      ACRA.getErrorReporter().handleException(new Exception("*** userCursor is null ***"));
+      BugReporter.sendBugReport("*** userCursor is null ***");
       return false;
     }
     cursor.moveToFirst();
@@ -149,13 +153,11 @@ public class FieldDBApplication extends Application {
       String actualJSON = "";
       mUser = new User(_id, _rev, username, firstname, lastname, email, gravatar, affiliation, researchInterest,
           description, subtitle, null, actualJSON);
-      if (!BuildConfig.DEBUG)
-        ACRA.getErrorReporter().putCustomData("username", username);
+      BugReporter.putCustomData("username", username);
       Config.CURRENT_USERNAME = username;
     } else {
       Log.e(Config.TAG, "There is no user... this is a problem the app wont work.");
-      if (!BuildConfig.DEBUG)
-        ACRA.getErrorReporter().putCustomData("username", "unknown");
+      BugReporter.putCustomData("username", "unknown");
     }
     /* Make the default corpus point to the user's own corpus */
     Config.DEFAULT_CORPUS = Config.DEFAULT_CORPUS.replace("username", username);
@@ -164,9 +166,7 @@ public class FieldDBApplication extends Application {
         + "/" + Config.DEFAULT_CORPUS;
     (new File(Config.DEFAULT_OUTPUT_DIRECTORY)).mkdirs();
 
-    if (!BuildConfig.DEBUG) {
-      ACRA.getErrorReporter().putCustomData("dbname", Config.DEFAULT_CORPUS);
-    }
+    BugReporter.putCustomData("dbname", Config.DEFAULT_CORPUS);
 
     Log.d(Config.TAG, cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_USERNAME)));
     cursor.close();
