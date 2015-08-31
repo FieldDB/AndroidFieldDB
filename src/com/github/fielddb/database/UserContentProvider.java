@@ -160,7 +160,7 @@ public class UserContentProvider extends ContentProvider {
 				UserTable.setColumns();
 				db.execSQL(UserTable
 						.generateCreateTableSQLStatement(UserTable.TABLE_NAME));
-				db.insert(UserTable.TABLE_NAME, null, UserTable.sampleData());
+				db.insert(UserTable.TABLE_NAME, null, UserTable.createAnonymousUser());
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
@@ -243,8 +243,8 @@ public class UserContentProvider extends ContentProvider {
 
 		public static String[] currentColumns = version1Columns;
 
-		// Offline Sample data
-		protected static ContentValues sampleData() {
+		// Create a user
+		protected static ContentValues createAnonymousUser() {
 			ContentValues values = new ContentValues();
 			String username = ANONYMOUS_PREFIX + System.currentTimeMillis();
 			values.put(COLUMN_USERNAME, username);
