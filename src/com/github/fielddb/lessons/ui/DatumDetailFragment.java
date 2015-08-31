@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.acra.ACRA;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -48,7 +47,7 @@ import com.github.fielddb.datacollection.TakePicture;
 import com.github.fielddb.datacollection.VideoRecorder;
 import com.github.fielddb.model.Datum;
 import com.github.fielddb.service.UploadAudioVideoService;
-import com.github.fielddb.BuildConfig;
+import com.github.fielddb.BugReporter;
 import com.github.fielddb.R;
 
 /**
@@ -96,6 +95,7 @@ public class DatumDetailFragment extends Fragment {
 
 	protected String mAudioFileName;
 
+	@SuppressLint("NewApi") 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -151,9 +151,7 @@ public class DatumDetailFragment extends Fragment {
 
 				mItem = datum;
 				this.recordUserEvent("loadDatum", mUri.getLastPathSegment());
-				if (!BuildConfig.DEBUG)
-					ACRA.getErrorReporter().putCustomData("urlString",
-							mUri.toString());
+				BugReporter.putCustomData("urlString", mUri.toString());
 
 			}
 
@@ -821,15 +819,6 @@ public class DatumDetailFragment extends Fragment {
 			this.mDatumEditCounts.put(eventValue, count);
 			return;
 		}
-		if (!BuildConfig.DEBUG) {
-			ACRA.getErrorReporter().putCustomData("action",
-					"{\"" + eventType + "\" : \"" + eventValue + "\"}");
-			ACRA.getErrorReporter().putCustomData("androidTimestamp",
-					System.currentTimeMillis() + "");
-			ACRA.getErrorReporter().putCustomData("deviceDetails",
-					this.mDeviceDetails.getCurrentDeviceDetails());
-			ACRA.getErrorReporter().handleException(
-					new Exception("*** User event " + eventType + " ***"));
-		}
+    com.github.fielddb.model.Activity.sendActivity(eventType, eventValue);
 	}
 }

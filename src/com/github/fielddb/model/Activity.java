@@ -21,6 +21,10 @@ public class Activity {
   long dateModified;
   String appVersion;
 
+  public static void sendActivity(String verb, String details) {
+    sendActivity("{\"" + verb + "\" : \"" + details + "\"}", "{}", "*** User event " + verb + " ***");
+  }
+
   public static void sendActivity(String action, String deviceDetails, String type) {
     if (!BuildConfig.DEBUG) {
       BugReporter.putCustomData("action", action);

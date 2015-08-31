@@ -7,18 +7,16 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
-import org.acra.ACRA;
-
-
 import com.github.fielddb.Config;
 import com.github.fielddb.database.FieldDBUserContentProvider;
 import com.github.fielddb.database.UserContentProvider.UserTable;
 import com.github.fielddb.datacollection.DeviceDetails;
 import com.github.fielddb.datacollection.NotifyingIntentService;
-import com.github.fielddb.BuildConfig;
+import com.github.fielddb.BugReporter;
 import com.github.fielddb.R;
 import com.google.gson.JsonObject;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
@@ -46,20 +44,15 @@ public class RegisterUserService extends NotifyingIntentService {
 		if (Config.D) {
 			Log.d(Config.TAG, "Inside RegisterUserService intent");
 		}
-		if (!BuildConfig.DEBUG)
-			ACRA.getErrorReporter().putCustomData("action", "registerUser:::");
-		if (!BuildConfig.DEBUG)
-			ACRA.getErrorReporter().putCustomData("urlString",
-					Config.DEFAULT_REGISTER_USER_URL);
+    BugReporter.putCustomData("action", "registerUser:::");
+    BugReporter.putCustomData("urlString", Config.DEFAULT_REGISTER_USER_URL);
 
 		super.onHandleIntent(intent);
 
 		if (!"".equals(this.userFriendlyErrorMessage)) {
 			this.notifyUser(" " + this.userFriendlyErrorMessage, this.noti,
 					this.notificationId, true);
-			if (!BuildConfig.DEBUG)
-				ACRA.getErrorReporter().handleException(
-						new Exception(this.userFriendlyErrorMessage));
+			BugReporter.sendBugReport(this.userFriendlyErrorMessage);
 			return;
 		}
 
@@ -70,9 +63,7 @@ public class RegisterUserService extends NotifyingIntentService {
 		if (!"".equals(this.userFriendlyErrorMessage)) {
 			this.notifyUser(" " + this.userFriendlyErrorMessage, this.noti,
 					this.notificationId, true);
-			if (!BuildConfig.DEBUG)
-				ACRA.getErrorReporter().handleException(
-						new Exception(this.userFriendlyErrorMessage));
+			BugReporter.sendBugReport(this.userFriendlyErrorMessage);
 			return;
 		}
 
@@ -80,9 +71,7 @@ public class RegisterUserService extends NotifyingIntentService {
 		if (!"".equals(this.userFriendlyErrorMessage)) {
 			this.notifyUser(" " + this.userFriendlyErrorMessage, this.noti,
 					this.notificationId, true);
-			if (!BuildConfig.DEBUG)
-				ACRA.getErrorReporter().handleException(
-						new Exception(this.userFriendlyErrorMessage));
+			BugReporter.sendBugReport(this.userFriendlyErrorMessage);
 			return;
 		}
 
@@ -93,9 +82,7 @@ public class RegisterUserService extends NotifyingIntentService {
 		/* Success: remove the notification */
 		((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
 				.cancel(this.notificationId);
-		if (!BuildConfig.DEBUG)
-			ACRA.getErrorReporter().handleException(
-					new Exception("*** Registered user ssucessfully ***"));
+		com.github.fielddb.model.Activity.sendActivity("{\"register\" : \"username\"}","{}", "*** Registered user ssucessfully ***");
 	}
 
 	public String loginUser(String username, String password, String loginUrl) {
@@ -144,6 +131,7 @@ public class RegisterUserService extends NotifyingIntentService {
 		return JSONResponse;
 	}
 
+	@SuppressLint("NewApi") 
 	public String registerUsers(Uri uri) {
 		String[] userProjection = {UserTable.COLUMN_REV,
 				UserTable.COLUMN_USERNAME, UserTable.COLUMN_FIRSTNAME,
@@ -209,8 +197,7 @@ public class RegisterUserService extends NotifyingIntentService {
 		cursor.close();
 
 		this.statusMessage = "Registering user " + username;
-		if (!BuildConfig.DEBUG)
-			ACRA.getErrorReporter().putCustomData("registerUser", username);
+    BugReporter.putCustomData("registerUser", username);
 		String urlStringAuthenticationSession = Config.DEFAULT_REGISTER_USER_URL;
 		URL url;
 		HttpURLConnection urlConnection;

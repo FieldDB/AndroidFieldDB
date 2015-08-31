@@ -9,7 +9,6 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.security.KeyStore;
 
-import org.acra.ACRA;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -29,10 +28,10 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
 
+import com.github.fielddb.BugReporter;
 import com.github.fielddb.Config;
 import com.github.fielddb.PrivateConstants;
 import com.github.fielddb.datacollection.NotifyingIntentService;
-import com.github.fielddb.BuildConfig;
 import com.github.fielddb.R;
 import com.google.gson.JsonObject;
 
@@ -97,21 +96,15 @@ public class UploadAudioVideoService extends NotifyingIntentService {
 		if (Config.D) {
 			Log.d(Config.TAG, "Inside UploadAudioVideoService intent");
 		}
-		if (!BuildConfig.DEBUG)
-			ACRA.getErrorReporter().putCustomData("action",
-					"uploadAudioVideo:::");
-		if (!BuildConfig.DEBUG)
-			ACRA.getErrorReporter().putCustomData("urlString",
-					Config.DEFAULT_UPLOAD_AUDIO_VIDEO_URL);
+    BugReporter.putCustomData("action", "uploadAudioVideo:::");
+    BugReporter.putCustomData("urlString", Config.DEFAULT_UPLOAD_AUDIO_VIDEO_URL);
 
 		super.onHandleIntent(intent);
 
 		if (!"".equals(this.userFriendlyErrorMessage)) {
 			this.notifyUser(" " + this.userFriendlyErrorMessage, this.noti,
 					this.notificationId, true);
-			if (!BuildConfig.DEBUG)
-				ACRA.getErrorReporter().handleException(
-						new Exception(this.userFriendlyErrorMessage));
+			BugReporter.sendBugReport(this.userFriendlyErrorMessage);
 			return;
 		}
 
@@ -131,9 +124,7 @@ public class UploadAudioVideoService extends NotifyingIntentService {
 		if (!"".equals(this.userFriendlyErrorMessage)) {
 			this.notifyUser(" " + this.userFriendlyErrorMessage, this.noti,
 					this.notificationId, true);
-			if (!BuildConfig.DEBUG)
-				ACRA.getErrorReporter().handleException(
-						new Exception(this.userFriendlyErrorMessage));
+			BugReporter.sendBugReport(this.userFriendlyErrorMessage);
 			return;
 		}
 
@@ -141,9 +132,7 @@ public class UploadAudioVideoService extends NotifyingIntentService {
 		if (!"".equals(this.userFriendlyErrorMessage)) {
 			this.notifyUser(" " + this.userFriendlyErrorMessage, this.noti,
 					this.notificationId, true);
-			if (!BuildConfig.DEBUG)
-				ACRA.getErrorReporter().handleException(
-						new Exception(this.userFriendlyErrorMessage));
+			BugReporter.sendBugReport(this.userFriendlyErrorMessage);
 			return;
 		}
 
@@ -154,18 +143,13 @@ public class UploadAudioVideoService extends NotifyingIntentService {
 		/* Success: remove the notification */
 		((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
 				.cancel(this.notificationId);
-		if (!BuildConfig.DEBUG)
-			ACRA.getErrorReporter().handleException(
-					new Exception("*** Uploaded audio sucessfully ***"));
-
+    com.github.fielddb.model.Activity.sendActivity("{\"uploaded\" : \"audio\"}","{}", "*** Uploaded audio sucessfully ***");
 	}
 
 	public String upload(Uri uri) {
 		String filePath = uri.getPath();
 		this.statusMessage = "Uploading audio " + uri.getLastPathSegment();
-		if (!BuildConfig.DEBUG)
-			ACRA.getErrorReporter().putCustomData("uploadAudio",
-					uri.getLastPathSegment());
+    BugReporter.putCustomData("uploadAudio", uri.getLastPathSegment());
 		String urlStringAuthenticationSession = Config.DEFAULT_UPLOAD_AUDIO_VIDEO_URL;
 
 		/* Actually uploads the video */
@@ -300,18 +284,7 @@ public class UploadAudioVideoService extends NotifyingIntentService {
 			this.userFriendlyErrorMessage = "The server response is very strange, please report this.";
 			return 0;
 		} else {
-			String eventType = "uploadAudio";
-			String eventValue = jsonResponse;
-			if (!BuildConfig.DEBUG) {
-				ACRA.getErrorReporter().putCustomData("action",
-						"{" + eventType + " : " + eventValue + "}");
-				ACRA.getErrorReporter().putCustomData("androidTimestamp",
-						System.currentTimeMillis() + "");
-				ACRA.getErrorReporter().putCustomData("deviceDetails",
-						mDeviceDetails);
-				ACRA.getErrorReporter().handleException(
-						new Exception("*** User event " + eventType + " ***"));
-			}
+	    com.github.fielddb.model.Activity.sendActivity("uploadAudio", jsonResponse);
 		}
 
 		return 0;

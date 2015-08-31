@@ -1,7 +1,6 @@
 package com.github.fielddb.lessons.ui;
 
-import org.acra.ACRA;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -26,8 +25,8 @@ import android.widget.ListView;
 import com.github.fielddb.Config;
 import com.github.fielddb.database.DatumContentProvider;
 import com.github.fielddb.database.DatumContentProvider.DatumTable;
+import com.github.fielddb.BugReporter;
 import com.github.fielddb.R;
-import com.github.fielddb.BuildConfig;
 
 /**
  * A list fragment representing a list of Datums. This fragment also supports
@@ -245,6 +244,7 @@ public class DatumListFragment extends ListFragment
 		mActivatedPosition = position;
 	}
 
+	@SuppressLint("InlinedApi") 
 	private void fillData() {
 		String[] from = new String[]{DatumTable.COLUMN_ORTHOGRAPHY};
 		int[] to = new int[]{android.R.id.text1};
@@ -253,8 +253,7 @@ public class DatumListFragment extends ListFragment
 				android.R.layout.simple_list_item_activated_1, null, from, to,
 				0);
 		setListAdapter(adapter);
-		if (!BuildConfig.DEBUG) ACRA.getErrorReporter().handleException(
-				new Exception("*** User load datum list ***"));
+		com.github.fielddb.model.Activity.sendActivity("loaded", "datalist");
 	}
 
 	@Override
@@ -294,9 +293,7 @@ public class DatumListFragment extends ListFragment
 				if (newDatum != null) {
 					mCallbacks.onItemSelected(newDatum.getLastPathSegment());
 				} else {
-					if (!BuildConfig.DEBUG) ACRA.getErrorReporter().handleException(
-							new Exception(
-									"*** Error inserting a datum in DB ***"));
+					BugReporter.sendBugReport("*** Error inserting a datum in DB ***");
 				}
 				return true;
 		} else {
