@@ -5,21 +5,17 @@ import java.util.UUID;
 
 
 import com.github.fielddb.Config;
-import com.github.fielddb.service.DownloadDatumsService;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
@@ -220,22 +216,6 @@ public class DatumContentProvider extends ContentProvider {
 				db.execSQL(DatumTable
 						.generateCreateTableSQLStatement(DatumTable.TABLE_NAME));
 
-				ConnectivityManager connManager = (ConnectivityManager) getContext()
-						.getSystemService(Context.CONNECTIVITY_SERVICE);
-				NetworkInfo mWifi = connManager
-						.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
-				if (!Config.APP_TYPE.equals("speechrecognition") && mWifi.isConnected()) {
-					// if the user has a wifi connection we can download some
-					// real sample data
-					Intent downloadSamples = new Intent(getContext(),
-							DownloadDatumsService.class);
-					getContext().startService(downloadSamples);
-				} else {
-					// Otherwise, insert offline data
-					insert(null, DatumTable.sampleData());
-				}
-
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
@@ -323,31 +303,6 @@ public class DatumContentProvider extends ContentProvider {
 				COLUMN_ENTERED_BY_USER, COLUMN_MODIFIED_BY_USER};
 
 		public static String[] currentColumns = version1Columns;
-
-		// Offline Sample data
-		public static ContentValues sampleData() {
-			// ContentValues values = new ContentValues();
-			// values.put(COLUMN_ID, "sample12345");
-			// values.put(COLUMN_MORPHEMES, "e'sig");
-			// values.put(COLUMN_GLOSS, "clam");
-			// values.put(COLUMN_TRANSLATION, "Clam");
-			// values.put(COLUMN_ORTHOGRAPHY, "e'sig");
-			// values.put(COLUMN_CONTEXT, " ");
-			// return values;
-
-			ContentValues values = new ContentValues();
-			values.put(COLUMN_ID, "instructions");
-			values.put(
-					COLUMN_UTTERANCE,
-					"You need to read a few sentences to train the recognizer to your voice and your words.");
-			values.put(
-					COLUMN_ORTHOGRAPHY,
-					"შენ უნდა წაიკითხო რამოდენიმე წინადადება, რათა გადაამზადო აპლიკაცია შენს ხმაზე და შენს სიტყვებზე");
-			values.put(
-					COLUMN_CONTEXT,
-					"The Georgian language is very complex and very different from other languages which were used to build Speech Recognition systems. This means each person should have their own recognizer.");
-			return values;
-		}
 
 		public static void setColumns() {
 			DatumTable.columns = FieldDBTable.getBaseColumns();
