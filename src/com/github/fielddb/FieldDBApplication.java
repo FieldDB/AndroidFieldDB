@@ -18,13 +18,11 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
-import com.github.fielddb.database.DatumContentProvider;
 import com.github.fielddb.database.FieldDBUserContentProvider;
 import com.github.fielddb.database.User;
 import com.github.fielddb.database.UserContentProvider.UserTable;
@@ -42,12 +40,10 @@ import com.github.fielddb.service.RegisterUserService;
 @ReportsCrashes(formKey = "", formUri = "", reportType = org.acra.sender.HttpSender.Type.JSON, httpMethod = org.acra.sender.HttpSender.Method.PUT, formUriBasicAuthLogin = "see_private_constants", formUriBasicAuthPassword = "see_private_constants")
 public class FieldDBApplication extends Application {
   protected User mUser;
-  Intent mUpdateSampleData;
+  protected Intent mUpdateSampleData;
 
   @Override
   public void onCreate() {
-    DatumContentProvider.setAppType(Config.APP_TYPE);
-    DatumContentProvider.setDataIsAboutLanguageName(Config.DATA_IS_ABOUT_LANGUAGE_NAME_ASCII);
     super.onCreate();
     String language = forceLocale(Config.DATA_IS_ABOUT_LANGUAGE_ISO);
     Log.d(Config.TAG, "Forced the locale to " + language);
@@ -108,14 +104,18 @@ public class FieldDBApplication extends Application {
     }
 
     ACRA.setConfig(config);
-    ACRA.init(this);
     if (BuildConfig.DEBUG) {
-      SharedPreferences prefs = this.getSharedPreferences(config.sharedPreferencesName(), MODE_PRIVATE);
-      SharedPreferences.Editor editor = prefs.edit();
-      editor.putBoolean(ACRA.PREF_ENABLE_ACRA, false);
-      editor.commit();
+      // TODO unable to disable acra sharedPreferencesName = "kartuliacra", sharedPreferencesMode = Context.MODE_PRIVATE, 
+      // https://github.com/ACRA/acra/wiki/AdvancedUsage#letting-your-users-control-acra
+      // SharedPreferences prefs = this.getSharedPreferences("kartuliacra",
+      // Context.MODE_PRIVATE);
+      // SharedPreferences.Editor editor = prefs.edit();
+      // editor.putBoolean(ACRA.PREF_ENABLE_ACRA, false);
+      // editor.commit();
+      ACRA.init(this);
       return false;
     } else {
+      ACRA.init(this);
       return true;
     }
   }
