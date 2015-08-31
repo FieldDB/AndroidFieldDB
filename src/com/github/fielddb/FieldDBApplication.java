@@ -14,32 +14,39 @@ import org.acra.ACRA;
 import org.acra.ACRAConfiguration;
 import org.acra.annotation.ReportsCrashes;
 
-import com.github.fielddb.database.FieldDBUserContentProvider;
-import com.github.fielddb.database.User;
-import com.github.fielddb.database.UserContentProvider.UserTable;
-import com.github.fielddb.service.DownloadDatumsService;
-import com.github.fielddb.service.RegisterUserService;
-import com.github.fielddb.BuildConfig;
-import com.github.fielddb.R;
-
 import android.annotation.SuppressLint;
 import android.app.Application;
-import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.Log;
 
+import com.github.fielddb.database.DatumContentProvider;
+import com.github.fielddb.database.FieldDBUserContentProvider;
+import com.github.fielddb.database.User;
+import com.github.fielddb.database.UserContentProvider.UserTable;
+import com.github.fielddb.service.RegisterUserService;
+
+/**
+ * If you want the app to automatically update sample data if the user has wifi,
+ * you can provide a mUpdateSampleData; If you want the app to always work
+ * offline (no online sample data) you can provide mOfflineSampleData;
+ * 
+ * - mUpdateSampleData to be an intent which knows how to download/update sample
+ * data from a server - mOfflineSampleData to have 1 sample datum
+ * 
+ */
 @ReportsCrashes(formKey = "", formUri = "", reportType = org.acra.sender.HttpSender.Type.JSON, httpMethod = org.acra.sender.HttpSender.Method.PUT, formUriBasicAuthLogin = "see_private_constants", formUriBasicAuthPassword = "see_private_constants")
 public class FieldDBApplication extends Application {
-  User mUser;
+  protected User mUser;
+  Intent mUpdateSampleData;
 
   @Override
-  public final void onCreate() {
+  public void onCreate() {
+    DatumContentProvider.setAppType(Config.APP_TYPE);
+    DatumContentProvider.setDataIsAboutLanguageName(Config.DATA_IS_ABOUT_LANGUAGE_NAME_ASCII);
     super.onCreate();
     String language = forceLocale(Config.DATA_IS_ABOUT_LANGUAGE_ISO);
     Log.d(Config.TAG, "Forced the locale to " + language);
@@ -47,7 +54,10 @@ public class FieldDBApplication extends Application {
     // (new File(Config.DEFAULT_OUTPUT_DIRECTORY)).mkdirs();
     initBugReporter();
     initUser();
-    populateWithSampleOrOnlineData();
+
+    if (mUpdateSampleData != null) {
+      getApplicationContext().startService(mUpdateSampleData);
+    }
   }
 
   protected boolean initBugReporter() {
@@ -116,6 +126,11 @@ public class FieldDBApplication extends Application {
     CursorLoader cursorLoader = new CursorLoader(getApplicationContext(), FieldDBUserContentProvider.CONTENT_URI,
         userProjection, null, null, null);
     Cursor cursor = cursorLoader.loadInBackground();
+    if (cursor == null) {
+      Log.e(Config.TAG, "The user cursor is null, why did this happen?");
+      ACRA.getErrorReporter().handleException(new Exception("*** userCursor is null ***"));
+      return false;
+    }
     cursor.moveToFirst();
     String _id = "";
     String username = "default";
@@ -138,7 +153,7 @@ public class FieldDBApplication extends Application {
         ACRA.getErrorReporter().putCustomData("username", username);
       Config.CURRENT_USERNAME = username;
     } else {
-      Log.e(Config.TAG, "There is no user... this is a problme the app wont work.");
+      Log.e(Config.TAG, "There is no user... this is a problem the app wont work.");
       if (!BuildConfig.DEBUG)
         ACRA.getErrorReporter().putCustomData("username", "unknown");
     }
@@ -162,27 +177,7 @@ public class FieldDBApplication extends Application {
       getApplicationContext().startService(registerUser);
     }
 
-    return true;
-  }
-
-  /**
-   * If we are in debug mode, or the user is connected to wifi, download updates
-   * for samples and also register the user if they weren't registered before
-   * 
-   * @return
-   */
-  public boolean populateWithSampleOrOnlineData() {
-    ConnectivityManager connManager = (ConnectivityManager) getApplicationContext().getSystemService(
-        Context.CONNECTIVITY_SERVICE);
-    NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
-    if (wifi.isConnected() || Config.D) {
-      Intent updateSamples = new Intent(getApplicationContext(), DownloadDatumsService.class);
-      getApplicationContext().startService(updateSamples);
-      return true;
-    } else {
-      return false;
-    }
+    return mUser != null;
   }
 
   /**

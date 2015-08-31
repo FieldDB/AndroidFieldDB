@@ -1,9 +1,5 @@
 package com.github.fielddb;
 
-import com.github.fielddb.database.DatumContentProvider.DatumTable;
-
-import android.content.ContentValues;
-
 /**
  * 
  * http://developer.android.com/tools/devices/emulator.html#networkaddresses
@@ -36,17 +32,4 @@ public class PrivateConstantsSample {
 	 * "apasswordforyourkeystore"
 	 */
 	public static final String KEYSTORE_PASS = "apasswordforyourkeystore";
-	
-
-  // Offline Sample data
-	public static ContentValues sampleData() {
-      ContentValues values = new ContentValues();
-      values.put(DatumTable.COLUMN_ID, "sample12345");
-      values.put(DatumTable.COLUMN_MORPHEMES, "e'sig");
-      values.put(DatumTable.COLUMN_GLOSS, "clam");
-      values.put(DatumTable.COLUMN_TRANSLATION, "Clam");
-      values.put(DatumTable.COLUMN_ORTHOGRAPHY, "e'sig");
-      values.put(DatumTable.COLUMN_CONTEXT, " ");
-      return values;
-  }
 }

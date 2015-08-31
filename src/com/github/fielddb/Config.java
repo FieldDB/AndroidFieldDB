@@ -50,6 +50,7 @@ public class Config {
   public static final String ENGLISH                                     = "en";
 
   public static final String EXTRA_DEBUG_MODE                            = "debug_mode";
+  public static final String EXTRA_CONNECTIVITY                          = "connectivity";
   public static final String EXTRA_EXPERIMENT_TRIAL_INFORMATION          = "experimenttrialinfo";
   public static final String EXTRA_HTML5_JAVASCRIPT_INTERFACE            = "javascriptinterface";
   public static final String EXTRA_HTML5_SUB_EXPERIMENT_INITIAL_URL      = "subexperimenturl";

@@ -24,13 +24,25 @@ import com.github.fielddb.R;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.Log;
 
+/**
+ * Downloads updates to sample data over wifi. 
+ * 
+ * IF you want to download even when not on wifi you must pass 
+ *  - Config.EXTRA_CONNECTIVITY set to "all"
+ * 
+ */
 public class DownloadDatumsService extends NotifyingIntentService {
 	String datumTagToDownload;
 	String urlStringSampleDataDownload;
@@ -48,11 +60,20 @@ public class DownloadDatumsService extends NotifyingIntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 
-		if (Config.D) {
-			return;
-		}
+    ConnectivityManager connManager = (ConnectivityManager) getApplicationContext().getSystemService(
+        Context.CONNECTIVITY_SERVICE);
+    NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+    
+    if (!wifi.isConnected()) {
+      String connectivity = intent.getExtras().getString(Config.EXTRA_CONNECTIVITY);
+      if (connectivity == null || !"any".equals(connectivity) || !connectivity.contains("wifi")) {
+        Log.d(Config.TAG,
+            "Skipping DownloadDatumsService, wifi is not on, and accepted connectivity isn't overriding this ");
+        ensureOfflineSampleDataIsPopulated();
+        return;
+      }
+    }
 
-		this.D = Config.D;
 		this.statusMessage = "Downloading samples "
 				+ Config.USER_FRIENDLY_DATA_NAME;
 		this.tryAgain = intent;
@@ -428,5 +449,47 @@ public class DownloadDatumsService extends NotifyingIntentService {
 		}
 		return filenames;
 	}
+	
+
+  /**
+   * Looks to see if there is any data in the database. If there is no data, it
+   * inserts the sample data.
+   * 
+   * @return count of data which is already in the database
+   */
+  @SuppressLint("NewApi")
+  protected int ensureOfflineSampleDataIsPopulated() {
+    int dataCountInDatabase = 0;
+
+    String[] datumProjection = { DatumTable.COLUMN_ID };
+    CursorLoader loader = new CursorLoader(getApplicationContext(), DatumContentProvider.CONTENT_URI, datumProjection,
+        null, null, null);
+    Cursor datumCursor = loader.loadInBackground();
+
+    if (datumCursor == null) {
+      Log.e(Config.TAG, "The datum cursor is null, why did this happen?");
+      ACRA.getErrorReporter().handleException(new Exception("*** datumCursor is null ***"));
+    } else {
+      dataCountInDatabase = datumCursor.getCount();
+      datumCursor.close();
+      if (dataCountInDatabase == 0) {
+        dataCountInDatabase = createSampleData();
+      }
+    }
+    return dataCountInDatabase;
+  }
+  
+  protected int createSampleData(){
+    ContentValues sampleDatum = new ContentValues();
+    sampleDatum.put(DatumTable.COLUMN_ID, "sample12345");
+    sampleDatum.put(DatumTable.COLUMN_MORPHEMES, "e'sig");
+    sampleDatum.put(DatumTable.COLUMN_GLOSS, "clam");
+    sampleDatum.put(DatumTable.COLUMN_TRANSLATION, "Clam");
+    sampleDatum.put(DatumTable.COLUMN_ORTHOGRAPHY, "e'sig");
+    sampleDatum.put(DatumTable.COLUMN_CONTEXT, " ");
+    getContentResolver().insert(DatumContentProvider.CONTENT_URI, sampleDatum);
+    return 1;
+  }
+
 
 }
