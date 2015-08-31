@@ -29,16 +29,18 @@ public class DatumContentProvider extends ContentProvider {
 	// Used for the UriMacher
 	private static final int ITEMS = 10;
 	private static final int ITEM_ID = 20;
-
-	private static final String AUTHORITY = "com.github.opensourcefieldlinguistics.fielddb."
-			+ Config.APP_TYPE.toLowerCase()
+	
+  private static String mAppType = Config.APP_TYPE;
+  private static String mDataIsAboutLanguageName = Config.DATA_IS_ABOUT_LANGUAGE_NAME_ASCII;
+  
+	private static String AUTHORITY = "com.github.fielddb."
+			+ mAppType.toLowerCase()
 			+ "."
-			+ Config.DATA_IS_ABOUT_LANGUAGE_NAME_ASCII.toLowerCase()
+			+ mDataIsAboutLanguageName.toLowerCase()
 			+ "."
 			+ DatumTable.TABLE_NAME;
 	private static final String BASE_PATH = DatumTable.TABLE_NAME + "s";
-	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
-			+ "/" + BASE_PATH);
+	public static  Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + BASE_PATH);
 	public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
 			+ "/" + DatumTable.TABLE_NAME + "s";
 	public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
@@ -52,6 +54,47 @@ public class DatumContentProvider extends ContentProvider {
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/*", ITEM_ID);
 	}
 
+  public static String getAppType() {
+    return mAppType;
+  }
+
+  public static void setAppType(String appType) {
+    if (Config.APP_TYPE.equals(mAppType)) {
+      DatumContentProvider.mAppType = appType;
+      intializeAuthority();
+    } else {
+      Log.d(Config.TAG, "Cant change app type after its been set to "+ mAppType);
+    }
+  }
+
+  public static String getDataIsAboutLanguageName() {
+    return mDataIsAboutLanguageName;
+  }
+
+  public static void setDataIsAboutLanguageName(String dataIsAboutLanguageName) {
+    if (Config.DATA_IS_ABOUT_LANGUAGE_NAME_ASCII.equals(mDataIsAboutLanguageName)) {
+      DatumContentProvider.mDataIsAboutLanguageName = dataIsAboutLanguageName;
+      intializeAuthority();
+    } else {
+      Log.d(Config.TAG, "Cant change language data after its been set to "+ mDataIsAboutLanguageName);
+    }
+    
+    
+    
+    
+    
+    
+  }
+
+  private static void intializeAuthority() {
+    AUTHORITY = "com.github.fielddb." + mAppType.toLowerCase() + "." + mDataIsAboutLanguageName.toLowerCase() + "."
+        + DatumTable.TABLE_NAME;
+    CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + BASE_PATH);
+
+    sURIMatcher.addURI(AUTHORITY, BASE_PATH, ITEMS);
+    sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/*", ITEM_ID);
+  }
+  
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		ContentValues values = new ContentValues();
