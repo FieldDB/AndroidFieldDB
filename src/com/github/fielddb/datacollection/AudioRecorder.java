@@ -34,19 +34,19 @@ public class AudioRecorder extends Service {
 
   }
 
-  protected static String     TAG               = "OPrime";
-  private RecordingReceiver   mAudioFileUpdateReceiver;
-  private int                 mAudioIconId      = android.R.drawable.ic_btn_speak_now;
-  private String              mAudioResultsFile = "";
-  private PendingIntent       mContentIntent;
+  protected static String TAG = "OPrime";
+  private RecordingReceiver mAudioFileUpdateReceiver;
+  private int mAudioIconId = android.R.drawable.ic_btn_speak_now;
+  private String mAudioResultsFile = "";
+  private PendingIntent mContentIntent;
 
   private NotificationManager mNM;
 
-  private Notification        mNotification;
-  private MediaRecorder       mRecorder;
-  private Boolean             mRecordingNow     = false;
+  private Notification mNotification;
+  private MediaRecorder mRecorder;
+  private Boolean mRecordingNow = false;
 
-  private int                 NOTIFICATION      = 7029;
+  private int NOTIFICATION = 7029;
 
   @Override
   public IBinder onBind(Intent arg0) {
@@ -78,9 +78,9 @@ public class AudioRecorder extends Service {
       Notification.Builder builder = new Notification.Builder(this.getApplicationContext());
 
       builder.setContentIntent(this.mContentIntent).setSmallIcon(this.mAudioIconId)
-          .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.ic_launcher)).setTicker(res.getString(R.string.app_name))
-          .setWhen(System.currentTimeMillis()).setAutoCancel(true).setContentTitle(res.getString(R.string.app_name))
-          .setContentText(res.getString(R.string.app_name));
+          .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.ic_launcher))
+          .setTicker(res.getString(R.string.app_name)).setWhen(System.currentTimeMillis()).setAutoCancel(true)
+          .setContentTitle(res.getString(R.string.app_name)).setContentText(res.getString(R.string.app_name));
       if (sdk >= 16) {
         this.mNotification = builder.build();
       } else {
@@ -89,8 +89,10 @@ public class AudioRecorder extends Service {
       }
     } else {
       /* below sdk 11 use deprecated methods */
-      this.mNotification = new Notification(this.mAudioIconId, res.getString(R.string.app_name), System.currentTimeMillis());
-      this.mNotification.setLatestEventInfo(this, res.getString(R.string.app_name), "Recording...", this.mContentIntent);
+      this.mNotification = new Notification(this.mAudioIconId, res.getString(R.string.app_name),
+          System.currentTimeMillis());
+      this.mNotification
+          .setLatestEventInfo(this, res.getString(R.string.app_name), "Recording...", this.mContentIntent);
       this.mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
     }
   }
@@ -135,14 +137,15 @@ public class AudioRecorder extends Service {
       this.mAudioResultsFile = intent.getStringExtra(Config.EXTRA_RESULT_FILENAME);
     }
     if (this.mAudioResultsFile == null || "".equals(this.mAudioResultsFile)) {
-      this.mAudioResultsFile = Config.DEFAULT_OUTPUT_DIRECTORY + "/audio/OPrime_result_file_" + Config.getHumanReadableTimestamp() + "_"
-          + System.currentTimeMillis() + Config.DEFAULT_AUDIO_EXTENSION;
+      this.mAudioResultsFile = Config.DEFAULT_OUTPUT_DIRECTORY + "/audio/OPrime_result_file_"
+          + Config.getHumanReadableTimestamp() + "_" + System.currentTimeMillis() + Config.DEFAULT_AUDIO_EXTENSION;
     }
     /*
      * In case this is a call from an attempt to video
      */
-    this.mAudioResultsFile = this.mAudioResultsFile.replace(Config.DEFAULT_VIDEO_EXTENSION, Config.DEFAULT_AUDIO_EXTENSION).replace(
-        Config.DEFAULT_OUTPUT_DIRECTORY + "/video", Config.DEFAULT_OUTPUT_DIRECTORY + "/audio");
+    this.mAudioResultsFile = this.mAudioResultsFile.replace(Config.DEFAULT_VIDEO_EXTENSION,
+        Config.DEFAULT_AUDIO_EXTENSION).replace(Config.DEFAULT_OUTPUT_DIRECTORY + "/video",
+        Config.DEFAULT_OUTPUT_DIRECTORY + "/audio");
 
     (new File(this.mAudioResultsFile).getParentFile()).mkdirs();
 

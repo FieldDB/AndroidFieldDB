@@ -22,6 +22,7 @@ import android.webkit.WebViewClient;
 public class AssetIncludeWorkaroundWebViewClient extends WebViewClient {
   private boolean D = false;
   private Context mContext;
+
   // protected String anchor;
 
   @Override
@@ -52,7 +53,9 @@ public class AssetIncludeWorkaroundWebViewClient extends WebViewClient {
         AssetManager assets = this.mContext.getAssets();
         Uri uri = Uri.parse(url);
         if (this.D)
-          Log.d("OPrime", "The URL was in the assets. (removed the assets and sending the contents of the file)? to the browser. " + url);
+          Log.d("OPrime",
+              "The URL was in the assets. (removed the assets and sending the contents of the file)? to the browser. "
+                  + url);
 
         return assets.open(uri.getPath(), AssetManager.ACCESS_STREAMING);
       } catch (IOException e) {
@@ -62,7 +65,8 @@ public class AssetIncludeWorkaroundWebViewClient extends WebViewClient {
       }
     } else {
       if (this.D)
-        Log.d("OPrime", "The URL was not the assets. Not performing any action, letting the WebView handle it normally. " + url);
+        Log.d("OPrime",
+            "The URL was not the assets. Not performing any action, letting the WebView handle it normally. " + url);
 
     }
     return null;

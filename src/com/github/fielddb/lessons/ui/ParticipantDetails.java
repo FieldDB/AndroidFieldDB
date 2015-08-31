@@ -44,11 +44,11 @@ public class ParticipantDetails extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-//    this.getPreferenceManager().setSharedPreferencesMode(MODE_PRIVATE);
-//    this.getPreferenceManager().setSharedPreferencesName(Config.PREFERENCE_NAME);
-//
-//    // Load the preferences from an XML resource
-//    this.addPreferencesFromResource(R.xml.preferences);
+    // this.getPreferenceManager().setSharedPreferencesMode(MODE_PRIVATE);
+    // this.getPreferenceManager().setSharedPreferencesName(Config.PREFERENCE_NAME);
+    //
+    // // Load the preferences from an XML resource
+    // this.addPreferencesFromResource(R.xml.preferences);
 
   }
 

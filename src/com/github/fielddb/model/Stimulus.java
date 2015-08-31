@@ -7,21 +7,21 @@ import com.github.fielddb.R;
 
 public class Stimulus implements Serializable {
 
-  private static final long serialVersionUID       = -4023355491498842498L;
-  protected int             audioFileId            = R.raw.gammatone;
-  protected String          audioFilePath          = "";
-  protected long            audioOffset            = 0;
-  protected int             imageFileId            = R.drawable.speech_bubbles;
-  protected String          imageFilePath          = "";
+  private static final long serialVersionUID = -4023355491498842498L;
+  protected int audioFileId = R.raw.gammatone;
+  protected String audioFilePath = "";
+  protected long audioOffset = 0;
+  protected int imageFileId = R.drawable.speech_bubbles;
+  protected String imageFilePath = "";
 
-  protected String          label                  = "";
+  protected String label = "";
 
-  protected long            reactionTimePostOffset = 0;
+  protected long reactionTimePostOffset = 0;
 
-  protected long            startTime              = 0;
-  protected long            totalReactionTime      = 0;
-  public ArrayList<Touch>   touches                = new ArrayList<Touch>();
-  protected String          videoFilePath          = "";
+  protected long startTime = 0;
+  protected long totalReactionTime = 0;
+  public ArrayList<Touch> touches = new ArrayList<Touch>();
+  protected String videoFilePath = "";
 
   public Stimulus() {
     super();

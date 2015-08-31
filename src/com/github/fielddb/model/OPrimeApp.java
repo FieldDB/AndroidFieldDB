@@ -17,17 +17,17 @@ import android.widget.Toast;
 import com.github.fielddb.R;
 
 public abstract class OPrimeApp extends Application {
-  public boolean                  D                  = false;
+  public boolean D = false;
   /* This is a pointer to the experiment currently underway */
-  protected int                   mCurrentExperiment;
+  protected int mCurrentExperiment;
 
   /* This is a pointer to the sub experiment currently underway */
-  protected int                   mCurrentSubExperiment;
+  protected int mCurrentSubExperiment;
 
   /*
    * Customer support
    */
-  protected String[]              mDevEmailAddresses = new String[] { "opensource@ilanguage.ca" };
+  protected String[] mDevEmailAddresses = new String[] { "opensource@ilanguage.ca" };
 
   /*
    * This is an array of experiments that are in memory. it is possible to have
@@ -39,22 +39,22 @@ public abstract class OPrimeApp extends Application {
   /*
    * Localization of multi-lingual experiments/stimuli/UI
    */
-  protected Locale                mLanguage;
-  protected String                mLocalCouchDBname  = "oprimesample";
+  protected Locale mLanguage;
+  protected String mLocalCouchDBname = "oprimesample";
 
   /*
    * Variables for TouchDB - CouchDB storage if used by the application.
    */
-  protected String                mLocalCouchDir     = Config.DEFAULT_OUTPUT_DIRECTORY + "db/couchdb/";
+  protected String mLocalCouchDir = Config.DEFAULT_OUTPUT_DIRECTORY + "db/couchdb/";
 
   /*
    * Experiment variables
    */
 
   // protected boolean mAutoAdvanceStimuliOnTouch = false;
-  protected String                mOutputDir         = Config.DEFAULT_OUTPUT_DIRECTORY;
-  protected String                mRemoteCouchUrl    = "https://oprimesampleadmin:none@cesine.iriscouch.com/oprimesample";
-  public String                   TAG                = Config.TAG;
+  protected String mOutputDir = Config.DEFAULT_OUTPUT_DIRECTORY;
+  protected String mRemoteCouchUrl = "https://oprimesampleadmin:none@cesine.iriscouch.com/oprimesample";
+  public String TAG = Config.TAG;
 
   protected void addStimuli() {
 
@@ -111,8 +111,8 @@ public abstract class OPrimeApp extends Application {
           .get(this.mCurrentExperiment)
           .getSubExperiments()
           .add(
-              new SubExperimentBlock(subextitle, languagecode, subextitle, null, Config.EMPTYSTRING, Config.INTENT_START_SUB_EXPERIMENT,
-                  true, autoAdvanceStimuliOnTouch));
+              new SubExperimentBlock(subextitle, languagecode, subextitle, null, Config.EMPTYSTRING,
+                  Config.INTENT_START_SUB_EXPERIMENT, true, autoAdvanceStimuliOnTouch));
     }
     this.addStimuli();
     this.mCurrentSubExperiment = 0;
@@ -144,7 +144,8 @@ public abstract class OPrimeApp extends Application {
     }
     Locale.setDefault(locale);
     config.locale = locale;
-    this.getBaseContext().getResources().updateConfiguration(config, this.getBaseContext().getResources().getDisplayMetrics());
+    this.getBaseContext().getResources()
+        .updateConfiguration(config, this.getBaseContext().getResources().getDisplayMetrics());
     this.mLanguage = Locale.getDefault();
 
     return Locale.getDefault().getDisplayLanguage();

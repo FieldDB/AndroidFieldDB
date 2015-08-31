@@ -43,7 +43,7 @@ public class StoryBookStimuliPagerAdapter extends PageTurnPagerAdapter {
         args.putBoolean(StimulusPageTurnFragment.ARG_STIMULUS_LAST, false);
       }
       fragment.setArguments(args);
-     
+
     }
     return fragment;
   }

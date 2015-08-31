@@ -12,12 +12,13 @@ import android.webkit.WebView;
 public class ExperimentJavaScriptInterface extends JavaScriptInterface implements NonObfuscateable {
   private static final long serialVersionUID = -8802714328569435146L;
   private HTML5GameActivity mUIParent;
-  protected WebView mWebView; 
+  protected WebView mWebView;
   protected Experiment mExperiment;
   protected Boolean mAutoAdvance = false;
   protected int mCurrentSubex = 0;
-  
-  public ExperimentJavaScriptInterface(boolean d, String tag, String outputDir, Context context, HTML5GameActivity UIParent, String assetsPrefix) {
+
+  public ExperimentJavaScriptInterface(boolean d, String tag, String outputDir, Context context,
+      HTML5GameActivity UIParent, String assetsPrefix) {
     super(d, tag, outputDir, context, UIParent, assetsPrefix);
   }
 
@@ -51,27 +52,37 @@ public class ExperimentJavaScriptInterface extends JavaScriptInterface implement
     }
     Log.w(Config.TAG, "TODO Update Launching sub experiment:" + subex);
 
-    
-//    final int currentSubExperiment = Integer.parseInt(subex);
-//    this.setCurrentSubex(currentSubExperiment);
-//
-//    String mDateString = (String) android.text.format.DateFormat.format("yyyy-MM-dd_kk_mm", new java.util.Date(System.currentTimeMillis()));
-//    mDateString = mDateString.replaceAll("/", "-").replaceAll(" ", "-");
-//
-//    OPrimeApp app = this.getApp();
-//    String resultsFile = app.getExperiment().getParticipant().getCode() + "_" + app.getLanguage() + currentSubExperiment + "_"
-//        + app.getSubExperiments().get(currentSubExperiment).getTitle().replaceAll(" ", "_") + "-" + mDateString;
-//
-//    Intent intent = new Intent(app.getSubExperiments().get(currentSubExperiment).getIntentToCallThisSubExperiment());
-//
-//    intent.putExtra(Config.EXTRA_SUB_EXPERIMENT, app.getSubExperiments().get(currentSubExperiment));
-//    intent.putExtra(Config.EXTRA_LANGUAGE, app.getLanguage().getLanguage());
-//    intent.putExtra(Config.EXTRA_RESULT_FILENAME, this.mOutputDir + "video/" + resultsFile + ".3gp");
-//    this.getUIParent().startActivityForResult(intent, Config.EXPERIMENT_COMPLETED);
-//
-//    app.getSubExperiments().get(currentSubExperiment).setResultsFileWithoutSuffix(this.mOutputDir + "video/" + resultsFile);
-//    if (this.D)
-//      Log.d(Config.TAG, "setResultsFileWithoutSuffix sub experiment:" + resultsFile);
+    // final int currentSubExperiment = Integer.parseInt(subex);
+    // this.setCurrentSubex(currentSubExperiment);
+    //
+    // String mDateString = (String)
+    // android.text.format.DateFormat.format("yyyy-MM-dd_kk_mm", new
+    // java.util.Date(System.currentTimeMillis()));
+    // mDateString = mDateString.replaceAll("/", "-").replaceAll(" ", "-");
+    //
+    // OPrimeApp app = this.getApp();
+    // String resultsFile = app.getExperiment().getParticipant().getCode() + "_"
+    // + app.getLanguage() + currentSubExperiment + "_"
+    // +
+    // app.getSubExperiments().get(currentSubExperiment).getTitle().replaceAll(" ",
+    // "_") + "-" + mDateString;
+    //
+    // Intent intent = new
+    // Intent(app.getSubExperiments().get(currentSubExperiment).getIntentToCallThisSubExperiment());
+    //
+    // intent.putExtra(Config.EXTRA_SUB_EXPERIMENT,
+    // app.getSubExperiments().get(currentSubExperiment));
+    // intent.putExtra(Config.EXTRA_LANGUAGE, app.getLanguage().getLanguage());
+    // intent.putExtra(Config.EXTRA_RESULT_FILENAME, this.mOutputDir + "video/"
+    // + resultsFile + ".3gp");
+    // this.getUIParent().startActivityForResult(intent,
+    // Config.EXPERIMENT_COMPLETED);
+    //
+    // app.getSubExperiments().get(currentSubExperiment).setResultsFileWithoutSuffix(this.mOutputDir
+    // + "video/" + resultsFile);
+    // if (this.D)
+    // Log.d(Config.TAG, "setResultsFileWithoutSuffix sub experiment:" +
+    // resultsFile);
 
   }
 
@@ -94,12 +105,14 @@ public class ExperimentJavaScriptInterface extends JavaScriptInterface implement
   @Deprecated
   @JavascriptInterface
   public void startVideoRecorderWithResult() {
-    String mDateString = (String) android.text.format.DateFormat.format("yyyy-MM-dd_kk_mm", new java.util.Date(System.currentTimeMillis()));
+    String mDateString = (String) android.text.format.DateFormat.format("yyyy-MM-dd_kk_mm",
+        new java.util.Date(System.currentTimeMillis()));
     mDateString = mDateString.replaceAll("/", "-").replaceAll(" ", "-");
 
     int currentSubExperiment = this.mCurrentSubex;
 
-    String resultsFile = mExperiment.getParticipant().getCode() + "_" + mExperiment.getLanguage() + currentSubExperiment + "_"
+    String resultsFile = mExperiment.getParticipant().getCode() + "_" + mExperiment.getLanguage()
+        + currentSubExperiment + "_"
         + mExperiment.getSubExperiments().get(currentSubExperiment).getTitle().replaceAll(" ", "_") + "-" + mDateString;
 
     if (this.D) {
@@ -107,7 +120,8 @@ public class ExperimentJavaScriptInterface extends JavaScriptInterface implement
     }
     this.startVideoRecorder(resultsFile);
 
-    mExperiment.getSubExperiments().get(currentSubExperiment).setResultsFileWithoutSuffix(this.mOutputDir + "video/" + resultsFile);
+    mExperiment.getSubExperiments().get(currentSubExperiment)
+        .setResultsFileWithoutSuffix(this.mOutputDir + "video/" + resultsFile);
   }
 
 }

@@ -17,39 +17,39 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 
 public class DeviceDetails implements LocationListener {
-  String            androidId         = "unknown";
-  String            appVersion;
+  String androidId = "unknown";
+  String appVersion;
 
-  String            brand;
-  int               currentOrientation;
+  String brand;
+  int currentOrientation;
 
-  protected boolean D                 = true;
+  protected boolean D = true;
 
-  String            device;
-  String            hardware;
-  double            latitude          = 0;
-  double            locationAccuracy  = 0;
-  double            longitude         = 0;
-  String            manufacturer;
-  Context           mContext;
-  String            mDeviceDetails;
-  long              min_dis           = 10;
-  long              min_time          = 100;
+  String device;
+  String hardware;
+  double latitude = 0;
+  double locationAccuracy = 0;
+  double longitude = 0;
+  String manufacturer;
+  Context mContext;
+  String mDeviceDetails;
+  long min_dis = 10;
+  long min_time = 100;
 
-  String            model;
-  String            osversion;
-  String            product;
-  int               screenHeight;
+  String model;
+  String osversion;
+  String product;
+  int screenHeight;
 
-  double            screenRatio;
-  int               screenWidth;
-  int               sdk;
+  double screenRatio;
+  int screenWidth;
+  int sdk;
 
-  String            serial            = "unknown";
-  protected String  TAG               = Config.TAG;
-  String            telephonyDeviceId = "unknown";
-  String            userFriendlyBuildID;
-  String            wifiMacAddress    = "unknown";
+  String serial = "unknown";
+  protected String TAG = Config.TAG;
+  String telephonyDeviceId = "unknown";
+  String userFriendlyBuildID;
+  String wifiMacAddress = "unknown";
 
   @SuppressLint("NewApi")
   public DeviceDetails(Context mContext, boolean debugMode, String tag) {

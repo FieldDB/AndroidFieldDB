@@ -74,11 +74,12 @@ public class FieldDBChromeClient extends WebChromeClient {
     if (view.getContext() == null) {
       return true;
     }
-    new AlertDialog.Builder(view.getContext()).setTitle("").setMessage(message).setPositiveButton(android.R.string.ok, new AlertDialog.OnClickListener() {
-      public void onClick(DialogInterface dialog, int which) {
-        result.confirm();
-      }
-    }).setCancelable(false).create().show();
+    new AlertDialog.Builder(view.getContext()).setTitle("").setMessage(message)
+        .setPositiveButton(android.R.string.ok, new AlertDialog.OnClickListener() {
+          public void onClick(DialogInterface dialog, int which) {
+            result.confirm();
+          }
+        }).setCancelable(false).create().show();
     return true;
   }
 
@@ -90,15 +91,16 @@ public class FieldDBChromeClient extends WebChromeClient {
     if (view.getContext() == null) {
       return true;
     }
-    new AlertDialog.Builder(view.getContext()).setTitle("").setMessage(message).setPositiveButton(android.R.string.ok, new AlertDialog.OnClickListener() {
-      public void onClick(DialogInterface dialog, int which) {
-        result.confirm();
-      }
-    }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-      public void onClick(DialogInterface dialog, int id) {
-        result.cancel();
-      }
-    }).setCancelable(false).create().show();
+    new AlertDialog.Builder(view.getContext()).setTitle("").setMessage(message)
+        .setPositiveButton(android.R.string.ok, new AlertDialog.OnClickListener() {
+          public void onClick(DialogInterface dialog, int which) {
+            result.confirm();
+          }
+        }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int id) {
+            result.cancel();
+          }
+        }).setCancelable(false).create().show();
 
     return true;
   }
@@ -129,7 +131,8 @@ public class FieldDBChromeClient extends WebChromeClient {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
           // Send result back to JS
-          result.confirm(year + "-" + String.format("%02d", (monthOfYear + 1)) + "-" + String.format("%02d", (dayOfMonth)) + " 00:00:00");
+          result.confirm(year + "-" + String.format("%02d", (monthOfYear + 1)) + "-"
+              + String.format("%02d", (dayOfMonth)) + " 00:00:00");
         }
       }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE));
 
@@ -178,17 +181,18 @@ public class FieldDBChromeClient extends WebChromeClient {
       TextView prompt = (TextView) promptsView.findViewById(R.id.prompt);
       prompt.setText(message);
       // set dialog message
-      alertDialogBuilder.setCancelable(false).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-        public void onClick(DialogInterface dialog, int id) {
-          // get user input and set it to result edit text
-          Log.d(Config.TAG, userInput.getText().toString());
-          result.confirm(userInput.getText().toString());
-        }
-      }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-        public void onClick(DialogInterface dialog, int id) {
-          result.cancel();
-        }
-      });
+      alertDialogBuilder.setCancelable(false)
+          .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+              // get user input and set it to result edit text
+              Log.d(Config.TAG, userInput.getText().toString());
+              result.confirm(userInput.getText().toString());
+            }
+          }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+              result.cancel();
+            }
+          });
 
       // create alert dialog
       AlertDialog alertDialog = alertDialogBuilder.create();

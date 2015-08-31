@@ -45,57 +45,51 @@ import android.widget.VideoView;
 import com.github.fielddb.R;
 
 public class StopWatchSubExperiment extends Activity implements SurfaceHolder.Callback {
-  protected static String                 TAG            = "StopWatchSubExperiment";
-  protected boolean                       D              = true;
-  protected long                          lastPause      = 0;
-  protected Chronometer                   mChronometer;
-  protected Boolean                       mRecording     = false;
-  View.OnClickListener                    mResetListener = new OnClickListener() {
-                                                           @Override
-                                                           public void onClick(View v) {
-                                                             StopWatchSubExperiment.this.mChronometer
-                                                                 .setBase(SystemClock.elapsedRealtime());
-                                                           }
-                                                         };
+  protected static String TAG = "StopWatchSubExperiment";
+  protected boolean D = true;
+  protected long lastPause = 0;
+  protected Chronometer mChronometer;
+  protected Boolean mRecording = false;
+  View.OnClickListener mResetListener = new OnClickListener() {
+    @Override
+    public void onClick(View v) {
+      StopWatchSubExperiment.this.mChronometer.setBase(SystemClock.elapsedRealtime());
+    }
+  };
 
-  View.OnClickListener                    mStartListener = new OnClickListener() {
-                                                           @Override
-                                                           public void onClick(View v) {
-                                                             if (StopWatchSubExperiment.this.lastPause == 0) {
-                                                               StopWatchSubExperiment.this.mChronometer
-                                                                   .setBase(SystemClock.elapsedRealtime());
+  View.OnClickListener mStartListener = new OnClickListener() {
+    @Override
+    public void onClick(View v) {
+      if (StopWatchSubExperiment.this.lastPause == 0) {
+        StopWatchSubExperiment.this.mChronometer.setBase(SystemClock.elapsedRealtime());
 
-                                                             } else {
-                                                               StopWatchSubExperiment.this.mChronometer
-                                                                   .setBase(StopWatchSubExperiment.this.mChronometer
-                                                                       .getBase()
-                                                                       + SystemClock.elapsedRealtime()
-                                                                       - StopWatchSubExperiment.this.lastPause);
-                                                             }
+      } else {
+        StopWatchSubExperiment.this.mChronometer.setBase(StopWatchSubExperiment.this.mChronometer.getBase()
+            + SystemClock.elapsedRealtime() - StopWatchSubExperiment.this.lastPause);
+      }
 
-                                                             StopWatchSubExperiment.this.mChronometer.start();
-                                                           }
-                                                         };
+      StopWatchSubExperiment.this.mChronometer.start();
+    }
+  };
   protected ArrayList<? extends Stimulus> mStimuli;
-  View.OnClickListener                    mStopListener  = new OnClickListener() {
-                                                           @Override
-                                                           public void onClick(View v) {
-                                                             StopWatchSubExperiment.this.lastPause = SystemClock
-                                                                 .elapsedRealtime();
+  View.OnClickListener mStopListener = new OnClickListener() {
+    @Override
+    public void onClick(View v) {
+      StopWatchSubExperiment.this.lastPause = SystemClock.elapsedRealtime();
 
-                                                             StopWatchSubExperiment.this.mChronometer.stop();
+      StopWatchSubExperiment.this.mChronometer.stop();
 
-                                                           }
-                                                         };
+    }
+  };
 
-  protected SubExperimentBlock            mSubExperiment;
+  protected SubExperimentBlock mSubExperiment;
 
-  protected VideoView                     mVideoView     = null;
+  protected VideoView mVideoView = null;
 
   /*
    * Video variables
    */
-  protected VideoRecorderAsyncTask        recordVideoTask;
+  protected VideoRecorderAsyncTask recordVideoTask;
 
   public void finishSubExperiment() {
     this.mSubExperiment.setDisplayedStimuli(this.mStimuli.size());

@@ -34,45 +34,43 @@ import android.widget.VideoView;
 import com.github.fielddb.R;
 
 public class SubExperiment extends Activity implements SurfaceHolder.Callback {
-  Animation                               animationSlideInRight;
+  Animation animationSlideInRight;
 
-  AnimationListener                       animationSlideInRightListener = new AnimationListener() {
+  AnimationListener animationSlideInRightListener = new AnimationListener() {
 
-                                                                          @Override
-                                                                          public void onAnimationEnd(Animation animation) {
-                                                                          }
+    @Override
+    public void onAnimationEnd(Animation animation) {
+    }
 
-                                                                          @Override
-                                                                          public void onAnimationRepeat(
-                                                                              Animation animation) {
-                                                                          }
+    @Override
+    public void onAnimationRepeat(Animation animation) {
+    }
 
-                                                                          @Override
-                                                                          public void onAnimationStart(
-                                                                              Animation animation) {
-                                                                          }
-                                                                        };
-  protected boolean                       D                             = true;
-  protected int                           height                        = 1;
-  protected Locale                        language;
-  MediaPlayer                             mAudioStimuli;
-  protected Boolean                       mAutoAdvanceStimuliOnTouch    = false;
-  protected long                          mLastTouchTime                = 0;
-  protected Boolean                       mRecording                    = false;
+    @Override
+    public void onAnimationStart(Animation animation) {
+    }
+  };
+  protected boolean D = true;
+  protected int height = 1;
+  protected Locale language;
+  MediaPlayer mAudioStimuli;
+  protected Boolean mAutoAdvanceStimuliOnTouch = false;
+  protected long mLastTouchTime = 0;
+  protected Boolean mRecording = false;
   protected ArrayList<? extends Stimulus> mStimuli;
-  protected int                           mStimuliIndex                 = -1;
-  protected SubExperimentBlock            mSubExperiment;
+  protected int mStimuliIndex = -1;
+  protected SubExperimentBlock mSubExperiment;
 
-  MediaPlayer                             mTouchAudio;
+  MediaPlayer mTouchAudio;
 
-  protected VideoView                     mVideoView                    = null;
+  protected VideoView mVideoView = null;
   /*
    * Video variables
    */
-  protected VideoRecorderAsyncTask        recordVideoTask;
-  protected String                        TAG                           = "OPrime SubExperiment";
+  protected VideoRecorderAsyncTask recordVideoTask;
+  protected String TAG = "OPrime SubExperiment";
 
-  protected int                           width                         = 1;
+  protected int width = 1;
 
   public void finishSubExperiment() {
     this.mSubExperiment.setDisplayedStimuli(this.mStimuliIndex);

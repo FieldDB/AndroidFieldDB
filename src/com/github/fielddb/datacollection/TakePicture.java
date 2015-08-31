@@ -29,8 +29,8 @@ import com.github.fielddb.R;
 
 public class TakePicture extends Activity {
   boolean mAppearSeamless = true;
-  String  mImageFilename;
-  Uri     myPicture;
+  String mImageFilename;
+  Uri myPicture;
 
   public void captureImage(View view) {
     ContentValues values = new ContentValues();
@@ -171,7 +171,8 @@ public class TakePicture extends Activity {
       } catch (Exception e) {
         e.printStackTrace();
         Toast.makeText(this.getApplicationContext(),
-            "Result picture wasn't copied, its in the Camera folder: " + this.getPath(this.myPicture), Toast.LENGTH_LONG).show();
+            "Result picture wasn't copied, its in the Camera folder: " + this.getPath(this.myPicture),
+            Toast.LENGTH_LONG).show();
       }
 
     }
@@ -191,8 +192,8 @@ public class TakePicture extends Activity {
       this.mImageFilename = this.getIntent().getStringExtra(Config.EXTRA_RESULT_FILENAME);
     }
     if (this.mImageFilename == null || "".equals(this.mImageFilename)) {
-      this.mImageFilename = Config.DEFAULT_OUTPUT_DIRECTORY + "/image/OPrime_result_file_" + Config.getHumanReadableTimestamp() + "_" + System.currentTimeMillis()
-          + Config.DEFAULT_IMAGE_EXTENSION;
+      this.mImageFilename = Config.DEFAULT_OUTPUT_DIRECTORY + "/image/OPrime_result_file_"
+          + Config.getHumanReadableTimestamp() + "_" + System.currentTimeMillis() + Config.DEFAULT_IMAGE_EXTENSION;
     }
 
     if (this.mAppearSeamless) {

@@ -50,8 +50,8 @@ import android.widget.Toast;
  */
 public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
 
-  protected static int    cameraNumberUsed = -1;
-  protected static String TAG              = "VideoRecorder";
+  protected static int cameraNumberUsed = -1;
+  protected static String TAG = "VideoRecorder";
 
   @SuppressLint("NewApi")
   public static Camera getCameraInstance() throws IOException {
@@ -116,17 +116,17 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
   /*
    * Recording variables
    */
-  public boolean          D                      = true;
+  public boolean D = true;
   protected SurfaceHolder holder;
-  String                  mVideoResultsFile      = "";
-  protected Camera        mCamera;
-  protected Context       mContext;
-  protected Activity      mParentUI;
-  protected Boolean       mRecording             = false;
+  String mVideoResultsFile = "";
+  protected Camera mCamera;
+  protected Context mContext;
+  protected Activity mParentUI;
+  protected Boolean mRecording = false;
 
-  protected Boolean       mRecordingAudioInstead = false;
+  protected Boolean mRecordingAudioInstead = false;
 
-  protected MediaRecorder mVideoRecorder         = null;
+  protected MediaRecorder mVideoRecorder = null;
 
   /**
    * Uses the surface defined in video_recorder.xml Tested using 2.2 (HTC
@@ -283,8 +283,8 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
       this.mVideoResultsFile = this.mParentUI.getIntent().getStringExtra(Config.EXTRA_RESULT_FILENAME);
     }
     if (this.mVideoResultsFile == null || "".equals(this.mVideoResultsFile)) {
-      mVideoResultsFile = Config.DEFAULT_OUTPUT_DIRECTORY + "/video/OPrime_result_file_" + Config.getHumanReadableTimestamp() + "_"
-          + System.currentTimeMillis() + Config.DEFAULT_VIDEO_EXTENSION;
+      mVideoResultsFile = Config.DEFAULT_OUTPUT_DIRECTORY + "/video/OPrime_result_file_"
+          + Config.getHumanReadableTimestamp() + "_" + System.currentTimeMillis() + Config.DEFAULT_VIDEO_EXTENSION;
     }
     (new File(this.mVideoResultsFile).getParentFile()).mkdirs();
 

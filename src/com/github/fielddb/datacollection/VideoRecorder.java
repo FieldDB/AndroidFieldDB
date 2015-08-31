@@ -38,9 +38,9 @@ import android.widget.VideoView;
  */
 public class VideoRecorder extends FragmentActivity implements SurfaceHolder.Callback {
   protected VideoRecorderAsyncTask mRecordVideoTask;
-  protected Boolean                mRecording = false;
-  protected VideoStatusReceiver    mVideoStatusReceiver;
-  protected int                    mLayout    = R.layout.fragment_fixation_video_recorder;
+  protected Boolean mRecording = false;
+  protected VideoStatusReceiver mVideoStatusReceiver;
+  protected int mLayout = R.layout.fragment_fixation_video_recorder;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {

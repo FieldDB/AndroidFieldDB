@@ -2,7 +2,6 @@ package com.github.fielddb.lessons.ui;
 
 import java.util.ArrayList;
 
-
 import com.github.fielddb.Config;
 import com.github.fielddb.database.DatumContentProvider;
 import com.github.fielddb.database.UserContentProvider.UserTable;
@@ -16,76 +15,73 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
 
 public class DatumFragmentPagerAdapter extends FragmentPagerAdapter {
-	private ArrayList<String> mDatumsIds;
-	private ArrayList<Fragment> mFragments;
+  private ArrayList<String> mDatumsIds;
+  private ArrayList<Fragment> mFragments;
 
-	Uri mVisibleDatumUri;
+  Uri mVisibleDatumUri;
 
-	public DatumFragmentPagerAdapter(FragmentManager fm) {
-		super(fm);
-		mFragments = new ArrayList<Fragment>();
-	}
+  public DatumFragmentPagerAdapter(FragmentManager fm) {
+    super(fm);
+    mFragments = new ArrayList<Fragment>();
+  }
 
-	public void swapCursor(Cursor cursor) {
-		this.mDatumsIds = new ArrayList<String>();
-		this.mDatumsIds.add("instructions");
-		if (cursor != null && cursor.getCount() > 0) {
-			cursor.moveToFirst();
-			while (cursor.moveToNext()) {
-				String id = cursor.getString(cursor
-						.getColumnIndexOrThrow(UserTable.COLUMN_ID));
-				if (!"instructions".equals(id)) {
-					this.mDatumsIds.add(id);
-				}
-			}
-			cursor.close();
-		}
-	}
-	@Override
-	public Fragment getItem(int position) {
-		Log.d(Config.TAG, "Displaying datum in position " + position);
-		if (mFragments.size() > position) {
-			if (mFragments.get(position) != null) {
-				return mFragments.get(position);
-			}
-		}
+  public void swapCursor(Cursor cursor) {
+    this.mDatumsIds = new ArrayList<String>();
+    this.mDatumsIds.add("instructions");
+    if (cursor != null && cursor.getCount() > 0) {
+      cursor.moveToFirst();
+      while (cursor.moveToNext()) {
+        String id = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_ID));
+        if (!"instructions".equals(id)) {
+          this.mDatumsIds.add(id);
+        }
+      }
+      cursor.close();
+    }
+  }
 
-		String id = "instructions";
-		if (mDatumsIds.size() > position) {
-			id = mDatumsIds.get(position);
-		}
-		Bundle arguments = new Bundle();
-		DatumDetailFragment fragment = new DatumProductionExperimentFragment();
-		if (Config.APP_TYPE.equals("speechrecognition")) {
-//			fragment = new DatumProductionExperimentFragment();
-		} else {
-			 fragment = new DatumDetailFragment();
-		}
-		mVisibleDatumUri = Uri.parse(DatumContentProvider.CONTENT_URI + "/"
-				+ id);
-		Log.d(Config.TAG, mVisibleDatumUri + "");
-		arguments.putParcelable(DatumContentProvider.CONTENT_ITEM_TYPE,
-				mVisibleDatumUri);
-		arguments.putString(DatumDetailFragment.ARG_ITEM_ID, id);
-		arguments.putInt(DatumDetailFragment.ARG_TOTAL_DATUM_IN_LIST,
-				mDatumsIds.size() - 1);
+  @Override
+  public Fragment getItem(int position) {
+    Log.d(Config.TAG, "Displaying datum in position " + position);
+    if (mFragments.size() > position) {
+      if (mFragments.get(position) != null) {
+        return mFragments.get(position);
+      }
+    }
 
-		fragment.mTwoPane = false;
-		fragment.setArguments(arguments);
-		if (mFragments.size() == position ||mFragments.size() < position) {
-			mFragments.add(fragment);
-		} else {
-			mFragments.set(position, fragment);
-		}
-		return fragment;
-	}
+    String id = "instructions";
+    if (mDatumsIds.size() > position) {
+      id = mDatumsIds.get(position);
+    }
+    Bundle arguments = new Bundle();
+    DatumDetailFragment fragment = new DatumProductionExperimentFragment();
+    if (Config.APP_TYPE.equals("speechrecognition")) {
+      // fragment = new DatumProductionExperimentFragment();
+    } else {
+      fragment = new DatumDetailFragment();
+    }
+    mVisibleDatumUri = Uri.parse(DatumContentProvider.CONTENT_URI + "/" + id);
+    Log.d(Config.TAG, mVisibleDatumUri + "");
+    arguments.putParcelable(DatumContentProvider.CONTENT_ITEM_TYPE, mVisibleDatumUri);
+    arguments.putString(DatumDetailFragment.ARG_ITEM_ID, id);
+    arguments.putInt(DatumDetailFragment.ARG_TOTAL_DATUM_IN_LIST, mDatumsIds.size() - 1);
 
-	@Override
-	public int getCount() {
-		if (mDatumsIds != null) {
-			return mDatumsIds.size();
-		}
-		return 0;
-	}
+    fragment.mTwoPane = false;
+    fragment.setArguments(arguments);
+    if (mFragments.size() == position || mFragments.size() < position) {
+      mFragments.add(fragment);
+    } else {
+      mFragments.set(position, fragment);
+    }
+    return fragment;
+  }
+
+  @Override
+  public int getCount() {
+    if (mDatumsIds != null) {
+      return mDatumsIds.size();
+    }
+    return 0;
+  }
 
 }

@@ -89,7 +89,8 @@ public abstract class HTML5Activity extends Activity {
       this.getJavaScriptInterface().mMediaPlayer.stop();
       this.getJavaScriptInterface().mMediaPlayer.release();
     }
-    if (this.getJavaScriptInterface().mListenForEndAudioInterval != null && !this.getJavaScriptInterface().mListenForEndAudioInterval.isCancelled()) {
+    if (this.getJavaScriptInterface().mListenForEndAudioInterval != null
+        && !this.getJavaScriptInterface().mListenForEndAudioInterval.isCancelled()) {
       this.getJavaScriptInterface().mListenForEndAudioInterval.cancel(true);
       // getJavaScriptInterface().mListenForEndAudioInterval = null;
     }
@@ -111,11 +112,16 @@ public abstract class HTML5Activity extends Activity {
     } else if (item.getItemId() == R.id.result_folder) {
       final boolean fileManagerAvailable = isIntentAvailable(this, "org.openintents.action.PICK_FILE");
       if (!fileManagerAvailable) {
-        Toast.makeText(
-            this.getApplicationContext(),
-            "To open and export recorded files or " + "draft data you can install the OI File Manager, " + "it allows you to browse your SDCARD directly on your mobile device."
-                + " There are other apps which allow you to view the files, but OI is the one this app uses when you click on this button", Toast.LENGTH_LONG).show();
-        Intent goToMarket = new Intent(Intent.ACTION_VIEW).setData(Uri.parse("market://details?id=org.openintents.filemanager"));
+        Toast
+            .makeText(
+                this.getApplicationContext(),
+                "To open and export recorded files or "
+                    + "draft data you can install the OI File Manager, "
+                    + "it allows you to browse your SDCARD directly on your mobile device."
+                    + " There are other apps which allow you to view the files, but OI is the one this app uses when you click on this button",
+                Toast.LENGTH_LONG).show();
+        Intent goToMarket = new Intent(Intent.ACTION_VIEW).setData(Uri
+            .parse("market://details?id=org.openintents.filemanager"));
         this.startActivity(goToMarket);
       } else {
         Intent openResults = new Intent("org.openintents.action.PICK_FILE");
@@ -171,7 +177,8 @@ public abstract class HTML5Activity extends Activity {
     webSettings.setDomStorageEnabled(true);
     webSettings.setDatabasePath(this.getFilesDir().getAbsolutePath() + "webdb/");
     if (Config.D)
-      Log.d(Config.TAG, "Turning on dom storage enabled webSettings.setDomStorageEnabled " + this.getFilesDir().getAbsolutePath() + "/databases/");
+      Log.d(Config.TAG, "Turning on dom storage enabled webSettings.setDomStorageEnabled "
+          + this.getFilesDir().getAbsolutePath() + "/databases/");
 
     webSettings.setUserAgentString(webSettings.getUserAgentString() + " " + Config.USER_AGENT_STRING);
 
@@ -210,7 +217,8 @@ public abstract class HTML5Activity extends Activity {
      * assets works as expected
      */
     else if (android.os.Build.VERSION.SDK_INT <= 10) {
-      Log.w(Config.TAG, "This Android SDK " + android.os.Build.VERSION.SDK_INT + " may or may not be able to display a file if the HTML5 uses a # or ? to set variables.");
+      Log.w(Config.TAG, "This Android SDK " + android.os.Build.VERSION.SDK_INT
+          + " may or may not be able to display a file if the HTML5 uses a # or ? to set variables.");
       this.mWebView.setWebViewClient(new FieldDBWebViewClient());
     }
 
@@ -221,7 +229,8 @@ public abstract class HTML5Activity extends Activity {
 
     HTML5Activity mUIParent;
 
-    public HTML5JavaScriptInterface(boolean d, String tag, String outputDir, Context context, HTML5Activity UIParent, String assetsPrefix) {
+    public HTML5JavaScriptInterface(boolean d, String tag, String outputDir, Context context, HTML5Activity UIParent,
+        String assetsPrefix) {
       super(d, tag, outputDir, context, UIParent, assetsPrefix);
     }
 

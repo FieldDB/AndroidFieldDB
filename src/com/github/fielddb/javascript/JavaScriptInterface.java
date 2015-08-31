@@ -52,7 +52,8 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
         }
       }
       JavaScriptInterface.this.mMediaPlayer.pause();
-      Log.d(JavaScriptInterface.this.TAG, "\tPaused audio at ... " + JavaScriptInterface.this.mMediaPlayer.getCurrentPosition());
+      Log.d(JavaScriptInterface.this.TAG,
+          "\tPaused audio at ... " + JavaScriptInterface.this.mMediaPlayer.getCurrentPosition());
       return "End audio interval";
     }
 
@@ -64,7 +65,8 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
       } else {
         currentPosition = "" + JavaScriptInterface.this.mMediaPlayer.getCurrentPosition();
       }
-      Log.d(JavaScriptInterface.this.TAG, "\t" + result + ": Stopped listening for audio interval at ... " + currentPosition);
+      Log.d(JavaScriptInterface.this.TAG, "\t" + result + ": Stopped listening for audio interval at ... "
+          + currentPosition);
     }
 
     @Override
@@ -90,7 +92,9 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
     protected void onPostExecute(String result) {
       if (JavaScriptInterface.this.getUIParent() != null && JavaScriptInterface.this.getUIParent().mWebView != null) {
         if (JavaScriptInterface.this.D)
-          Log.d(JavaScriptInterface.this.TAG, "\tPost execute LoadUrlToWebView task. Now trying to send a pubsub message to the webview." + this.mMessage);
+          Log.d(JavaScriptInterface.this.TAG,
+              "\tPost execute LoadUrlToWebView task. Now trying to send a pubsub message to the webview."
+                  + this.mMessage);
         JavaScriptInterface.this.getUIParent().mWebView.loadUrl(this.mMessage);
       }
     }
@@ -200,7 +204,8 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
    *          chrome extension is.(example: release/)
    */
 
-  public JavaScriptInterface(boolean d, String tag, String outputDir, Context context, HTML5Activity UIParent, String assetsPrefix) {
+  public JavaScriptInterface(boolean d, String tag, String outputDir, Context context, HTML5Activity UIParent,
+      String assetsPrefix) {
     this.D = d;
     this.TAG = tag;
     this.mOutputDir = outputDir;
@@ -426,7 +431,8 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
         @Override
         public void onSeekComplete(MediaPlayer mediaPlayer) {
           if (JavaScriptInterface.this.D)
-            Log.d(JavaScriptInterface.this.TAG, "current audio position... " + JavaScriptInterface.this.mMediaPlayer.getCurrentPosition());
+            Log.d(JavaScriptInterface.this.TAG,
+                "current audio position... " + JavaScriptInterface.this.mMediaPlayer.getCurrentPosition());
           JavaScriptInterface.this.mMediaPlayer.start();
           JavaScriptInterface.this.mMediaPlayer.setOnSeekCompleteListener(null);
 
@@ -529,7 +535,8 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
           JavaScriptInterface.this.mMediaPlayer = null;
           // getUIParent().loadUrlToWebView();
           LoadUrlToWebView v = new LoadUrlToWebView();
-          v.setMessage("javascript:OPrime.hub.publish('playbackCompleted','" + JavaScriptInterface.this.mAudioPlaybackFileUrl + "');");
+          v.setMessage("javascript:OPrime.hub.publish('playbackCompleted','"
+              + JavaScriptInterface.this.mAudioPlaybackFileUrl + "');");
           v.execute();
         }
       });
@@ -602,7 +609,8 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
     this.getUIParent().startService(intent);
     // Publish audio recording started
     LoadUrlToWebView v = new LoadUrlToWebView();
-    v.setMessage("javascript:OPrime.hub.publish('audioRecordingSucessfullyStarted','" + this.mAudioRecordFileUrl + "');");
+    v.setMessage("javascript:OPrime.hub.publish('audioRecordingSucessfullyStarted','" + this.mAudioRecordFileUrl
+        + "');");
     v.execute();
   }
 
@@ -642,7 +650,8 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
     this.getUIParent().stopService(audio);
     // Publish stopped audio
     LoadUrlToWebView v = new LoadUrlToWebView();
-    v.setMessage("javascript:OPrime.hub.publish('audioRecordingSucessfullyStopped','" + this.mAudioRecordFileUrl + "');");
+    v.setMessage("javascript:OPrime.hub.publish('audioRecordingSucessfullyStopped','" + this.mAudioRecordFileUrl
+        + "');");
     v.execute();
     // TODO add broadcast and listener from audio service to be sure the file
     // works(?)
@@ -667,7 +676,8 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
 
     // Publish picture taking started
     LoadUrlToWebView v = new LoadUrlToWebView();
-    v.setMessage("javascript:OPrime.hub.publish('pictureCaptureSucessfullyStarted','" + this.mTakeAPictureFileUrl + "');");
+    v.setMessage("javascript:OPrime.hub.publish('pictureCaptureSucessfullyStarted','" + this.mTakeAPictureFileUrl
+        + "');");
     v.execute();
 
     Intent intent;

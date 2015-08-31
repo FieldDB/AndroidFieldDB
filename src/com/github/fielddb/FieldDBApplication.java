@@ -105,7 +105,8 @@ public class FieldDBApplication extends Application {
 
     ACRA.setConfig(config);
     if (BuildConfig.DEBUG) {
-      // TODO unable to disable acra sharedPreferencesName = "kartuliacra", sharedPreferencesMode = Context.MODE_PRIVATE, 
+      // TODO unable to disable acra sharedPreferencesName = "kartuliacra",
+      // sharedPreferencesMode = Context.MODE_PRIVATE,
       // https://github.com/ACRA/acra/wiki/AdvancedUsage#letting-your-users-control-acra
       // SharedPreferences prefs = this.getSharedPreferences("kartuliacra",
       // Context.MODE_PRIVATE);

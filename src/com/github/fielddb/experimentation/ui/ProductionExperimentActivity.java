@@ -1,6 +1,5 @@
 package com.github.fielddb.experimentation.ui;
 
-
 import com.github.fielddb.Config;
 import com.github.fielddb.database.DatumContentProvider;
 import com.github.fielddb.database.DatumContentProvider.DatumTable;
@@ -18,67 +17,64 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 
-public class ProductionExperimentActivity extends FragmentActivity
-		implements
-			LoaderManager.LoaderCallbacks<Cursor> {
+public class ProductionExperimentActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-	private DatumFragmentPagerAdapter mPagerAdapter;
+  private DatumFragmentPagerAdapter mPagerAdapter;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		super.setContentView(R.layout.activity_production_experiment_datum_list);
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    super.setContentView(R.layout.activity_production_experiment_datum_list);
 
-		this.initialisePaging();
-	}
+    this.initialisePaging();
+  }
 
-	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String[] projection = {DatumTable.COLUMN_ID};
-		String filterStr = "AutomaticallyRecognized";
-		String selection = DatumTable.COLUMN_VALIDATION_STATUS + " IS NULL OR "
-				+ DatumTable.COLUMN_VALIDATION_STATUS + " NOT LIKE ? ";
-		String[] selectionArgs = new String[]{"%" + filterStr + "%"};
+  @Override
+  public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+    String[] projection = { DatumTable.COLUMN_ID };
+    String filterStr = "AutomaticallyRecognized";
+    String selection = DatumTable.COLUMN_VALIDATION_STATUS + " IS NULL OR " + DatumTable.COLUMN_VALIDATION_STATUS
+        + " NOT LIKE ? ";
+    String[] selectionArgs = new String[] { "%" + filterStr + "%" };
 
-		CursorLoader cursorLoader = new CursorLoader(this,
-				DatumContentProvider.CONTENT_URI, projection, selection,
-				selectionArgs, null);
-		Cursor cursor = cursorLoader.loadInBackground();
-		this.mPagerAdapter.swapCursor(cursor);
+    CursorLoader cursorLoader = new CursorLoader(this, DatumContentProvider.CONTENT_URI, projection, selection,
+        selectionArgs, null);
+    Cursor cursor = cursorLoader.loadInBackground();
+    this.mPagerAdapter.swapCursor(cursor);
 
-		return cursorLoader;
-	}
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    return cursorLoader;
+  }
 
-		Log.d(Config.TAG, "Finished loading the ids for swipe paging");
-		this.mPagerAdapter.swapCursor(data);
-	}
+  @Override
+  public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
-	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
-		this.mPagerAdapter.swapCursor(null);
-	}
+    Log.d(Config.TAG, "Finished loading the ids for swipe paging");
+    this.mPagerAdapter.swapCursor(data);
+  }
 
-	/**
-	 * Initialise the fragments to be paged
-	 */
-	private void initialisePaging() {
+  @Override
+  public void onLoaderReset(Loader<Cursor> loader) {
+    this.mPagerAdapter.swapCursor(null);
+  }
 
-		this.mPagerAdapter = new DatumFragmentPagerAdapter(
-				super.getSupportFragmentManager());
-		this.onCreateLoader(0, null);
+  /**
+   * Initialise the fragments to be paged
+   */
+  private void initialisePaging() {
 
-		ViewPager pager = (ViewPager) super.findViewById(R.id.viewpager);
-		pager.setAdapter(this.mPagerAdapter);
-	}
+    this.mPagerAdapter = new DatumFragmentPagerAdapter(super.getSupportFragmentManager());
+    this.onCreateLoader(0, null);
 
-	@Override
-	public void onBackPressed() {
-		Intent audio = new Intent(this, AudioRecorder.class);
-		this.stopService(audio);
+    ViewPager pager = (ViewPager) super.findViewById(R.id.viewpager);
+    pager.setAdapter(this.mPagerAdapter);
+  }
 
-		super.onBackPressed();
-	}
+  @Override
+  public void onBackPressed() {
+    Intent audio = new Intent(this, AudioRecorder.class);
+    this.stopService(audio);
+
+    super.onBackPressed();
+  }
 
 }
