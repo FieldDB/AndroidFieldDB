@@ -78,12 +78,6 @@ public class DatumContentProvider extends ContentProvider {
     } else {
       Log.d(Config.TAG, "Cant change language data after its been set to "+ mDataIsAboutLanguageName);
     }
-    
-    
-    
-    
-    
-    
   }
 
   private static void intializeAuthority() {
