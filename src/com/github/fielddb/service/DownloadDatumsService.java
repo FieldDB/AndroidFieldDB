@@ -10,9 +10,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import org.acra.ACRA;
-
-
 import com.github.fielddb.Config;
 import com.github.fielddb.database.AudioVideoContentProvider;
 import com.github.fielddb.database.DatumContentProvider;
@@ -20,13 +17,11 @@ import com.github.fielddb.database.AudioVideoContentProvider.AudioVideoTable;
 import com.github.fielddb.database.DatumContentProvider.DatumTable;
 import com.github.fielddb.datacollection.NotifyingIntentService;
 import com.github.fielddb.BugReporter;
-import com.github.fielddb.BuildConfig;
 import com.github.fielddb.R;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.ContentValues;
 import android.content.Context;
