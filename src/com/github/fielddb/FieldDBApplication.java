@@ -23,6 +23,7 @@ import com.github.fielddb.service.RegisterUserService;
 import com.github.fielddb.BuildConfig;
 import com.github.fielddb.R;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -45,7 +46,12 @@ public class FieldDBApplication extends Application {
 		Log.d(Config.TAG, "Forced the locale to " + language);
 
 		// (new File(Config.DEFAULT_OUTPUT_DIRECTORY)).mkdirs();
-
+		initBugReporter();
+		initUser();
+		populateWithSampleOrOnlineData();
+	}
+	
+	protected boolean initBugReporter(){
 		ACRAConfiguration config = ACRA.getNewDefaultConfig(this);
 		config.setFormUri(Config.ACRA_SERVER_URL);
 		config.setFormUriBasicAuthLogin(Config.ACRA_USER);
@@ -94,9 +100,16 @@ public class FieldDBApplication extends Application {
 
 		ACRA.setConfig(config);
 
-		if (!BuildConfig.DEBUG)
-			ACRA.init(this);
-
+    if (BuildConfig.DEBUG) {
+      return false;
+    } else {
+      ACRA.init(this);
+      return true;
+    }
+  }
+	
+	@SuppressLint("NewApi") 
+	protected boolean initUser(){
 		// Get the user from the db
 		String[] userProjection = {UserTable.COLUMN_ID, UserTable.COLUMN_REV,
 				UserTable.COLUMN_USERNAME, UserTable.COLUMN_FIRSTNAME,
@@ -172,8 +185,8 @@ public class FieldDBApplication extends Application {
 					.parse(FieldDBUserContentProvider.CONTENT_URI + "/" + _id));
 			getApplicationContext().startService(registerUser);
 		}
-
-		populateWithSampleOrOnlineData();
+		
+		return true;
 	}
 	
 	/**
