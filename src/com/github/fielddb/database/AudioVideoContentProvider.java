@@ -2,7 +2,6 @@ package com.github.fielddb.database;
 
 import java.util.ArrayList;
 
-
 import com.github.fielddb.Config;
 
 import android.content.ContentProvider;
@@ -228,16 +227,6 @@ public class AudioVideoContentProvider extends ContentProvider {
 				COLUMN_DESCRIPTION};
 
 		public static String[] currentColumns = version1Columns;
-
-		// Offline Sample data
-		private static ContentValues sampleData() {
-			ContentValues values = new ContentValues();
-			values.put(COLUMN_FILENAME, "gamardZoba.jpg");
-			values.put(
-					COLUMN_URL,
-					"https://corpus.lingsync.org/community-georgian/723a8b707e579087aa36c2e338eb17ec/gamardZoba.jpg");
-			return values;
-		}
 
 		public static void setColumns() {
 			AudioVideoTable.columns = FieldDBTable.getBaseColumns();
