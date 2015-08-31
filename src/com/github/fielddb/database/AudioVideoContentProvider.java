@@ -24,7 +24,7 @@ public class AudioVideoContentProvider extends ContentProvider {
 	private static final int ITEMS = 10;
 	private static final int ITEM_ID = 20;
 
-	private static final String AUTHORITY = "com.github.opensourcefieldlinguistics.fielddb."
+	private static final String AUTHORITY = "com.github.fielddb."
 			+ Config.APP_TYPE.toLowerCase()
 			+ "."
 			+ Config.DATA_IS_ABOUT_LANGUAGE_NAME_ASCII.toLowerCase()

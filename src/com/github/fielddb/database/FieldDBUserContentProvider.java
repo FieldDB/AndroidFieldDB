@@ -13,7 +13,7 @@ public class FieldDBUserContentProvider extends UserContentProvider {
 		if (Config.D) {
 			UserTable.ANONYMOUS_PREFIX = "testing" + UserTable.ANONYMOUS_PREFIX;
 		}
-		AUTHORITY = "com.github.opensourcefieldlinguistics.fielddb."
+		AUTHORITY = "com.github.fielddb."
 				+ Config.APP_TYPE.toLowerCase() + "."
 				+ Config.DATA_IS_ABOUT_LANGUAGE_NAME_ASCII.toLowerCase() + "."
 				+ UserTable.TABLE_NAME;

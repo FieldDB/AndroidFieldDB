@@ -63,7 +63,7 @@ public class FieldDBApplication extends Application {
     config.setFormUriBasicAuthLogin(Config.ACRA_USER);
     config.setFormUriBasicAuthPassword(Config.ACRA_PASS);
 
-    /* https://github.com/OpenSourceFieldlinguistics/FieldDB/issues/1435 */
+    /* https://github.com/FieldDB/FieldDB/issues/1435 */
     boolean doesAcraSupportKeystoresWorkaroundForSNIMissingVirtualhosts = false;
     if (doesAcraSupportKeystoresWorkaroundForSNIMissingVirtualhosts) {
 

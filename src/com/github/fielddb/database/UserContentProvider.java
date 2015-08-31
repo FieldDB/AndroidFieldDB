@@ -27,7 +27,7 @@ public class UserContentProvider extends ContentProvider {
 	protected static final int ITEMS = 10;
 	protected static final int ITEM_ID = 20;
 
-	protected static String AUTHORITY = "com.github.opensourcefieldlinguistics.fielddb."
+  protected static String AUTHORITY = "com.github.fielddb."
 			+ UserTable.TABLE_NAME;
 	protected static final String BASE_PATH = UserTable.TABLE_NAME + "s";
 	public static Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/"

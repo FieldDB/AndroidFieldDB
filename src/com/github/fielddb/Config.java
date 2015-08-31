@@ -4,7 +4,7 @@ import java.util.regex.Pattern;
 
 public class Config {
 
-  public static final String APP_TYPE                                    = "default";
+  public static final String APP_TYPE                                    = PrivateConstants.APP_TYPE;
 
   /*
    * Control Flow constants
