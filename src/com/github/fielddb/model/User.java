@@ -1,4 +1,4 @@
-package com.github.fielddb.database;
+package com.github.fielddb.model;
 
 import java.util.ArrayList;
 
