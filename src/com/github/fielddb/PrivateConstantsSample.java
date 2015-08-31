@@ -7,6 +7,13 @@ package com.github.fielddb;
  */
 public class PrivateConstantsSample {
 
+  /* Make sure this is part of your ContentProvider in the manifest
+  <provider
+    android:name="com.github.fielddb.database.DatumContentProvider"
+    android:authorities="com.github.fielddb.speechrecognition.kartuli.datum"
+    android:exported="false" >
+</provider>
+*/
   public static final String APP_TYPE = "speechrecognition"; // "leanrnx"
 
   public static final String ACRA_PASS = "acouchdbpassword";
@@ -23,6 +30,13 @@ public class PrivateConstantsSample {
   public static final String DEFAULT_UPLOAD_AUDIO_VIDEO_URL = "http://10.0.2.2:3184/upload/extract/utterances";
 
   public static final String DATA_IS_ABOUT_LANGUAGE_ISO = "ka";
+  /* Make sure this is part of your ContentProvider
+      <provider
+        android:name="com.github.fielddb.database.DatumContentProvider"
+        android:authorities="com.github.fielddb.speechrecognition.kartuli.datum"
+        android:exported="false" >
+    </provider>
+   */
   public static final String DATA_IS_ABOUT_LANGUAGE_NAME_ASCII = "kartuli";
   public static final String DATA_IS_ABOUT_LANGUAGE_NAME = "ქართული";
 
