@@ -4,6 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_gravity="center"
+    android:background="#ffffffff"
     android:stretchColumns="field" >
 
     <TableRow
@@ -12,93 +13,28 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal" >
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="            "
-            android:textColor="#000000"
-            android:textSize="10dip" >
-        </TextView>
-
-        <ImageView
-            android:id="@+id/buttonback"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="Previous"
-            android:onClick="onPreviousClick"
-            android:src="@android:drawable/ic_media_previous" >
-        </ImageView>
-
-        <ImageView
-            android:id="@+id/buttonexit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="Stop"
-            android:onClick="onExitClick"
-            android:src="@android:drawable/ic_lock_power_off"
-            android:visibility="invisible" >
-        </ImageView>
-
-        <TextView
-            android:id="@+id/stimuli_number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="#1"
-            android:textColor="#000000"
-            android:textSize="10dip" >
-        </TextView>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="            "
-            android:textColor="#000000"
-            android:textSize="10dip" >
-        </TextView>
-
         <VideoView
             android:id="@+id/videoView"
-            android:layout_width="10dp"
-            android:layout_height="10dp" />
-
-        <ImageView
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="Next"
-            android:onClick="onNextClick"
-            android:src="@android:drawable/ic_media_next" >
-        </ImageView>
+            android:layout_width="1dp"
+            android:layout_height="1dp" />
     </TableRow>
 
     <TableRow
         android:id="@+id/tableRow2"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:background="#ffffffff"
+        android:gravity="center_horizontal" >
 
-        <com.briangriffey.notebook.PageTurnLayout
+        <android.support.v4.view.ViewPager
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight=".5"
+            android:id="@+id/pager"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="#ffffffff"
             android:gravity="center" >
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/speech_bubbles" />
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/speech_bubbles" />
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/speech_bubbles" />
-        </com.briangriffey.notebook.PageTurnLayout>
+        </android.support.v4.view.ViewPager>
     </TableRow>
 
 </TableLayout>

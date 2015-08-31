@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/datum_list"
-        android:name="com.github.opensourcefieldlinguistics.fielddb.lessons.ui.DatumListFragment"
+        android:name="com.github.fielddb.lessons.ui.DatumListFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
