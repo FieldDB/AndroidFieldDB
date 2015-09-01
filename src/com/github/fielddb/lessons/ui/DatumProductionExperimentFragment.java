@@ -79,6 +79,10 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
   }
 
   protected void playPromptContext() {
+    if (getActivity() == null) {
+      Log.e(Config.TAG, "Unable to play prompt context, the activity is gone.");
+      return;
+    }
     isPlaying = true;
 
     Log.d(Config.TAG, "Playing prompting context");
@@ -149,16 +153,24 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
   public static class ContinueToAdvancedTraining extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+      if (getActivity() == null) {
+        Log.e(Config.TAG, "Unable to continue to advanced training, the activity is gone.");
+        return null;
+      }
+      
       AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
       builder.setMessage(R.string.dialog_continue_to_advanced_training)
           .setPositiveButton(R.string.continue_word, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+              if (getActivity() == null) {
+                Log.e(Config.TAG, "Unable to continue to advanced training, the activity is gone.");
+                return;
+              }
               Intent openTrainer = new Intent(getActivity(), DatumListActivity.class);
               startActivity(openTrainer);
             }
           }).setNegativeButton(R.string.finished, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-
               Intent openRecognizer = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
               openRecognizer.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
               openRecognizer.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.im_listening));
