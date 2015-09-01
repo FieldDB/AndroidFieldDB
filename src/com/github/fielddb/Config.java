@@ -32,7 +32,7 @@ public class Config {
   public static String DEFAULT_CORPUS = "username-" + DATA_IS_ABOUT_LANGUAGE_NAME_ASCII;
   public static String DEFAULT_IMAGE_EXTENSION = ".png";
   public static final String DEFAULT_LANGUAGE = "en";
-  public static String DEFAULT_OUTPUT_DIRECTORY = "/sdcard/OPrime";
+  public static String DEFAULT_OUTPUT_DIRECTORY = "/sdcard/FieldDB";
   public static final String DEFAULT_PARTICIPANT_ID = "0000";
   public static String DEFAULT_VIDEO_EXTENSION = ".mp4";
   public static final String DEFAULT_RECOGNIZER_AUDIO_EXTENSION = ".raw";

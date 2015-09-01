@@ -7,7 +7,6 @@ import java.util.Locale;
 import com.github.fielddb.Config;
 import com.github.fielddb.datacollection.AudioRecorder;
 import com.github.fielddb.datacollection.VideoRecorderAsyncTask;
-import com.github.fielddb.model.OPrimeApp;
 import com.github.fielddb.model.Stimulus;
 import com.github.fielddb.model.SubExperimentBlock;
 import com.github.fielddb.model.Touch;
@@ -50,7 +49,6 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
     public void onAnimationStart(Animation animation) {
     }
   };
-  protected boolean D = true;
   protected int height = 1;
   protected Locale language;
   MediaPlayer mAudioStimuli;
@@ -68,7 +66,6 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
    * Video variables
    */
   protected VideoRecorderAsyncTask recordVideoTask;
-  protected String TAG = "OPrime SubExperiment";
 
   protected int width = 1;
 
@@ -90,14 +87,14 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
     this.setResult(Config.CODE_EXPERIMENT_COMPLETED, intent);
 
     try {
-      if (this.D)
-        Log.d(this.TAG, "Telling recorder asyc to stop. ");
+      if (Config.D)
+        Log.d(Config.TAG, "Telling recorder asyc to stop. ");
       if (this.recordVideoTask != null) {
         this.recordVideoTask.stopRecording();
       }
     } catch (Exception e) {
-      if (this.D)
-        Log.d(this.TAG, "Error Telling recorder asyc to stop. ");
+      if (Config.D)
+        Log.d(Config.TAG, "Error Telling recorder asyc to stop. ");
       e.printStackTrace();
     }
 
@@ -212,8 +209,8 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
   @Override
   public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
-    if (this.D)
-      Log.d(this.TAG, "Configuration has changed (rotation). Not redrawing the screen.");
+    if (Config.D)
+      Log.d(Config.TAG, "Configuration has changed (rotation). Not redrawing the screen.");
     /*
      * Doing nothing makes the current redraw properly
      */
@@ -222,9 +219,6 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
-    this.D = ((OPrimeApp) this.getApplication()).D;
-    this.TAG = ((OPrimeApp) this.getApplication()).TAG;
 
     DisplayMetrics displaymetrics = new DisplayMetrics();
     this.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
@@ -404,8 +398,8 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
 
   @Override
   public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-    if (this.D)
-      Log.v(this.TAG, "Width x Height = " + width + "x" + height);
+    if (Config.D)
+      Log.v(Config.TAG, "Width x Height = " + width + "x" + height);
   }
 
   @Override
@@ -413,14 +407,14 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
     if (this.mRecording) {
       return;
     }
-    if (this.D)
-      Log.d(this.TAG, "Preparing to record. ");
+    if (Config.D)
+      Log.d(Config.TAG, "Preparing to record. ");
     this.recordVideoTask = new VideoRecorderAsyncTask();
     this.recordVideoTask.setContext(this);
     this.recordVideoTask.setParentUI(this);
     this.recordVideoTask.setHolder(holder);
-    if (this.D)
-      Log.d(this.TAG, "Telling recorder asyc to execute. ");
+    if (Config.D)
+      Log.d(Config.TAG, "Telling recorder asyc to execute. ");
     this.recordVideoTask.execute();
 
   }

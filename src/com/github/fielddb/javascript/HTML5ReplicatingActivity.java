@@ -29,7 +29,7 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
   /* must be specified by child classes */
   // public static final String PREFERENCE_NAME =
   // "oprimeofflinepreferences";
-  protected String PREFERENCE_NAME = "oprimepreferences";
+  protected String PREFERENCE_NAME = "fielddbpreferences";
   public static final String PREFERENCE_USERS_DB_NAME = "usersdbname";
   public static final String PREFERENCE_USERNAME = "username";
   public static final String PREFERENCE_PASSWORD = "password";
@@ -51,7 +51,7 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
   protected String mRemoteCouchDBURL = "";
   protected String mLocalCouchAppInitialURL = "";
   protected String mLoginInitialAppServerUrl = "https://oprime.iriscouch.com/login/_design/pages/authentication.html";
-  protected String mDatabaseName = "dboprimesample";
+  protected String mDatabaseName = "dbsample";
   protected String mDefaultRemoteCouchURL = "https://oprime.iriscouch.com";
   protected String mDefaultLoginDatabase = "login";
   protected String mOfflineInitialAppServerUrl = "http://localhost:" + mTouchDBListenerPort + "/"

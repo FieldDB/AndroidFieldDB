@@ -35,7 +35,7 @@ public class TakePicture extends Activity {
   public void captureImage(View view) {
     ContentValues values = new ContentValues();
     values.put(MediaColumns.TITLE, this.mImageFilename);
-    values.put(ImageColumns.DESCRIPTION, "Image Captured an Android using OPrime");
+    values.put(ImageColumns.DESCRIPTION, "Image Captured an Android using FieldDB");
 
     this.myPicture = this.getContentResolver().insert(Media.EXTERNAL_CONTENT_URI, values);
     /*
@@ -192,7 +192,7 @@ public class TakePicture extends Activity {
       this.mImageFilename = this.getIntent().getStringExtra(Config.EXTRA_RESULT_FILENAME);
     }
     if (this.mImageFilename == null || "".equals(this.mImageFilename)) {
-      this.mImageFilename = Config.DEFAULT_OUTPUT_DIRECTORY + "/image/OPrime_result_file_"
+      this.mImageFilename = Config.DEFAULT_OUTPUT_DIRECTORY + "/image/result_file_"
           + Config.getHumanReadableTimestamp() + "_" + System.currentTimeMillis() + Config.DEFAULT_IMAGE_EXTENSION;
     }
 

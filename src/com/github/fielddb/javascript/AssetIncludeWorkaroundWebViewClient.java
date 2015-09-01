@@ -3,6 +3,8 @@ package com.github.fielddb.javascript;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.github.fielddb.Config;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -20,7 +22,6 @@ import android.webkit.WebViewClient;
  * for sdk 11-15 
  */
 public class AssetIncludeWorkaroundWebViewClient extends WebViewClient {
-  private boolean D = false;
   private Context mContext;
 
   // protected String anchor;
@@ -52,20 +53,20 @@ public class AssetIncludeWorkaroundWebViewClient extends WebViewClient {
       try {
         AssetManager assets = this.mContext.getAssets();
         Uri uri = Uri.parse(url);
-        if (this.D)
-          Log.d("OPrime",
+        if (Config.D)
+          Log.d(Config.TAG,
               "The URL was in the assets. (removed the assets and sending the contents of the file)? to the browser. "
                   + url);
 
         return assets.open(uri.getPath(), AssetManager.ACCESS_STREAMING);
       } catch (IOException e) {
-        if (this.D)
-          Log.d("OPrime", "The URL was in the assets. But there was an IOException when opening it. " + url);
+        if (Config.D)
+          Log.d(Config.TAG, "The URL was in the assets. But there was an IOException when opening it. " + url);
 
       }
     } else {
-      if (this.D)
-        Log.d("OPrime",
+      if (Config.D)
+        Log.d(Config.TAG,
             "The URL was not the assets. Not performing any action, letting the WebView handle it normally. " + url);
 
     }
@@ -75,8 +76,8 @@ public class AssetIncludeWorkaroundWebViewClient extends WebViewClient {
   @SuppressLint("NewApi")
   @Override
   public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-    if (this.D)
-      Log.d("OPrime", "Intercepting an URL requestin the webview " + url);
+    if (Config.D)
+      Log.d(Config.TAG, "Intercepting an URL requestin the webview " + url);
     InputStream stream = this.inputStreamForAndroidResource(url);
     if (stream != null) {
       return new WebResourceResponse(null, null, stream);

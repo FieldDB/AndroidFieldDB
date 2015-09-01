@@ -17,9 +17,9 @@ public class ExperimentJavaScriptInterface extends JavaScriptInterface implement
   protected Boolean mAutoAdvance = false;
   protected int mCurrentSubex = 0;
 
-  public ExperimentJavaScriptInterface(boolean d, String tag, String outputDir, Context context,
+  public ExperimentJavaScriptInterface(String outputDir, Context context,
       HTML5GameActivity UIParent, String assetsPrefix) {
-    super(d, tag, outputDir, context, UIParent, assetsPrefix);
+    super(outputDir, context, UIParent, assetsPrefix);
   }
 
   @JavascriptInterface
@@ -47,7 +47,7 @@ public class ExperimentJavaScriptInterface extends JavaScriptInterface implement
   @JavascriptInterface
   @Deprecated
   public void launchSubExperimentJS(String subex) {
-    if (this.D) {
+    if (Config.D) {
       Log.d(Config.TAG, "Launching sub experiment:" + subex);
     }
     Log.w(Config.TAG, "TODO Update Launching sub experiment:" + subex);
@@ -80,7 +80,7 @@ public class ExperimentJavaScriptInterface extends JavaScriptInterface implement
     //
     // app.getSubExperiments().get(currentSubExperiment).setResultsFileWithoutSuffix(this.mOutputDir
     // + "video/" + resultsFile);
-    // if (this.D)
+    // if (Config.D)
     // Log.d(Config.TAG, "setResultsFileWithoutSuffix sub experiment:" +
     // resultsFile);
 
@@ -115,7 +115,7 @@ public class ExperimentJavaScriptInterface extends JavaScriptInterface implement
         + currentSubExperiment + "_"
         + mExperiment.getSubExperiments().get(currentSubExperiment).getTitle().replaceAll(" ", "_") + "-" + mDateString;
 
-    if (this.D) {
+    if (Config.D) {
       Log.d(Config.TAG, "Starting video/audio recording to:" + resultsFile);
     }
     this.startVideoRecorder(resultsFile);

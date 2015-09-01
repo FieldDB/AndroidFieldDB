@@ -37,7 +37,6 @@ public class RegisterUserService extends NotifyingIntentService {
 
   @Override
   protected void onHandleIntent(Intent intent) {
-    this.D = Config.D;
     this.statusMessage = "Registering user";
     this.tryAgain = intent;
     this.keystoreResourceId = R.raw.sslkeystore;
@@ -216,7 +215,7 @@ public class RegisterUserService extends NotifyingIntentService {
     jsonParam.addProperty("appVersionWhenCreated", appVersionsWhenModified);
 
     try {
-      DeviceDetails device = new DeviceDetails(getApplicationContext(), Config.D, Config.TAG);
+      DeviceDetails device = new DeviceDetails(getApplicationContext());
       jsonParam.addProperty("device", device.getCurrentDeviceDetails());
     } catch (Exception e) {
       Log.e(Config.TAG, "Wasn't able to attach device details to the user registration");

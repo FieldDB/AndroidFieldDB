@@ -34,7 +34,6 @@ public class AudioRecorder extends Service {
 
   }
 
-  protected static String TAG = "OPrime";
   private RecordingReceiver mAudioFileUpdateReceiver;
   private int mAudioIconId = android.R.drawable.ic_btn_speak_now;
   private String mAudioResultsFile = "";
@@ -137,7 +136,7 @@ public class AudioRecorder extends Service {
       this.mAudioResultsFile = intent.getStringExtra(Config.EXTRA_RESULT_FILENAME);
     }
     if (this.mAudioResultsFile == null || "".equals(this.mAudioResultsFile)) {
-      this.mAudioResultsFile = Config.DEFAULT_OUTPUT_DIRECTORY + "/audio/OPrime_result_file_"
+      this.mAudioResultsFile = Config.DEFAULT_OUTPUT_DIRECTORY + "/audio/result_file_"
           + Config.getHumanReadableTimestamp() + "_" + System.currentTimeMillis() + Config.DEFAULT_AUDIO_EXTENSION;
     }
     /*
@@ -175,15 +174,15 @@ public class AudioRecorder extends Service {
       this.mRecorder.prepare();
       this.mRecorder.start();
     } catch (IllegalStateException e) {
-      Log.d(TAG, "IllegalStateException in starting audio recorder");
+      Log.d(Config.TAG, "IllegalStateException in starting audio recorder");
     } catch (IOException e) {
-      Log.d(TAG, "IOException in starting audio recorder");
+      Log.d(Config.TAG, "IOException in starting audio recorder");
       e.printStackTrace();
     } catch (RuntimeException e) {
-      Log.d(TAG, "RuntimeException in starting audio recorder");
+      Log.d(Config.TAG, "RuntimeException in starting audio recorder");
       e.printStackTrace();
     } catch (Exception e) {
-      Log.d(TAG, "Exception in starting audio recorder");
+      Log.d(Config.TAG, "Exception in starting audio recorder");
       e.printStackTrace();
     }
 
@@ -208,11 +207,11 @@ public class AudioRecorder extends Service {
           this.mRecorder.stop();
           this.mRecorder.release();
           Toast.makeText(this.getApplicationContext(), "Saving.", Toast.LENGTH_LONG).show();
-          Log.d(TAG, "Turned off the audio recorder.");
+          Log.d(Config.TAG, "Turned off the audio recorder.");
         } catch (Exception e) {
           // Do nothing
           e.printStackTrace();
-          Log.d(TAG, "There was an error when off the audio recorder.");
+          Log.d(Config.TAG, "There was an error when off the audio recorder.");
         }
         this.mRecorder = null;
 
@@ -222,7 +221,7 @@ public class AudioRecorder extends Service {
         this.mRecorder = null;
       }
     } else {
-      Log.d(TAG, "The audio recorder was null, didnt turn it off.");
+      Log.d(Config.TAG, "The audio recorder was null, didnt turn it off.");
     }
   }
 

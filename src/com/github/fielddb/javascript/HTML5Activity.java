@@ -133,7 +133,7 @@ public abstract class HTML5Activity extends Activity {
       // startActivityForResult(intentReplay, OPrime.REPLAY_RESULTS);
       return true;
     } else if (item.getItemId() == R.id.issue_tracker) {
-      Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/iLanguage/OPrime/issues"));
+      Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/FieldDB/FieldDB/issues"));
       this.startActivity(browserIntent);
       return true;
     }
@@ -229,9 +229,9 @@ public abstract class HTML5Activity extends Activity {
 
     HTML5Activity mUIParent;
 
-    public HTML5JavaScriptInterface(boolean d, String tag, String outputDir, Context context, HTML5Activity UIParent,
+    public HTML5JavaScriptInterface(String outputDir, Context context, HTML5Activity UIParent,
         String assetsPrefix) {
-      super(d, tag, outputDir, context, UIParent, assetsPrefix);
+      super(outputDir, context, UIParent, assetsPrefix);
     }
 
     public HTML5JavaScriptInterface(Context context) {

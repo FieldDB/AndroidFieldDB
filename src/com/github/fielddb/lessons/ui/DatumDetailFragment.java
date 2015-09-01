@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -100,7 +101,7 @@ public class DatumDetailFragment extends Fragment {
     super.onCreate(savedInstanceState);
     setHasOptionsMenu(true);
     if (this.mDeviceDetails == null) {
-      this.mDeviceDetails = new DeviceDetails(getActivity(), Config.D, Config.TAG);
+      this.mDeviceDetails = new DeviceDetails(getActivity());
     }
 
     if (getArguments().containsKey(ARG_ITEM_ID)) {
@@ -698,9 +699,9 @@ public class DatumDetailFragment extends Fragment {
   public void onPause() {
     if (this.mDatumEditCounts != null) {
       String edits = "";
-      Iterator it = this.mDatumEditCounts.entrySet().iterator();
+      Iterator<Entry<String, Integer>> it = this.mDatumEditCounts.entrySet().iterator();
       while (it.hasNext()) {
-        Map.Entry pair = (Map.Entry) it.next();
+        Map.Entry<String, Integer> pair = (Map.Entry<String, Integer>) it.next();
         if (!"".equals(edits)) {
           edits = edits + ",";
         }

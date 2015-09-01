@@ -2,7 +2,6 @@ package com.github.fielddb.lessons.ui;
 
 import com.github.fielddb.Config;
 import com.github.fielddb.javascript.HTML5GameActivity;
-import com.github.fielddb.model.OPrimeApp;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,8 +14,6 @@ public class ParticipantDetails extends Activity {
 
   @Override
   public void onBackPressed() {
-    String tag = Config.TAG;
-    boolean d = ((OPrimeApp) this.getApplication()).isD();
     try {
       boolean prepareExperiment = this.getIntent().getExtras()
           .getBoolean(Config.EXTRA_PLEASE_PREPARE_EXPERIMENT, false);
@@ -24,15 +21,15 @@ public class ParticipantDetails extends Activity {
       } else {
         Intent i = new Intent(this.getBaseContext(), HTML5GameActivity.class);
         i.putExtra(Config.EXTRA_PLEASE_PREPARE_EXPERIMENT, true);
-        i.putExtra(Config.EXTRA_DEBUG_MODE, d);
-        i.putExtra(Config.EXTRA_TAG, tag);
+        i.putExtra(Config.EXTRA_DEBUG_MODE, Config.D);
+        i.putExtra(Config.EXTRA_TAG, Config.TAG);
         this.startActivity(i);
       }
     } catch (Exception e) {
       Intent i = new Intent(this.getBaseContext(), HTML5GameActivity.class);
       i.putExtra(Config.EXTRA_PLEASE_PREPARE_EXPERIMENT, true);
-      i.putExtra(Config.EXTRA_DEBUG_MODE, d);
-      i.putExtra(Config.EXTRA_TAG, tag);
+      i.putExtra(Config.EXTRA_DEBUG_MODE, Config.D);
+      i.putExtra(Config.EXTRA_TAG, Config.TAG);
       this.startActivity(i);
     }
     this.finish();

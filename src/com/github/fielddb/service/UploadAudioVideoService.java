@@ -87,7 +87,6 @@ public class UploadAudioVideoService extends NotifyingIntentService {
       return;
     }
 
-    this.D = Config.D;
     this.statusMessage = "Uploading audio video";
     this.tryAgain = intent;
     this.keystoreResourceId = R.raw.sslkeystore;
@@ -252,7 +251,7 @@ public class UploadAudioVideoService extends NotifyingIntentService {
   }
 
   public int processUploadResponse(Uri uri, String jsonResponse) {
-    if (jsonResponse != null && this.D) {
+    if (jsonResponse != null && Config.D) {
       Log.d(Config.TAG, jsonResponse);
     }
     JsonObject json = (JsonObject) NotifyingIntentService.jsonParser.parse(jsonResponse);

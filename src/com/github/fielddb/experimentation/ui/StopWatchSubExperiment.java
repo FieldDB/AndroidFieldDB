@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import com.github.fielddb.Config;
 import com.github.fielddb.datacollection.AudioRecorder;
 import com.github.fielddb.datacollection.VideoRecorderAsyncTask;
-import com.github.fielddb.model.OPrimeApp;
 import com.github.fielddb.model.Stimulus;
 import com.github.fielddb.model.SubExperimentBlock;
 
@@ -45,8 +44,6 @@ import android.widget.VideoView;
 import com.github.fielddb.R;
 
 public class StopWatchSubExperiment extends Activity implements SurfaceHolder.Callback {
-  protected static String TAG = "StopWatchSubExperiment";
-  protected boolean D = true;
   protected long lastPause = 0;
   protected Chronometer mChronometer;
   protected Boolean mRecording = false;
@@ -106,14 +103,14 @@ public class StopWatchSubExperiment extends Activity implements SurfaceHolder.Ca
     this.setResult(Config.CODE_EXPERIMENT_COMPLETED, intent);
 
     try {
-      if (this.D)
-        Log.d(TAG, "Telling recorder asyc to stop. ");
+      if (Config.D)
+        Log.d(Config.TAG, "Telling recorder asyc to stop. ");
       if (this.recordVideoTask != null) {
         this.recordVideoTask.stopRecording();
       }
     } catch (Exception e) {
-      if (this.D)
-        Log.d(TAG, "Error Telling recorder asyc to stop. ");
+      if (Config.D)
+        Log.d(Config.TAG, "Error Telling recorder asyc to stop. ");
       e.printStackTrace();
     }
     this.finish();
@@ -126,8 +123,8 @@ public class StopWatchSubExperiment extends Activity implements SurfaceHolder.Ca
   @Override
   public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
-    if (this.D)
-      Log.d(TAG, "Configuration has changed (rotation). Not redrawing the screen.");
+    if (Config.D)
+      Log.d(Config.TAG, "Configuration has changed (rotation). Not redrawing the screen.");
     /*
      * Doing nothing makes the current redraw properly
      */
@@ -138,8 +135,6 @@ public class StopWatchSubExperiment extends Activity implements SurfaceHolder.Ca
     super.onCreate(savedInstanceState);
 
     this.setContentView(R.layout.fragment_stop_watch);
-    this.D = ((OPrimeApp) this.getApplication()).D;
-    TAG = Config.TAG;
     Button button;
 
     this.mChronometer = (Chronometer) this.findViewById(R.id.chronometer);
@@ -209,8 +204,8 @@ public class StopWatchSubExperiment extends Activity implements SurfaceHolder.Ca
 
   @Override
   public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-    if (this.D)
-      Log.v(TAG, "Width x Height = " + width + "x" + height);
+    if (Config.D)
+      Log.v(Config.TAG, "Width x Height = " + width + "x" + height);
   }
 
   @Override
@@ -218,14 +213,14 @@ public class StopWatchSubExperiment extends Activity implements SurfaceHolder.Ca
     if (this.mRecording) {
       return;
     }
-    if (this.D)
-      Log.d(TAG, "Preparing to record. ");
+    if (Config.D)
+      Log.d(Config.TAG, "Preparing to record. ");
     this.recordVideoTask = new VideoRecorderAsyncTask();
     this.recordVideoTask.setContext(this);
     this.recordVideoTask.setParentUI(this);
     this.recordVideoTask.setHolder(holder);
-    if (this.D)
-      Log.d(TAG, "Telling recorder asyc to execute. ");
+    if (Config.D)
+      Log.d(Config.TAG, "Telling recorder asyc to execute. ");
     this.recordVideoTask.execute();
 
   }

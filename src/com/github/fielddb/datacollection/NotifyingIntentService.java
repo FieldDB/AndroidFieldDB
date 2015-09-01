@@ -28,6 +28,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import com.github.fielddb.R;
+import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -38,7 +39,6 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 public class NotifyingIntentService extends IntentService {
-  protected boolean D = com.github.fielddb.Config.D;
   protected boolean useSelfSignedCertificates = false;
   protected int notificationId;
   protected String statusMessage;
@@ -57,6 +57,7 @@ public class NotifyingIntentService extends IntentService {
     super("NotifyingIntentService");
   }
 
+  @SuppressLint("NewApi") 
   @Override
   protected void onHandleIntent(Intent arg0) {
     this.notificationId = (int) System.currentTimeMillis();

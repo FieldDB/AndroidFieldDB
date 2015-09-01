@@ -11,6 +11,8 @@ import android.view.SurfaceHolder;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
+
+import com.github.fielddb.Config;
 import com.github.fielddb.R;
 
 public class TwoImageSubExperiment extends SubExperiment {
@@ -82,7 +84,7 @@ public class TwoImageSubExperiment extends SubExperiment {
       this.mStimuli.get(this.mStimuliIndex).setStartTime(System.currentTimeMillis());
 
     } catch (Exception e) {
-      Log.e(this.TAG, "Error getting images out." + e.getMessage());
+      Log.e(Config.TAG, "Error getting images out." + e.getMessage());
 
     }
     this.playAudioStimuli();
@@ -123,7 +125,7 @@ public class TwoImageSubExperiment extends SubExperiment {
           ((TwoImageStimulus) this.mStimuli.get(this.mStimuliIndex)).getRightImageFileId());
       rightimage.setImageDrawable(d);
     } catch (Exception e) {
-      Log.e(this.TAG, "Error getting images out." + e.getMessage());
+      Log.e(Config.TAG, "Error getting images out." + e.getMessage());
     }
     this.playAudioStimuli();
   }
