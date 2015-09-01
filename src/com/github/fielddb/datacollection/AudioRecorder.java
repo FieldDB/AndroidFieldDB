@@ -88,10 +88,10 @@ public class AudioRecorder extends Service {
       }
     } else {
       /* below sdk 11 use deprecated methods */
-      this.mNotification = new Notification(this.mAudioIconId, res.getString(R.string.app_name),
+      this.mNotification = new Notification(this.mAudioIconId, "Recording...",
           System.currentTimeMillis());
-      this.mNotification
-          .setLatestEventInfo(this, res.getString(R.string.app_name), "Recording...", this.mContentIntent);
+//      this.mNotification
+//          .setLatestEventInfo(this, res.getString(R.string.app_name), "Recording...", this.mContentIntent);
       this.mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
     }
   }
