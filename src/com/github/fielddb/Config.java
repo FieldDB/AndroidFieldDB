@@ -70,6 +70,7 @@ public class Config {
   public static final String EXTRA_TAKE_PICTURE_AT_END = "takepictureatend";
   public static final String EXTRA_TWO_PAGE_STORYBOOK = "twopagebook";
   public static final String EXTRA_USE_FRONT_FACING_CAMERA = "usefrontfacingcamera";
+  public static final String EXTRA_URL = "url";
 
   public static final String FRENCH = "fr";
 
