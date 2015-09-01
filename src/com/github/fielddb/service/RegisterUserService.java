@@ -41,7 +41,8 @@ public class RegisterUserService extends NotifyingIntentService {
     this.tryAgain = intent;
     this.keystoreResourceId = R.raw.sslkeystore;
     if (Config.D) {
-      Log.d(Config.TAG, "Inside RegisterUserService intent");
+      Log.d(Config.TAG, "Inside RegisterUserService intent, not registering on server because we are in debug mode");
+      return;
     }
     BugReporter.putCustomData("action", "registerUser:::");
     BugReporter.putCustomData("urlString", Config.DEFAULT_REGISTER_USER_URL);
