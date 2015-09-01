@@ -120,25 +120,33 @@ public class DatumDetailFragment extends Fragment {
           sortOrder);
 
       Cursor cursor = cursorLoader.loadInBackground();
-      cursor.moveToFirst();
-      if (cursor.getCount() > 0) {
-        Datum datum = new Datum(cursor.getString(cursor.getColumnIndexOrThrow(DatumTable.COLUMN_ORTHOGRAPHY)),
-            cursor.getString(cursor.getColumnIndexOrThrow(DatumTable.COLUMN_MORPHEMES)), cursor.getString(cursor
-                .getColumnIndexOrThrow(DatumTable.COLUMN_GLOSS)), cursor.getString(cursor
-                .getColumnIndexOrThrow(DatumTable.COLUMN_TRANSLATION)), cursor.getString(cursor
-                .getColumnIndexOrThrow(DatumTable.COLUMN_CONTEXT)));
-        datum.setId(id);
-        datum.setUtterance(cursor.getString(cursor.getColumnIndexOrThrow(DatumTable.COLUMN_UTTERANCE)));
-        datum.addMediaFiles(cursor.getString(cursor.getColumnIndexOrThrow(DatumTable.COLUMN_IMAGE_FILES)));
-        datum.addMediaFiles((cursor.getString(cursor.getColumnIndexOrThrow(DatumTable.COLUMN_AUDIO_VIDEO_FILES))));
+      if (cursor != null) {
+        cursor.moveToFirst();
+        if (cursor.getCount() > 0) {
+          Datum datum = new Datum(cursor.getString(cursor.getColumnIndexOrThrow(DatumTable.COLUMN_ORTHOGRAPHY)),
+              cursor.getString(cursor.getColumnIndexOrThrow(DatumTable.COLUMN_MORPHEMES)), cursor.getString(cursor
+                  .getColumnIndexOrThrow(DatumTable.COLUMN_GLOSS)), cursor.getString(cursor
+                  .getColumnIndexOrThrow(DatumTable.COLUMN_TRANSLATION)), cursor.getString(cursor
+                  .getColumnIndexOrThrow(DatumTable.COLUMN_CONTEXT)));
+          datum.setId(id);
+          datum.setUtterance(cursor.getString(cursor.getColumnIndexOrThrow(DatumTable.COLUMN_UTTERANCE)));
+          datum.addMediaFiles(cursor.getString(cursor.getColumnIndexOrThrow(DatumTable.COLUMN_IMAGE_FILES)));
+          datum.addMediaFiles((cursor.getString(cursor.getColumnIndexOrThrow(DatumTable.COLUMN_AUDIO_VIDEO_FILES))));
 
-        datum.setTagsFromSting(cursor.getString(cursor.getColumnIndexOrThrow(DatumTable.COLUMN_TAGS)));
+          datum.setTagsFromSting(cursor.getString(cursor.getColumnIndexOrThrow(DatumTable.COLUMN_TAGS)));
+          cursor.close();
+
+          mItem = datum;
+          this.recordUserEvent("loadDatum", mUri.getLastPathSegment());
+          BugReporter.putCustomData("urlString", mUri.toString());
+        } else {
+          Log.e(Config.TAG, "Displaying nothing on the screen. this is a problem. ");
+          BugReporter.sendBugReport("*** couldnt open" + mUri + " ***");
+        }
         cursor.close();
-
-        mItem = datum;
-        this.recordUserEvent("loadDatum", mUri.getLastPathSegment());
-        BugReporter.putCustomData("urlString", mUri.toString());
-
+      } else {
+        Log.e(Config.TAG, "unable to open the datums content provider. this is a problem. ");
+        BugReporter.sendBugReport("*** datumCursor is null ***");
       }
 
     }
