@@ -10,6 +10,7 @@
 
     <!-- Recognition prompts -->
     <string name="im_listening">I\'m listening</string>
+    <string name="i_cant_listen">I\'m sorry, your device is strange. It cannot recognize speech.</string>
     <string name="i_might_have_heard">I might have heard: </string>
     <string name="or_maybe">Or maybe this: </string>
     <string name="there_were_others">. I\'m pretty funny, ey? There were some other options, but I think I\'ll stop there. </string>

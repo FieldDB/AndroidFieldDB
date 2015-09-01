@@ -1,12 +1,16 @@
 package com.github.fielddb.lessons.ui;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
+import com.github.fielddb.Config;
 import com.github.fielddb.R;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
@@ -24,9 +28,10 @@ import android.widget.Toast;
  * 
  */
 public class ListenAndRepeat extends Activity implements OnInitListener {
-  private static final String TAG = "MakeItListen";
   private static final int RETURN_FROM_VOICE_RECOGNITION_REQUEST_CODE = 341;
-  /** Talk to the user */
+  /**
+   * Talk to the user
+   */
   private TextToSpeech mTts;
 
   @Override
@@ -34,11 +39,14 @@ public class ListenAndRepeat extends Activity implements OnInitListener {
     super.onCreate(savedInstanceState);
 
     mTts = new TextToSpeech(this, this);
-
   }
 
   protected void promptTheUserToTalk() {
-    mTts.speak(getString(R.string.im_listening), TextToSpeech.QUEUE_ADD, null);
+    if (isIntentAvailable(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)) {
+      this.speak(getString(R.string.im_listening));
+    } else {
+      this.speak(getString(R.string.i_cant_listen));
+    }
   }
 
   /**
@@ -48,7 +56,12 @@ public class ListenAndRepeat extends Activity implements OnInitListener {
     Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
     intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
     intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.im_listening));
-    startActivityForResult(intent, RETURN_FROM_VOICE_RECOGNITION_REQUEST_CODE);
+    if (isIntentAvailable(intent)) {
+      startActivityForResult(intent, RETURN_FROM_VOICE_RECOGNITION_REQUEST_CODE);
+    } else {
+      Log.w(Config.TAG,
+          "This device doesn't have speech recognition, maybe its an emulator or a phone from china without google products?");
+    }
   }
 
   /**
@@ -73,14 +86,14 @@ public class ListenAndRepeat extends Activity implements OnInitListener {
         carrierPhrase += " " + matches.get(iMightHaveHeardThis) + ".";
 
         Toast.makeText(this, carrierPhrase, Toast.LENGTH_LONG).show();
-        mTts.speak(carrierPhrase, TextToSpeech.QUEUE_ADD, null);
+        this.speak(carrierPhrase);
 
         /*
          * Don't go on forever, it there are too many potential matches don't
          * say them all
          */
         if (iMightHaveHeardThis == 2 && matches.size() > 2) {
-          mTts.speak(getString(R.string.there_were_others), TextToSpeech.QUEUE_ADD, null);
+          this.speak(getString(R.string.there_were_others));
           break;
         }
       }
@@ -102,7 +115,7 @@ public class ListenAndRepeat extends Activity implements OnInitListener {
     if (status == TextToSpeech.SUCCESS) {
       int result = mTts.setLanguage(Locale.getDefault());
       if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-        Log.e(TAG, "Language is not available.");
+        Log.e(Config.TAG, "Language is not available.");
         Toast.makeText(
             this,
             "The " + Locale.getDefault().getDisplayLanguage() + " TextToSpeech isn't installed, you can go into the "
@@ -118,4 +131,25 @@ public class ListenAndRepeat extends Activity implements OnInitListener {
           Toast.LENGTH_LONG).show();
     }
   }
+
+  public boolean speak(String message) {
+    if (mTts != null) {
+      mTts.speak(message, TextToSpeech.QUEUE_ADD, null);
+    } else {
+      Toast.makeText(this, "Sorry, I can't speak to you: " + message, Toast.LENGTH_LONG).show();
+    }
+    return true;
+  }
+
+  public boolean isIntentAvailable(String action) {
+    final Intent intent = new Intent(action);
+    return isIntentAvailable(intent);
+  }
+
+  public boolean isIntentAvailable(final Intent intent) {
+    final PackageManager packageManager = this.getPackageManager();
+    List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+    return list.size() > 0;
+  }
+
 }
