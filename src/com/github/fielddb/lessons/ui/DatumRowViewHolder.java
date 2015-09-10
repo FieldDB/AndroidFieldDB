@@ -1,53 +1,74 @@
 package com.github.fielddb.lessons.ui;
 
-import java.util.List;
-
-import com.github.fielddb.model.Datum;
+import com.github.fielddb.database.CursorRecyclerViewAdapter;
+import com.github.fielddb.Config;
 import com.github.fielddb.R;
 
-import android.content.Context;
-import android.view.LayoutInflater;
+import android.net.Uri;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
  * 
- * http://www.vogella.com/tutorials/AndroidListView/article.html#
- * adapterown_custom
+ * https://github.com/devunwired/recyclerview-playground
+ * 
  */
-public class DatumRowViewHolder extends ArrayAdapter<Datum> {
-  private final Context context;
-  private final List<Datum> values;
+public class DatumRowViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+  private int mPosition;
+  private Uri mUri;
+  private TextView mOrthographyView;
+  private TextView mTranslationView;
+  private ImageView mIconView;
 
-  public DatumRowViewHolder(Context context, List<Datum> items) {
-    super(context, R.layout.datum_list_row, items);
-    this.context = context;
-    this.values = items;
+  private CursorRecyclerViewAdapter mAdapter;
+
+  protected AdapterView.OnItemClickListener mOnItemClickListener;
+
+  public DatumRowViewHolder(View itemView, CursorRecyclerViewAdapter adapter) {
+    super(itemView);
+    itemView.setOnClickListener(this);
+    mAdapter = adapter;
+
+    mOrthographyView = (TextView) itemView.findViewById(R.id.orthography);
+    mIconView = (ImageView) itemView.findViewById(R.id.icon);
+    mTranslationView = (TextView) itemView.findViewById(R.id.translation);
   }
 
   @Override
-  public View getView(int position, View convertView, ViewGroup parent) {
-    LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    View rowView = inflater.inflate(R.layout.datum_list_row, parent, false);
-    TextView textView = (TextView) rowView.findViewById(R.id.orthography);
-    // ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
-    textView.setText(values.get(position).getOrthography());
-    textView = (TextView) rowView.findViewById(R.id.translation);
-    String translation = values.get(position).getTranslation();
-    if (translation != null && !"".equals(translation)) {
-      translation = " - " + translation;
-    }
-    textView.setText(translation);
-    // change the icon for Windows and iPhone
-    // String s = values[position];
-    // if (s.startsWith("iPhone")) {
-    // imageView.setImageResource(R.drawable.no);
-    // } else {
-    // imageView.setImageResource(R.drawable.ok);
-    // }
+  public void onClick(View v) {
+    Log.d(Config.TAG, "TODO open detail view.");
+    // mAdapter.onItemHolderClick(this);
+  }
 
-    return rowView;
+  public void removeThisRow() {
+    mAdapter.removeItem(mPosition, mUri);
+  }
+
+  public void setPosition(int position) {
+    this.mPosition = position;
+  }
+
+  public void setUri(Uri uri) {
+    this.mUri = uri;
+  }
+
+  public void setOrthography(CharSequence orthography) {
+    this.mOrthographyView.setText(orthography);
+  }
+
+  public void setTranslation(CharSequence translation) {
+    this.mTranslationView.setText(translation);
+  }
+
+  public void setIcon(int iconId) {
+    this.mIconView.setImageResource(iconId);
+  }
+
+  public void setIcon(String filename) {
+    Log.d(Config.TAG, "TODO set the image thumbnail.");
   }
 }

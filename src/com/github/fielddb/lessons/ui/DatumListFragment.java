@@ -1,6 +1,5 @@
 package com.github.fielddb.lessons.ui;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -8,21 +7,27 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
-import android.support.v4.app.LoaderManager;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.github.fielddb.Config;
+import com.github.fielddb.database.CursorRecyclerViewAdapter;
 import com.github.fielddb.database.DatumContentProvider;
 import com.github.fielddb.database.DatumContentProvider.DatumTable;
 import com.github.fielddb.BugReporter;
@@ -37,8 +42,9 @@ import com.github.fielddb.R;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class DatumListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
-  private SimpleCursorAdapter adapter;
+public class DatumListFragment extends Fragment implements AdapterView.OnItemClickListener {
+  private RecyclerView mList;
+  private CursorRecyclerViewAdapter mAdapter;
 
   /**
    * The serialization (saved instance state) Bundle key representing the
@@ -97,15 +103,44 @@ public class DatumListFragment extends ListFragment implements LoaderManager.Loa
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setHasOptionsMenu(true);
-    fillData();
     // setListAdapter(new DatumRowArrayAdapter(getActivity(),
     // PlaceholderContent.ITEMS));
   }
 
   @Override
+  @Nullable
+  public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    View rootView = inflater.inflate(R.layout.fragment_datum_list, container, false);
+    mList = (RecyclerView) rootView.findViewById(R.id.section_list);
+    mList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+    // mList.addItemDecoration(new DividerDecoration(getActivity());
+
+    mList.getItemAnimator().setAddDuration(1000);
+    mList.getItemAnimator().setChangeDuration(1000);
+    mList.getItemAnimator().setMoveDuration(1000);
+    mList.getItemAnimator().setRemoveDuration(1000);
+
+    String[] projection = { DatumTable.COLUMN_ID, DatumTable.COLUMN_ORTHOGRAPHY, DatumTable.COLUMN_TRANSLATION };
+    CursorLoader loader = new CursorLoader(getActivity(), DatumContentProvider.CONTENT_URI, projection, null, null,
+        null);
+    Cursor cursor = loader.loadInBackground();
+
+    if (cursor == null) {
+      Log.e(Config.TAG, "The cursor is null, maybe your provider is not declared in the AndroidManifest?");
+      loader = null;
+    }
+    mAdapter = new CursorRecyclerViewAdapter(cursor);
+    // mAdapter.setOnItemClickListener(this);
+    mList.setAdapter(mAdapter);
+    com.github.fielddb.model.Activity.sendActivity("loaded", "datalist");
+
+    return rootView;
+  }
+
+  @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-    registerForContextMenu(getListView());
+    registerForContextMenu(getView());
   }
 
   @Override
@@ -139,13 +174,20 @@ public class DatumListFragment extends ListFragment implements LoaderManager.Loa
   }
 
   @Override
-  public void onListItemClick(ListView listView, View view, int position, long id) {
-    super.onListItemClick(listView, view, position, id);
+  public void onDestroy() {
+    mAdapter.onDestroy();
+    super.onDestroy();
+  }
 
+  @Override
+  public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    Toast.makeText(getActivity(), "Clicked: " + position + ", index " + mList.indexOfChild(view), Toast.LENGTH_SHORT)
+        .show();
+    Log.d(Config.TAG, "TODO Test this");
     // Notify the active callbacks interface (the activity, if the
     // fragment is attached to one) that an item has been selected.
-    adapter.getCursor().moveToPosition(position);
-    String actualId = adapter.getCursor().getString(adapter.getCursor().getColumnIndexOrThrow(DatumTable.COLUMN_ID));
+    mAdapter.getCursor().moveToPosition(position);
+    String actualId = mAdapter.getCursor().getString(mAdapter.getCursor().getColumnIndexOrThrow(DatumTable.COLUMN_ID));
     mCallbacks.onItemSelected(actualId);
   }
 
@@ -165,24 +207,32 @@ public class DatumListFragment extends ListFragment implements LoaderManager.Loa
   public void setActivateOnItemClick(boolean activateOnItemClick) {
     // When setting CHOICE_MODE_SINGLE, ListView will automatically
     // give items the 'activated' state when touched.
-    getListView().setChoiceMode(activateOnItemClick ? ListView.CHOICE_MODE_SINGLE : ListView.CHOICE_MODE_NONE);
+    // getView().setChoiceMode(activateOnItemClick ? ListView.CHOICE_MODE_SINGLE
+    // : ListView.CHOICE_MODE_NONE);
   }
 
   @Override
-  public boolean onContextItemSelected(MenuItem item) {
+  public boolean onContextItemSelected(final MenuItem item) {
 
     if (item.getItemId() == R.id.action_delete) {
-      AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-      adapter.getCursor().moveToPosition(info.position);
-      String actualId = adapter.getCursor().getString(adapter.getCursor().getColumnIndexOrThrow(DatumTable.COLUMN_ID));
-      final Uri uri = Uri.parse(DatumContentProvider.CONTENT_URI + "/" + actualId);
       AlertDialog deleteConfirmationDialog = new AlertDialog.Builder(getActivity()).setTitle("Are you sure?")
           .setMessage("Are you sure you want to put this " + Config.USER_FRIENDLY_DATA_NAME + " in the trash?")
           .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+              // Old Option:
+              final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+              mAdapter.getCursor().moveToPosition(info.position);
+              String actualId = mAdapter.getCursor().getString(
+                  mAdapter.getCursor().getColumnIndexOrThrow(DatumTable.COLUMN_ID));
+              final Uri uri = Uri.parse(DatumContentProvider.CONTENT_URI + "/" + actualId);
               getActivity().getContentResolver().delete(uri, null, null);
-              fillData();
+              mAdapter.notifyItemRemoved(info.position);
+
+              // New Option:
+              // mAdapter.removeItem(info.position, uri);
+
               mCallbacks.onItemDeleted(uri);
               dialog.dismiss();
             }
@@ -206,45 +256,13 @@ public class DatumListFragment extends ListFragment implements LoaderManager.Loa
   }
 
   private void setActivatedPosition(int position) {
-    if (position == ListView.INVALID_POSITION) {
-      getListView().setItemChecked(mActivatedPosition, false);
-    } else {
-      getListView().setItemChecked(position, true);
-    }
+    // if (position == ListView.INVALID_POSITION) {
+    // getView().setItemChecked(mActivatedPosition, false);
+    // } else {
+    // getView().setItemChecked(position, true);
+    // }
 
     mActivatedPosition = position;
-  }
-
-  @SuppressLint("InlinedApi")
-  private void fillData() {
-    String[] from = new String[] { DatumTable.COLUMN_ORTHOGRAPHY };
-    int[] to = new int[] { android.R.id.text1 };
-    getLoaderManager().initLoader(0, null, this);
-    adapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_list_item_activated_1, null, from, to, 0);
-    setListAdapter(adapter);
-    com.github.fielddb.model.Activity.sendActivity("loaded", "datalist");
-  }
-
-  @Override
-  public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-    String[] projection = { DatumTable.COLUMN_ID, DatumTable.COLUMN_ORTHOGRAPHY, DatumTable.COLUMN_TRANSLATION };
-    CursorLoader cursorLoader = new CursorLoader(getActivity(), DatumContentProvider.CONTENT_URI, projection, null,
-        null, null);
-    return cursorLoader;
-  }
-
-  @Override
-  public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-    // this.getListView().invalidate();
-    adapter.swapCursor(data);
-    // http://stackoverflow.com/questions/14867324/update-listview-after-update-database-sqlite
-    // this.getListView().invalidate();
-    // adapter.notifyDataSetChanged();
-  }
-
-  @Override
-  public void onLoaderReset(Loader<Cursor> loader) {
-    adapter.swapCursor(null);
   }
 
   @Override
