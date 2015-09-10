@@ -1,7 +1,7 @@
 package com.github.fielddb.database;
 
 import com.github.fielddb.R;
-import com.github.fielddb.lessons.ui.DatumRowViewHolder;
+import com.github.fielddb.lessons.ui.DatumPreviewViewHolder;
 import com.github.fielddb.model.Datum;
 
 import android.database.Cursor;
@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class CursorRecyclerViewAdapter extends RecyclerView.Adapter<DatumRowViewHolder> {
+public class CursorRecyclerViewAdapter extends RecyclerView.Adapter<DatumPreviewViewHolder> {
   // protected AdapterView.OnItemClickListener mOnItemClickListener;
   protected Cursor mCursor;
 
@@ -30,7 +30,7 @@ public class CursorRecyclerViewAdapter extends RecyclerView.Adapter<DatumRowView
   }
 
   @Override
-  public void onBindViewHolder(DatumRowViewHolder itemHolder, int position) {
+  public void onBindViewHolder(DatumPreviewViewHolder itemHolder, int position) {
     Datum datum = new Datum("Testing " + position);
 
     itemHolder.setOrthography(datum.getOrthography());
@@ -42,11 +42,11 @@ public class CursorRecyclerViewAdapter extends RecyclerView.Adapter<DatumRowView
   }
 
   @Override
-  public DatumRowViewHolder onCreateViewHolder(ViewGroup container, int viewType) {
+  public DatumPreviewViewHolder onCreateViewHolder(ViewGroup container, int viewType) {
     LayoutInflater inflater = LayoutInflater.from(container.getContext());
     View root = inflater.inflate(R.layout.datum_list_row, container, false);
 
-    return new DatumRowViewHolder(root, this);
+    return new DatumPreviewViewHolder(root, this);
   }
 
   public void removeItem(int position, Uri mUri) {

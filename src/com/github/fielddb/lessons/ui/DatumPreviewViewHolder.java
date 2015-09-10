@@ -17,7 +17,7 @@ import android.widget.TextView;
  * https://github.com/devunwired/recyclerview-playground
  * 
  */
-public class DatumRowViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class DatumPreviewViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
   private int mPosition;
   private Uri mUri;
   private TextView mOrthographyView;
@@ -28,7 +28,7 @@ public class DatumRowViewHolder extends RecyclerView.ViewHolder implements View.
 
   protected AdapterView.OnItemClickListener mOnItemClickListener;
 
-  public DatumRowViewHolder(View itemView, CursorRecyclerViewAdapter adapter) {
+  public DatumPreviewViewHolder(View itemView, CursorRecyclerViewAdapter adapter) {
     super(itemView);
     itemView.setOnClickListener(this);
     mAdapter = adapter;
