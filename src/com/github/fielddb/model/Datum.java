@@ -267,6 +267,9 @@ public class Datum {
 
   public void setImageFiles(String imageFilesString) {
     this.imageFiles = new ArrayList<Datum.AudioVideo>();
+    if (imageFilesString == null) {
+      return;
+    }
 
     String[] filenames = imageFilesString.split(",");
     for (int i = 0; i < filenames.length; i++) {
@@ -284,6 +287,9 @@ public class Datum {
 
   public void setAudioVideoFiles(String filesString) {
     this.audioVideoFiles = new ArrayList<Datum.AudioVideo>();
+    if (filesString == null) {
+      return;
+    }
 
     String[] filenames = filesString.split(",");
     for (int i = 0; i < filenames.length; i++) {

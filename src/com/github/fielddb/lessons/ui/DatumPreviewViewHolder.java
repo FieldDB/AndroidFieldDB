@@ -1,6 +1,7 @@
 package com.github.fielddb.lessons.ui;
 
 import com.github.fielddb.database.CursorRecyclerViewAdapter;
+import com.github.fielddb.lessons.ui.DatumListFragment.Callbacks;
 import com.github.fielddb.Config;
 import com.github.fielddb.R;
 
@@ -25,13 +26,14 @@ public class DatumPreviewViewHolder extends RecyclerView.ViewHolder implements V
   private ImageView mIconView;
 
   private CursorRecyclerViewAdapter mAdapter;
-
   protected AdapterView.OnItemClickListener mOnItemClickListener;
+  protected Callbacks mClickCallbacks;
 
-  public DatumPreviewViewHolder(View itemView, CursorRecyclerViewAdapter adapter) {
+  public DatumPreviewViewHolder(View itemView, CursorRecyclerViewAdapter adapter, Callbacks clickCallbacks) {
     super(itemView);
     itemView.setOnClickListener(this);
     mAdapter = adapter;
+    mClickCallbacks = clickCallbacks;
 
     mOrthographyView = (TextView) itemView.findViewById(R.id.orthography);
     mTranslationView = (TextView) itemView.findViewById(R.id.translation);
@@ -40,6 +42,7 @@ public class DatumPreviewViewHolder extends RecyclerView.ViewHolder implements V
   @Override
   public void onClick(View v) {
     Log.d(Config.TAG, "TODO open detail view.");
+    mClickCallbacks.onItemSelected(mUri.getLastPathSegment());
     // mAdapter.onItemHolderClick(this);
   }
 

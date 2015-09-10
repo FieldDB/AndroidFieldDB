@@ -120,7 +120,8 @@ public class DatumListFragment extends Fragment implements AdapterView.OnItemCli
     mList.getItemAnimator().setMoveDuration(1000);
     mList.getItemAnimator().setRemoveDuration(1000);
 
-    String[] projection = { DatumTable.COLUMN_ID, DatumTable.COLUMN_ORTHOGRAPHY, DatumTable.COLUMN_TRANSLATION };
+    String[] projection = { DatumTable.COLUMN_ID, DatumTable.COLUMN_ORTHOGRAPHY, DatumTable.COLUMN_TRANSLATION,
+        DatumTable.COLUMN_IMAGE_FILES };
     CursorLoader loader = new CursorLoader(getActivity(), DatumContentProvider.CONTENT_URI, projection, null, null,
         null);
     Cursor cursor = loader.loadInBackground();
@@ -129,7 +130,7 @@ public class DatumListFragment extends Fragment implements AdapterView.OnItemCli
       Log.e(Config.TAG, "The cursor is null, maybe your provider is not declared in the AndroidManifest?");
       loader = null;
     }
-    mAdapter = new CursorRecyclerViewAdapter(cursor);
+    mAdapter = new CursorRecyclerViewAdapter(mCallbacks, cursor);
     // mAdapter.setOnItemClickListener(this);
     mList.setAdapter(mAdapter);
     com.github.fielddb.model.Activity.sendActivity("loaded", "datalist");

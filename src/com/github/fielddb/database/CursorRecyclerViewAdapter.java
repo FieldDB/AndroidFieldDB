@@ -1,6 +1,7 @@
 package com.github.fielddb.database;
 
 import com.github.fielddb.R;
+import com.github.fielddb.lessons.ui.DatumListFragment.Callbacks;
 import com.github.fielddb.lessons.ui.DatumPreviewViewHolder;
 import com.github.fielddb.model.Datum;
 
@@ -14,10 +15,12 @@ import android.view.ViewGroup;
 public class CursorRecyclerViewAdapter extends RecyclerView.Adapter<DatumPreviewViewHolder> {
   // protected AdapterView.OnItemClickListener mOnItemClickListener;
   protected Cursor mCursor;
+  protected Callbacks mClickCallbacks;
 
-  public CursorRecyclerViewAdapter(Cursor cursor) {
+  public CursorRecyclerViewAdapter(Callbacks clickCallbacks, Cursor cursor) {
     super();
     this.mCursor = cursor;
+    this.mClickCallbacks = clickCallbacks;
   }
 
   public void onDestroy() {
@@ -51,7 +54,7 @@ public class CursorRecyclerViewAdapter extends RecyclerView.Adapter<DatumPreview
     LayoutInflater inflater = LayoutInflater.from(container.getContext());
     View root = inflater.inflate(R.layout.datum_list_row, container, false);
 
-    return new DatumPreviewViewHolder(root, this);
+    return new DatumPreviewViewHolder(root, this, mClickCallbacks);
   }
 
   public void removeItem(int position, Uri mUri) {
