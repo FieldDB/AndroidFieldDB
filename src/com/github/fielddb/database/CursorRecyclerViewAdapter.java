@@ -35,7 +35,7 @@ public class CursorRecyclerViewAdapter extends RecyclerView.Adapter<DatumRowView
 
     itemHolder.setOrthography(datum.getOrthography());
     itemHolder.setTranslation(datum.getTranslation());
-    // itemHolder.setIcon(R.id.icon);
+    itemHolder.setIcon(datum.getMainImageFile());
 
     itemHolder.setPosition(position);
     itemHolder.setUri(Uri.withAppendedPath(DatumContentProvider.CONTENT_URI, datum.getId()));

@@ -34,7 +34,6 @@ public class DatumRowViewHolder extends RecyclerView.ViewHolder implements View.
     mAdapter = adapter;
 
     mOrthographyView = (TextView) itemView.findViewById(R.id.orthography);
-    mIconView = (ImageView) itemView.findViewById(R.id.icon);
     mTranslationView = (TextView) itemView.findViewById(R.id.translation);
   }
 
@@ -65,10 +64,16 @@ public class DatumRowViewHolder extends RecyclerView.ViewHolder implements View.
   }
 
   public void setIcon(int iconId) {
+    if (mIconView == null) {
+      mIconView = (ImageView) itemView.findViewById(R.id.icon);
+    }
     this.mIconView.setImageResource(iconId);
   }
 
   public void setIcon(String filename) {
+    if (mIconView == null) {
+      mIconView = (ImageView) itemView.findViewById(R.id.icon);
+    }
     Log.d(Config.TAG, "TODO set the image thumbnail.");
   }
 }
