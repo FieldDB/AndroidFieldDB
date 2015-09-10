@@ -74,6 +74,6 @@ public class DatumPreviewViewHolder extends RecyclerView.ViewHolder implements V
     if (mIconView == null) {
       mIconView = (ImageView) itemView.findViewById(R.id.icon);
     }
-    Log.d(Config.TAG, "TODO set the image thumbnail.");
+    Log.d(Config.TAG, "TODO set the image thumbnail with " + filename);
   }
 }

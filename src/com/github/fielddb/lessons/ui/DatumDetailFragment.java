@@ -124,20 +124,8 @@ public class DatumDetailFragment extends Fragment {
       if (cursor != null) {
         cursor.moveToFirst();
         if (cursor.getCount() > 0) {
-          Datum datum = new Datum(cursor.getString(cursor.getColumnIndexOrThrow(DatumTable.COLUMN_ORTHOGRAPHY)),
-              cursor.getString(cursor.getColumnIndexOrThrow(DatumTable.COLUMN_MORPHEMES)), cursor.getString(cursor
-                  .getColumnIndexOrThrow(DatumTable.COLUMN_GLOSS)), cursor.getString(cursor
-                  .getColumnIndexOrThrow(DatumTable.COLUMN_TRANSLATION)), cursor.getString(cursor
-                  .getColumnIndexOrThrow(DatumTable.COLUMN_CONTEXT)));
-          datum.setId(id);
-          datum.setUtterance(cursor.getString(cursor.getColumnIndexOrThrow(DatumTable.COLUMN_UTTERANCE)));
-          datum.addMediaFiles(cursor.getString(cursor.getColumnIndexOrThrow(DatumTable.COLUMN_IMAGE_FILES)));
-          datum.addMediaFiles((cursor.getString(cursor.getColumnIndexOrThrow(DatumTable.COLUMN_AUDIO_VIDEO_FILES))));
-
-          datum.setTagsFromSting(cursor.getString(cursor.getColumnIndexOrThrow(DatumTable.COLUMN_TAGS)));
+          mItem = new Datum(cursor);
           cursor.close();
-
-          mItem = datum;
           this.recordUserEvent("loadDatum", mUri.getLastPathSegment());
           BugReporter.putCustomData("urlString", mUri.toString());
         } else {

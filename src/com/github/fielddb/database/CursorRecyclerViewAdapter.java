@@ -26,12 +26,17 @@ public class CursorRecyclerViewAdapter extends RecyclerView.Adapter<DatumPreview
 
   @Override
   public int getItemCount() {
+    if (mCursor == null) {
+      return 0;
+    }
     return 3;
   }
 
   @Override
   public void onBindViewHolder(DatumPreviewViewHolder itemHolder, int position) {
-    Datum datum = new Datum("Testing " + position);
+    mCursor.moveToPosition(position);
+    // TODO consider not using the whole Datum model for the previews
+    Datum datum = new Datum(mCursor);
 
     itemHolder.setOrthography(datum.getOrthography());
     itemHolder.setTranslation(datum.getTranslation());
