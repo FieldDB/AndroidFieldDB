@@ -54,7 +54,15 @@ public class CursorRecyclerViewAdapter extends RecyclerView.Adapter<DatumPreview
     LayoutInflater inflater = LayoutInflater.from(container.getContext());
     View root = inflater.inflate(R.layout.datum_list_row, container, false);
 
-    return new DatumPreviewViewHolder(root, this, mClickCallbacks);
+    return new DatumPreviewViewHolder(root, this);
+  }
+
+  public void onItemHolderClick(String id) {
+    mClickCallbacks.onItemSelected(id);
+  }
+
+  public void onItemHolderContextClick(DatumPreviewViewHolder item) {
+
   }
 
   public void removeItem(int position, Uri mUri) {

@@ -1,7 +1,6 @@
 package com.github.fielddb.lessons.ui;
 
 import com.github.fielddb.database.CursorRecyclerViewAdapter;
-import com.github.fielddb.lessons.ui.DatumListFragment.Callbacks;
 import com.github.fielddb.Config;
 import com.github.fielddb.R;
 
@@ -27,13 +26,12 @@ public class DatumPreviewViewHolder extends RecyclerView.ViewHolder implements V
 
   private CursorRecyclerViewAdapter mAdapter;
   protected AdapterView.OnItemClickListener mOnItemClickListener;
-  protected Callbacks mClickCallbacks;
 
-  public DatumPreviewViewHolder(View itemView, CursorRecyclerViewAdapter adapter, Callbacks clickCallbacks) {
+  public DatumPreviewViewHolder(View itemView, CursorRecyclerViewAdapter adapter) {
     super(itemView);
     itemView.setOnClickListener(this);
+    // itemView.setOnContextClickListener(this);
     mAdapter = adapter;
-    mClickCallbacks = clickCallbacks;
 
     mOrthographyView = (TextView) itemView.findViewById(R.id.orthography);
     mTranslationView = (TextView) itemView.findViewById(R.id.translation);
@@ -41,9 +39,16 @@ public class DatumPreviewViewHolder extends RecyclerView.ViewHolder implements V
 
   @Override
   public void onClick(View v) {
-    Log.d(Config.TAG, "TODO open detail view.");
-    mClickCallbacks.onItemSelected(mUri.getLastPathSegment());
-    // mAdapter.onItemHolderClick(this);
+    if (mUri == null) {
+      Log.w(Config.TAG, "User clicked on an item which had no uri.");
+      return;
+    }
+    mAdapter.onItemHolderClick(mUri.getLastPathSegment());
+  }
+
+  public boolean onContextClick(View v) {
+    Log.d(Config.TAG, "context click on item " + mUri);
+    return false;
   }
 
   public void removeThisRow() {
@@ -79,4 +84,5 @@ public class DatumPreviewViewHolder extends RecyclerView.ViewHolder implements V
     }
     Log.d(Config.TAG, "TODO set the image thumbnail with " + filename);
   }
+
 }
