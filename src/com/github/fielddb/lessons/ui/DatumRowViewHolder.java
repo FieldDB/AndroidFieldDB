@@ -17,11 +17,11 @@ import android.widget.TextView;
  * http://www.vogella.com/tutorials/AndroidListView/article.html#
  * adapterown_custom
  */
-public class DatumRowArrayAdapter extends ArrayAdapter<Datum> {
+public class DatumRowViewHolder extends ArrayAdapter<Datum> {
   private final Context context;
   private final List<Datum> values;
 
-  public DatumRowArrayAdapter(Context context, List<Datum> items) {
+  public DatumRowViewHolder(Context context, List<Datum> items) {
     super(context, R.layout.datum_list_row, items);
     this.context = context;
     this.values = items;
