@@ -85,14 +85,9 @@ public abstract class HTML5Activity extends Activity {
 
   @Override
   protected void onDestroy() {
-    if (this.getJavaScriptInterface().mMediaPlayer != null) {
-      this.getJavaScriptInterface().mMediaPlayer.stop();
-      this.getJavaScriptInterface().mMediaPlayer.release();
-    }
-    if (this.getJavaScriptInterface().mListenForEndAudioInterval != null
-        && !this.getJavaScriptInterface().mListenForEndAudioInterval.isCancelled()) {
-      this.getJavaScriptInterface().mListenForEndAudioInterval.cancel(true);
-      // getJavaScriptInterface().mListenForEndAudioInterval = null;
+    if (this.getJavaScriptInterface() != null) {
+      this.getJavaScriptInterface().onDestroy();
+      this.setJavaScriptInterface(null);
     }
     super.onDestroy();
   }
@@ -222,31 +217,6 @@ public abstract class HTML5Activity extends Activity {
       this.mWebView.setWebViewClient(new FieldDBWebViewClient());
     }
 
-  }
-
-  public class HTML5JavaScriptInterface extends JavaScriptInterface {
-    private static final long serialVersionUID = 373085850425945181L;
-
-    HTML5Activity mUIParent;
-
-    public HTML5JavaScriptInterface(String outputDir, Context context, HTML5Activity UIParent,
-        String assetsPrefix) {
-      super(outputDir, context, UIParent, assetsPrefix);
-    }
-
-    public HTML5JavaScriptInterface(Context context) {
-      super(context);
-    }
-
-    @Override
-    public HTML5Activity getUIParent() {
-      return this.mUIParent;
-    }
-
-    @Override
-    public void setUIParent(HTML5Activity UIParent) {
-      this.mUIParent = UIParent;
-    }
   }
 
   public static Bitmap decodeBase64(String input) {

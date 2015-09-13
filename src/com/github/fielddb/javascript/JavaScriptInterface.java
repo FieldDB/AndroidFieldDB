@@ -25,82 +25,74 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 public abstract class JavaScriptInterface implements Serializable, NonObfuscateable {
 
-  public class ListenForEndAudioInterval extends AsyncTask<Void, Void, String> {
-    private int endAudioInterval;
+  protected static class ListenForEndAudioInterval implements MediaPlayer.OnSeekCompleteListener {
+    private long endAudioInterval;
+    private boolean paused;
+
+    public void setEndAudioInterval(long endAudioInterval) {
+      this.endAudioInterval = endAudioInterval;
+    }
+
+    public void setPaused(boolean paused) {
+      this.paused = paused;
+    }
 
     @Override
-    protected String doInBackground(Void... params) {
-      if (JavaScriptInterface.this.mMediaPlayer == null) {
-        return "No media playing";
+    public void onSeekComplete(MediaPlayer mediaPlayer) {
+      if (mediaPlayer == null) {
+        return;
       }
 
-      long currentPos = JavaScriptInterface.this.mMediaPlayer.getCurrentPosition();
-      while (currentPos < this.endAudioInterval) {
-        try {
-          // wait some period
-          Thread.sleep(100);
-          if (JavaScriptInterface.this.mMediaPlayer == null) {
-            return "No media playing";
-          }
-          currentPos = JavaScriptInterface.this.mMediaPlayer.getCurrentPosition();
-        } catch (InterruptedException e) {
-          return "Cancelled";
+      if (Config.D) {
+        Log.d(Config.TAG, "current audio position... " + mediaPlayer.getCurrentPosition());
+      }
+      if (!mediaPlayer.isPlaying()) {
+        mediaPlayer.start();
+        return;
+      }
+      // mediaPlayer.setOnSeekCompleteListener(null);
+
+      // If the endtime is valid, start an async task to loop until the
+      // audio gets to the endtime
+      if (endAudioInterval < mediaPlayer.getDuration()) {
+        long currentPos = mediaPlayer.getCurrentPosition();
+        if (currentPos < this.endAudioInterval && mediaPlayer != null && !paused) {
+          // Continue playing
+          return;
+        }
+        if (mediaPlayer != null) {
+          mediaPlayer.pause();
+          Log.d(Config.TAG, "\tPaused audio at ... " + mediaPlayer.getCurrentPosition());
+        } else {
+          Log.d(Config.TAG, "\tPaused audio when media player became null ... ");
         }
       }
-      JavaScriptInterface.this.mMediaPlayer.pause();
-      Log.d(Config.TAG,
-          "\tPaused audio at ... " + JavaScriptInterface.this.mMediaPlayer.getCurrentPosition());
-      return "End audio interval";
-    }
-
-    @Override
-    protected void onPostExecute(String result) {
-      String currentPosition;
-      if (JavaScriptInterface.this.mMediaPlayer == null) {
-        currentPosition = "";
-      } else {
-        currentPosition = "" + JavaScriptInterface.this.mMediaPlayer.getCurrentPosition();
-      }
-      Log.d(Config.TAG, "\t" + result + ": Stopped listening for audio interval at ... "
-          + currentPosition);
-    }
-
-    @Override
-    protected void onPreExecute() {
-    }
-
-    protected void setEndAudioInterval(int message) {
-      this.endAudioInterval = message;
     }
   }
 
-  public class LoadUrlToWebView extends AsyncTask<Void, Void, String> {
+  protected static class LoadUrlToWebView extends AsyncTask<Void, Void, String> {
     private String mMessage;
+    private WebView mWebView;
 
     @Override
     protected String doInBackground(Void... params) {
-
-      String result = "";
-      return result;
+      return "";
     }
 
     @Override
     protected void onPostExecute(String result) {
-      if (JavaScriptInterface.this.getUIParent() != null && JavaScriptInterface.this.getUIParent().mWebView != null) {
-        if (Config.D)
-          Log.d(Config.TAG,
-              "\tPost execute LoadUrlToWebView task. Now trying to send a pubsub message to the webview."
-                  + this.mMessage);
-        JavaScriptInterface.this.getUIParent().mWebView.loadUrl(this.mMessage);
+      if (mWebView != null) {
+        if (Config.D) {
+          Log.d(Config.TAG, "\tPost execute LoadUrlToWebView task. Now trying to send a pubsub message to the webview."
+              + this.mMessage);
+        }
+        mWebView.loadUrl(this.mMessage);
       }
-    }
-
-    @Override
-    protected void onPreExecute() {
     }
 
     public void setMessage(String message) {
@@ -108,7 +100,7 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
     }
   }
 
-  public class WriteStringToFile extends AsyncTask<Void, Void, String> {
+  protected static class WriteStringToFile extends AsyncTask<Void, Void, String> {
     private String contents;
     private String filename;
     private String outputdir;
@@ -116,13 +108,11 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
     @Override
     protected String doInBackground(Void... params) {
       if ("".equals(this.outputdir)) {
-        this.outputdir = JavaScriptInterface.this.mOutputDir;
+        return "File write error: no output dir specified for " + this.filename;
       }
-
       (new File(this.outputdir)).mkdirs();
 
       File outfile = new File(this.outputdir + "/" + this.filename);
-
       try {
         BufferedWriter buf = new BufferedWriter(new FileWriter(outfile, false));
         buf.append(this.contents);
@@ -138,11 +128,9 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
 
     @Override
     protected void onPostExecute(String result) {
-      if (Config.D)
+      if (Config.D) {
         Log.d(Config.TAG, "\t" + result + ": Wrote string to file");
-      if (Config.D)
-        Toast.makeText(JavaScriptInterface.this.mContext, result, Toast.LENGTH_LONG).show();
-
+      }
     }
 
     @Override
@@ -167,17 +155,17 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
   protected String mAudioPlaybackFileUrl;
   protected String mAudioRecordFileUrl;
   protected Context mContext;
-  public int mCurrentAudioPosition;
+  protected int mCurrentAudioPosition;
   protected DeviceDetails mDeviceDetails;
   protected Handler mHandler;
-  public ListenForEndAudioInterval mListenForEndAudioInterval;
-  public MediaPlayer mMediaPlayer;
+  protected ListenForEndAudioInterval mListenForEndAudioInterval;
+  protected LoadUrlToWebView mLoadUrlToWebView;
+  protected MediaPlayer mMediaPlayer;
   protected String mOutputDir;
 
   protected int mRequestedMediaPlayer = 0;
 
   protected String mTakeAPictureFileUrl;
-
 
   /**
    * Can pass in all or none of the parameters. Expects the caller to set the
@@ -202,8 +190,7 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
    *          chrome extension is.(example: release/)
    */
 
-  public JavaScriptInterface(String outputDir, Context context, HTML5Activity UIParent,
-      String assetsPrefix) {
+  public JavaScriptInterface(String outputDir, Context context, HTML5Activity UIParent, String assetsPrefix) {
     this.mOutputDir = outputDir;
     this.mContext = context;
     if (Config.D)
@@ -223,6 +210,31 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
       Log.d(Config.TAG, "Initializing the Javascript Interface (JSI).");
     this.mHandler = new Handler();
 
+  }
+
+  /**
+   * To be called explicitly in Activity's onDestroy
+   */
+  public void onDestroy() {
+    if (mListenForEndAudioInterval != null) {
+      this.mListenForEndAudioInterval.setPaused(true);
+      this.mListenForEndAudioInterval = null;
+    }
+    if (this.mMediaPlayer != null) {
+      this.mMediaPlayer.stop();
+      this.mMediaPlayer.release();
+      this.mMediaPlayer = null;
+    }
+
+    this.setUIParent(null);
+    this.mDeviceDetails = null;
+    this.mContext = null;
+    this.mHandler = null;
+
+    if (mLoadUrlToWebView != null) {
+      mLoadUrlToWebView.mWebView = null;
+      this.mLoadUrlToWebView = null;
+    }
   }
 
   @JavascriptInterface
@@ -251,23 +263,35 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
 
   @JavascriptInterface
   public void getConnectivityType() {
+    if (getUIParent() == null) {
+      return;
+    }
     // TODO get Connectivity status
     String connectivityType = "WiFi";
-    LoadUrlToWebView v = new LoadUrlToWebView();
-    v.setMessage("javascript:OPrime.hub.publish('connectivityType','" + connectivityType + "');");
-    v.execute();
+    if (mLoadUrlToWebView == null) {
+      mLoadUrlToWebView = new LoadUrlToWebView();
+      mLoadUrlToWebView.mWebView = getUIParent().mWebView;
+    }
+    mLoadUrlToWebView.setMessage("javascript:OPrime.hub.publish('connectivityType','" + connectivityType + "');");
+    mLoadUrlToWebView.execute();
   }
 
   @JavascriptInterface
   public void getHardwareDetails() {
+    if (getUIParent() == null) {
+      return;
+    }
     if (this.mDeviceDetails == null) {
       this.mDeviceDetails = new DeviceDetails(this.getUIParent());
     }
     String deviceType = this.mDeviceDetails.getCurrentDeviceDetails();
 
-    LoadUrlToWebView v = new LoadUrlToWebView();
-    v.setMessage("javascript:OPrime.hub.publish('hardwareDetails'," + deviceType + ");");
-    v.execute();
+    if (mLoadUrlToWebView == null) {
+      mLoadUrlToWebView = new LoadUrlToWebView();
+      mLoadUrlToWebView.mWebView = getUIParent().mWebView;
+    }
+    mLoadUrlToWebView.setMessage("javascript:OPrime.hub.publish('hardwareDetails'," + deviceType + ");");
+    mLoadUrlToWebView.execute();
   }
 
   @JavascriptInterface
@@ -279,6 +303,9 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
 
   @JavascriptInterface
   public String getVersionJIS() {
+    if (getUIParent() == null) {
+      return "";
+    }
     String versionName;
     try {
       versionName = this.getUIParent().getPackageManager().getPackageInfo(this.getUIParent().getPackageName(), 0).versionName;
@@ -296,11 +323,21 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
 
   @JavascriptInterface
   public void openExternalLink(String url) {
+    if (getUIParent() == null) {
+      return;
+    }
     Uri uri = Uri.parse(url);
     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
     this.getUIParent().startActivity(intent);
   }
 
+  /**
+   * FIXME why is this is creating a file.
+   * 
+   * @param url
+   * @param filename
+   */
+  @Deprecated
   @JavascriptInterface
   public void openExternalLink(String url, String filename) {
     if (url == null) {
@@ -365,6 +402,9 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
 
   @JavascriptInterface
   public void playAudio(String urlstring) {
+    if (getUIParent() == null) {
+      return;
+    }
     urlstring = urlstring.trim();
     if (urlstring == null || "".equals(urlstring.trim())) {
       return;
@@ -408,6 +448,10 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
 
   @JavascriptInterface
   public void playIntervalOfAudio(String urlstring, final int startTimeMS, final int endTimeMS) {
+    if (getUIParent() == null) {
+      return;
+    }
+    Log.w(Config.TAG, "TODO playIntervalOfAudio needs to be re-verified to avoid memory leaks");
     if (Config.D)
       Log.d(Config.TAG, "In milliseconds from " + startTimeMS + " to " + endTimeMS);
     if (this.mMediaPlayer != null) {
@@ -416,31 +460,19 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
       if (this.mMediaPlayer.isPlaying()) {
         this.mMediaPlayer.pause();
       }
-      // If there is a background timer waiting for the previous audio interval
+      // If there is a another interval timer waiting for the previous audio
+      // interval
       // to finish, kill it
-      if (this.mListenForEndAudioInterval != null && !this.mListenForEndAudioInterval.isCancelled()) {
-        this.mListenForEndAudioInterval.cancel(true);
-        // mListenForEndAudioInterval = null;
+      if (this.mListenForEndAudioInterval != null) {
+        this.mListenForEndAudioInterval.setPaused(true);
+        mListenForEndAudioInterval = null;
       }
-      this.mMediaPlayer.seekTo(startTimeMS);
-      this.mMediaPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
-        @Override
-        public void onSeekComplete(MediaPlayer mediaPlayer) {
-          if (Config.D)
-            Log.d(Config.TAG,
-                "current audio position... " + JavaScriptInterface.this.mMediaPlayer.getCurrentPosition());
-          JavaScriptInterface.this.mMediaPlayer.start();
-          JavaScriptInterface.this.mMediaPlayer.setOnSeekCompleteListener(null);
+      this.mListenForEndAudioInterval = new ListenForEndAudioInterval();
+      this.mListenForEndAudioInterval.setEndAudioInterval(endTimeMS);
+      this.mListenForEndAudioInterval.setPaused(false);
+      this.mMediaPlayer.setOnSeekCompleteListener(this.mListenForEndAudioInterval);
 
-          // If the endtime is valid, start an async task to loop until the
-          // audio gets to the endtime
-          if (endTimeMS < JavaScriptInterface.this.mMediaPlayer.getDuration()) {
-            JavaScriptInterface.this.mListenForEndAudioInterval = new ListenForEndAudioInterval();
-            JavaScriptInterface.this.mListenForEndAudioInterval.setEndAudioInterval(endTimeMS);
-            JavaScriptInterface.this.mListenForEndAudioInterval.execute();
-          }
-        }
-      });
+      this.mMediaPlayer.seekTo(startTimeMS);
     } else {
       if (this.mRequestedMediaPlayer < 2) {
         this.setAudioFile(urlstring, startTimeMS, endTimeMS);
@@ -453,7 +485,9 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
 
   @JavascriptInterface
   public void saveStringToFile(String contents, String filename, String path) {
-
+    if (getUIParent() == null) {
+      return;
+    }
     WriteStringToFile w = new WriteStringToFile();
     w.setContents(contents);
     w.setFilename(filename);
@@ -486,6 +520,9 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
    */
   @JavascriptInterface
   protected void setAudioFile(final String urlstring, final int cueTo, final int endAt) {
+    if (getUIParent() == null) {
+      return;
+    }
     this.mMediaPlayer = new MediaPlayer();
     try {
       if (urlstring.contains("android_asset")) {
@@ -509,33 +546,19 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
         this.mMediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
         afd.close();
       }
-      this.mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-        @Override
-        public void onPrepared(MediaPlayer mp) {
-          if (Config.D)
-            Log.d(Config.TAG, "Starting to play the audio.");
-          if (cueTo == 0 && endAt == 0) {
-            JavaScriptInterface.this.mMediaPlayer.start();
-          } else {
-            JavaScriptInterface.this.playIntervalOfAudio(JavaScriptInterface.this.mAudioPlaybackFileUrl, cueTo, endAt);
-          }
-        }
-      });
-      this.mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-        @Override
-        public void onCompletion(MediaPlayer mp) {
-          if (Config.D)
-            Log.d(Config.TAG, "Audio playback is complete, releasing the audio.");
 
-          JavaScriptInterface.this.mMediaPlayer.release();
-          JavaScriptInterface.this.mMediaPlayer = null;
-          // getUIParent().loadUrlToWebView();
-          LoadUrlToWebView v = new LoadUrlToWebView();
-          v.setMessage("javascript:OPrime.hub.publish('playbackCompleted','"
-              + JavaScriptInterface.this.mAudioPlaybackFileUrl + "');");
-          v.execute();
-        }
-      });
+      OnPreparedPlay onPrepared = new OnPreparedPlay();
+      if (cueTo == 0 && endAt == 0) {
+        this.mMediaPlayer.setOnPreparedListener(onPrepared);
+      } else {
+        this.playIntervalOfAudio(this.mAudioPlaybackFileUrl, cueTo, endAt);
+      }
+
+      OnCompletedPublish onCompleted = new OnCompletedPublish();
+      onCompleted.mAudioPlaybackFileUrl = this.mAudioPlaybackFileUrl;
+      onCompleted.mLoadUrlToWebView = mLoadUrlToWebView;
+      this.mMediaPlayer.setOnCompletionListener(new OnCompletedPublish());
+
       this.mMediaPlayer.prepareAsync();
     } catch (IllegalArgumentException e) {
       Log.e(Config.TAG, "There was a problem with the sound " + e.getMessage());
@@ -553,6 +576,38 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
     }
   }
 
+  protected static class OnPreparedPlay implements MediaPlayer.OnPreparedListener {
+    @Override
+    public void onPrepared(MediaPlayer mediaPlayer) {
+      if (Config.D) {
+        Log.d(Config.TAG, "Starting to play the audio.");
+      }
+      mediaPlayer.start();
+    }
+  }
+
+  protected static class OnCompletedPublish implements MediaPlayer.OnCompletionListener {
+    String mAudioPlaybackFileUrl;
+    LoadUrlToWebView mLoadUrlToWebView;
+
+    @Override
+    public void onCompletion(MediaPlayer mediaPlayer) {
+      if (Config.D) {
+        Log.d(Config.TAG, "Audio playback is complete, releasing the audio.");
+      }
+
+      mediaPlayer.release();
+      mediaPlayer = null;
+      if (mLoadUrlToWebView == null) {
+        return;
+      }
+      // getUIParent().loadUrlToWebView();
+      mLoadUrlToWebView.setMessage("javascript:OPrime.hub.publish('playbackCompleted','" + mAudioPlaybackFileUrl
+          + "');");
+      mLoadUrlToWebView.execute();
+    }
+  }
+
   @JavascriptInterface
   public void setAudioFileUrl(String mAudioPlaybackFileUrl) {
     this.mAudioPlaybackFileUrl = mAudioPlaybackFileUrl;
@@ -567,6 +622,9 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
 
   @JavascriptInterface
   public void shareIt(String message) {
+    if (getUIParent() == null) {
+      return;
+    }
     Intent share = new Intent(Intent.ACTION_SEND);
     share.setType("text/plain");
     share.putExtra(Intent.EXTRA_TEXT, message);
@@ -575,6 +633,9 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
 
   @JavascriptInterface
   public void showToast(String toast) {
+    if (getUIParent() == null) {
+      return;
+    }
     Toast.makeText(this.mContext, toast, Toast.LENGTH_LONG).show();
     if (Config.D)
       Log.d(Config.TAG, "Showing toast " + toast);
@@ -582,6 +643,9 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
 
   @JavascriptInterface
   public void startAudioRecordingService(String resultfilename) {
+    if (getUIParent() == null) {
+      return;
+    }
     if ("".equals(resultfilename.trim())) {
       if (Config.D)
         Log.d(Config.TAG, "The resultfilename in startAudioRecordingService was empty.");
@@ -604,14 +668,20 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
     intent.putExtra(Config.EXTRA_RESULT_FILENAME, this.mAudioRecordFileUrl);
     this.getUIParent().startService(intent);
     // Publish audio recording started
-    LoadUrlToWebView v = new LoadUrlToWebView();
-    v.setMessage("javascript:OPrime.hub.publish('audioRecordingSucessfullyStarted','" + this.mAudioRecordFileUrl
-        + "');");
-    v.execute();
+    if (mLoadUrlToWebView == null) {
+      mLoadUrlToWebView = new LoadUrlToWebView();
+      mLoadUrlToWebView.mWebView = getUIParent().mWebView;
+    }
+    mLoadUrlToWebView.setMessage("javascript:OPrime.hub.publish('audioRecordingSucessfullyStarted','"
+        + this.mAudioRecordFileUrl + "');");
+    mLoadUrlToWebView.execute();
   }
 
   @Deprecated
   public void startVideoRecorder(String resultsFile) {
+    if (getUIParent() == null) {
+      return;
+    }
     String outputDir = this.mOutputDir + "video/";
     new File(outputDir).mkdirs();
 
@@ -636,6 +706,9 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
 
   @JavascriptInterface
   public void stopAudioRecordingService(String resultfilename) {
+    if (getUIParent() == null) {
+      return;
+    }
     // TODO could do some checking to see if the same file the HTML5 wants us to
     // stop is similarly named to the one in the Java
     // if(mAudioRecordFileUrl.contains(resultfilename))
@@ -645,21 +718,27 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
     Intent audio = new Intent(this.mContext, AudioRecorder.class);
     this.getUIParent().stopService(audio);
     // Publish stopped audio
-    LoadUrlToWebView v = new LoadUrlToWebView();
-    v.setMessage("javascript:OPrime.hub.publish('audioRecordingSucessfullyStopped','" + this.mAudioRecordFileUrl
-        + "');");
-    v.execute();
+    if (mLoadUrlToWebView == null) {
+      mLoadUrlToWebView = new LoadUrlToWebView();
+      mLoadUrlToWebView.mWebView = getUIParent().mWebView;
+    }
+    mLoadUrlToWebView.setMessage("javascript:OPrime.hub.publish('audioRecordingSucessfullyStopped','"
+        + this.mAudioRecordFileUrl + "');");
+    mLoadUrlToWebView.execute();
     // TODO add broadcast and listener from audio service to be sure the file
     // works(?)
-    LoadUrlToWebView t = new LoadUrlToWebView();
-    t.setMessage("javascript:OPrime.hub.publish('audioRecordingCompleted','" + this.mAudioRecordFileUrl + "');");
-    t.execute();
+    mLoadUrlToWebView.setMessage("javascript:OPrime.hub.publish('audioRecordingCompleted','" + this.mAudioRecordFileUrl
+        + "');");
+    mLoadUrlToWebView.execute();
     // null out the audio file to be sure this is called once per audio file.
     this.mAudioRecordFileUrl = null;
   }
 
   @JavascriptInterface
   public void takeAPicture(String resultfilename) {
+    if (getUIParent() == null) {
+      return;
+    }
     new File(this.mOutputDir).mkdirs();
 
     if (Config.D)
@@ -671,10 +750,13 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
       Log.d(Config.TAG, "This is what the image file looks like:" + this.mTakeAPictureFileUrl);
 
     // Publish picture taking started
-    LoadUrlToWebView v = new LoadUrlToWebView();
-    v.setMessage("javascript:OPrime.hub.publish('pictureCaptureSucessfullyStarted','" + this.mTakeAPictureFileUrl
-        + "');");
-    v.execute();
+    if (mLoadUrlToWebView == null) {
+      mLoadUrlToWebView = new LoadUrlToWebView();
+      mLoadUrlToWebView.mWebView = getUIParent().mWebView;
+    }
+    mLoadUrlToWebView.setMessage("javascript:OPrime.hub.publish('pictureCaptureSucessfullyStarted','"
+        + this.mTakeAPictureFileUrl + "');");
+    mLoadUrlToWebView.execute();
 
     Intent intent;
     // intent = new Intent(OPrime.INTENT_TAKE_PICTURE);

@@ -133,7 +133,7 @@ public class UserContentProvider extends ContentProvider {
     return rowsUpdated;
   }
 
-  public class UserSQLiteHelper extends SQLiteOpenHelper {
+  public static class UserSQLiteHelper extends SQLiteOpenHelper {
     protected static final String DATABASE_NAME = UserTable.TABLE_NAME + ".db";
     protected static final int DATABASE_VERSION = 1;
 

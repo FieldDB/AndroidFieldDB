@@ -31,6 +31,7 @@ import com.github.fielddb.BugReporter;
 import com.github.fielddb.Config;
 import com.github.fielddb.PrivateConstants;
 import com.github.fielddb.datacollection.NotifyingIntentService;
+import com.github.fielddb.datacollection.SecureHttpClient;
 import com.github.fielddb.R;
 import com.google.gson.JsonObject;
 
@@ -42,6 +43,9 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.Log;
 
+/**
+ * FIXME this needs to be updated to not use new http connections
+ */
 public class UploadAudioVideoService extends NotifyingIntentService {
   protected String mDeviceDetails = "{}";
   protected String mUsername = "default";
@@ -145,7 +149,8 @@ public class UploadAudioVideoService extends NotifyingIntentService {
     String urlStringAuthenticationSession = Config.DEFAULT_UPLOAD_AUDIO_VIDEO_URL;
 
     /* Actually uploads the video */
-    HttpClient httpClient = new SecureHttpClient(getApplicationContext());
+    SecureHttpClient httpClient = new SecureHttpClient(getApplicationContext());
+    httpClient.setKeystoreIdandPassword(R.raw.sslkeystore, PrivateConstants.KEYSTORE_PASS);
     // HttpClient httpClient = new DefaultHttpClient();
 
     HttpContext localContext = new BasicHttpContext();
@@ -203,51 +208,6 @@ public class UploadAudioVideoService extends NotifyingIntentService {
       return null;
     }
     return JSONResponse;
-  }
-
-  public class SecureHttpClient extends DefaultHttpClient {
-
-    final Context context;
-
-    public SecureHttpClient(Context context) {
-      this.context = context;
-    }
-
-    @Override
-    protected ClientConnectionManager createClientConnectionManager() {
-      try {
-        // Get an instance of the Bouncy Castle KeyStore format
-        KeyStore trusted = KeyStore.getInstance("BKS");
-        // Get the raw resource, which contains the keystore with
-        // your trusted certificates (root and any intermediate certs)
-        InputStream in = getApplicationContext().getResources().openRawResource(R.raw.sslkeystore);
-        try {
-          // Initialize the keystore with the provided trusted
-          // certificates
-          // Also provide the password of the keystore
-          trusted.load(in, PrivateConstants.KEYSTORE_PASS.toCharArray());
-        } finally {
-          in.close();
-        }
-        // Pass the keystore to the SSLSocketFactory. The factory is
-        // responsible
-        // for the verification of the server certificate.
-        SSLSocketFactory sf = new SSLSocketFactory(trusted);
-        // Hostname verification from certificate
-        // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/connmgmt.html#d4e506
-        sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-        // sf.setHostnameVerifier(SSLSocketFactory.STRICT_HOSTNAME_VERIFIER);
-
-        SchemeRegistry registry = new SchemeRegistry();
-        registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-        // Register for port 443 our SSLSocketFactory with our keystore
-        // to the ConnectionManager
-        registry.register(new Scheme("https", sf, 443));
-        return new SingleClientConnManager(getParams(), registry);
-      } catch (Exception e) {
-        throw new AssertionError(e);
-      }
-    }
   }
 
   public int processUploadResponse(Uri uri, String jsonResponse) {

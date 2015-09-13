@@ -1,6 +1,7 @@
 package com.github.fielddb.database;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import com.github.fielddb.Config;
 
@@ -24,8 +25,8 @@ public class AudioVideoContentProvider extends ContentProvider {
   private static final int ITEMS = 10;
   private static final int ITEM_ID = 20;
 
-  private static final String AUTHORITY = "com.github.fielddb." + Config.APP_TYPE.toLowerCase() + "."
-      + Config.DATA_IS_ABOUT_LANGUAGE_NAME_ASCII.toLowerCase() + "." + AudioVideoTable.TABLE_NAME;
+  private static final String AUTHORITY = "com.github.fielddb." + Config.APP_TYPE.toLowerCase(new Locale("en")) + "."
+      + Config.DATA_IS_ABOUT_LANGUAGE_NAME_ASCII.toLowerCase(new Locale("en")) + "." + AudioVideoTable.TABLE_NAME;
   private static final String BASE_PATH = AudioVideoTable.TABLE_NAME + "s";
   public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + BASE_PATH);
   public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + AudioVideoTable.TABLE_NAME
@@ -126,7 +127,7 @@ public class AudioVideoContentProvider extends ContentProvider {
     return rowsUpdated;
   }
 
-  public class AudioVideoSQLiteHelper extends SQLiteOpenHelper {
+  public static class AudioVideoSQLiteHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = AudioVideoTable.TABLE_NAME + ".db";
     private static final int DATABASE_VERSION = 1;
 
