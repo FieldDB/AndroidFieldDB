@@ -79,7 +79,11 @@ public class DownloadDatumsService extends NotifyingIntentService {
     }
 
     this.datumTagToDownload = "SampleData";
-    this.urlStringSampleDataDownload = Config.DEFAULT_SAMPLE_DATA_URL + "?key=%22" + datumTagToDownload + "%22";
+    this.urlStringSampleDataDownload = intent.getStringExtra(Config.EXTRA_URL);
+    if (this.urlStringSampleDataDownload == null) {
+      this.urlStringSampleDataDownload = Config.DEFAULT_SAMPLE_DATA_URL + "?key=%22" + datumTagToDownload + "%22";
+    }
+
     if (Config.D) {
       Log.d(Config.TAG, this.urlStringSampleDataDownload);
     }

@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.github.fielddb.Config;
+import com.github.fielddb.database.DatumContentProvider.DatumTable;
 
+import android.database.Cursor;
 import android.util.Log;
 
 public class Datum {
@@ -133,6 +135,68 @@ public class Datum {
     this.actualJSON = "";
   }
 
+  public Datum(Cursor cursor) {
+    super();
+
+    int currentColumnIndex = cursor.getColumnIndex(DatumTable.COLUMN_ID);
+    if (currentColumnIndex > -1) {
+      this._id = cursor.getString(currentColumnIndex);
+    }
+
+    currentColumnIndex = cursor.getColumnIndex(DatumTable.COLUMN_UTTERANCE);
+    if (currentColumnIndex > -1) {
+      this.utterance = new DatumField("utterance", cursor.getString(currentColumnIndex));
+    }
+
+    currentColumnIndex = cursor.getColumnIndex(DatumTable.COLUMN_MORPHEMES);
+    if (currentColumnIndex > -1) {
+      this.morphemes = new DatumField("morphemes", cursor.getString(currentColumnIndex));
+    }
+
+    currentColumnIndex = cursor.getColumnIndex(DatumTable.COLUMN_GLOSS);
+    if (currentColumnIndex > -1) {
+      this.gloss = new DatumField("gloss", cursor.getString(currentColumnIndex));
+    }
+
+    currentColumnIndex = cursor.getColumnIndex(DatumTable.COLUMN_TRANSLATION);
+    if (currentColumnIndex > -1) {
+      this.translation = new DatumField("translation", cursor.getString(currentColumnIndex));
+    }
+
+    currentColumnIndex = cursor.getColumnIndex(DatumTable.COLUMN_ORTHOGRAPHY);
+    if (currentColumnIndex > -1) {
+      this.orthography = new DatumField("orthography", cursor.getString(currentColumnIndex));
+    }
+
+    currentColumnIndex = cursor.getColumnIndex(DatumTable.COLUMN_CONTEXT);
+    if (currentColumnIndex > -1) {
+      this.context = new DatumField("context", cursor.getString(currentColumnIndex));
+    }
+
+    currentColumnIndex = cursor.getColumnIndex(DatumTable.COLUMN_CONTEXT);
+    if (currentColumnIndex > -1) {
+      this.context = new DatumField("context", cursor.getString(currentColumnIndex));
+    }
+
+    currentColumnIndex = cursor.getColumnIndex(DatumTable.COLUMN_IMAGE_FILES);
+    if (currentColumnIndex > -1) {
+      this.setImageFiles(cursor.getString(currentColumnIndex));
+    }
+
+    currentColumnIndex = cursor.getColumnIndex(DatumTable.COLUMN_AUDIO_VIDEO_FILES);
+    if (currentColumnIndex > -1) {
+      this.setAudioVideoFiles(cursor.getString(currentColumnIndex));
+    }
+
+    this.locations = new ArrayList<String>();
+    this.related = new ArrayList<String>();
+    this.reminders = new ArrayList<String>();
+    this.tags = new ArrayList<String>();
+    this.validationStati = new ArrayList<String>();
+    this.coments = new ArrayList<String>();
+    this.actualJSON = "";
+  }
+
   public String getId() {
     return _id;
   }
@@ -201,12 +265,36 @@ public class Datum {
     return imageFiles;
   }
 
+  public void setImageFiles(String imageFilesString) {
+    this.imageFiles = new ArrayList<Datum.AudioVideo>();
+    if (imageFilesString == null) {
+      return;
+    }
+
+    String[] filenames = imageFilesString.split(",");
+    for (int i = 0; i < filenames.length; i++) {
+      this.addImageFile(filenames[i]);
+    }
+  }
+
   public void setImageFiles(ArrayList<AudioVideo> imageFiles) {
     this.imageFiles = imageFiles;
   }
 
   public ArrayList<AudioVideo> getAudioVideoFiles() {
     return audioVideoFiles;
+  }
+
+  public void setAudioVideoFiles(String filesString) {
+    this.audioVideoFiles = new ArrayList<Datum.AudioVideo>();
+    if (filesString == null) {
+      return;
+    }
+
+    String[] filenames = filesString.split(",");
+    for (int i = 0; i < filenames.length; i++) {
+      this.addAudioFile(filenames[i]);
+    }
   }
 
   public void setAudioVideoFiles(ArrayList<AudioVideo> audioVideoFiles) {
