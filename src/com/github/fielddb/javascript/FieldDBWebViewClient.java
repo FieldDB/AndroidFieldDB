@@ -17,7 +17,8 @@ public class FieldDBWebViewClient extends WebViewClient {
 
   @Override
   public boolean shouldOverrideUrlLoading(WebView view, String uri) {
-    if (Uri.parse(uri).getHost().equals("localhost") || uri.startsWith("file:///android_asset") || uri.contains("pivot88.com:6984/login")) {
+    if (Uri.parse(uri).getHost().equals("localhost") || uri.startsWith("file:///android_asset")
+        || uri.contains("pivot88.com:6984/login")) {
       // do not override; let WebView load the page
       Log.d(Config.TAG, "Not overriding " + uri);
       return false;
@@ -32,6 +33,5 @@ public class FieldDBWebViewClient extends WebViewClient {
 
     return true;
   }
-
 
 }

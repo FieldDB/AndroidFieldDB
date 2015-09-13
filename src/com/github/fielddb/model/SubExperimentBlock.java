@@ -3,23 +3,22 @@ package com.github.fielddb.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-
 import com.github.fielddb.Config;
 import com.google.gson.Gson;
 
 public class SubExperimentBlock implements Serializable {
-  private static final long               serialVersionUID                    = -3637915995040502723L;
-  protected boolean                       autoAdvanceStimuliOnTouch           = false;
-  protected boolean                       autoAdvanceStimuliOnTouchIsPossible = true;
-  protected String                        description                         = Config.EMPTYSTRING;
-  protected int                           displayedStimuli                    = 0;
-  protected String                        intentToCallAfterThisSubExperiment  = "";
-  protected String                        intentToCallThisSubExperiment       = Config.INTENT_START_SUB_EXPERIMENT;
-  protected String                        language                            = Config.DEFAULT_LANGUAGE;
-  protected String                        resultsFileWithoutSuffix            = Config.EMPTYSTRING;
-  protected long                          startTime                           = 0;
+  private static final long serialVersionUID = -3637915995040502723L;
+  protected boolean autoAdvanceStimuliOnTouch = false;
+  protected boolean autoAdvanceStimuliOnTouchIsPossible = true;
+  protected String description = Config.EMPTYSTRING;
+  protected int displayedStimuli = 0;
+  protected String intentToCallAfterThisSubExperiment = "";
+  protected String intentToCallThisSubExperiment = Config.INTENT_START_SUB_EXPERIMENT;
+  protected String language = Config.DEFAULT_LANGUAGE;
+  protected String resultsFileWithoutSuffix = Config.EMPTYSTRING;
+  protected long startTime = 0;
   protected ArrayList<? extends Stimulus> stimuli;
-  protected String                        title                               = Config.EMPTYSTRING;
+  protected String title = Config.EMPTYSTRING;
 
   public SubExperimentBlock() {
     super();

@@ -17,17 +17,16 @@ import android.widget.Toast;
 import com.github.fielddb.R;
 
 public abstract class OPrimeApp extends Application {
-  public boolean                  D                  = false;
   /* This is a pointer to the experiment currently underway */
-  protected int                   mCurrentExperiment;
+  protected int mCurrentExperiment;
 
   /* This is a pointer to the sub experiment currently underway */
-  protected int                   mCurrentSubExperiment;
+  protected int mCurrentSubExperiment;
 
   /*
    * Customer support
    */
-  protected String[]              mDevEmailAddresses = new String[] { "opensource@ilanguage.ca" };
+  protected String[] mDevEmailAddresses = new String[] { "opensource@ilanguage.ca" };
 
   /*
    * This is an array of experiments that are in memory. it is possible to have
@@ -39,22 +38,21 @@ public abstract class OPrimeApp extends Application {
   /*
    * Localization of multi-lingual experiments/stimuli/UI
    */
-  protected Locale                mLanguage;
-  protected String                mLocalCouchDBname  = "oprimesample";
+  protected Locale mLanguage;
+  protected String mLocalCouchDBname = "oprimesample";
 
   /*
    * Variables for TouchDB - CouchDB storage if used by the application.
    */
-  protected String                mLocalCouchDir     = Config.DEFAULT_OUTPUT_DIRECTORY + "db/couchdb/";
+  protected String mLocalCouchDir = Config.DEFAULT_OUTPUT_DIRECTORY + "db/couchdb/";
 
   /*
    * Experiment variables
    */
 
   // protected boolean mAutoAdvanceStimuliOnTouch = false;
-  protected String                mOutputDir         = Config.DEFAULT_OUTPUT_DIRECTORY;
-  protected String                mRemoteCouchUrl    = "https://oprimesampleadmin:none@cesine.iriscouch.com/oprimesample";
-  public String                   TAG                = Config.TAG;
+  protected String mOutputDir = Config.DEFAULT_OUTPUT_DIRECTORY;
+  protected String mRemoteCouchUrl = "https://oprimesampleadmin:none@cesine.iriscouch.com/oprimesample";
 
   protected void addStimuli() {
 
@@ -111,13 +109,13 @@ public abstract class OPrimeApp extends Application {
           .get(this.mCurrentExperiment)
           .getSubExperiments()
           .add(
-              new SubExperimentBlock(subextitle, languagecode, subextitle, null, Config.EMPTYSTRING, Config.INTENT_START_SUB_EXPERIMENT,
-                  true, autoAdvanceStimuliOnTouch));
+              new SubExperimentBlock(subextitle, languagecode, subextitle, null, Config.EMPTYSTRING,
+                  Config.INTENT_START_SUB_EXPERIMENT, true, autoAdvanceStimuliOnTouch));
     }
     this.addStimuli();
     this.mCurrentSubExperiment = 0;
-    if (this.D)
-      Log.d(this.TAG, "Created an experiment " + this.mExperiments.get(this.mCurrentExperiment).getTitle());
+    if (Config.D)
+      Log.d(Config.TAG, "Created an experiment " + this.mExperiments.get(this.mCurrentExperiment).getTitle());
 
   }
 
@@ -144,7 +142,8 @@ public abstract class OPrimeApp extends Application {
     }
     Locale.setDefault(locale);
     config.locale = locale;
-    this.getBaseContext().getResources().updateConfiguration(config, this.getBaseContext().getResources().getDisplayMetrics());
+    this.getBaseContext().getResources()
+        .updateConfiguration(config, this.getBaseContext().getResources().getDisplayMetrics());
     this.mLanguage = Locale.getDefault();
 
     return Locale.getDefault().getDisplayLanguage();
@@ -158,7 +157,7 @@ public abstract class OPrimeApp extends Application {
     if (this.mExperiments.size() > 0) {
       return this.mExperiments.get(this.mCurrentExperiment);
     } else {
-      Log.e(this.TAG, "There are no experiments... this is probably a bug.");
+      Log.e(Config.TAG, "There are no experiments... this is probably a bug.");
       return null;
     }
   }
@@ -193,14 +192,6 @@ public abstract class OPrimeApp extends Application {
       titles.add(subexperiment.getTitle());
     }
     return titles;
-  }
-
-  public String getTag() {
-    return this.TAG;
-  }
-
-  public boolean isD() {
-    return this.D;
   }
 
   /**
@@ -257,27 +248,27 @@ public abstract class OPrimeApp extends Application {
     if (this.mExperiments == null) {
       this.mExperiments = new ArrayList<Experiment>();
     }
-    if (this.D)
-      Log.d(this.TAG, "Oncreate of the OPrimeApp ");
+    if (Config.D)
+      Log.d(Config.TAG, "Oncreate of the OPrimeApp ");
   }
 
   @Override
   public void onLowMemory() {
-    if (this.D)
-      Log.d(this.TAG, "The application is facing low memory, closing...");
+    if (Config.D)
+      Log.d(Config.TAG, "The application is facing low memory, closing...");
     super.onLowMemory();
   }
 
   @Override
   public void onTerminate() {
-    if (this.D)
-      Log.d(this.TAG, "The application has been terminated, closing...");
+    if (Config.D)
+      Log.d(Config.TAG, "The application has been terminated, closing...");
     super.onTerminate();
   }
 
   public void sendDevsAnEmail(String subject, String message) {
     if (subject == null) {
-      subject = "Email from " + this.TAG;
+      subject = "Email from " + Config.TAG;
     }
     String[] recipients = this.mDevEmailAddresses;
     Intent i = new Intent(Intent.ACTION_SEND);
@@ -341,10 +332,10 @@ public abstract class OPrimeApp extends Application {
       out.flush();
       out.close();
     } catch (FileNotFoundException e) {
-      Log.e(this.TAG, "writePrivateParticipantToFile Problem opening outfile.");
+      Log.e(Config.TAG, "writePrivateParticipantToFile Problem opening outfile.");
 
     } catch (IOException e) {
-      Log.e(this.TAG, "writePrivateParticipantToFile Problem writing outfile.");
+      Log.e(Config.TAG, "writePrivateParticipantToFile Problem writing outfile.");
     }
   }
 

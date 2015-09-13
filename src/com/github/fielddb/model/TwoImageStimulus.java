@@ -8,11 +8,11 @@ public class TwoImageStimulus extends Stimulus {
   /**
 	 * 
 	 */
-  private static final long serialVersionUID   = 4599224930707785294L;
-  protected int             leftImageFileId;
-  protected String          leftImageFilePath  = "";
-  protected int             rightImageFileId;
-  protected String          rightImageFilePath = "";
+  private static final long serialVersionUID = 4599224930707785294L;
+  protected int leftImageFileId;
+  protected String leftImageFilePath = "";
+  protected int rightImageFileId;
+  protected String rightImageFilePath = "";
 
   public TwoImageStimulus() {
     super();

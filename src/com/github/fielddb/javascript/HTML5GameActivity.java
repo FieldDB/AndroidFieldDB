@@ -58,8 +58,8 @@ public class HTML5GameActivity extends HTML5Activity {
 
   @Override
   protected void setUpVariables() {
-    this.setJavaScriptInterface(new ExperimentJavaScriptInterface(Config.D, Config.TAG, Config.DEFAULT_OUTPUT_DIRECTORY, this.getApplicationContext(), this, ""));
+    this.setJavaScriptInterface(new ExperimentJavaScriptInterface(Config.DEFAULT_OUTPUT_DIRECTORY, this.getApplicationContext(), this, ""));
     if (Config.D)
-      Log.d(Config.TAG, "Using the OPrime experiment javascript interface.");
+      Log.d(Config.TAG, "Using the experiment javascript interface.");
   }
 }

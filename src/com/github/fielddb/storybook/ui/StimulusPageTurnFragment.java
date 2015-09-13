@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.github.fielddb.model.Stimulus;
 import com.github.fielddb.model.Touch;
+import com.github.fielddb.Config;
 import com.github.fielddb.R;
 
 public class StimulusPageTurnFragment extends Fragment {
@@ -66,7 +67,7 @@ public class StimulusPageTurnFragment extends Fragment {
     }
     MediaPlayer mediaPlayer = MediaPlayer.create(this.getActivity(), audioStimuliResource);
     if (mediaPlayer == null) {
-      Log.d("OPrime", "Problem opening the audio stimuli");
+      Log.d(Config.TAG, "Problem opening the audio stimuli");
       return;
     }
     try {

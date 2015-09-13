@@ -3,9 +3,9 @@ package com.github.fielddb.model;
 import java.util.ArrayList;
 
 public class Experiment {
-  Participant                   participant;
+  Participant participant;
   ArrayList<SubExperimentBlock> subExperiments;
-  String                        title;
+  String title;
 
   public Experiment() {
     super();

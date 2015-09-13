@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import com.github.fielddb.Config;
 import com.github.fielddb.datacollection.AudioRecorder;
 import com.github.fielddb.datacollection.VideoRecorderAsyncTask;
-import com.github.fielddb.model.OPrimeApp;
 import com.github.fielddb.model.Stimulus;
 import com.github.fielddb.model.SubExperimentBlock;
 
@@ -45,57 +44,49 @@ import android.widget.VideoView;
 import com.github.fielddb.R;
 
 public class StopWatchSubExperiment extends Activity implements SurfaceHolder.Callback {
-  protected static String                 TAG            = "StopWatchSubExperiment";
-  protected boolean                       D              = true;
-  protected long                          lastPause      = 0;
-  protected Chronometer                   mChronometer;
-  protected Boolean                       mRecording     = false;
-  View.OnClickListener                    mResetListener = new OnClickListener() {
-                                                           @Override
-                                                           public void onClick(View v) {
-                                                             StopWatchSubExperiment.this.mChronometer
-                                                                 .setBase(SystemClock.elapsedRealtime());
-                                                           }
-                                                         };
+  protected long lastPause = 0;
+  protected Chronometer mChronometer;
+  protected Boolean mRecording = false;
+  View.OnClickListener mResetListener = new OnClickListener() {
+    @Override
+    public void onClick(View v) {
+      StopWatchSubExperiment.this.mChronometer.setBase(SystemClock.elapsedRealtime());
+    }
+  };
 
-  View.OnClickListener                    mStartListener = new OnClickListener() {
-                                                           @Override
-                                                           public void onClick(View v) {
-                                                             if (StopWatchSubExperiment.this.lastPause == 0) {
-                                                               StopWatchSubExperiment.this.mChronometer
-                                                                   .setBase(SystemClock.elapsedRealtime());
+  View.OnClickListener mStartListener = new OnClickListener() {
+    @Override
+    public void onClick(View v) {
+      if (StopWatchSubExperiment.this.lastPause == 0) {
+        StopWatchSubExperiment.this.mChronometer.setBase(SystemClock.elapsedRealtime());
 
-                                                             } else {
-                                                               StopWatchSubExperiment.this.mChronometer
-                                                                   .setBase(StopWatchSubExperiment.this.mChronometer
-                                                                       .getBase()
-                                                                       + SystemClock.elapsedRealtime()
-                                                                       - StopWatchSubExperiment.this.lastPause);
-                                                             }
+      } else {
+        StopWatchSubExperiment.this.mChronometer.setBase(StopWatchSubExperiment.this.mChronometer.getBase()
+            + SystemClock.elapsedRealtime() - StopWatchSubExperiment.this.lastPause);
+      }
 
-                                                             StopWatchSubExperiment.this.mChronometer.start();
-                                                           }
-                                                         };
+      StopWatchSubExperiment.this.mChronometer.start();
+    }
+  };
   protected ArrayList<? extends Stimulus> mStimuli;
-  View.OnClickListener                    mStopListener  = new OnClickListener() {
-                                                           @Override
-                                                           public void onClick(View v) {
-                                                             StopWatchSubExperiment.this.lastPause = SystemClock
-                                                                 .elapsedRealtime();
+  View.OnClickListener mStopListener = new OnClickListener() {
+    @Override
+    public void onClick(View v) {
+      StopWatchSubExperiment.this.lastPause = SystemClock.elapsedRealtime();
 
-                                                             StopWatchSubExperiment.this.mChronometer.stop();
+      StopWatchSubExperiment.this.mChronometer.stop();
 
-                                                           }
-                                                         };
+    }
+  };
 
-  protected SubExperimentBlock            mSubExperiment;
+  protected SubExperimentBlock mSubExperiment;
 
-  protected VideoView                     mVideoView     = null;
+  protected VideoView mVideoView = null;
 
   /*
    * Video variables
    */
-  protected VideoRecorderAsyncTask        recordVideoTask;
+  protected VideoRecorderAsyncTask recordVideoTask;
 
   public void finishSubExperiment() {
     this.mSubExperiment.setDisplayedStimuli(this.mStimuli.size());
@@ -112,14 +103,14 @@ public class StopWatchSubExperiment extends Activity implements SurfaceHolder.Ca
     this.setResult(Config.CODE_EXPERIMENT_COMPLETED, intent);
 
     try {
-      if (this.D)
-        Log.d(TAG, "Telling recorder asyc to stop. ");
+      if (Config.D)
+        Log.d(Config.TAG, "Telling recorder asyc to stop. ");
       if (this.recordVideoTask != null) {
         this.recordVideoTask.stopRecording();
       }
     } catch (Exception e) {
-      if (this.D)
-        Log.d(TAG, "Error Telling recorder asyc to stop. ");
+      if (Config.D)
+        Log.d(Config.TAG, "Error Telling recorder asyc to stop. ");
       e.printStackTrace();
     }
     this.finish();
@@ -132,8 +123,8 @@ public class StopWatchSubExperiment extends Activity implements SurfaceHolder.Ca
   @Override
   public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
-    if (this.D)
-      Log.d(TAG, "Configuration has changed (rotation). Not redrawing the screen.");
+    if (Config.D)
+      Log.d(Config.TAG, "Configuration has changed (rotation). Not redrawing the screen.");
     /*
      * Doing nothing makes the current redraw properly
      */
@@ -144,8 +135,6 @@ public class StopWatchSubExperiment extends Activity implements SurfaceHolder.Ca
     super.onCreate(savedInstanceState);
 
     this.setContentView(R.layout.fragment_stop_watch);
-    this.D = ((OPrimeApp) this.getApplication()).D;
-    TAG = Config.TAG;
     Button button;
 
     this.mChronometer = (Chronometer) this.findViewById(R.id.chronometer);
@@ -215,8 +204,8 @@ public class StopWatchSubExperiment extends Activity implements SurfaceHolder.Ca
 
   @Override
   public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-    if (this.D)
-      Log.v(TAG, "Width x Height = " + width + "x" + height);
+    if (Config.D)
+      Log.v(Config.TAG, "Width x Height = " + width + "x" + height);
   }
 
   @Override
@@ -224,14 +213,14 @@ public class StopWatchSubExperiment extends Activity implements SurfaceHolder.Ca
     if (this.mRecording) {
       return;
     }
-    if (this.D)
-      Log.d(TAG, "Preparing to record. ");
+    if (Config.D)
+      Log.d(Config.TAG, "Preparing to record. ");
     this.recordVideoTask = new VideoRecorderAsyncTask();
     this.recordVideoTask.setContext(this);
     this.recordVideoTask.setParentUI(this);
     this.recordVideoTask.setHolder(holder);
-    if (this.D)
-      Log.d(TAG, "Telling recorder asyc to execute. ");
+    if (Config.D)
+      Log.d(Config.TAG, "Telling recorder asyc to execute. ");
     this.recordVideoTask.execute();
 
   }

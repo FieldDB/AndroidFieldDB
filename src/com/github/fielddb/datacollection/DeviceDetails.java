@@ -17,46 +17,41 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 
 public class DeviceDetails implements LocationListener {
-  String            androidId         = "unknown";
-  String            appVersion;
+  String androidId = "unknown";
+  String appVersion;
 
-  String            brand;
-  int               currentOrientation;
+  String brand;
+  int currentOrientation;
 
-  protected boolean D                 = true;
+  String device;
+  String hardware;
+  double latitude = 0;
+  double locationAccuracy = 0;
+  double longitude = 0;
+  String manufacturer;
+  Context mContext;
+  String mDeviceDetails;
+  long min_dis = 10;
+  long min_time = 100;
 
-  String            device;
-  String            hardware;
-  double            latitude          = 0;
-  double            locationAccuracy  = 0;
-  double            longitude         = 0;
-  String            manufacturer;
-  Context           mContext;
-  String            mDeviceDetails;
-  long              min_dis           = 10;
-  long              min_time          = 100;
+  String model;
+  String osversion;
+  String product;
+  int screenHeight;
 
-  String            model;
-  String            osversion;
-  String            product;
-  int               screenHeight;
+  double screenRatio;
+  int screenWidth;
+  int sdk;
 
-  double            screenRatio;
-  int               screenWidth;
-  int               sdk;
-
-  String            serial            = "unknown";
-  protected String  TAG               = Config.TAG;
-  String            telephonyDeviceId = "unknown";
-  String            userFriendlyBuildID;
-  String            wifiMacAddress    = "unknown";
+  String serial = "unknown";
+  String telephonyDeviceId = "unknown";
+  String userFriendlyBuildID;
+  String wifiMacAddress = "unknown";
 
   @SuppressLint("NewApi")
-  public DeviceDetails(Context mContext, boolean debugMode, String tag) {
+  public DeviceDetails(Context mContext) {
     super();
     this.mContext = mContext;
-    this.D = debugMode;
-    this.TAG = tag;
 
     try {
       this.appVersion = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).versionName;
@@ -115,30 +110,30 @@ public class DeviceDetails implements LocationListener {
 
     String provider = locationManager.getBestProvider(crta, true);
     if ("network".equals(provider)) {
-      if (this.D)
-        Log.d(this.TAG, "Using network for location provider.");
+      if (Config.D)
+        Log.d(Config.TAG, "Using network for location provider.");
       if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, this.min_time, this.min_dis, this);
       }
     } else if ("gps".equals(provider)) {
-      if (this.D)
-        Log.d(this.TAG, "Using network for location provider.");
+      if (Config.D)
+        Log.d(Config.TAG, "Using network for location provider.");
       if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
       }
     } else {
-      if (this.D)
-        Log.d(this.TAG, "Best location provider was not specified, using both network and gps.");
+      if (Config.D)
+        Log.d(Config.TAG, "Best location provider was not specified, using both network and gps.");
 
       if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-        if (this.D)
-          Log.d(this.TAG, "Using network for location provider.");
+        if (Config.D)
+          Log.d(Config.TAG, "Using network for location provider.");
 
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, this.min_time, this.min_dis, this);
       }
       if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-        if (this.D)
-          Log.d(this.TAG, "Using gps for location provider.");
+        if (Config.D)
+          Log.d(Config.TAG, "Using gps for location provider.");
 
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
       }
@@ -155,8 +150,8 @@ public class DeviceDetails implements LocationListener {
     this.longitude = location.getLongitude();
     this.latitude = location.getLatitude();
     this.locationAccuracy = location.getAccuracy();
-    if (this.D)
-      Log.d(this.TAG, "Location changed; " + this.longitude + ":" + this.latitude + " accuracy: "
+    if (Config.D)
+      Log.d(Config.TAG, "Location changed; " + this.longitude + ":" + this.latitude + " accuracy: "
           + this.locationAccuracy);
   }
 

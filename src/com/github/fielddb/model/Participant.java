@@ -7,19 +7,17 @@ import java.util.GregorianCalendar;
 
 import com.github.fielddb.Config;
 
-
 public class Participant {
-  private static int         counter                     = 0;
+  private static int counter = 0;
 
-  public static final int    FEMALE                      = 2;
-  public static final int    MALE                        = 1;
-  public static final String PARTICIPANT_ID_DEFAULT      = "0000";
+  public static final int FEMALE = 2;
+  public static final int MALE = 1;
+  public static final String PARTICIPANT_ID_DEFAULT = "0000";
   public static final String participantCSVprivateString = "Code" + ",First" + ",Last" + ",Birthdate" + ",Gender"
-                                                             + ",DateTested" + ",InterviewerCode" + ",Details"
-                                                             + ",Languages";
-  public static final String participantCSVpublicString  = "Code" + ",DateTested" + ",InterviewerCode" + ",Status"
-                                                             + ",Languages";
-  public static final int    UNKNOWN_GENDER              = Config.CODE_NOTSPECIFIED;
+      + ",DateTested" + ",InterviewerCode" + ",Details" + ",Languages";
+  public static final String participantCSVpublicString = "Code" + ",DateTested" + ",InterviewerCode" + ",Status"
+      + ",Languages";
+  public static final int UNKNOWN_GENDER = Config.CODE_NOTSPECIFIED;
 
   public static int autoIncrement() {
     counter++;
@@ -34,20 +32,20 @@ public class Participant {
     counter = newcount;
   }
 
-  Date              birthdate;
-  String            code             = Config.EMPTYSTRING;
-  long              dateTested       = System.currentTimeMillis();
-  String            details          = Config.EMPTYSTRING;
-  String            experimenterCode = "NA";
-  String            firstname        = Config.EMPTYSTRING;
-  int               gender           = UNKNOWN_GENDER;
+  Date birthdate;
+  String code = Config.EMPTYSTRING;
+  long dateTested = System.currentTimeMillis();
+  String details = Config.EMPTYSTRING;
+  String experimenterCode = "NA";
+  String firstname = Config.EMPTYSTRING;
+  int gender = UNKNOWN_GENDER;
   ArrayList<String> languageCodes;
 
   ArrayList<String> languages;
 
-  String            lastname         = Config.EMPTYSTRING;
+  String lastname = Config.EMPTYSTRING;
 
-  String            status           = Config.EMPTYSTRING;
+  String status = Config.EMPTYSTRING;
 
   public Participant() {
     this.firstname = "";

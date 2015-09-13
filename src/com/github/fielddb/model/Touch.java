@@ -4,11 +4,11 @@ import java.io.Serializable;
 
 public class Touch implements Serializable {
   private static final long serialVersionUID = -6910004898670050860L;
-  public int                height;
-  public long               time;
-  public int                width;
-  public float              x;
-  public float              y;
+  public int height;
+  public long time;
+  public int width;
+  public float x;
+  public float y;
 
   public Touch() {
     super();
