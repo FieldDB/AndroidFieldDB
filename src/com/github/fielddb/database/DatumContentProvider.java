@@ -1,6 +1,7 @@
 package com.github.fielddb.database;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.UUID;
 
 import com.github.fielddb.Config;
@@ -28,8 +29,8 @@ public class DatumContentProvider extends ContentProvider {
   private static String mAppType = Config.APP_TYPE;
   private static String mDataIsAboutLanguageName = Config.DATA_IS_ABOUT_LANGUAGE_NAME_ASCII;
 
-  private static String AUTHORITY = "com.github.fielddb." + mAppType.toLowerCase() + "."
-      + mDataIsAboutLanguageName.toLowerCase() + "." + DatumTable.TABLE_NAME;
+  private static String AUTHORITY = "com.github.fielddb." + mAppType.toLowerCase(new Locale("en")) + "."
+      + mDataIsAboutLanguageName.toLowerCase(new Locale("en")) + "." + DatumTable.TABLE_NAME;
   private static final String BASE_PATH = DatumTable.TABLE_NAME + "s";
   public static Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + BASE_PATH);
   public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + DatumTable.TABLE_NAME + "s";
@@ -149,7 +150,7 @@ public class DatumContentProvider extends ContentProvider {
     return rowsUpdated;
   }
 
-  public class DatumSQLiteHelper extends SQLiteOpenHelper {
+  public static class DatumSQLiteHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = DatumTable.TABLE_NAME + ".db";
     private static final int DATABASE_VERSION = 1;
 
