@@ -13,6 +13,10 @@ import org.apache.http.impl.conn.SingleClientConnManager;
 
 import android.content.Context;
 
+/**
+ * FIXME this comes from the session recorder project, why is this called
+ * SecureHTTPClient?
+ */
 @Deprecated
 public class SecureHttpClient extends DefaultHttpClient {
   int keystoreResource;
