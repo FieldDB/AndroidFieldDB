@@ -18,8 +18,8 @@ public class Datum {
   protected DatumField translation;
   protected DatumField orthography;
   protected DatumField context;
-  protected ArrayList<AudioVideo> imageFiles;
-  protected ArrayList<AudioVideo> audioVideoFiles;
+  protected ArrayList<FieldDBFile> imageFiles;
+  protected ArrayList<FieldDBFile> audioVideoFiles;
   protected int currentAudioVideoIndex = 0;
   protected int currentImageIndex = 0;
   protected ArrayList<String> locations;
@@ -31,8 +31,8 @@ public class Datum {
   protected String actualJSON;
 
   public Datum(String id, String rev, DatumField utterance, DatumField morphemes, DatumField gloss,
-      DatumField translation, DatumField orthography, DatumField context, ArrayList<AudioVideo> imageFiles,
-      ArrayList<AudioVideo> audioVideoFiles, ArrayList<AudioVideo> videoFiles, ArrayList<String> locations,
+      DatumField translation, DatumField orthography, DatumField context, ArrayList<FieldDBFile> imageFiles,
+      ArrayList<FieldDBFile> audioVideoFiles, ArrayList<FieldDBFile> videoFiles, ArrayList<String> locations,
       ArrayList<String> related, ArrayList<String> reminders, ArrayList<String> tags,
       ArrayList<String> validationStati, ArrayList<String> coments, String actualJSON) {
     super();
@@ -64,8 +64,8 @@ public class Datum {
     this.translation = new DatumField("translation", "");
     this.orthography = new DatumField("orthography", orthography);
     this.context = new DatumField("context", " ");
-    this.imageFiles = new ArrayList<Datum.AudioVideo>();
-    this.audioVideoFiles = new ArrayList<Datum.AudioVideo>();
+    this.imageFiles = new ArrayList<FieldDBFile>();
+    this.audioVideoFiles = new ArrayList<FieldDBFile>();
     this.locations = new ArrayList<String>();
     this.related = new ArrayList<String>();
     this.reminders = new ArrayList<String>();
@@ -84,8 +84,8 @@ public class Datum {
     this.translation = new DatumField("translation", translation);
     this.orthography = new DatumField("orthography", orthography);
     this.context = new DatumField("context", " ");
-    this.imageFiles = new ArrayList<Datum.AudioVideo>();
-    this.audioVideoFiles = new ArrayList<Datum.AudioVideo>();
+    this.imageFiles = new ArrayList<FieldDBFile>();
+    this.audioVideoFiles = new ArrayList<FieldDBFile>();
     this.locations = new ArrayList<String>();
     this.related = new ArrayList<String>();
     this.reminders = new ArrayList<String>();
@@ -104,8 +104,8 @@ public class Datum {
     this.translation = new DatumField("translation", translation);
     this.orthography = new DatumField("orthography", orthography);
     this.context = new DatumField("context", context);
-    this.imageFiles = new ArrayList<Datum.AudioVideo>();
-    this.audioVideoFiles = new ArrayList<Datum.AudioVideo>();
+    this.imageFiles = new ArrayList<FieldDBFile>();
+    this.audioVideoFiles = new ArrayList<FieldDBFile>();
     this.locations = new ArrayList<String>();
     this.related = new ArrayList<String>();
     this.reminders = new ArrayList<String>();
@@ -124,8 +124,8 @@ public class Datum {
     this.translation = new DatumField("translation", "");
     this.orthography = new DatumField("orthography", "");
     this.context = new DatumField("context", " ");
-    this.imageFiles = new ArrayList<Datum.AudioVideo>();
-    this.audioVideoFiles = new ArrayList<Datum.AudioVideo>();
+    this.imageFiles = new ArrayList<FieldDBFile>();
+    this.audioVideoFiles = new ArrayList<FieldDBFile>();
     this.locations = new ArrayList<String>();
     this.related = new ArrayList<String>();
     this.reminders = new ArrayList<String>();
@@ -261,12 +261,12 @@ public class Datum {
     this.context.setValue(context);
   }
 
-  public ArrayList<AudioVideo> getImageFiles() {
+  public ArrayList<FieldDBFile> getImageFiles() {
     return imageFiles;
   }
 
   public void setImageFiles(String imageFilesString) {
-    this.imageFiles = new ArrayList<Datum.AudioVideo>();
+    this.imageFiles = new ArrayList<FieldDBFile>();
     if (imageFilesString == null) {
       return;
     }
@@ -277,16 +277,16 @@ public class Datum {
     }
   }
 
-  public void setImageFiles(ArrayList<AudioVideo> imageFiles) {
+  public void setImageFiles(ArrayList<FieldDBFile> imageFiles) {
     this.imageFiles = imageFiles;
   }
 
-  public ArrayList<AudioVideo> getAudioVideoFiles() {
+  public ArrayList<FieldDBFile> getAudioVideoFiles() {
     return audioVideoFiles;
   }
 
   public void setAudioVideoFiles(String filesString) {
-    this.audioVideoFiles = new ArrayList<Datum.AudioVideo>();
+    this.audioVideoFiles = new ArrayList<FieldDBFile>();
     if (filesString == null) {
       return;
     }
@@ -297,13 +297,13 @@ public class Datum {
     }
   }
 
-  public void setAudioVideoFiles(ArrayList<AudioVideo> audioVideoFiles) {
+  public void setAudioVideoFiles(ArrayList<FieldDBFile> audioVideoFiles) {
     this.audioVideoFiles = audioVideoFiles;
   }
 
-  public ArrayList<AudioVideo> getVideoFiles() {
-    ArrayList<AudioVideo> videoFiles = new ArrayList<AudioVideo>();
-    for (AudioVideo audioVideo : this.audioVideoFiles) {
+  public ArrayList<FieldDBFile> getVideoFiles() {
+    ArrayList<FieldDBFile> videoFiles = new ArrayList<FieldDBFile>();
+    for (FieldDBFile audioVideo : this.audioVideoFiles) {
       if (audioVideo.getFilename().endsWith(Config.DEFAULT_VIDEO_EXTENSION)) {
         videoFiles.add(audioVideo);
       }
@@ -311,7 +311,7 @@ public class Datum {
     return videoFiles;
   }
 
-  public void setVideoFiles(ArrayList<AudioVideo> videoFiles) throws Exception {
+  public void setVideoFiles(ArrayList<FieldDBFile> videoFiles) throws Exception {
     throw new Exception("Use setAudioVideoFiles instead");
   }
 
@@ -406,7 +406,7 @@ public class Datum {
   }
 
   public void addImageFile(String filename) {
-    this.imageFiles.add(new AudioVideo(filename));
+    this.imageFiles.add(new FieldDBFile(filename));
   }
 
   public String getMainImageFile() {
@@ -418,7 +418,7 @@ public class Datum {
 
   public void addAudioFile(String audioFileName) {
     if (!this.audioVideoFiles.contains(audioFileName)) {
-      this.audioVideoFiles.add(new AudioVideo(audioFileName));
+      this.audioVideoFiles.add(new FieldDBFile(audioFileName));
     }
   }
 
@@ -430,14 +430,14 @@ public class Datum {
   }
 
   public void addVideoFile(String videoFileName) {
-    this.audioVideoFiles.add(new AudioVideo(videoFileName));
+    this.audioVideoFiles.add(new FieldDBFile(videoFileName));
   }
 
   public String getMainVideoFile() {
     return this.getMainAudioVideoFile();
   }
 
-  public String getPrevNextMediaFile(String type, ArrayList<AudioVideo> mediaFiles, String prevNext) {
+  public String getPrevNextMediaFile(String type, ArrayList<FieldDBFile> mediaFiles, String prevNext) {
     if (mediaFiles == null || mediaFiles.size() == 0) {
       return null;
     }
@@ -482,162 +482,6 @@ public class Datum {
       Log.d(Config.TAG, fileWillBe);
     }
     return fileWillBe;
-  }
-
-  public class AudioVideo {
-    protected String filename;
-    protected String description;
-    protected String URL;
-
-    public AudioVideo(String filename, String description, String uRL) {
-      super();
-      this.filename = filename;
-      this.description = description;
-      URL = uRL;
-    }
-
-    public AudioVideo(String filename) {
-      super();
-      this.filename = filename;
-      this.description = "";
-      this.URL = filename;
-    }
-
-    public String getFilename() {
-      return this.filename;
-    }
-
-    public void setFilename(String filename) {
-      this.filename = filename;
-    }
-
-    public String getDescription() {
-      return description;
-    }
-
-    public void setDescription(String description) {
-      this.description = description;
-    }
-
-    public String getURL() {
-      return URL;
-    }
-
-    public void setURL(String uRL) {
-      URL = uRL;
-    }
-
-  }
-
-  public class DatumField {
-    protected String label;
-    protected String value;
-    protected String mask;
-    protected String encrypted;
-    protected String shouldBeEncrypted;
-    protected String help;
-    protected String size;
-    protected String showToUserTypes;
-    protected String userchooseable;
-
-    public DatumField(String label, String value, String mask, String encrypted, String shouldBeEncrypted, String help,
-        String size, String showToUserTypes, String userchooseable) {
-      super();
-      this.label = label;
-      this.value = value;
-      this.mask = mask;
-      this.encrypted = encrypted;
-      this.shouldBeEncrypted = shouldBeEncrypted;
-      this.help = help;
-      this.size = size;
-      this.showToUserTypes = showToUserTypes;
-      this.userchooseable = userchooseable;
-    }
-
-    public DatumField(String label, String value) {
-      super();
-      this.label = label;
-      this.value = value;
-      this.mask = value;
-      this.encrypted = "false";
-      this.shouldBeEncrypted = "true";
-      this.help = "Field created on an Android App";
-      this.showToUserTypes = "all";
-      this.userchooseable = "false";
-    }
-
-    public String getLabel() {
-      return label;
-    }
-
-    public void setLabel(String label) {
-      this.label = label;
-    }
-
-    public String getValue() {
-      return value;
-    }
-
-    public void setValue(String value) {
-      this.value = value;
-    }
-
-    public String getMask() {
-      return mask;
-    }
-
-    public void setMask(String mask) {
-      this.mask = mask;
-    }
-
-    public String getEncrypted() {
-      return encrypted;
-    }
-
-    public void setEncrypted(String encrypted) {
-      this.encrypted = encrypted;
-    }
-
-    public String getShouldBeEncrypted() {
-      return shouldBeEncrypted;
-    }
-
-    public void setShouldBeEncrypted(String shouldBeEncrypted) {
-      this.shouldBeEncrypted = shouldBeEncrypted;
-    }
-
-    public String getHelp() {
-      return help;
-    }
-
-    public void setHelp(String help) {
-      this.help = help;
-    }
-
-    public String getSize() {
-      return size;
-    }
-
-    public void setSize(String size) {
-      this.size = size;
-    }
-
-    public String getShowToUserTypes() {
-      return showToUserTypes;
-    }
-
-    public void setShowToUserTypes(String showToUserTypes) {
-      this.showToUserTypes = showToUserTypes;
-    }
-
-    public String getUserchooseable() {
-      return userchooseable;
-    }
-
-    public void setUserchooseable(String userchooseable) {
-      this.userchooseable = userchooseable;
-    }
-
   }
 
   public String getBaseFilename() {
@@ -710,10 +554,10 @@ public class Datum {
     }
   }
 
-  public String getMediaFilesAsCSV(ArrayList<AudioVideo> mediaFiles) {
+  public String getMediaFilesAsCSV(ArrayList<FieldDBFile> mediaFiles) {
     String asString = "";
     boolean isFirst = true;
-    for (AudioVideo file : mediaFiles) {
+    for (FieldDBFile file : mediaFiles) {
       if (!isFirst) {
         asString = asString + ",";
       }
