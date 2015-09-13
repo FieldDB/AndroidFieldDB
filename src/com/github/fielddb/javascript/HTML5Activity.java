@@ -85,14 +85,9 @@ public abstract class HTML5Activity extends Activity {
 
   @Override
   protected void onDestroy() {
-    if (this.getJavaScriptInterface().mMediaPlayer != null) {
-      this.getJavaScriptInterface().mMediaPlayer.stop();
-      this.getJavaScriptInterface().mMediaPlayer.release();
-    }
-    if (this.getJavaScriptInterface().mListenForEndAudioInterval != null
-        && !this.getJavaScriptInterface().mListenForEndAudioInterval.isCancelled()) {
-      this.getJavaScriptInterface().mListenForEndAudioInterval.cancel(true);
-      // getJavaScriptInterface().mListenForEndAudioInterval = null;
+    if (this.getJavaScriptInterface() != null) {
+      this.getJavaScriptInterface().onDestroy();
+      this.setJavaScriptInterface(null);
     }
     super.onDestroy();
   }
