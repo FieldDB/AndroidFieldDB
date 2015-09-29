@@ -32,7 +32,7 @@ public class CursorRecyclerViewAdapter extends RecyclerView.Adapter<DatumPreview
     if (mCursor == null) {
       return 0;
     }
-    return 3;
+    return mCursor.getCount();
   }
 
   @Override
@@ -61,12 +61,9 @@ public class CursorRecyclerViewAdapter extends RecyclerView.Adapter<DatumPreview
     mClickCallbacks.onItemSelected(id);
   }
 
-  public void onItemHolderContextClick(DatumPreviewViewHolder item) {
-
-  }
-
-  public void removeItem(int position, Uri mUri) {
+  public void removeItem(int position, Uri uri) {
     notifyItemRemoved(position);
+    mClickCallbacks.onItemDeleted(uri);
   }
 
   public Cursor getCursor() {

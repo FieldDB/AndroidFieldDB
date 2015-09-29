@@ -5,8 +5,8 @@
     <string name="speech_app_name">SpeechRecognizer</string>
     <string name="title_datum_detail">Datum</string>
     <string name="app_explanation"></string>
-    <string name="are_you_sure">Are you sure?</string>
-    <string name="are_you_sure_put_in_trash">Are you sure you want to put this datum in the trash?</string>
+    <string name="delete">Delete</string>
+    <string name="are_you_sure_put_in_trash">Put this datum in the trash?</string>
 
     <!-- Recognition prompts -->
     <string name="im_listening">I\'m listening</string>

@@ -4,6 +4,8 @@ import com.github.fielddb.database.CursorRecyclerViewAdapter;
 import com.github.fielddb.Config;
 import com.github.fielddb.R;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,7 +19,8 @@ import android.widget.TextView;
  * https://github.com/devunwired/recyclerview-playground
  * 
  */
-public class DatumPreviewViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class DatumPreviewViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
+    View.OnLongClickListener {
   private int mPosition;
   private Uri mUri;
   private TextView mOrthographyView;
@@ -30,7 +33,7 @@ public class DatumPreviewViewHolder extends RecyclerView.ViewHolder implements V
   public DatumPreviewViewHolder(View itemView, CursorRecyclerViewAdapter adapter) {
     super(itemView);
     itemView.setOnClickListener(this);
-    // itemView.setOnContextClickListener(this);
+    itemView.setOnLongClickListener(this);
     mAdapter = adapter;
 
     mOrthographyView = (TextView) itemView.findViewById(R.id.orthography);
@@ -46,9 +49,26 @@ public class DatumPreviewViewHolder extends RecyclerView.ViewHolder implements V
     mAdapter.onItemHolderClick(mUri.getLastPathSegment());
   }
 
-  public boolean onContextClick(View v) {
-    Log.d(Config.TAG, "context click on item " + mUri);
-    return false;
+  @Override
+  public boolean onLongClick(final View view) {
+    Log.d(Config.TAG, "long click on item " + mUri);
+    AlertDialog deleteConfirmationDialog = new AlertDialog.Builder(view.getContext())
+        .setMessage(view.getContext().getString(R.string.are_you_sure_put_in_trash).replace("datum", Config.USER_FRIENDLY_DATA_NAME))
+        .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            view.getContext().getContentResolver().delete(mUri, null, null);
+            mAdapter.removeItem(mPosition, mUri);
+            dialog.dismiss();
+          }
+        }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+          }
+        }).create();
+    deleteConfirmationDialog.show();
+    return true;
   }
 
   public void removeThisRow() {

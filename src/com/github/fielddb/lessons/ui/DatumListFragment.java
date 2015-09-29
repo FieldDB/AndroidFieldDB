@@ -1,9 +1,7 @@
 package com.github.fielddb.lessons.ui;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,8 +11,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -212,50 +207,6 @@ public class DatumListFragment extends Fragment implements AdapterView.OnItemCli
     // : ListView.CHOICE_MODE_NONE);
   }
 
-  @Override
-  public boolean onContextItemSelected(final MenuItem item) {
-
-    if (item.getItemId() == R.id.action_delete) {
-      AlertDialog deleteConfirmationDialog = new AlertDialog.Builder(getActivity()).setTitle("Are you sure?")
-          .setMessage("Are you sure you want to put this " + Config.USER_FRIENDLY_DATA_NAME + " in the trash?")
-          .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-              // Old Option:
-              final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-              mAdapter.getCursor().moveToPosition(info.position);
-              String actualId = mAdapter.getCursor().getString(
-                  mAdapter.getCursor().getColumnIndexOrThrow(DatumTable.COLUMN_ID));
-              final Uri uri = Uri.parse(DatumContentProvider.CONTENT_URI + "/" + actualId);
-              getActivity().getContentResolver().delete(uri, null, null);
-              mAdapter.notifyItemRemoved(info.position);
-
-              // New Option:
-              // mAdapter.removeItem(info.position, uri);
-
-              mCallbacks.onItemDeleted(uri);
-              dialog.dismiss();
-            }
-          }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-              dialog.dismiss();
-            }
-          }).create();
-      deleteConfirmationDialog.show();
-    }
-
-    return super.onContextItemSelected(item);
-  }
-
-  @Override
-  public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-    super.onCreateContextMenu(menu, v, menuInfo);
-    MenuInflater inflater = getActivity().getMenuInflater();
-    inflater.inflate(R.menu.actions_context_select, menu);
-  }
-
   private void setActivatedPosition(int position) {
     // if (position == ListView.INVALID_POSITION) {
     // getView().setItemChecked(mActivatedPosition, false);
@@ -278,6 +229,7 @@ public class DatumListFragment extends Fragment implements AdapterView.OnItemCli
       Uri newDatum = getActivity().getContentResolver().insert(DatumContentProvider.CONTENT_URI, new ContentValues());
       if (newDatum != null) {
         mCallbacks.onItemSelected(newDatum.getLastPathSegment());
+        mAdapter.notifyItemInserted(mAdapter.getItemCount() + 1);
       } else {
         BugReporter.sendBugReport("*** Error inserting a datum in DB ***");
       }
