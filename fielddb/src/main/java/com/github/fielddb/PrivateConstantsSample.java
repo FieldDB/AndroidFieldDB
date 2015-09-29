@@ -28,7 +28,8 @@ public class PrivateConstantsSample {
   public static final String DEFAULT_PUBLIC_USERNAME = "apassword";
   public static final String DEFAULT_REGISTER_USER_URL = "http://10.0.2.2:3183/register";
   public static final String DEFAULT_UPLOAD_AUDIO_VIDEO_URL = "http://10.0.2.2:3184/upload/extract/utterances";
-
+  public static final String DEFAULT_UPLOAD_TOKEN = "yourapitoken";
+  
   public static final String DATA_IS_ABOUT_LANGUAGE_ISO = "ka";
   /*
    * Make sure this is part of your ContentProvider <provider

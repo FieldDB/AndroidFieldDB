@@ -1,0 +1,2 @@
+include ':bookanimation'
+include ':fielddb'
