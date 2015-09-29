@@ -112,7 +112,7 @@ public class DatumDetailFragment extends Fragment {
       String[] selectionArgs = null;
       String sortOrder = null;
 
-      String[] datumProjection = { DatumTable.COLUMN_ORTHOGRAPHY, DatumTable.COLUMN_UTTERANCE,
+      String[] datumProjection = { DatumTable.COLUMN_ID, DatumTable.COLUMN_ORTHOGRAPHY, DatumTable.COLUMN_UTTERANCE,
           DatumTable.COLUMN_MORPHEMES, DatumTable.COLUMN_GLOSS, DatumTable.COLUMN_TRANSLATION,
           DatumTable.COLUMN_CONTEXT, DatumTable.COLUMN_IMAGE_FILES, DatumTable.COLUMN_AUDIO_VIDEO_FILES,
           DatumTable.COLUMN_TAGS };
@@ -487,10 +487,9 @@ public class DatumDetailFragment extends Fragment {
   }
 
   protected boolean delete() {
-    AlertDialog deleteConfirmationDialog = new AlertDialog.Builder(getActivity()).setTitle(R.string.are_you_sure)
+    AlertDialog deleteConfirmationDialog = new AlertDialog.Builder(getActivity())
         .setMessage(getString(R.string.are_you_sure_put_in_trash).replace("datum", Config.USER_FRIENDLY_DATA_NAME))
-
-        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+        .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
             getActivity().getContentResolver().delete(mUri, null, null);
