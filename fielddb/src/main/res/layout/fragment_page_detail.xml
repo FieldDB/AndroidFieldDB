@@ -11,7 +11,7 @@
         android:background="#ffffffff"
         android:contentDescription="This is the a background image representing this text"
         android:gravity="center"
-        android:src="@drawable/ic_launcher" />
+        android:src="@mipmap/ic_launcher" />
 
     <TextView
         android:id="@+id/item_number"

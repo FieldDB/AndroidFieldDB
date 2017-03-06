@@ -1,1 +1,1 @@
-include ':fielddb', ':bookanimation'
+include ':fielddb', ':notebook-release'

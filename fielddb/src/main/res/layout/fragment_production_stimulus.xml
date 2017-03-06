@@ -10,14 +10,14 @@
         android:layout_height="match_parent"
         android:contentDescription="This is the main image representing this example."
         android:gravity="center"
-        android:src="@drawable/ic_launcher" />
+        android:src="@mipmap/ic_launcher" />
 
     <VideoView
         android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:background="@drawable/ic_launcher"
+        android:background="@mipmap/ic_launcher"
         android:gravity="center"
         android:visibility="gone" />
 

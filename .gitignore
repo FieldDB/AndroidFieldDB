@@ -1,5 +1,3 @@
-bookanimation
-
 AndroidClient/assets/release
 assets/sync
 
@@ -65,6 +63,7 @@ target
 *.dmg
 *.gz
 *.iso
+*.aar
 #*.jar
 *.rar
 *.tar
