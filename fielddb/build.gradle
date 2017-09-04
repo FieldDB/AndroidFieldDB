@@ -1,14 +1,18 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
+
+version = '3.17.0'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion '25.0.2'
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 25
         versionCode 5
-        versionName "3.16.12"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        versionName version
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
     buildTypes {
         release {
@@ -43,4 +47,54 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.1'
     testCompile 'junit:junit:4.12'
     compile project(':notebook-release')
+}
+
+
+task generateSourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier 'sources'
+}
+
+task generateJavadocs(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath()
+            .join(File.pathSeparator))
+}
+
+task generateJavadocsJar(type: Jar) {
+    from generateJavadocs.destinationDir
+    classifier 'javadoc'
+}
+
+generateJavadocsJar.dependsOn generateJavadocs
+
+//artifacts.add("archives", file('build/libs/fielddb-javadoc.jar'))
+artifacts.add("archives", file('build/libs/fielddb-' + version + '-sources.jar'))
+//
+//artifacts {
+//    archives generateJavaDocsJar
+//    archives generateSourcesJar
+//}
+
+
+group = 'com.github.fielddb.fielddb'
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+    pkg {
+        repo = 'maven'
+        name = group
+        userOrg = 'fielddb'
+        version {
+            name = version
+            desc = 'Android library which makes it easy to save and display data with FieldDB databases'
+            released = new Date()
+            vcsTag = version
+        }
+
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/fielddb/AndroidFieldDB.git'
+        websiteUrl = 'https://github.com/fielddb/AndroidFieldDB'
+    }
+    configurations = ['archives']
 }

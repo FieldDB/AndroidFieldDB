@@ -1,12 +1,15 @@
-An Android app which lets the user build a custom visual and auditory vocabulary, useful for guided anomia treatment and self designed language lessons by heritage speakers. 
+# AndroidFieldDB
+
+An Android app which lets the user build a custom visual and auditory vocabulary, useful for guided anomia treatment and self designed language lessons by heritage speakers.
 
 Plugs into FieldDB databases to create language learning apps.
 
 [![Video shows how heritage speakers can use field methods techniques and a Learn X app to practice with their friends and family.](http://img.youtube.com/vi/nULRWUMUc-I/0.jpg)](https://www.youtube.com/watch?v=nULRWUMUc-I)
 
 
-Install
-You can see what this code base is for by installing this app (which was customized for Kartuli/Georgian heritage speakers).
+## Install
+
+You can see what this codebase is for by installing this app (which was customized for Kartuli/Georgian heritage speakers).
 https://play.google.com/store/apps/details?id=com.github.opensourcefieldlinguistics.fielddb.lessons.georgian
 
 
@@ -18,3 +21,35 @@ Phone uses list:
 
 And a separate detail screen (here with speech recognition showing)
 ![learn_x_phone_speech_recognition](https://f.cloud.github.com/assets/196199/2483269/837d01f0-b0fe-11e3-8707-748ab9b02022.png)
+
+
+## Android Library
+
+As an Android developer, you can reuse this library in your app.
+
+### Install
+
+To include this library, add the maven repository to your Android build.gradle:
+
+```groovy
+repositories {
+    maven {
+        url  "https://dl.bintray.com/fielddb/maven"
+    }
+}
+```
+
+
+### Release
+
+To publish a new release of this library, edit the `version` in `fielddb/build.gradle' and set the ENV variables for `BINTRAY_USER` and `BINTRAY_API_KEY`
+
+```bash
+./gradlew tasks
+./gradlew install
+./gradlew assembleRelease
+./gradlew generateSourcesJar
+./gradlew generateJavadocs
+./gradlew generateJavadocsJar
+./gradlew bintrayUpload
+```

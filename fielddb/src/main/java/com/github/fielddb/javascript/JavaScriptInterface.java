@@ -172,10 +172,6 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
    * context after initialization. This allows this class to be serialized and
    * sent as an Extra for maximum modularity.
    * 
-   * @param d
-   *          Whether or not the app should log out
-   * @param tag
-   *          The TAG for the logging
    * @param outputDir
    *          usually on the sdcard where users can see the files, not in the
    *          data dirs (problems opening the files in a webview if you choose

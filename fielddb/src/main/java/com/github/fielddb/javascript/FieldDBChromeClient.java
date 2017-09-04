@@ -46,7 +46,7 @@ public class FieldDBChromeClient extends WebChromeClient {
    * Could override like this, but that woudl make the saveApp funciton
    * obligatory on the apps if it has been 30 seconds, then save the app, and
    * redirect back to here after its done if(mLastUnloadSaveAppCalledTimestamp -
-   * System.currentTimeMillis() > 30000){ Log.d(TAG,
+   * System.currentTimeMillis() &lt; 30000){ Log.d(TAG,
    * "Calling window.saveApp("+url+")");
    * view.loadUrl("javascript:window.saveApp("+url+")");
    * mLastUnloadSaveAppCalledTimestamp = System.currentTimeMillis(); return

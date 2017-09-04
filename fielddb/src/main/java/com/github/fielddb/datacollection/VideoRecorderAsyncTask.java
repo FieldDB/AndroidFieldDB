@@ -21,32 +21,32 @@ import android.widget.Toast;
  * Android video recorder with "no" preview (the preview is a 1x1 pixel which
  * simulates an unobtrusive recording led). Based on Pro Android 2 2010 (Hashimi
  * et al) source code in Listing 9-6.
- * 
+ *
  * Also demonstrates how to use the front-facing and back-facing cameras. A
  * calling Intent can pass an Extra to use the front facing camera if available.
- * 
+ *
  * Suitable use cases: A: eye gaze tracking library to let users use eyes as a
  * mouse to navigate a web page B: use tablet camera(s) to replace video camera
  * in lab experiments (psycholingusitics or other experiments)
- * 
+ *
  * Video is recording is controlled in two ways: 1. Video starts and stops with
  * the activity 2. Video starts and stops on any touch
- * 
+ *
  * To control recording in other ways see the try blocks of the onTouchEvent
- * 
+ *
  * To incorporate into project add these features and permissions to
  * manifest.xml:
- * 
- * <uses-feature android:name="android.hardware.camera"/> <uses-feature
- * android:name="android.hardware.camera.autofocus"/>
- * 
- * <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
- * <uses-permission android:name="android.permission.CAMERA" /> <uses-permission
- * android:name="android.permission.RECORD_AUDIO" />
- * 
- * Tested Date: October 2 2011 with manifest.xml <uses-sdk
- * android:minSdkVersion="8" android:targetSdkVersion="11"/>
- * 
+ *
+ * &lt;uses-feature android:name="android.hardware.camera"/&gt; &lt;uses-feature
+ * android:name="android.hardware.camera.autofocus"/&gt;
+ *
+ * &lt;uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /&gt;
+ * &lt;uses-permission android:name="android.permission.CAMERA" /&gt; &lt;uses-permission
+ * android:name="android.permission.RECORD_AUDIO" /&gt;
+ *
+ * Tested Date: October 2 2011 with manifest.xml &lt;uses-sdk
+ * android:minSdkVersion="8" android:targetSdkVersion="11"/&gt;
+ *
  */
 public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
 
@@ -128,22 +128,21 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
 
   /**
    * Uses the surface defined in video_recorder.xml Tested using 2.2 (HTC
-   * Desire/Hero phone) -> Use all defaults works, records back facing camera
-   * with AMR_NB audio 3.0 (Motorola Xoom tablet) -> Use all defaults doesn't
+   * Desire/Hero phone) -&gt; Use all defaults works, records back facing camera
+   * with AMR_NB audio 3.0 (Motorola Xoom tablet) -&gt; Use all defaults doesn't
    * work, works with these specs, might work with others
-   * 
+   *
    * Doesnt work on Nexus 7 and Nexus S, this hints at why:
    * http://stackoverflow.
    * com/questions/12098298/android-camera-app-passed-null-surface
    * "The only reason why this code didn't work is because the nexus 7 and droid x both don't support the passing of a dummy surfaceview to a camera object."
-   * 
-   * 
+   *
+   *
    * The solution was to put this code in an AsyncTask, and use High_Quality
    * video others didnt work on Nexus S and Nexus 7
-   * 
+   *
    * @param holder
    *          The surfaceholder from the videoview of the layout
-   * @throws Exception
    */
   @SuppressLint("NewApi")
   protected void beginRecording(SurfaceHolder holder) throws IOException {
