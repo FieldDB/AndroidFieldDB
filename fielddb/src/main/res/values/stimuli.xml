@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="sample_image_stimuli">
+        <item>@drawable/speech_bubbles</item>
+        <item>@drawable/speech_recognizer_listening</item>
+        </string-array>
+    <string-array name="sample_audio_stimuli">
+        <item>@raw/gammatone</item>
+        <item>@raw/gammatone</item>
+        </string-array>
+
+</resources>
