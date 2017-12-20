@@ -1,6 +1,5 @@
 package com.github.fielddb;
 
-import android.content.Context;
 import android.support.test.filters.MediumTest;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.ApplicationTestCase;
@@ -18,22 +17,23 @@ import static org.junit.Assert.assertThat;
  */
 @RunWith(AndroidJUnit4.class)
 @MediumTest
-public class ApplicationTest extends ApplicationTestCase<FieldDBApplication> {
-    private Context mContext;
+public class FieldDBApplicationTest extends ApplicationTestCase<FieldDBApplication> {
+    private FieldDBApplication mContext;
 
-    public ApplicationTest() {
+    public FieldDBApplicationTest() {
         super(FieldDBApplication.class);
     }
 
     @Before
     public void initTargetContext() {
-        mContext = getTargetContext();
+        mContext = (FieldDBApplication) getTargetContext().getApplicationContext();
         assertThat(mContext, notNullValue());
     }
 
     @Test
-    public void mUserIsDefined() {
-        assertThat(mContext, notNullValue());
+    public void mUserIsNull() {
+        // Expect Failed to find provider info for com.github.fielddb.user
+        assertThat(mContext.mUser, nullValue());
     }
 
 }
