@@ -2,8 +2,10 @@ package com.github.fielddb.datacollection;
 
 import com.github.fielddb.Config;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.location.Criteria;
@@ -13,6 +15,7 @@ import android.location.LocationManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.provider.Settings.Secure;
+import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -83,13 +86,23 @@ public class DeviceDetails implements LocationListener {
       this.screenRatio = this.screenHeight / this.screenWidth;
     }
 
-    this.wifiMacAddress = (((WifiManager) mContext.getSystemService(Context.WIFI_SERVICE)).getConnectionInfo())
-        .getMacAddress();
+    int permissionCheck = ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_WIFI_STATE);
+    if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+//      ActivityCompat.requestPermissions(mContext, new String[]{Manifest.permission.ACCESS_WIFI_STATE}, REQUEST_READ_PHONE_STATE);
+    } else {
+      this.wifiMacAddress = (((WifiManager) mContext.getSystemService(Context.WIFI_SERVICE)).getConnectionInfo()).getMacAddress();
+    }
     if (this.wifiMacAddress == null) {
       this.wifiMacAddress = "unknown";
     }
 
-    this.telephonyDeviceId = ((TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
+    permissionCheck = ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_PHONE_STATE);
+    if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+//      ActivityCompat.requestPermissions(mContext, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_READ_PHONE_STATE);
+    } else {
+      this.telephonyDeviceId = ((TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
+    }
+
     if (this.telephonyDeviceId == null) {
       this.telephonyDeviceId = "unknown";
     }
@@ -125,17 +138,27 @@ public class DeviceDetails implements LocationListener {
       if (Config.D)
         Log.d(Config.TAG, "Best location provider was not specified, using both network and gps.");
 
+      permissionCheck = ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION);
       if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-        if (Config.D)
+        if (Config.D) {
           Log.d(Config.TAG, "Using network for location provider.");
+        }
 
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, this.min_time, this.min_dis, this);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+//          ActivityCompat.requestPermissions(mContext, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_READ_PHONE_STATE);
+        } else {
+          locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, this.min_time, this.min_dis, this);
+        }
       }
       if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
         if (Config.D)
           Log.d(Config.TAG, "Using gps for location provider.");
 
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+//          ActivityCompat.requestPermissions(mContext, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_READ_PHONE_STATE);
+        } else {
+          locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        }
       }
     }
     this.setDeviceDetails();
