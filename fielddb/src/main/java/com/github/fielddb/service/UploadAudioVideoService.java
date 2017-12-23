@@ -61,7 +61,7 @@ public class UploadAudioVideoService extends NotifyingIntentService {
     NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
     if (!wifi.isConnected()) {
       Log.d(Config.TAG, " we are not using wifi, not uploading audio/video file");
-      return;
+      // return;
     }
 
     /* only upload files with content */
