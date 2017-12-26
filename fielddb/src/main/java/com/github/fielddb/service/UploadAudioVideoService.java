@@ -56,8 +56,7 @@ public class UploadAudioVideoService extends NotifyingIntentService {
     }
 
     /* only upload files when connected to wifi */
-    ConnectivityManager connManager = (ConnectivityManager) getApplicationContext().getSystemService(
-        Context.CONNECTIVITY_SERVICE);
+    ConnectivityManager connManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
     NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
     if (!wifi.isConnected()) {
       Log.d(Config.TAG, " we are not using wifi, not uploading audio/video file");
@@ -136,61 +135,20 @@ public class UploadAudioVideoService extends NotifyingIntentService {
     String filePath = uri.getPath();
     this.statusMessage = "Uploading audio " + uri.getLastPathSegment();
     BugReporter.putCustomData("uploadAudio", uri.getLastPathSegment());
-    String urlStringAuthenticationSession = Config.DEFAULT_UPLOAD_AUDIO_VIDEO_URL;
-
-    /* Actually uploads the video */
-    SecureHttpClient httpClient = new SecureHttpClient(getApplicationContext());
-    httpClient.setKeystoreIdandPassword(R.raw.sslkeystore, PrivateConstants.KEYSTORE_PASS);
-    // HttpClient httpClient = new DefaultHttpClient();
-
-    HttpContext localContext = new BasicHttpContext();
-    String url = Config.DEFAULT_UPLOAD_AUDIO_VIDEO_URL;
-    HttpPost httpPost = new HttpPost(url);
-
-    MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE, null, Charset.forName("UTF-8"));
-
-    try {
-
-      entity.addPart("videoFile", new FileBody(new File(filePath)));
-
-      entity.addPart("token", new StringBody(Config.DEFAULT_UPLOAD_TOKEN, "text/plain", Charset.forName("UTF-8")));
-
-      entity.addPart("username", new StringBody(mUsername, "text/plain", Charset.forName("UTF-8")));
-
-      entity.addPart("dbname", new StringBody(Config.DEFAULT_CORPUS, "text/plain", Charset.forName("UTF-8")));
-
-      entity.addPart("returnTextGrid", new StringBody("true", "text/plain", Charset.forName("UTF-8")));
-
-    } catch (UnsupportedEncodingException e) {
-      Log.d(Config.TAG, "Failed to add entity parts due to string encodinuserFriendlyMessageg UTF-8");
-      e.printStackTrace();
-    }
-
-    httpPost.setEntity(entity);
-    String userFriendlyErrorMessage = "";
     String JSONResponse = "";
 
     try {
-      HttpResponse response = httpClient.execute(httpPost, localContext);
-      BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
-      String newLine;
-      do {
-        newLine = reader.readLine();
-        if (newLine != null) {
-          JSONResponse += newLine;
-        }
-      } while (newLine != null);
-
-    } catch (ClientProtocolException e1) {
-      this.userFriendlyErrorMessage = "Problem using POST, please report this error.";
-      e1.printStackTrace();
-    } catch (IOException e1) {
+      SecureHttpClient httpClient = new SecureHttpClient(Config.DEFAULT_UPLOAD_AUDIO_VIDEO_URL);
+      httpClient.addFilePart("videoFile", new File(filePath));
+      httpClient.addFormField("token", Config.DEFAULT_UPLOAD_TOKEN);
+      httpClient.addFormField("username", mUsername);
+      httpClient.addFormField("dbname", Config.DEFAULT_CORPUS);
+      httpClient.addFormField("returnTextGrid", "true");
+      JSONResponse = httpClient.execute();
+    } catch (IOException e) {
       this.userFriendlyErrorMessage = "Problem opening upload connection to server, please report this error.";
-      e1.printStackTrace();
-    }
-
-    if ("".equals(JSONResponse)) {
-      this.userFriendlyErrorMessage = "Unknown error uploading data to server";
+      Log.d(Config.TAG, "Failed to add entity parts due to IOException");
+      e.printStackTrace();
       return null;
     }
 
