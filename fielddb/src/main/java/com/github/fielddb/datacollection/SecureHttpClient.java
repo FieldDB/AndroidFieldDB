@@ -7,14 +7,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
 import java.io.*;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.net.ssl.HttpsURLConnection;
+
 public class SecureHttpClient {
-  private HttpURLConnection httpConn;
+  private HttpsURLConnection httpConn;
   private DataOutputStream request;
   private final String boundary = "*****";
   private final String crlf = "\r\n";
@@ -31,7 +32,7 @@ public class SecureHttpClient {
 
     // creates a unique boundary based on time stamp
     URL url = new URL(requestURL);
-    httpConn = (HttpURLConnection) url.openConnection();
+    httpConn = (HttpsURLConnection) url.openConnection();
     httpConn.setUseCaches(false);
     httpConn.setDoOutput(true); // indicates POST method
     httpConn.setDoInput(true);
@@ -92,7 +93,7 @@ public class SecureHttpClient {
     request.close();
     // checks server's status code first
     int status = httpConn.getResponseCode();
-    if (status == HttpURLConnection.HTTP_OK) {
+    if (status == HttpsURLConnection.HTTP_OK) {
       InputStream responseStream = new
           BufferedInputStream(httpConn.getInputStream());
       BufferedReader responseStreamReader =
