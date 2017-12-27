@@ -1,15 +1,25 @@
 package com.github.fielddb.datacollection;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+
 public class SecureHttpClient {
   private HttpURLConnection httpConn;
   private DataOutputStream request;
-  private final String boundary =  "*****";
+  private final String boundary = "*****";
   private final String crlf = "\r\n";
   private final String twoHyphens = "--";
+
   /**
    * This constructor initializes a new HTTP POST request with content type
    * is set to multipart/form-data
@@ -17,8 +27,8 @@ public class SecureHttpClient {
    * @param requestURL
    * @throws IOException
    */
-  public SecureHttpClient(String requestURL)
-      throws IOException {
+  public SecureHttpClient(String requestURL) throws IOException {
+
     // creates a unique boundary based on time stamp
     URL url = new URL(requestURL);
     httpConn = (HttpURLConnection) url.openConnection();
@@ -28,24 +38,25 @@ public class SecureHttpClient {
     httpConn.setRequestMethod("POST");
     httpConn.setRequestProperty("Connection", "Keep-Alive");
     httpConn.setRequestProperty("Cache-Control", "no-cache");
-    httpConn.setRequestProperty(
-        "Content-Type", "multipart/form-data;boundary=" + this.boundary);
-    request =  new DataOutputStream(httpConn.getOutputStream());
+    httpConn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + this.boundary);
+    request = new DataOutputStream(httpConn.getOutputStream());
   }
+
   /**
    * Adds a form field to the request
    *
    * @param name  field name
    * @param value field value
    */
-  public void addFormField(String name, String value)throws IOException  {
+  public void addFormField(String name, String value) throws IOException {
     request.writeBytes(this.twoHyphens + this.boundary + this.crlf);
-    request.writeBytes("Content-Disposition: form-data; name=\"" + name + "\""+ this.crlf);
+    request.writeBytes("Content-Disposition: form-data; name=\"" + name + "\"" + this.crlf);
     request.writeBytes("Content-Type: text/plain; charset=UTF-8" + this.crlf);
     request.writeBytes(this.crlf);
-    request.writeBytes(value+ this.crlf);
+    request.writeBytes(value + this.crlf);
     request.flush();
   }
+
   /**
    * Adds a upload file section to the request
    *
@@ -64,6 +75,7 @@ public class SecureHttpClient {
     byte[] bytes = Files.readAllBytes(uploadFile.toPath());
     request.write(bytes);
   }
+
   /**
    * Completes the request and receives response from the server.
    *
@@ -72,7 +84,7 @@ public class SecureHttpClient {
    * @throws IOException
    */
   public String execute() throws IOException {
-    String response ="";
+    String response = "";
     request.writeBytes(this.crlf);
     request.writeBytes(this.twoHyphens + this.boundary +
         this.twoHyphens + this.crlf);
@@ -97,5 +109,24 @@ public class SecureHttpClient {
       throw new IOException("Server returned non-OK status: " + status);
     }
     return response;
+  }
+
+  public static boolean checkAndRequestPermissions(Activity activity, int REQUEST_ID_MULTIPLE_PERMISSIONS) {
+    List<String> listPermissionsNeeded = new ArrayList<>();
+
+    if (ContextCompat.checkSelfPermission(activity, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+      listPermissionsNeeded.add(Manifest.permission.INTERNET);
+    }
+    if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
+      listPermissionsNeeded.add(Manifest.permission.ACCESS_NETWORK_STATE);
+    }
+    if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
+      listPermissionsNeeded.add(Manifest.permission.ACCESS_WIFI_STATE);
+    }
+    if (!listPermissionsNeeded.isEmpty()) {
+      ActivityCompat.requestPermissions(activity, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
+      return false;
+    }
+    return true;
   }
 }

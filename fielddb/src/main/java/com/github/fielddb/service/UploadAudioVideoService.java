@@ -146,8 +146,8 @@ public class UploadAudioVideoService extends NotifyingIntentService {
       httpClient.addFormField("returnTextGrid", "true");
       JSONResponse = httpClient.execute();
     } catch (IOException e) {
-      this.userFriendlyErrorMessage = "Problem opening upload connection to server, please report this error.";
-      Log.d(Config.TAG, "Failed to add entity parts due to IOException");
+      this.userFriendlyErrorMessage = "Problem opening upload connection to server, please report this error. " + e.getMessage();
+      Log.d(Config.TAG, "Failed to execute request.");
       e.printStackTrace();
       return null;
     }
