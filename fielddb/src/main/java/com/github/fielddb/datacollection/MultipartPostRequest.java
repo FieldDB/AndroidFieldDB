@@ -14,7 +14,7 @@ import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class SecureHttpClient {
+public class MultipartPostRequest {
   private HttpsURLConnection httpConn;
   private DataOutputStream request;
   private final String boundary = "*****";
@@ -28,7 +28,7 @@ public class SecureHttpClient {
    * @param requestURL
    * @throws IOException
    */
-  public SecureHttpClient(String requestURL) throws IOException {
+  public MultipartPostRequest(String requestURL) throws IOException {
 
     // creates a unique boundary based on time stamp
     URL url = new URL(requestURL);

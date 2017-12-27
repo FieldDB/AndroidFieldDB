@@ -1,27 +1,12 @@
 package com.github.fielddb.service;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
 
 import com.github.fielddb.BugReporter;
 import com.github.fielddb.Config;
-import com.github.fielddb.PrivateConstants;
 import com.github.fielddb.datacollection.NotifyingIntentService;
-import com.github.fielddb.datacollection.SecureHttpClient;
+import com.github.fielddb.datacollection.MultipartPostRequest;
 import com.github.fielddb.R;
 import com.google.gson.JsonObject;
 
@@ -138,7 +123,7 @@ public class UploadAudioVideoService extends NotifyingIntentService {
     String JSONResponse = "";
 
     try {
-      SecureHttpClient httpClient = new SecureHttpClient(Config.DEFAULT_UPLOAD_AUDIO_VIDEO_URL);
+      MultipartPostRequest httpClient = new MultipartPostRequest(Config.DEFAULT_UPLOAD_AUDIO_VIDEO_URL);
       httpClient.addFilePart("videoFile", new File(filePath));
       httpClient.addFormField("username", mUsername);
       httpClient.addFormField("token", Config.DEFAULT_UPLOAD_TOKEN);
