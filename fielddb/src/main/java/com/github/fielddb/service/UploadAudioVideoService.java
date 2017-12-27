@@ -140,8 +140,8 @@ public class UploadAudioVideoService extends NotifyingIntentService {
     try {
       SecureHttpClient httpClient = new SecureHttpClient(Config.DEFAULT_UPLOAD_AUDIO_VIDEO_URL);
       httpClient.addFilePart("videoFile", new File(filePath));
-      httpClient.addFormField("token", Config.DEFAULT_UPLOAD_TOKEN);
       httpClient.addFormField("username", mUsername);
+      httpClient.addFormField("token", Config.DEFAULT_UPLOAD_TOKEN);
       httpClient.addFormField("dbname", Config.DEFAULT_CORPUS);
       httpClient.addFormField("returnTextGrid", "true");
       JSONResponse = httpClient.execute();
