@@ -28,12 +28,17 @@ public class UploadAudioVideoServiceTest {
   public GrantPermissionRule mRuntimeAccessNetworkStatePermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_NETWORK_STATE);
   @Rule
   public GrantPermissionRule mRuntimeAccessWifiStatePermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_WIFI_STATE);
+  @Rule
+  public GrantPermissionRule mRuntimeReadSdcardPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.READ_EXTERNAL_STORAGE);
 
   @Test
-  public void uploadShouldWork() {
+  public void uploadShouldContactServer() {
     underTest = new UploadAudioVideoService();
     assertThat(underTest, notNullValue());
     String response = underTest.upload(Uri.parse("/sdcard/1.raw"));
-    assertThat(response, containsString(" something "));
+    assertThat(response, notNullValue());
+    assertThat(response, containsString("\"name\":\"1.raw\","));
+    assertThat(response, containsString("\"dbname\":\"username-kartuli\","));
+    assertThat(response, containsString("\"size\":38402,"));
   }
 }

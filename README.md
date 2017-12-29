@@ -40,6 +40,19 @@ repositories {
 ```
 
 
+### Development
+
+#### Tests
+
+Copy the sample data to the device:
+
+```bash
+$ adb push sample-data/* /sdcard/
+```
+
+To run the tests click on the > next to the method you want to test.
+
+
 ### Release
 
 To publish a new release of this library, edit the `version` in `fielddb/build.gradle' and set the ENV variables for `BINTRAY_USER` and `BINTRAY_API_KEY`

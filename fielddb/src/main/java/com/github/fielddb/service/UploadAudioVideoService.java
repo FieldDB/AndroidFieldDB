@@ -124,11 +124,11 @@ public class UploadAudioVideoService extends NotifyingIntentService {
 
     try {
       MultipartPostRequest httpClient = new MultipartPostRequest(Config.DEFAULT_UPLOAD_AUDIO_VIDEO_URL);
-      httpClient.addFilePart("videoFile", new File(filePath));
       httpClient.addFormField("username", mUsername);
       httpClient.addFormField("token", Config.DEFAULT_UPLOAD_TOKEN);
       httpClient.addFormField("dbname", Config.DEFAULT_CORPUS);
       httpClient.addFormField("returnTextGrid", "true");
+      httpClient.addFilePart("videoFile", new File(filePath));
       JSONResponse = httpClient.execute();
     } catch (IOException e) {
       this.userFriendlyErrorMessage = "Problem opening upload connection to server, please report this error. " + e.getMessage();
@@ -138,7 +138,7 @@ public class UploadAudioVideoService extends NotifyingIntentService {
     }
 
     if (!"".equals(this.userFriendlyErrorMessage)) {
-      return null;
+      return JSONResponse;
     }
     return JSONResponse;
   }

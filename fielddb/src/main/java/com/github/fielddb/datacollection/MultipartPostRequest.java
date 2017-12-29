@@ -6,9 +6,15 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.net.URL;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +43,7 @@ public class MultipartPostRequest {
     httpConn.setDoOutput(true); // indicates POST method
     httpConn.setDoInput(true);
     httpConn.setRequestMethod("POST");
+    httpConn.setRequestProperty("Accept", "application/json");
     httpConn.setRequestProperty("Connection", "Keep-Alive");
     httpConn.setRequestProperty("Cache-Control", "no-cache");
     httpConn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + this.boundary);
@@ -73,8 +80,9 @@ public class MultipartPostRequest {
         fieldName + "\";filename=\"" +
         fileName + "\"" + this.crlf);
     request.writeBytes(this.crlf);
-    byte[] bytes = Files.readAllBytes(uploadFile.toPath());
+    byte[] bytes = readFile(uploadFile);
     request.write(bytes);
+    request.writeBytes(this.crlf);
   }
 
   /**
@@ -91,13 +99,13 @@ public class MultipartPostRequest {
         this.twoHyphens + this.crlf);
     request.flush();
     request.close();
+    // Cant read data from 400+ status streams so
     // checks server's status code first
+    // https://stackoverflow.com/questions/9365829/filenotfoundexception-for-httpurlconnection-in-ice-cream-sandwich
     int status = httpConn.getResponseCode();
     if (status == HttpsURLConnection.HTTP_OK) {
-      InputStream responseStream = new
-          BufferedInputStream(httpConn.getInputStream());
-      BufferedReader responseStreamReader =
-          new BufferedReader(new InputStreamReader(responseStream));
+      InputStream responseStream = new BufferedInputStream(httpConn.getInputStream());
+      BufferedReader responseStreamReader = new BufferedReader(new InputStreamReader(responseStream));
       String line = "";
       StringBuilder stringBuilder = new StringBuilder();
       while ((line = responseStreamReader.readLine()) != null) {
@@ -107,9 +115,38 @@ public class MultipartPostRequest {
       response = stringBuilder.toString();
       httpConn.disconnect();
     } else {
-      throw new IOException("Server returned non-OK status: " + status);
+      response = "{\"status\": " + status + "}";
     }
     return response;
+  }
+
+  /**
+   * readFile into bytes without using
+   *
+   * byte[] java.nio.file.Files.readAllBytes(Path path)
+   *
+   * which errors in test suite (works fine in runtime on android)
+   *
+   * @param file
+   * @return
+   * @throws IOException
+   */
+  public static byte[] readFile(File file) throws IOException {
+    // Open file in read mode
+    RandomAccessFile f = new RandomAccessFile(file, "r");
+    try {
+      // Get and check length
+      long longlength = f.length();
+      int length = (int) longlength;
+      if (length != longlength)
+        throw new IOException("File size >= 2 GB");
+      // Read file and return data
+      byte[] data = new byte[length];
+      f.readFully(data);
+      return data;
+    } finally {
+      f.close();
+    }
   }
 
   public static boolean checkAndRequestPermissions(Activity activity, int REQUEST_ID_MULTIPLE_PERMISSIONS) {
@@ -123,6 +160,9 @@ public class MultipartPostRequest {
     }
     if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
       listPermissionsNeeded.add(Manifest.permission.ACCESS_WIFI_STATE);
+    }
+    if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+      listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
     }
     if (!listPermissionsNeeded.isEmpty()) {
       ActivityCompat.requestPermissions(activity, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
