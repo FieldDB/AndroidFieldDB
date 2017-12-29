@@ -123,13 +123,13 @@ public class UploadAudioVideoService extends NotifyingIntentService {
     String JSONResponse = "";
 
     try {
-      MultipartPostRequest httpClient = new MultipartPostRequest(Config.DEFAULT_UPLOAD_AUDIO_VIDEO_URL);
-      httpClient.addFormField("username", mUsername);
-      httpClient.addFormField("token", Config.DEFAULT_UPLOAD_TOKEN);
-      httpClient.addFormField("dbname", Config.DEFAULT_CORPUS);
-      httpClient.addFormField("returnTextGrid", "true");
-      httpClient.addFilePart("videoFile", new File(filePath));
-      JSONResponse = httpClient.execute();
+      MultipartPostRequest request = new MultipartPostRequest(Config.DEFAULT_UPLOAD_AUDIO_VIDEO_URL);
+      request.addFormField("username", mUsername);
+      request.addFormField("token", Config.DEFAULT_UPLOAD_TOKEN);
+      request.addFormField("dbname", Config.DEFAULT_CORPUS);
+      request.addFormField("returnTextGrid", "true");
+      request.addFilePart("videoFile", new File(filePath));
+      JSONResponse = request.execute();
     } catch (IOException e) {
       this.userFriendlyErrorMessage = "Problem opening upload connection to server, please report this error. " + e.getMessage();
       Log.d(Config.TAG, "Failed to execute request.");
