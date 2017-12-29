@@ -35,16 +35,16 @@ public class Config {
   public static String DEFAULT_OUTPUT_DIRECTORY = "/sdcard/FieldDB";
   public static final String DEFAULT_PARTICIPANT_ID = "0000";
   public static String DEFAULT_VIDEO_EXTENSION = ".mp4";
-  public static final String DEFAULT_RECOGNIZER_AUDIO_EXTENSION = ".raw";
-  public static final String DEFAULT_DATA_LOGIN = PrivateConstants.DEFAULT_DATA_SERVER_URL + "/_session";
-  public static final String DEFAULT_AUTH_LOGIN_URL = PrivateConstants.DEFAULT_AUTH_LOGIN_URL;
-  public static final String DEFAULT_DATA_SERVER_URL = PrivateConstants.DEFAULT_DATA_SERVER_URL;
-  public static final String DEFAULT_PUBLIC_USER_PASS = PrivateConstants.DEFAULT_PUBLIC_USER_PASS;
-  public static final String DEFAULT_PUBLIC_USERNAME = PrivateConstants.DEFAULT_PUBLIC_USERNAME;
-  public static final String DEFAULT_UPLOAD_TOKEN = PrivateConstants.DEFAULT_UPLOAD_TOKEN;
-  public static final String DEFAULT_REGISTER_USER_URL = PrivateConstants.DEFAULT_REGISTER_USER_URL;
-  public static final String DEFAULT_UPLOAD_AUDIO_VIDEO_URL = PrivateConstants.DEFAULT_UPLOAD_AUDIO_VIDEO_URL;
-  public static final String DEFAULT_SAMPLE_DATA_URL = PrivateConstants.DEFAULT_DATA_SERVER_URL + "/" + DEFAULT_CORPUS
+  public static String DEFAULT_RECOGNIZER_AUDIO_EXTENSION = ".raw";
+  public static String DEFAULT_DATA_LOGIN = PrivateConstants.DEFAULT_DATA_SERVER_URL + "/_session";
+  public static String DEFAULT_AUTH_LOGIN_URL = PrivateConstants.DEFAULT_AUTH_LOGIN_URL;
+  public static String DEFAULT_DATA_SERVER_URL = PrivateConstants.DEFAULT_DATA_SERVER_URL;
+  public static String DEFAULT_PUBLIC_USER_PASS = PrivateConstants.DEFAULT_PUBLIC_USER_PASS;
+  public static String DEFAULT_PUBLIC_USERNAME = PrivateConstants.DEFAULT_PUBLIC_USERNAME;
+  public static String DEFAULT_UPLOAD_TOKEN = PrivateConstants.DEFAULT_UPLOAD_TOKEN;
+  public static String DEFAULT_REGISTER_USER_URL = PrivateConstants.DEFAULT_REGISTER_USER_URL;
+  public static String DEFAULT_UPLOAD_AUDIO_VIDEO_URL = PrivateConstants.DEFAULT_UPLOAD_AUDIO_VIDEO_URL;
+  public static String DEFAULT_SAMPLE_DATA_URL = PrivateConstants.DEFAULT_DATA_SERVER_URL + "/" + DEFAULT_CORPUS
       + "/_design/learnx/_view/byTag";
 
   public static final String EMPTYSTRING = "";

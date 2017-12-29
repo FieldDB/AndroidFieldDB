@@ -1,27 +1,12 @@
 package com.github.fielddb.service;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
 
 import com.github.fielddb.BugReporter;
 import com.github.fielddb.Config;
-import com.github.fielddb.PrivateConstants;
 import com.github.fielddb.datacollection.NotifyingIntentService;
-import com.github.fielddb.datacollection.SecureHttpClient;
+import com.github.fielddb.datacollection.MultipartPostRequest;
 import com.github.fielddb.R;
 import com.google.gson.JsonObject;
 
@@ -56,8 +41,7 @@ public class UploadAudioVideoService extends NotifyingIntentService {
     }
 
     /* only upload files when connected to wifi */
-    ConnectivityManager connManager = (ConnectivityManager) getApplicationContext().getSystemService(
-        Context.CONNECTIVITY_SERVICE);
+    ConnectivityManager connManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
     NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
     if (!wifi.isConnected()) {
       Log.d(Config.TAG, " we are not using wifi, not uploading audio/video file");
@@ -136,66 +120,25 @@ public class UploadAudioVideoService extends NotifyingIntentService {
     String filePath = uri.getPath();
     this.statusMessage = "Uploading audio " + uri.getLastPathSegment();
     BugReporter.putCustomData("uploadAudio", uri.getLastPathSegment());
-    String urlStringAuthenticationSession = Config.DEFAULT_UPLOAD_AUDIO_VIDEO_URL;
-
-    /* Actually uploads the video */
-    SecureHttpClient httpClient = new SecureHttpClient(getApplicationContext());
-    httpClient.setKeystoreIdandPassword(R.raw.sslkeystore, PrivateConstants.KEYSTORE_PASS);
-    // HttpClient httpClient = new DefaultHttpClient();
-
-    HttpContext localContext = new BasicHttpContext();
-    String url = Config.DEFAULT_UPLOAD_AUDIO_VIDEO_URL;
-    HttpPost httpPost = new HttpPost(url);
-
-    MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE, null, Charset.forName("UTF-8"));
-
-    try {
-
-      entity.addPart("videoFile", new FileBody(new File(filePath)));
-
-      entity.addPart("token", new StringBody(Config.DEFAULT_UPLOAD_TOKEN, "text/plain", Charset.forName("UTF-8")));
-
-      entity.addPart("username", new StringBody(mUsername, "text/plain", Charset.forName("UTF-8")));
-
-      entity.addPart("dbname", new StringBody(Config.DEFAULT_CORPUS, "text/plain", Charset.forName("UTF-8")));
-
-      entity.addPart("returnTextGrid", new StringBody("true", "text/plain", Charset.forName("UTF-8")));
-
-    } catch (UnsupportedEncodingException e) {
-      Log.d(Config.TAG, "Failed to add entity parts due to string encodinuserFriendlyMessageg UTF-8");
-      e.printStackTrace();
-    }
-
-    httpPost.setEntity(entity);
-    String userFriendlyErrorMessage = "";
     String JSONResponse = "";
 
     try {
-      HttpResponse response = httpClient.execute(httpPost, localContext);
-      BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
-      String newLine;
-      do {
-        newLine = reader.readLine();
-        if (newLine != null) {
-          JSONResponse += newLine;
-        }
-      } while (newLine != null);
-
-    } catch (ClientProtocolException e1) {
-      this.userFriendlyErrorMessage = "Problem using POST, please report this error.";
-      e1.printStackTrace();
-    } catch (IOException e1) {
-      this.userFriendlyErrorMessage = "Problem opening upload connection to server, please report this error.";
-      e1.printStackTrace();
-    }
-
-    if ("".equals(JSONResponse)) {
-      this.userFriendlyErrorMessage = "Unknown error uploading data to server";
+      MultipartPostRequest request = new MultipartPostRequest(Config.DEFAULT_UPLOAD_AUDIO_VIDEO_URL);
+      request.addFormField("username", mUsername);
+      request.addFormField("token", Config.DEFAULT_UPLOAD_TOKEN);
+      request.addFormField("dbname", Config.DEFAULT_CORPUS);
+      request.addFormField("returnTextGrid", "true");
+      request.addFilePart("videoFile", new File(filePath));
+      JSONResponse = request.execute();
+    } catch (IOException e) {
+      this.userFriendlyErrorMessage = "Problem opening upload connection to server, please report this error. " + e.getMessage();
+      Log.d(Config.TAG, "Failed to execute request.");
+      e.printStackTrace();
       return null;
     }
 
     if (!"".equals(this.userFriendlyErrorMessage)) {
-      return null;
+      return JSONResponse;
     }
     return JSONResponse;
   }
