@@ -37,8 +37,11 @@ public class UploadAudioVideoServiceTest {
     assertThat(underTest, notNullValue());
     String response = underTest.upload(Uri.parse("/sdcard/1.raw"));
     assertThat(response, notNullValue());
+    // "scriptVersion": "v1.102.2"
     assertThat(response, containsString("\"name\":\"1.raw\","));
     assertThat(response, containsString("\"dbname\":\"username-kartuli\","));
     assertThat(response, containsString("\"size\":38402,"));
+    assertThat(response, containsString("\"checksum\":\"c4554b54a7c1e30da9f4d63cef41bab1a693a88a\","));
+    assertThat(response, containsString("\"articulationRate\":\"3.18\","));
   }
 }
