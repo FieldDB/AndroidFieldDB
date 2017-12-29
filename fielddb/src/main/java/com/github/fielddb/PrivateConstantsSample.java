@@ -23,11 +23,11 @@ public class PrivateConstantsSample {
   // HTTPS localhost must restarting couchdb with the ssl pointing to this ip
   // public static String DEFAULT_DATA_SERVER_URL = "https://10.0.2.2:6984";
   public static String DEFAULT_DATA_SERVER_URL = "http://10.0.2.2:5984";
-  public static String DEFAULT_AUTH_LOGIN_URL = "http://10.0.2.2:3183/login";
+  public static String DEFAULT_AUTH_LOGIN_URL = "https://10.0.2.2:3183/login";
   public static String DEFAULT_PUBLIC_USER_PASS = "ausername";
   public static String DEFAULT_PUBLIC_USERNAME = "apassword";
-  public static String DEFAULT_REGISTER_USER_URL = "http://10.0.2.2:3183/register";
-  public static String DEFAULT_UPLOAD_AUDIO_VIDEO_URL = "http://10.0.2.2:3184/upload/extract/utterances";
+  public static String DEFAULT_REGISTER_USER_URL = "https://10.0.2.2:3183/register";
+  public static String DEFAULT_UPLOAD_AUDIO_VIDEO_URL = "https://10.0.2.2:3184/upload/extract/utterances";
   public static String DEFAULT_UPLOAD_TOKEN = "yourapitoken";
 
   public static String DATA_IS_ABOUT_LANGUAGE_ISO = "ka";
