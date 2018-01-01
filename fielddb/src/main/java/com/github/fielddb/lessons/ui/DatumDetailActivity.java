@@ -1,13 +1,20 @@
 package com.github.fielddb.lessons.ui;
 
+import com.github.fielddb.Config;
 import com.github.fielddb.R;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 /**
  * An activity representing a single Datum detail screen. This activity is only
@@ -67,5 +74,23 @@ public class DatumDetailActivity extends AppCompatActivity {
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, requestCode, data);
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    Log.d(Config.TAG, "Permission callback called-------");
+    switch (requestCode) {
+      case Config.CODE_REQUEST_MULTIPLE_PERMISSIONS: {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+          Toast.makeText(this, "Unable to record audio, you won't be able to include audio or video in your examples.", Toast.LENGTH_LONG).show();
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+          Toast.makeText(this, "Unable to take pictures, you won't be able to include images or video in your examples.", Toast.LENGTH_LONG).show();
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+          Toast.makeText(this, "Unable to save media to your sdcard, you won't be able to include media in your examples.", Toast.LENGTH_LONG).show();
+        }
+      }
+    }
   }
 }
