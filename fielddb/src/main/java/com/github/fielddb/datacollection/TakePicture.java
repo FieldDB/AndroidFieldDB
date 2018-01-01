@@ -4,14 +4,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.github.fielddb.Config;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,7 +26,10 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.Images.Media;
 import android.provider.MediaStore.MediaColumns;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 import com.github.fielddb.R;
@@ -196,11 +203,43 @@ public class TakePicture extends Activity {
           + Config.getHumanReadableTimestamp() + "_" + System.currentTimeMillis() + Config.DEFAULT_IMAGE_EXTENSION;
     }
 
+    if (!checkAndRequestPermissions(this, Config.CODE_REQUEST_MULTIPLE_PERMISSIONS)) {
+      return;
+    }
+
     if (this.mAppearSeamless) {
       SharedPreferences prefs = this.getSharedPreferences(Config.PREFERENCE_NAME, MODE_PRIVATE);
       String picture = prefs.getString(Config.PREFERENCE_LAST_PICTURE_TAKEN, "");
       if (picture == "") {
         this.captureImage(null);
+      }
+    }
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    Log.d(Config.TAG, "Permission callback called-------");
+    switch (requestCode) {
+      case Config.CODE_REQUEST_MULTIPLE_PERMISSIONS: {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+          Toast.makeText(this, "Unable to take pictures, you won't be able to include pictures with your examples.", Toast.LENGTH_LONG).show();
+          finish();
+          return;
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+          Toast.makeText(this, "Unable to copy the pictures to your sdcard, you won't be able to include pictures with your examples.", Toast.LENGTH_LONG).show();
+          finish();
+          return;
+        }
+
+        if (this.mAppearSeamless) {
+          SharedPreferences prefs = this.getSharedPreferences(Config.PREFERENCE_NAME, MODE_PRIVATE);
+          String picture = prefs.getString(Config.PREFERENCE_LAST_PICTURE_TAKEN, "");
+          if (picture == "") {
+            this.captureImage(null);
+          }
+        }
       }
     }
   }
@@ -215,5 +254,21 @@ public class TakePicture extends Activity {
   protected void onDestroy() {
     this.setResult(Activity.RESULT_OK, new Intent().putExtra(Config.EXTRA_RESULT_FILENAME, this.mImageFilename));
     super.onDestroy();
+  }
+
+  public static boolean checkAndRequestPermissions(Activity activity, int REQUEST_ID_MULTIPLE_PERMISSIONS) {
+    List<String> listPermissionsNeeded = new ArrayList<>();
+
+    if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+      listPermissionsNeeded.add(Manifest.permission.CAMERA);
+    }
+    if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+      listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    }
+    if (!listPermissionsNeeded.isEmpty()) {
+      ActivityCompat.requestPermissions(activity, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
+      return false;
+    }
+    return true;
   }
 }

@@ -17,6 +17,7 @@ public class Config {
   public static final int CODE_PREPARE_TRIAL = 56;
   public static final int CODE_REPLAY_RESULTS = 58;
   public static final int CODE_SWITCH_LANGUAGE = 57;
+  public static final int CODE_REQUEST_MULTIPLE_PERMISSIONS = 487;
 
   public static String CURRENT_USERNAME = "default";
 

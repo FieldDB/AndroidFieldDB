@@ -1,9 +1,11 @@
 package com.github.fielddb.datacollection;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.HttpURLConnection;
@@ -19,8 +21,6 @@ import java.security.cert.CertificateException;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
-
-import org.apache.http.util.ByteArrayBuffer;
 
 import com.github.fielddb.Config;
 import com.google.gson.JsonArray;
@@ -57,7 +57,7 @@ public class NotifyingIntentService extends IntentService {
     super("NotifyingIntentService");
   }
 
-  @SuppressLint("NewApi") 
+  @SuppressLint("NewApi")
   @Override
   protected void onHandleIntent(Intent arg0) {
     this.notificationId = (int) System.currentTimeMillis();
@@ -185,28 +185,25 @@ public class NotifyingIntentService extends IntentService {
       Log.d(Config.TAG, "Server status code " + status);
     }
     this.statusMessage = "Downloading.";
-    BufferedInputStream reader;
+    BufferedInputStream responseStream;
     try {
       if (status < 400 && urlConnection.getInputStream() != null) {
-        reader = new BufferedInputStream(urlConnection.getInputStream());
+        responseStream = new BufferedInputStream(urlConnection.getInputStream());
       } else {
         this.userFriendlyErrorMessage = "Server replied " + status;
-        reader = new BufferedInputStream(urlConnection.getErrorStream());
+        responseStream = new BufferedInputStream(urlConnection.getErrorStream());
       }
       this.notifyUser(this.statusMessage, this.noti, notificationId, false);
 
-      ByteArrayBuffer baf = new ByteArrayBuffer(50);
-      int read = 0;
-      int bufSize = 512;
-      byte[] buffer = new byte[bufSize];
-      while (true) {
-        read = reader.read(buffer);
-        if (read == -1) {
-          break;
-        }
-        baf.append(buffer, 0, read);
+      BufferedReader responseStreamReader = new BufferedReader(new InputStreamReader(responseStream));
+      String line = "";
+      StringBuilder stringBuilder = new StringBuilder();
+      while ((line = responseStreamReader.readLine()) != null) {
+        stringBuilder.append(line).append("\n");
       }
-      String JSONResponse = new String(baf.toByteArray());
+      responseStreamReader.close();
+
+      String JSONResponse = stringBuilder.toString();
       Log.d(Config.TAG, url + ":::" + JSONResponse);
       return JSONResponse;
     } catch (IOException e) {

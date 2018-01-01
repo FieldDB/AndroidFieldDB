@@ -9,22 +9,22 @@
         android:id="@+id/action_speak"
         android:icon="@drawable/ic_action_mic"
         android:showAsAction="ifRoom"
-        android:title="Speak"/>
+        android:title="Record Audio"/>
     <item
         android:id="@+id/action_play"
         android:icon="@drawable/ic_action_play"
         android:showAsAction="ifRoom"
-        android:title="Listen"/>
+        android:title="Play"/>
     <item
         android:id="@+id/action_videos"
         android:icon="@drawable/ic_action_video"
         android:showAsAction="ifRoom"
-        android:title="Video"/>
+        android:title="Record Video"/>
     <item
         android:id="@+id/action_images"
         android:icon="@android:drawable/ic_menu_slideshow"
         android:showAsAction="ifRoom"
-        android:title="Image"/>
+        android:title="Take Picture"/>
     <item
         android:id="@+id/action_reminders"
         android:icon="@android:drawable/ic_popup_reminder"

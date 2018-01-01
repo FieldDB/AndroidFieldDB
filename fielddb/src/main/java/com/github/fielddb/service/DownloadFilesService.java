@@ -48,6 +48,7 @@ public class DownloadFilesService extends IntentService {
         AssetManager assetManager = getApplicationContext().getAssets();
         try {
           InputStream is = assetManager.open("images/" + fileName);
+          (new File(Config.DEFAULT_OUTPUT_DIRECTORY)).mkdirs();
           File out = new File(Config.DEFAULT_OUTPUT_DIRECTORY + "/" + fileName);
           byte[] buffer = new byte[1024];
           FileOutputStream fos = new FileOutputStream(out);

@@ -1,17 +1,22 @@
 package com.github.fielddb.lessons.ui;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -19,8 +24,10 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -399,6 +406,11 @@ public class DatumDetailFragment extends Fragment {
 
   public boolean toggleAudioRecording(MenuItem item) {
     if (!this.mRecordingAudio) {
+
+      if (!checkAndRequestPermissions(getActivity(), Config.CODE_REQUEST_MULTIPLE_PERMISSIONS, false)) {
+        return false;
+      }
+
       String audioFileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/" + mItem.getBaseFilename()
           + Config.DEFAULT_AUDIO_EXTENSION;
       this.mAudioFileName = audioFileName;
@@ -658,6 +670,10 @@ public class DatumDetailFragment extends Fragment {
   }
 
   protected boolean captureVideo() {
+    if (!checkAndRequestPermissions(getActivity(), Config.CODE_REQUEST_MULTIPLE_PERMISSIONS, true)) {
+      return false;
+    }
+
     String videoFileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/" + mItem.getBaseFilename()
         + Config.DEFAULT_VIDEO_EXTENSION;
     Intent intent = new Intent(getActivity(), VideoRecorder.class);
@@ -673,6 +689,10 @@ public class DatumDetailFragment extends Fragment {
   }
 
   protected boolean captureImage() {
+    if (!checkAndRequestPermissions(getActivity(), Config.CODE_REQUEST_MULTIPLE_PERMISSIONS, true)) {
+      return false;
+    }
+
     String imageFileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/" + mItem.getBaseFilename()
         + Config.DEFAULT_IMAGE_EXTENSION;
     Intent intent = new Intent(getActivity(), TakePicture.class);
@@ -725,5 +745,25 @@ public class DatumDetailFragment extends Fragment {
       return;
     }
     com.github.fielddb.model.Activity.sendActivity(eventType, eventValue);
+  }
+
+
+  public static boolean checkAndRequestPermissions(Activity activity, int REQUEST_ID_MULTIPLE_PERMISSIONS, boolean requestCamera) {
+    List<String> listPermissionsNeeded = new ArrayList<>();
+
+    if (requestCamera && ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+      listPermissionsNeeded.add(Manifest.permission.CAMERA);
+    }
+    if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+      listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    }
+    if (ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+      listPermissionsNeeded.add(Manifest.permission.RECORD_AUDIO);
+    }
+    if (!listPermissionsNeeded.isEmpty()) {
+      ActivityCompat.requestPermissions(activity, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
+      return false;
+    }
+    return true;
   }
 }
