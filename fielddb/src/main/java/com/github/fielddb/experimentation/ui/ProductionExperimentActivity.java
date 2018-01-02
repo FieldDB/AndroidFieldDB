@@ -10,14 +10,14 @@ import com.github.fielddb.R;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 
-public class ProductionExperimentActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ProductionExperimentActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
   private DatumFragmentPagerAdapter mPagerAdapter;
 
