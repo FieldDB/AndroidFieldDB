@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 
 import static org.hamcrest.CoreMatchers.*;
 import static android.support.test.InstrumentationRegistry.getTargetContext;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -18,22 +19,23 @@ import static org.junit.Assert.assertThat;
 @RunWith(AndroidJUnit4.class)
 @MediumTest
 public class FieldDBApplicationTest extends ApplicationTestCase<FieldDBApplication> {
-    private FieldDBApplication mContext;
+  private FieldDBApplication mContext;
 
-    public FieldDBApplicationTest() {
-        super(FieldDBApplication.class);
-    }
+  public FieldDBApplicationTest() {
+    super(FieldDBApplication.class);
+  }
 
-    @Before
-    public void initTargetContext() {
-        mContext = (FieldDBApplication) getTargetContext().getApplicationContext();
-        assertThat(mContext, notNullValue());
-    }
+  @Before
+  public void initTargetContext() {
+    mContext = (FieldDBApplication) getTargetContext().getApplicationContext();
+    assertThat(mContext, notNullValue());
+  }
 
-    @Test
-    public void mUserIsNull() {
-        // Expect Failed to find provider info for com.github.fielddb.user
-        assertThat(mContext.mUser, nullValue());
-    }
+  @Test
+  public void mUserIsNull() {
+    // Expect to be co-installed with a consuming app
+    assertThat(mContext.mUser, notNullValue());
+    assertThat(mContext.mUser.getUsername(), containsString("testinganonymous"));
+  }
 
 }

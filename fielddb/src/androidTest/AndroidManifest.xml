@@ -54,7 +54,7 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.github.fielddb.ui.FieldDBLib"
+            android:name="com.github.fielddb.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -68,15 +68,15 @@
             android:parentActivityName="com.github.fielddb.lessons.ui.DatumListActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".DatumListActivity" />
+                android:value="com.github.fielddb.lessons.ui.DatumListActivity" />
         </activity>
         <activity
-            android:name="com.github.datacollection.VideoRecorder"
+            android:name="com.github.fielddb.datacollection.VideoRecorder"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.github.datacollection.TakePicture"
+            android:name="com.github.fielddb.datacollection.TakePicture"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name" >
         </activity>
@@ -90,18 +90,18 @@
 
         <provider
             android:name="com.github.fielddb.database.DatumContentProvider"
-            android:authorities="com.github.fielddb.default.datum"
-            android:exported="false" >
+            android:authorities="com.github.fielddb.test.default.datum"
+            android:exported="true" >
         </provider>
         <provider
             android:name="com.github.fielddb.database.AudioVideoContentProvider"
-            android:authorities="com.github.fielddb.default.audiovideo"
-            android:exported="false" >
+            android:authorities="com.github.fielddb.test.default.audiovideo"
+            android:exported="true" >
         </provider>
         <provider
             android:name="com.github.fielddb.database.FieldDBUserContentProvider"
-            android:authorities="com.github.fielddb.default.user"
-            android:exported="false" >
+            android:authorities="com.github.fielddb.test.default.user"
+            android:exported="true" >
         </provider>
     </application>
 

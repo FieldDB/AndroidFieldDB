@@ -208,4 +208,8 @@ public class FieldDBApplication extends Application {
 
     return Locale.getDefault().getDisplayLanguage();
   }
+
+  public User getUser() {
+    return mUser;
+  }
 }
