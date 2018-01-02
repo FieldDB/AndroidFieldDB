@@ -7,7 +7,7 @@ import com.github.fielddb.R;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
@@ -26,7 +26,7 @@ import android.support.v4.app.FragmentTransaction;
  * This activity also implements the required
  * {@link DatumListFragment.Callbacks} interface to listen for item selections.
  */
-public class DatumListActivity extends FragmentActivity implements DatumListFragment.Callbacks {
+public class DatumListActivity extends AppCompatActivity implements DatumListFragment.Callbacks {
 
   /**
    * Whether or not the activity is in two-pane mode, i.e. running on a tablet

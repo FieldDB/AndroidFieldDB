@@ -11,16 +11,16 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.widget.VideoView;
 
 /**
  * Example call:
- * 
+ *
  * Intent intent = new Intent(this, VideoRecorder.class);
- * 
+ *
  * intent.putExtra(Config.EXTRA_USE_FRONT_FACING_CAMERA, true);
  * intent.putExtra(Config.EXTRA_LANGUAGE, Config.ENGLISH);
  * intent.putExtra(Config.EXTRA_PARTICIPANT_ID, "00000");
@@ -31,12 +31,12 @@ import android.widget.VideoView;
  * intent.putExtra(Config.EXTRA_EXPERIMENT_TRIAL_INFORMATION,
  * "ParticipantID,FirstName,LastName,WorstLanguage,FirstBat,StartTime,EndTime,ExperimenterID"
  * );
- * 
+ *
  * startActivityForResult(intent, Config.EXPERIMENT_COMPLETED);
- * 
- * 
+ *
+ *
  */
-public class VideoRecorder extends FragmentActivity implements SurfaceHolder.Callback {
+public class VideoRecorder extends AppCompatActivity implements SurfaceHolder.Callback {
   protected VideoRecorderAsyncTask mRecordVideoTask;
   protected Boolean mRecording = false;
   protected VideoStatusReceiver mVideoStatusReceiver;
