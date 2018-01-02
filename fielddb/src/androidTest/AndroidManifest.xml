@@ -53,46 +53,62 @@
         android:theme="@style/AppTheme"
         tools:replace="android:name,android:icon,android:roundIcon">
 
+        <!-- Data Collection -->
+        <activity android:name=".datacollection.StopAudioRecorder" />
         <activity
-            android:name="com.github.fielddb.lessons.ui.DatumListActivity"
-            android:theme="@style/AppTheme"
-            android:label="Recognition Trainer Advanced">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:name="com.github.fielddb.datacollection.TakePicture"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name="com.github.fielddb.datacollection.VideoRecorder"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme"></activity>
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <!-- Experimentation/Gamification -->
         <activity
             android:name="com.github.fielddb.experimentation.ui.ProductionExperimentActivity"
-            android:theme="@style/AppTheme"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/train">
+            android:label="@string/train"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".experimentation.ui.StopWatchSubExperiment"></activity>
+        <activity android:name=".experimentation.ui.SubExperiment"></activity>
+        <activity android:name=".experimentation.ui.TwoImageSubExperiment"></activity>
+
+        <!-- Data as content -->
         <activity
             android:name="com.github.fielddb.lessons.ui.DatumDetailActivity"
-            android:theme="@style/AppTheme"
             android:label="@string/title_datum_detail"
-            android:parentActivityName="com.github.fielddb.lessons.ui.DatumListActivity">
+            android:parentActivityName="com.github.fielddb.lessons.ui.DatumListActivity"
+            android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.github.fielddb.lessons.ui.DatumListActivity" />
         </activity>
         <activity
-            android:name="com.github.fielddb.datacollection.VideoRecorder"
-            android:theme="@style/AppTheme"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/app_name"></activity>
-        <activity
-            android:name="com.github.fielddb.datacollection.TakePicture"
-            android:theme="@style/AppTheme"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/app_name"></activity>
+            android:name="com.github.fielddb.lessons.ui.DatumListActivity"
+            android:label="Recognition Trainer Advanced"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".lessons.ui.ListenAndRepeat"></activity>
+
+        <!-- Data as Content (storybook) -->
+        <activity android:name=".storybook.ui.StoryBookSubExperiment"></activity>
+
+        <!-- Integration testing -->
+        <activity android:name=".MainActivity"></activity>
 
         <service android:name="com.github.fielddb.datacollection.AudioRecorder"></service>
         <service android:name="com.github.fielddb.service.DownloadFilesService"></service>
