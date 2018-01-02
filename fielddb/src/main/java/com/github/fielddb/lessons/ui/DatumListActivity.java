@@ -39,8 +39,9 @@ public class DatumListActivity extends AppCompatActivity implements DatumListFra
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     getApplicationContext().setTheme(R.style.AppTheme);
+    setTheme(R.style.AppTheme);
 
-    setContentView(R.layout.activity_datum_list);
+    setContentView(R.layout.activity_main);
 
     if (findViewById(R.id.datum_detail_container) != null) {
       // The detail container view will be present only in the

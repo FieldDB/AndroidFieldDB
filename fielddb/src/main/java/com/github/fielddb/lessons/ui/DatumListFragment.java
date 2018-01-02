@@ -105,6 +105,10 @@ public class DatumListFragment extends Fragment implements AdapterView.OnItemCli
   @Override
   @Nullable
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+    getActivity().getApplicationContext().setTheme(R.style.AppTheme);
+    getActivity().setTheme(R.style.AppTheme);
+
     View rootView = inflater.inflate(R.layout.fragment_datum_list, container, false);
     mList = (RecyclerView) rootView.findViewById(R.id.section_list);
     mList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
