@@ -58,26 +58,17 @@
         <activity
             android:name="com.github.fielddb.datacollection.TakePicture"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme"></activity>
+            android:label="@string/app_name"></activity>
         <activity
             android:name="com.github.fielddb.datacollection.VideoRecorder"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme"></activity>
+            android:label="@string/app_name"></activity>
 
         <!-- Experimentation/Gamification -->
         <activity
             android:name="com.github.fielddb.experimentation.ui.ProductionExperimentActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/train"
-            android:theme="@style/AppTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:label="@string/train"></activity>
         <activity android:name=".experimentation.ui.StopWatchSubExperiment"></activity>
         <activity android:name=".experimentation.ui.SubExperiment"></activity>
         <activity android:name=".experimentation.ui.TwoImageSubExperiment"></activity>
@@ -86,22 +77,14 @@
         <activity
             android:name="com.github.fielddb.lessons.ui.DatumDetailActivity"
             android:label="@string/title_datum_detail"
-            android:parentActivityName="com.github.fielddb.lessons.ui.DatumListActivity"
-            android:theme="@style/AppTheme">
+            android:parentActivityName="com.github.fielddb.lessons.ui.DatumListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.github.fielddb.lessons.ui.DatumListActivity" />
         </activity>
         <activity
             android:name="com.github.fielddb.lessons.ui.DatumListActivity"
-            android:label="Recognition Trainer Advanced"
-            android:theme="@style/AppTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:label="Recognition Trainer Advanced"></activity>
         <activity android:name=".lessons.ui.ListenAndRepeat"></activity>
 
         <!-- Data as Content (storybook) -->
