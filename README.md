@@ -42,6 +42,13 @@ repositories {
 
 ### Development
 
+Copy and optionally modify the sample private constants to customize the library:
+
+```bash
+$ sed 's/PrivateConstantsSample/PrivateConstants/' fielddb/src/main/java/com/github/fielddb/PrivateConstantsSample.java >  fielddb/src/main/java/com/github/fielddb/PrivateConstants.java
+```
+
+
 #### Tests
 
 Copy the sample data to the device:
