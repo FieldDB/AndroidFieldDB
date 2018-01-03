@@ -99,7 +99,7 @@ public class UploadAudioVideoService extends NotifyingIntentService {
       return;
     }
 
-    processUploadResponse(intent.getData(), JSONResponse);
+    processUploadResponse(JSONResponse);
     if (!"".equals(this.userFriendlyErrorMessage)) {
       this.notifyUser(" " + this.userFriendlyErrorMessage, this.noti, this.notificationId, true);
       BugReporter.sendBugReport(this.userFriendlyErrorMessage);
@@ -134,31 +134,28 @@ public class UploadAudioVideoService extends NotifyingIntentService {
       this.userFriendlyErrorMessage = "Problem opening upload connection to server, please report this error. " + e.getMessage();
       Log.d(Config.TAG, "Failed to execute request.");
       e.printStackTrace();
-      return null;
+      JSONResponse = "{\"status\": 0, \"userFriendlyErrors\": [\"Failed to execute request 8342.\"]}";
     }
 
-    if (!"".equals(this.userFriendlyErrorMessage)) {
-      return JSONResponse;
-    }
     return JSONResponse;
   }
 
-  public int processUploadResponse(Uri uri, String jsonResponse) {
+  public JsonObject processUploadResponse(String jsonResponse) {
     if (jsonResponse != null && Config.D) {
       Log.d(Config.TAG, jsonResponse);
     }
     JsonObject json = (JsonObject) NotifyingIntentService.jsonParser.parse(jsonResponse);
     if (json.has("userFriendlyErrors")) {
       this.userFriendlyErrorMessage = json.get("userFriendlyErrors").getAsString();
-      return 0;
+      return json;
     }
     if (!json.has("files")) {
       this.userFriendlyErrorMessage = "The server response is very strange, please report this.";
-      return 0;
+      return json;
     } else {
       com.github.fielddb.model.Activity.sendActivity("uploadAudio", jsonResponse);
     }
 
-    return 0;
+    return json;
   }
 }
