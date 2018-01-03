@@ -224,4 +224,8 @@ public class NotifyingIntentService extends IntentService {
     }
     ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(id, notification);
   }
+
+  public String getUserFriendlyErrorMessage() {
+    return userFriendlyErrorMessage;
+  }
 }

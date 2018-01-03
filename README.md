@@ -1,3 +1,5 @@
+[![Build Status][travis-image]][travis-url]
+
 # AndroidFieldDB
 
 An Android app which lets the user build a custom visual and auditory vocabulary, useful for guided anomia treatment and self designed language lessons by heritage speakers.
@@ -57,6 +59,12 @@ Copy the sample data to the device:
 $ adb push sample-data/* /sdcard/
 ```
 
+To run all the tests
+
+```bash
+./gradlew fielddb:connectedDebugAndroidTest
+```
+
 To run the tests click on the > next to the method you want to test.
 
 
@@ -73,3 +81,7 @@ To publish a new release of this library, edit the `version` in `fielddb/build.g
 ./gradlew generateJavadocsJar
 ./gradlew bintrayUpload
 ```
+
+
+[travis-url]: https://travis-ci.org/FieldDB/AndroidFieldDB
+[travis-image]: https://travis-ci.org/FieldDB/AndroidFieldDB.svg?branch=master

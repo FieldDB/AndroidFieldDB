@@ -26,7 +26,10 @@ before_install:
   # workaround for android-27 sha changed in dec 2017x
   - yes | sdkmanager "platforms;android-27"
   - android list target
+  - echo "TRAVIS is $TRAVIS"
   - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
-  - emulator -avd test -no-audio -no-window &
+  - emulator -writable-system -avd test -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
+  - adb root
+  - ./scripts/set_env_var.sh

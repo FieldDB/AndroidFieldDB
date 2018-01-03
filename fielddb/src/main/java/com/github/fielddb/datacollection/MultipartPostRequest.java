@@ -103,20 +103,21 @@ public class MultipartPostRequest {
     // checks server's status code first
     // https://stackoverflow.com/questions/9365829/filenotfoundexception-for-httpurlconnection-in-ice-cream-sandwich
     int status = httpConn.getResponseCode();
+    InputStream responseStream;
     if (status == HttpsURLConnection.HTTP_OK) {
-      InputStream responseStream = new BufferedInputStream(httpConn.getInputStream());
-      BufferedReader responseStreamReader = new BufferedReader(new InputStreamReader(responseStream));
-      String line = "";
-      StringBuilder stringBuilder = new StringBuilder();
-      while ((line = responseStreamReader.readLine()) != null) {
-        stringBuilder.append(line).append("\n");
-      }
-      responseStreamReader.close();
-      response = stringBuilder.toString();
-      httpConn.disconnect();
+      responseStream = new BufferedInputStream(httpConn.getInputStream());
     } else {
-      response = "{\"status\": " + status + "}";
+      responseStream = new BufferedInputStream(httpConn.getErrorStream());
     }
+    BufferedReader responseStreamReader = new BufferedReader(new InputStreamReader(responseStream));
+    String line = "";
+    StringBuilder stringBuilder = new StringBuilder();
+    while ((line = responseStreamReader.readLine()) != null) {
+      stringBuilder.append(line).append("\n");
+    }
+    responseStreamReader.close();
+    response = stringBuilder.toString();
+    httpConn.disconnect();
     return response;
   }
 
