@@ -50,8 +50,7 @@
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        tools:replace="android:name,android:icon,android:roundIcon">
+        android:theme="@style/AppTheme">
 
         <!-- Data Collection -->
         <activity android:name=".datacollection.StopAudioRecorder" />
