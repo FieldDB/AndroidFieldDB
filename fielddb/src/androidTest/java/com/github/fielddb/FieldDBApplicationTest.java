@@ -33,6 +33,11 @@ public class FieldDBApplicationTest extends ApplicationTestCase<FieldDBApplicati
 
   @Test
   public void mUserIsNull() {
+    // If not installed with a consuming app application shoud load and not fail
+    if (mContext.mUser == null) {
+      assertThat(mContext.mUser, nullValue());
+      return;
+    }
     // Expect to be co-installed with a consuming app
     assertThat(mContext.mUser, notNullValue());
     assertThat(mContext.mUser.getUsername(), containsString("testinganonymous"));
