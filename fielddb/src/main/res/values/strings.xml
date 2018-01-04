@@ -2,11 +2,27 @@
 <resources>
 
     <string name="app_name">FieldDBLib</string>
-    <string name="speech_app_name">SpeechRecognizer</string>
+    <string name="speech_app_name">LRL Speech Recognition</string>
     <string name="title_datum_detail">Datum</string>
-    <string name="app_explanation"></string>
+    <string name="title_datum_list_activity">Recognition Trainer Advanced</string>
+    <string name="app_explanation">
+      Field linguists and open source developers have gotten together to create a
+      speech recognizer for low resource language speakers. You can use this
+      application to prepare your Android to guess your speech. You need to read some
+      suggestions and then contact WiFi in order to prepare your voice model. We
+      expect that after reading some training sentences you will have a better result.
+      Because low resource languages are different from other languages ​​so we do
+      not know how useful this application will be. You can try it, it is mostly
+      experimental and used for research, so we can not guarantee that it will be
+      useful. If you use the app to train your recognizer, you agree that we can
+      use the anonymous training recordings to improve the recognizer and for linguistics research.
+      Here's our resulting research: http://batumi.github.io
+      We don't use or share your private data with anyone. Here is our privacy policy:
+      https://www.lingsync.org/privacy.html
+    </string>
     <string name="delete">Delete</string>
-    <string name="are_you_sure_put_in_trash">Put this datum in the trash?</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="are_you_sure_put_in_trash">Are you sure you want to put this datum in the trash?</string>
 
     <!-- Recognition prompts -->
     <string name="im_listening">I\'m listening</string>
@@ -14,7 +30,7 @@
     <string name="i_might_have_heard">I might have heard: </string>
     <string name="or_maybe">Or maybe this: </string>
     <string name="there_were_others">. I\'m pretty funny, ey? There were some other options, but I think I\'ll stop there. </string>
-    <string name="train">წვრთნა</string>
+    <string name="train">Train</string>
     <string name="recognize">Recognize</string>
     <string name="tap_to_speak">Tap to speak again</string>
     <string name="tap_to_end">Tap to end</string>
@@ -22,28 +38,26 @@
     <string name="dialog_continue_to_advanced_training">Add your own words?</string>
     <string name="continue_word">Continue</string>
     <string name="finished">Enough</string>
-    <string name="context">კონტექსტში</string>
-    <string name="orthography">ფრაზა</string>
+    <string name="context">Context</string>
+    <string name="orthography">Words</string>
     <string name="tag_hint">WebSearch, SMS, Email</string>
     <string name="translation_hint"></string>
     <string name="remove">Remove</string>
     <string name="no_recognized_result">I didn\'t hear anything...</string>
     <string name="hypothesis">Hypothesis</string>
-
-    <!-- PocketSphinx -->
-    <string name="start">Start</string>
-    <string name="stop">Stop</string>
-    <string name="kws_caption">To start demonstration say \"okay android\".</string>
-    <string name="menu_caption">Say \"digits\" or \"forecast\" to choose particular example.</string>
-    <string name="digits_caption">Let\'s recognize some digits: say something like \"one two three four five\".</string>
-    <string name="forecast_caption">Say something typical to a weather forecast like \"sunny spells on Wednesday\".</string>
+    <string name="training_instructions">You need to read a few sentences to train the recognizer to your voice and your words</string>
+    <string name="training_context">
+      The Georgian language is very complex and very different from other languages
+      which were used to build Speech Recognition systems. This means each person
+      should have their own recognizer.
+    </string>
 
     <!-- Generic Setting strings -->
     <string name="preference_choose_language_title">Choose Language</string>
     <string name="preference_choose_language_summary">You can choose any of the available languages for the experiment\'s stimuli.</string>
     <string name="preference_optional">Optional</string>
     <string name="preference_user_guide_title">User Guide</string>
-    <string name="preference_user_guide_summary">Click on this link to download 
+    <string name="preference_user_guide_summary">Click on this link to download
         Chiodo, Marquis, Achim, Dessureault, Nguyen, Royle 2013 which discusses the OPrime library project
          data collection in a clinical or research context. </string>
     <string name="preference_about">About</string>
@@ -57,18 +71,18 @@
 
     <!-- Strings which should be customized -->
     <string name="preference_about_title">About OPrime</string>
-    <string name="preference_about_summary">OPrime: Open Experimentation was created by the 
+    <string name="preference_about_summary">OPrime: Open Experimentation was created by the
 		iLanguage Lab ltd, an OpenSource Fieldlinguistics company in Montreal, Canada.</string>
     <string name="preference_visit_site">Go to the OPrime CodeBase</string>
-    <string name="preference_visit_site_summary">On the OPrime site you can 
+    <string name="preference_visit_site_summary">On the OPrime site you can
         access all our issues and milestones which serve as instructions and documentation of how to use this code base.</string>
-    <string name="preference_thanks_summary">Special thanks to the Montreal Computational Linguistics community, 
+    <string name="preference_thanks_summary">Special thanks to the Montreal Computational Linguistics community,
         Android Montreal, Javascript Montreal and the Android Open
 		Source developers for their work which directly or indirectly
 		contributed to this project.</string>
     <string name="preference_licence_summary">The Experiment designs and stimuli are copyright their original
 		authors, see the Experiment Home screen for details for each
-		Experiment. OPrime: Open Experimentation for Android is released under 
+		Experiment. OPrime: Open Experimentation for Android is released under
 		the Apache 2.0 License. Free to modify the code to your needs!</string>
 
     <!-- Stop Watch strings -->

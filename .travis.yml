@@ -24,6 +24,7 @@ android:
 before_install:
   - sed 's/PrivateConstantsSample/PrivateConstants/' fielddb/src/main/java/com/github/fielddb/PrivateConstantsSample.java >  fielddb/src/main/java/com/github/fielddb/PrivateConstants.java
   # workaround for android-27 sha changed in dec 2017x
+  - yes | sdkmanager "platforms;android-26"
   - yes | sdkmanager "platforms;android-27"
   - android list target
   - echo "TRAVIS is $TRAVIS"

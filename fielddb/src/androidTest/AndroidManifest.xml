@@ -76,7 +76,7 @@
         </activity>
         <activity
             android:name="com.github.fielddb.lessons.ui.DatumListActivity"
-            android:label="Recognition Trainer Advanced"></activity>
+            android:label="@string/title_datum_list_activity"></activity>
         <activity android:name=".lessons.ui.ListenAndRepeat"></activity>
 
         <!-- Data as Content (storybook) -->

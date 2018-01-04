@@ -6,13 +6,6 @@ package com.github.fielddb;
  * 10.0.2.2 emulator connection to localhost
  */
 public class PrivateConstantsSample {
-
-  /*
-   * Make sure this is part of your ContentProvider in the manifest <provider
-   * android:name="com.github.fielddb.database.DatumContentProvider"
-   * android:authorities="com.github.fielddb.speechrecognition.kartuli.datum"
-   * android:exported="false" > </provider>
-   */
   public static String APP_TYPE = "speechrecognition"; // "learnx"
   public static String APP_BRAND = "kartulispeechrecognition"; // "lingsync"
 
