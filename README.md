@@ -75,6 +75,8 @@ To publish a new release of this library, edit the `version` in `fielddb/build.g
 ```bash
 ./gradlew tasks
 ./gradlew install
+./gradlew clean
+./gradlew build
 ./gradlew assembleRelease
 ./gradlew generateSourcesJar
 ./gradlew generateJavadocs

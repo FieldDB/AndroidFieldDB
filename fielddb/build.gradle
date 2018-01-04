@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 
-version = '3.17.0'
+version = '3.17.0-rc1'
 
 android {
     compileSdkVersion 27
@@ -81,16 +81,16 @@ task generateJavadocsJar(type: Jar) {
 
 generateJavadocsJar.dependsOn generateJavadocs
 
-//artifacts.add("archives", file('build/libs/fielddb-javadoc.jar'))
+artifacts.add("archives", file('build/libs/fielddb-' + version + '-javadoc.jar'))
 artifacts.add("archives", file('build/libs/fielddb-' + version + '-sources.jar'))
-//
-//artifacts {
-//    archives generateJavaDocsJar
+// artifacts {
+//    archives generateJavaDocsJar,
 //    archives generateSourcesJar
-//}
+// }
 
+System.print System.getenv('BINTRAY_USER')
 
-group = 'com.github.fielddb.fielddb'
+group = 'com.github.fielddb'
 bintray {
     user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
     key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
