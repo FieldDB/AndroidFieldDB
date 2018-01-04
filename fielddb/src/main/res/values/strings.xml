@@ -24,6 +24,21 @@
     <string name="are_you_sure">Are you sure?</string>
     <string name="are_you_sure_put_in_trash">Are you sure you want to put this datum in the trash?</string>
 
+    <!-- Action menu items -->
+    <string name="action_comments">Comment(s)</string>
+    <string name="action_share">Share</string>
+    <string name="action_tag">Tag(s)</string>
+    <string name="action_similar">Similar</string>
+    <string name="action_gps_locations">GPS Location(s)</string>
+    <string name="action_reminder">Reminder(s)</string>
+    <string name="action_take_picture">Take Picture</string>
+    <string name="action_record_video">Record Video</string>
+    <string name="action_play_media">Play</string>
+    <string name="action_record_audio">Record Audio</string>
+    <string name="action_stop_record_media">Stop Recording</string>
+    <string name="action_search">Search</string>
+    <string name="action_create">New</string>
+
     <!-- Recognition prompts -->
     <string name="im_listening">I\'m listening</string>
     <string name="i_cant_listen">I\'m sorry, your device is strange. It cannot recognize speech.</string>

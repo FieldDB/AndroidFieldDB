@@ -426,6 +426,7 @@ public class DatumDetailFragment extends Fragment {
       this.mRecordingAudio = true;
       if (item != null) {
         item.setIcon(R.drawable.ic_action_stop);
+        item.setTitle(R.string.action_stop_record_media);
       }
       this.recordUserEvent("captureAudio", audioFileName);
 
@@ -469,6 +470,7 @@ public class DatumDetailFragment extends Fragment {
     this.mRecordingAudio = false;
     if (item != null) {
       item.setIcon(R.drawable.ic_action_mic);
+      item.setTitle(R.string.action_record_audio);
     }
     this.recordUserEvent("stopAudio", this.mAudioFileName);
 
