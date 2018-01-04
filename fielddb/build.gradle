@@ -61,23 +61,25 @@ dependencies {
 }
 
 
-// task generateSourcesJar(type: Jar) {
-//     from android.sourceSets.main.java.srcDirs
-//     classifier 'sources'
-// }
+task generateSourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier 'sources'
+}
 
-// task generateJavadocs(type: Javadoc) {
-//     source = android.sourceSets.main.java.srcDirs
-//     classpath += project.files(android.getBootClasspath()
-//             .join(File.pathSeparator))
-// }
+task generateJavadocs(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath()
+            .join(File.pathSeparator))
+    classpath += configurations.compile
+    failOnError false
+}
 
-// task generateJavadocsJar(type: Jar) {
-//     from generateJavadocs.destinationDir
-//     classifier 'javadoc'
-// }
+task generateJavadocsJar(type: Jar) {
+    from generateJavadocs.destinationDir
+    classifier 'javadoc'
+}
 
-// generateJavadocsJar.dependsOn generateJavadocs
+generateJavadocsJar.dependsOn generateJavadocs
 
 //artifacts.add("archives", file('build/libs/fielddb-javadoc.jar'))
 artifacts.add("archives", file('build/libs/fielddb-' + version + '-sources.jar'))
