@@ -20,6 +20,7 @@
       We don't use or share your private data with anyone. Here is our privacy policy:
       https://www.lingsync.org/privacy.html
     </string>
+    <string name="delete">Delete</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="are_you_sure_put_in_trash">Are you sure you want to put this datum in the trash?</string>
 
