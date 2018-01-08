@@ -44,6 +44,8 @@
 
     <application
         android:name="com.github.fielddb.FieldDBApplication">
+        <!-- Mocks -->
+        <activity android:name=".lessons.ui.FragmentUtilActivity"></activity>
 
         <!-- Data Collection -->
         <activity android:name=".datacollection.StopAudioRecorder" />

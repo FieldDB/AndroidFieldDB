@@ -111,40 +111,47 @@ public class DatumDetailFragment extends Fragment {
       this.mDeviceDetails = new DeviceDetails(getActivity());
     }
 
-    if (getArguments().containsKey(ARG_ITEM_ID)) {
-      String id = getArguments().getString(ARG_ITEM_ID);
-      this.mLastDatumIndex = getArguments().getInt(ARG_TOTAL_DATUM_IN_LIST);
-      Log.d(Config.TAG, "Will get id " + id);
-      String selection = null;
-      String[] selectionArgs = null;
-      String sortOrder = null;
+    if (getArguments() == null) {
+      Log.e(Config.TAG, "Agruments were empty, displaying nothing on the screen. this is a problem. ");
+      return;
+    }
 
-      String[] datumProjection = { DatumTable.COLUMN_ID, DatumTable.COLUMN_ORTHOGRAPHY, DatumTable.COLUMN_UTTERANCE,
-          DatumTable.COLUMN_MORPHEMES, DatumTable.COLUMN_GLOSS, DatumTable.COLUMN_TRANSLATION,
-          DatumTable.COLUMN_CONTEXT, DatumTable.COLUMN_IMAGE_FILES, DatumTable.COLUMN_AUDIO_VIDEO_FILES,
-          DatumTable.COLUMN_TAGS };
-      mUri = Uri.withAppendedPath(DatumContentProvider.CONTENT_URI, id);
-      CursorLoader cursorLoader = new CursorLoader(getActivity(), mUri, datumProjection, selection, selectionArgs,
-          sortOrder);
+    if (!getArguments().containsKey(ARG_ITEM_ID)) {
+      Log.e(Config.TAG, "Agruments were missig ARG_ITEM_ID, displaying nothing on the screen. this is a problem. ");
+      return;
+    }
 
-      Cursor cursor = cursorLoader.loadInBackground();
-      if (cursor != null) {
-        cursor.moveToFirst();
-        if (cursor.getCount() > 0) {
-          mItem = new Datum(cursor);
-          cursor.close();
-          this.recordUserEvent("loadDatum", mUri.getLastPathSegment());
-          BugReporter.putCustomData("urlString", mUri.toString());
-        } else {
-          Log.e(Config.TAG, "Displaying nothing on the screen. this is a problem. ");
-          BugReporter.sendBugReport("*** couldnt open" + mUri + " ***");
-        }
+    String id = getArguments().getString(ARG_ITEM_ID);
+    this.mLastDatumIndex = getArguments().getInt(ARG_TOTAL_DATUM_IN_LIST);
+    Log.d(Config.TAG, "Will get id " + id);
+    String selection = null;
+    String[] selectionArgs = null;
+    String sortOrder = null;
+
+    String[] datumProjection = { DatumTable.COLUMN_ID, DatumTable.COLUMN_ORTHOGRAPHY, DatumTable.COLUMN_UTTERANCE,
+        DatumTable.COLUMN_MORPHEMES, DatumTable.COLUMN_GLOSS, DatumTable.COLUMN_TRANSLATION,
+        DatumTable.COLUMN_CONTEXT, DatumTable.COLUMN_IMAGE_FILES, DatumTable.COLUMN_AUDIO_VIDEO_FILES,
+        DatumTable.COLUMN_TAGS };
+    mUri = Uri.withAppendedPath(DatumContentProvider.CONTENT_URI, id);
+    CursorLoader cursorLoader = new CursorLoader(getActivity(), mUri, datumProjection, selection, selectionArgs,
+        sortOrder);
+
+    Cursor cursor = cursorLoader.loadInBackground();
+    if (cursor != null) {
+      cursor.moveToFirst();
+      if (cursor.getCount() > 0) {
+        mItem = new Datum(cursor);
         cursor.close();
+        this.recordUserEvent("loadDatum", mUri.getLastPathSegment());
+        BugReporter.putCustomData("urlString", mUri.toString());
       } else {
-        Log.e(Config.TAG, "unable to open the datums content provider. this is a problem. ");
-        BugReporter.sendBugReport("*** datumCursor is null ***");
+        Log.e(Config.TAG, "Displaying nothing on the screen. this is a problem. ");
+        BugReporter.sendBugReport("*** couldnt open" + mUri + " ***");
       }
-
+      cursor.close();
+    } else {
+      Log.e(Config.TAG, "unable to open the datums content provider. this is a problem. ");
+      BugReporter.sendBugReport("*** datumCursor is null ***");
     }
   }
 
