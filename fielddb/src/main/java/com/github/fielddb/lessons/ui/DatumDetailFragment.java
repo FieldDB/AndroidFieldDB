@@ -539,14 +539,15 @@ public class DatumDetailFragment extends Fragment {
 
   @SuppressLint("NewApi")
   public boolean loadMainVideo(boolean playNow) {
-    String fileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/" + mItem.getMainAudioVideoFile();
-    File audioVideoFile = new File(fileName);
+    String fileName = mItem.getMainAudioVideoFile();
+    String filePath = Config.DEFAULT_OUTPUT_DIRECTORY + "/" + fileName;
+    File audioVideoFile = new File(filePath);
     if (!audioVideoFile.exists()) {
       this.loadMainImage();
       return false;
     }
     if (mVideoView != null) {
-      mVideoView.setVideoPath(fileName);
+      mVideoView.setVideoPath(filePath);
       if (fileName.endsWith(Config.DEFAULT_AUDIO_EXTENSION)) {
         loadMainImage();
       } else {
@@ -568,10 +569,10 @@ public class DatumDetailFragment extends Fragment {
 
           @Override
           public void onClick(View v) {
-            String filename = mItem.getPrevNextMediaFile("audio", mItem.getAudioVideoFiles(), "next");
-            if (filename != null) {
+            String nextFile = mItem.getPrevNextMediaFile("audio", mItem.getAudioVideoFiles(), "next");
+            if (nextFile != null) {
               mVideoView.stopPlayback();
-              mVideoView.setVideoPath(Config.DEFAULT_OUTPUT_DIRECTORY + "/" + filename);
+              mVideoView.setVideoPath(Config.DEFAULT_OUTPUT_DIRECTORY + "/" + nextFile);
               mVideoView.start();
             }
           }
@@ -579,10 +580,10 @@ public class DatumDetailFragment extends Fragment {
 
           @Override
           public void onClick(View v) {
-            String filename = mItem.getPrevNextMediaFile("audio", mItem.getAudioVideoFiles(), "prev");
-            if (filename != null) {
+            String previousFile = mItem.getPrevNextMediaFile("audio", mItem.getAudioVideoFiles(), "prev");
+            if (previousFile != null) {
               mVideoView.stopPlayback();
-              mVideoView.setVideoPath(Config.DEFAULT_OUTPUT_DIRECTORY + "/" + filename);
+              mVideoView.setVideoPath(Config.DEFAULT_OUTPUT_DIRECTORY + "/" + previousFile);
               mVideoView.start();
             }
           }
@@ -590,8 +591,11 @@ public class DatumDetailFragment extends Fragment {
       }
     } else {
       Log.d(Config.TAG, "Playing audio only (no video)");
-      mAudioPlayer = MediaPlayer.create(getActivity(),
-          Uri.parse("file://" + Config.DEFAULT_OUTPUT_DIRECTORY + "/" + fileName));
+      mAudioPlayer = MediaPlayer.create(getActivity(), Uri.parse("file://" + filePath));
+      if (mAudioPlayer == null) {
+        Log.e(Config.TAG, "Couldnt play audio file" + filePath);
+        return false;
+      }
       mAudioPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mp) {
@@ -774,5 +778,13 @@ public class DatumDetailFragment extends Fragment {
       return false;
     }
     return true;
+  }
+
+  public Datum getItem() {
+    return mItem;
+  }
+
+  public void setItem(Datum mItem) {
+    this.mItem = mItem;
   }
 }
