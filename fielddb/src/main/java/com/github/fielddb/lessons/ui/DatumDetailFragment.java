@@ -162,9 +162,11 @@ public class DatumDetailFragment extends Fragment {
       rootView = inflater.inflate(R.layout.fragment_datum_detail_simple, container, false);
     }
 
+    this.prepareVideoAndImageViews(rootView);
+
     if (mItem != null) {
+      this.loadVisuals(false);
       this.prepareEditTextListeners(rootView);
-      this.prepareVideoAndImages(rootView);
       this.prepareSpeechRecognitionButton(rootView);
     }
 
@@ -321,7 +323,7 @@ public class DatumDetailFragment extends Fragment {
     }
   }
 
-  protected void prepareVideoAndImages(View rootView) {
+  protected void prepareVideoAndImageViews(View rootView) {
     if (mImageView == null) {
       mImageView = (ImageView) rootView.findViewById(R.id.image_view);
     }
@@ -336,7 +338,6 @@ public class DatumDetailFragment extends Fragment {
         mVideoView.setMediaController(mMediaController);
       }
     }
-    this.loadVisuals(false);
   }
 
   protected void prepareSpeechRecognitionButton(View rootView) {
@@ -538,92 +539,91 @@ public class DatumDetailFragment extends Fragment {
   }
 
   @SuppressLint("NewApi")
-  public boolean loadMainVideo(boolean playNow) {
+  public boolean loadMainVideo(final boolean playNow) {
     if (mItem == null) {
-      Log.e(Config.TAG, "Couldnt set the video background there was no item.");
+      Log.e(Config.TAG, "Couldnt set the audio or video, there was no item.");
       return false;
     }
+
     String fileName = mItem.getMainAudioVideoFile();
     String filePath = Config.DEFAULT_OUTPUT_DIRECTORY + "/" + fileName;
     File audioVideoFile = new File(filePath);
     if (!audioVideoFile.exists()) {
-      this.loadMainImage();
-      return false;
+      return loadMainImage();
     }
-    if (mVideoView != null) {
-      mVideoView.setVideoPath(filePath);
-      if (fileName.endsWith(Config.DEFAULT_AUDIO_EXTENSION)) {
-        loadMainImage();
-      } else {
-        int sdk = android.os.Build.VERSION.SDK_INT;
-        if (sdk >= 16) {
-          mVideoView.setBackground(null);
-        } else {
-          Log.e(Config.TAG, "Couldnt set the video background. (this might be a kindle)");
-          mImageView.setImageBitmap(null);
-          mImageView.setVisibility(View.VISIBLE);
-          mVideoView.setVisibility(View.GONE);
-        }
-      }
-      if (playNow) {
-        this.recordUserEvent("loadMainVideo", fileName);
 
-        mVideoView.start();
-        mMediaController.setPrevNextListeners(new View.OnClickListener() {
-
-          @Override
-          public void onClick(View v) {
-            String nextFile = mItem.getPrevNextMediaFile("audio", mItem.getAudioVideoFiles(), "next");
-            if (nextFile != null) {
-              mVideoView.stopPlayback();
-              mVideoView.setVideoPath(Config.DEFAULT_OUTPUT_DIRECTORY + "/" + nextFile);
-              mVideoView.start();
-            }
-          }
-        }, new View.OnClickListener() {
-
-          @Override
-          public void onClick(View v) {
-            String previousFile = mItem.getPrevNextMediaFile("audio", mItem.getAudioVideoFiles(), "prev");
-            if (previousFile != null) {
-              mVideoView.stopPlayback();
-              mVideoView.setVideoPath(Config.DEFAULT_OUTPUT_DIRECTORY + "/" + previousFile);
-              mVideoView.start();
-            }
-          }
-        });
-      }
-    } else {
+    if (fileName.endsWith(Config.DEFAULT_AUDIO_EXTENSION)) {
+      loadMainImage();
       Log.d(Config.TAG, "Playing audio only (no video)");
       mAudioPlayer = MediaPlayer.create(getActivity(), Uri.parse("file://" + filePath));
       if (mAudioPlayer == null) {
-        Log.e(Config.TAG, "Couldnt play audio file" + filePath);
+        Log.e(Config.TAG, "Couldn't play audio file" + filePath);
         return false;
       }
       mAudioPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mp) {
-          mp.start();
+          if (playNow) {
+            mp.start();
+          }
+        }
+      });
+      return true;
+    }
+
+    mVideoView.setVideoPath(filePath);
+    int sdk = android.os.Build.VERSION.SDK_INT;
+    if (sdk >= 16) {
+      mVideoView.setBackground(null);
+    } else {
+      Log.e(Config.TAG, "Couldnt set the video background. (this might be a kindle)");
+      mImageView.setImageBitmap(null);
+      mImageView.setVisibility(View.VISIBLE);
+      mVideoView.setVisibility(View.GONE);
+    }
+
+    if (playNow) {
+      this.recordUserEvent("loadMainVideo", fileName);
+
+      mVideoView.start();
+      mMediaController.setPrevNextListeners(new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+          String nextFile = mItem.getPrevNextMediaFile("audio", mItem.getAudioVideoFiles(), "next");
+          if (nextFile != null) {
+            mVideoView.stopPlayback();
+            mVideoView.setVideoPath(Config.DEFAULT_OUTPUT_DIRECTORY + "/" + nextFile);
+            mVideoView.start();
+          }
+        }
+      }, new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+          String previousFile = mItem.getPrevNextMediaFile("audio", mItem.getAudioVideoFiles(), "prev");
+          if (previousFile != null) {
+            mVideoView.stopPlayback();
+            mVideoView.setVideoPath(Config.DEFAULT_OUTPUT_DIRECTORY + "/" + previousFile);
+            mVideoView.start();
+          }
         }
       });
     }
+
     return true;
   }
 
-  protected void loadMainImage() {
+  protected boolean loadMainImage() {
     File image = new File(Config.DEFAULT_OUTPUT_DIRECTORY + "/" + mItem.getMainImageFile());
     if (!image.exists()) {
-      if (mVideoView != null) {
-        mVideoView.setVisibility(View.GONE);
-      }
-      if (mImageView != null) {
-        mImageView.setVisibility(View.VISIBLE);
-      }
-      return;
+      mVideoView.setVisibility(View.GONE);
+      mImageView.setVisibility(View.VISIBLE);
+      return false;
     }
     Bitmap d = new BitmapDrawable(this.getResources(), image.getAbsolutePath()).getBitmap();
     if (d == null) {
-      return;
+      return false;
     }
     int nh = (int) (d.getHeight() * (512.0 / d.getWidth()));
     Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
@@ -638,7 +638,7 @@ public class DatumDetailFragment extends Fragment {
     mImageView.setVisibility(View.VISIBLE);
     mVideoView.setVisibility(View.GONE);
     // }
-
+    return true;
   }
 
   @Override

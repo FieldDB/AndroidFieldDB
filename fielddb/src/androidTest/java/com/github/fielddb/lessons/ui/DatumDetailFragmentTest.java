@@ -57,7 +57,7 @@ public class DatumDetailFragmentTest {
 
   @Test
   @UiThreadTest
-  public void shouldLoadMainImageIfItemIsNull() {
+  public void shouldLoadDefaultImageIfItemIsNull() {
     mFragment.setItem(null);
     boolean successful = mFragment.loadMainVideo(false);
     assertFalse(successful);
@@ -65,11 +65,43 @@ public class DatumDetailFragmentTest {
 
   @Test
   @UiThreadTest
-  public void loadMainVideo() {
+  public void shouldLoadImageIfVideoFileIsMissing() {
+    mFragment.setItem(new Datum("კი მაგრამ"));
+    Config.DEFAULT_OUTPUT_DIRECTORY = "/sdcard";
+    mFragment.getItem().setImageFiles("1.png");
+    mFragment.getItem().setAudioVideoFiles("oopsthisfilewasdeletedbyenduser.mp3");
+    boolean successful = mFragment.loadMainVideo(false);
+    assertTrue(successful);
+  }
+
+  @Test
+  @UiThreadTest
+  public void shouldLoadDefaultImageIfVideoAndImageFileAreMissing() {
+    mFragment.setItem(new Datum("კი მაგრამ"));
+    Config.DEFAULT_OUTPUT_DIRECTORY = "/sdcard";
+    mFragment.getItem().setImageFiles("oopsthisfilewasdeletedbyenduser.png");
+    mFragment.getItem().setAudioVideoFiles("oopsthisfilewasdeletedbyenduser.mp3");
+    boolean successful = mFragment.loadMainVideo(false);
+    assertFalse(successful);
+  }
+
+  @Test
+  @UiThreadTest
+  public void shouldLoadMainAudio() {
     mFragment.setItem(new Datum("კი მაგრამ"));
     mFragment.getItem().setAudioVideoFiles("1.mp3");
     Config.DEFAULT_OUTPUT_DIRECTORY = "/sdcard";
     boolean successful = mFragment.loadMainVideo(false);
+    assertTrue(successful);
+  }
+
+  @Test
+  @UiThreadTest
+  public void shouldPlayMainAudio() {
+    mFragment.setItem(new Datum("კი მაგრამ"));
+    mFragment.getItem().setAudioVideoFiles("1.mp3");
+    Config.DEFAULT_OUTPUT_DIRECTORY = "/sdcard";
+    boolean successful = mFragment.loadMainVideo(true);
     assertTrue(successful);
   }
 }
