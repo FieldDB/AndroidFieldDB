@@ -17,6 +17,7 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 public class DatumDetailFragmentTest {
   FragmentUtilActivity mActivity;
@@ -56,6 +57,14 @@ public class DatumDetailFragmentTest {
 
   @Test
   @UiThreadTest
+  public void shouldLoadMainImageIfItemIsNull() {
+    mFragment.setItem(null);
+    boolean successful = mFragment.loadMainVideo(false);
+    assertFalse(successful);
+  }
+
+  @Test
+  @UiThreadTest
   public void loadMainVideo() {
     mFragment.setItem(new Datum("კი მაგრამ"));
     mFragment.getItem().setAudioVideoFiles("1.mp3");
@@ -63,5 +72,4 @@ public class DatumDetailFragmentTest {
     boolean successful = mFragment.loadMainVideo(false);
     assertTrue(successful);
   }
-
 }

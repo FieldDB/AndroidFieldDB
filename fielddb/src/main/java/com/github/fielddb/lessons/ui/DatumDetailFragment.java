@@ -539,6 +539,10 @@ public class DatumDetailFragment extends Fragment {
 
   @SuppressLint("NewApi")
   public boolean loadMainVideo(boolean playNow) {
+    if (mItem == null) {
+      Log.e(Config.TAG, "Couldnt set the video background there was no item.");
+      return false;
+    }
     String fileName = mItem.getMainAudioVideoFile();
     String filePath = Config.DEFAULT_OUTPUT_DIRECTORY + "/" + fileName;
     File audioVideoFile = new File(filePath);
