@@ -1,6 +1,8 @@
 package com.github.fielddb.database;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.github.fielddb.Config;
 
@@ -80,9 +82,7 @@ public class UserContentProvider extends ContentProvider {
 
     // Using SQLiteQueryBuilder instead of query() method
     SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-
-    // Check if the caller has requested a column which does not exists
-    // checkColumns(projection);
+    queryBuilder.setStrict(true);
 
     // Set the table
     queryBuilder.setTables(UserTable.TABLE_NAME);
@@ -100,6 +100,12 @@ public class UserContentProvider extends ContentProvider {
     }
 
     SQLiteDatabase db = database.getWritableDatabase();
+
+    // Enforce the caller has not requested a column which does not exists
+    Map<String, String> restrictColumns = UserTable.getProjectionMap();
+    Log.d(Config.TAG, "restrictColumns " + restrictColumns.toString());
+    queryBuilder.setProjectionMap(restrictColumns);
+
     Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
     // Make sure that potential listeners are getting notified
     cursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -248,6 +254,17 @@ public class UserContentProvider extends ContentProvider {
       for (String column : currentColumns) {
         UserTable.columns.add(column);
       }
+    }
+
+    public static Map<String, String> getProjectionMap() {
+      Map<String, String> projection = new HashMap<>();
+      if (null == UserTable.columns || UserTable.columns.isEmpty()) {
+        UserTable.setColumns();
+      }
+      for (String column : UserTable.columns) {
+        projection.put(column, column);
+      }
+      return projection;
     }
   }
 }

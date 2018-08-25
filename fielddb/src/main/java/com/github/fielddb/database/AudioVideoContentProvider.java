@@ -1,7 +1,9 @@
 package com.github.fielddb.database;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import com.github.fielddb.Config;
 
@@ -73,9 +75,7 @@ public class AudioVideoContentProvider extends ContentProvider {
 
     // Using SQLiteQueryBuilder instead of query() method
     SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-
-    // Check if the caller has requested a column which does not exists
-    // checkColumns(projection);
+    queryBuilder.setStrict(true);
 
     // Set the table
     queryBuilder.setTables(AudioVideoTable.TABLE_NAME);
@@ -93,6 +93,12 @@ public class AudioVideoContentProvider extends ContentProvider {
     }
 
     SQLiteDatabase db = database.getWritableDatabase();
+
+    // Enforce the caller has not requested a column which does not exists
+    Map<String, String> restrictColumns = AudioVideoTable.getProjectionMap();
+    Log.d(Config.TAG, "restrictColumns " + restrictColumns.toString());
+    queryBuilder.setProjectionMap(restrictColumns);
+
     Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
     // Make sure that potential listeners are getting notified
     cursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -211,6 +217,17 @@ public class AudioVideoContentProvider extends ContentProvider {
       for (String column : currentColumns) {
         AudioVideoTable.columns.add(column);
       }
+    }
+
+    public static Map<String, String> getProjectionMap() {
+      Map<String, String> projection = new HashMap<>();
+      if (null == AudioVideoTable.columns || AudioVideoTable.columns.isEmpty()) {
+        AudioVideoTable.setColumns();
+      }
+      for (String column : AudioVideoTable.columns) {
+        projection.put(column, column);
+      }
+      return projection;
     }
   }
 
