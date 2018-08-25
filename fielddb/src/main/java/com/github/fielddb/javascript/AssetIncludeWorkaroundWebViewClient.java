@@ -18,18 +18,19 @@ import android.webkit.WebViewClient;
 
 /*
  * Source http://code.google.com/p/android/issues/attachmentText?id=17535&aid=175350100000&name=AssetIncludeWorkaround.java&token=2Xxhmu5Rbyi1ARW-ryk5L5MvaZU%3A1354052830422
- * 
- * for sdk 11-15 
+ *
+ * for sdk 11-15
  */
 public class AssetIncludeWorkaroundWebViewClient extends WebViewClient {
   private Context mContext;
 
   // protected String anchor;
 
-  @Override
-  public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-    handler.proceed();
-  }
+  // @Override
+  // public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+  //  Do not use proceed unilaterally
+  //   handler.proceed();
+  // }
 
   // public void onPageFinished(WebView view, String url) {
   //
