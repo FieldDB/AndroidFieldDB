@@ -56,7 +56,8 @@ $ sed 's/PrivateConstantsSample/PrivateConstants/' fielddb/src/main/java/com/git
 Copy the sample data to the device:
 
 ```bash
-$ adb push sample-data/* /sdcard/
+$ cd sample-data
+$ adb push * /sdcard/
 ```
 
 To run all the tests

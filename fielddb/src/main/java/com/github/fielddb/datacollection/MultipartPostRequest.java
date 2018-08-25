@@ -68,7 +68,7 @@ public class MultipartPostRequest {
   /**
    * Adds a upload file section to the request
    *
-   * @param fieldName  name attribute in <input type="file" name="..." />
+   * @param fieldName  name attribute in &lt; input type="file" name="..." /&gt;
    * @param uploadFile a File to be uploaded
    * @throws IOException
    */

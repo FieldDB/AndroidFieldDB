@@ -111,40 +111,47 @@ public class DatumDetailFragment extends Fragment {
       this.mDeviceDetails = new DeviceDetails(getActivity());
     }
 
-    if (getArguments().containsKey(ARG_ITEM_ID)) {
-      String id = getArguments().getString(ARG_ITEM_ID);
-      this.mLastDatumIndex = getArguments().getInt(ARG_TOTAL_DATUM_IN_LIST);
-      Log.d(Config.TAG, "Will get id " + id);
-      String selection = null;
-      String[] selectionArgs = null;
-      String sortOrder = null;
+    if (getArguments() == null) {
+      Log.e(Config.TAG, "Agruments were empty, displaying nothing on the screen. this is a problem. ");
+      return;
+    }
 
-      String[] datumProjection = { DatumTable.COLUMN_ID, DatumTable.COLUMN_ORTHOGRAPHY, DatumTable.COLUMN_UTTERANCE,
-          DatumTable.COLUMN_MORPHEMES, DatumTable.COLUMN_GLOSS, DatumTable.COLUMN_TRANSLATION,
-          DatumTable.COLUMN_CONTEXT, DatumTable.COLUMN_IMAGE_FILES, DatumTable.COLUMN_AUDIO_VIDEO_FILES,
-          DatumTable.COLUMN_TAGS };
-      mUri = Uri.withAppendedPath(DatumContentProvider.CONTENT_URI, id);
-      CursorLoader cursorLoader = new CursorLoader(getActivity(), mUri, datumProjection, selection, selectionArgs,
-          sortOrder);
+    if (!getArguments().containsKey(ARG_ITEM_ID)) {
+      Log.e(Config.TAG, "Agruments were missig ARG_ITEM_ID, displaying nothing on the screen. this is a problem. ");
+      return;
+    }
 
-      Cursor cursor = cursorLoader.loadInBackground();
-      if (cursor != null) {
-        cursor.moveToFirst();
-        if (cursor.getCount() > 0) {
-          mItem = new Datum(cursor);
-          cursor.close();
-          this.recordUserEvent("loadDatum", mUri.getLastPathSegment());
-          BugReporter.putCustomData("urlString", mUri.toString());
-        } else {
-          Log.e(Config.TAG, "Displaying nothing on the screen. this is a problem. ");
-          BugReporter.sendBugReport("*** couldnt open" + mUri + " ***");
-        }
+    String id = getArguments().getString(ARG_ITEM_ID);
+    this.mLastDatumIndex = getArguments().getInt(ARG_TOTAL_DATUM_IN_LIST);
+    Log.d(Config.TAG, "Will get id " + id);
+    String selection = null;
+    String[] selectionArgs = null;
+    String sortOrder = null;
+
+    String[] datumProjection = { DatumTable.COLUMN_ID, DatumTable.COLUMN_ORTHOGRAPHY, DatumTable.COLUMN_UTTERANCE,
+        DatumTable.COLUMN_MORPHEMES, DatumTable.COLUMN_GLOSS, DatumTable.COLUMN_TRANSLATION,
+        DatumTable.COLUMN_CONTEXT, DatumTable.COLUMN_IMAGE_FILES, DatumTable.COLUMN_AUDIO_VIDEO_FILES,
+        DatumTable.COLUMN_TAGS };
+    mUri = Uri.withAppendedPath(DatumContentProvider.CONTENT_URI, id);
+    CursorLoader cursorLoader = new CursorLoader(getActivity(), mUri, datumProjection, selection, selectionArgs,
+        sortOrder);
+
+    Cursor cursor = cursorLoader.loadInBackground();
+    if (cursor != null) {
+      cursor.moveToFirst();
+      if (cursor.getCount() > 0) {
+        mItem = new Datum(cursor);
         cursor.close();
+        this.recordUserEvent("loadDatum", mUri.getLastPathSegment());
+        BugReporter.putCustomData("urlString", mUri.toString());
       } else {
-        Log.e(Config.TAG, "unable to open the datums content provider. this is a problem. ");
-        BugReporter.sendBugReport("*** datumCursor is null ***");
+        Log.e(Config.TAG, "Displaying nothing on the screen. this is a problem. ");
+        BugReporter.sendBugReport("*** couldnt open" + mUri + " ***");
       }
-
+      cursor.close();
+    } else {
+      Log.e(Config.TAG, "unable to open the datums content provider. this is a problem. ");
+      BugReporter.sendBugReport("*** datumCursor is null ***");
     }
   }
 
@@ -155,9 +162,11 @@ public class DatumDetailFragment extends Fragment {
       rootView = inflater.inflate(R.layout.fragment_datum_detail_simple, container, false);
     }
 
+    this.prepareVideoAndImageViews(rootView);
+
     if (mItem != null) {
+      this.loadVisuals(false);
       this.prepareEditTextListeners(rootView);
-      this.prepareVideoAndImages(rootView);
       this.prepareSpeechRecognitionButton(rootView);
     }
 
@@ -314,7 +323,7 @@ public class DatumDetailFragment extends Fragment {
     }
   }
 
-  protected void prepareVideoAndImages(View rootView) {
+  protected void prepareVideoAndImageViews(View rootView) {
     if (mImageView == null) {
       mImageView = (ImageView) rootView.findViewById(R.id.image_view);
     }
@@ -329,7 +338,6 @@ public class DatumDetailFragment extends Fragment {
         mVideoView.setMediaController(mMediaController);
       }
     }
-    this.loadVisuals(false);
   }
 
   protected void prepareSpeechRecognitionButton(View rootView) {
@@ -426,6 +434,7 @@ public class DatumDetailFragment extends Fragment {
       this.mRecordingAudio = true;
       if (item != null) {
         item.setIcon(R.drawable.ic_action_stop);
+        item.setTitle(R.string.action_stop_record_media);
       }
       this.recordUserEvent("captureAudio", audioFileName);
 
@@ -469,6 +478,7 @@ public class DatumDetailFragment extends Fragment {
     this.mRecordingAudio = false;
     if (item != null) {
       item.setIcon(R.drawable.ic_action_mic);
+      item.setTitle(R.string.action_record_audio);
     }
     this.recordUserEvent("stopAudio", this.mAudioFileName);
 
@@ -529,84 +539,91 @@ public class DatumDetailFragment extends Fragment {
   }
 
   @SuppressLint("NewApi")
-  public boolean loadMainVideo(boolean playNow) {
-    String fileName = Config.DEFAULT_OUTPUT_DIRECTORY + "/" + mItem.getMainAudioVideoFile();
-    File audioVideoFile = new File(fileName);
-    if (!audioVideoFile.exists()) {
-      this.loadMainImage();
+  public boolean loadMainVideo(final boolean playNow) {
+    if (mItem == null) {
+      Log.e(Config.TAG, "Couldnt set the audio or video, there was no item.");
       return false;
     }
-    if (mVideoView != null) {
-      mVideoView.setVideoPath(fileName);
-      if (fileName.endsWith(Config.DEFAULT_AUDIO_EXTENSION)) {
-        loadMainImage();
-      } else {
-        int sdk = android.os.Build.VERSION.SDK_INT;
-        if (sdk >= 16) {
-          mVideoView.setBackground(null);
-        } else {
-          Log.e(Config.TAG, "Couldnt set the video background. (this might be a kindle)");
-          mImageView.setImageBitmap(null);
-          mImageView.setVisibility(View.VISIBLE);
-          mVideoView.setVisibility(View.GONE);
-        }
-      }
-      if (playNow) {
-        this.recordUserEvent("loadMainVideo", fileName);
 
-        mVideoView.start();
-        mMediaController.setPrevNextListeners(new View.OnClickListener() {
+    String fileName = mItem.getMainAudioVideoFile();
+    String filePath = Config.DEFAULT_OUTPUT_DIRECTORY + "/" + fileName;
+    File audioVideoFile = new File(filePath);
+    if (!audioVideoFile.exists()) {
+      return loadMainImage();
+    }
 
-          @Override
-          public void onClick(View v) {
-            String filename = mItem.getPrevNextMediaFile("audio", mItem.getAudioVideoFiles(), "next");
-            if (filename != null) {
-              mVideoView.stopPlayback();
-              mVideoView.setVideoPath(Config.DEFAULT_OUTPUT_DIRECTORY + "/" + filename);
-              mVideoView.start();
-            }
-          }
-        }, new View.OnClickListener() {
-
-          @Override
-          public void onClick(View v) {
-            String filename = mItem.getPrevNextMediaFile("audio", mItem.getAudioVideoFiles(), "prev");
-            if (filename != null) {
-              mVideoView.stopPlayback();
-              mVideoView.setVideoPath(Config.DEFAULT_OUTPUT_DIRECTORY + "/" + filename);
-              mVideoView.start();
-            }
-          }
-        });
-      }
-    } else {
+    if (fileName.endsWith(Config.DEFAULT_AUDIO_EXTENSION)) {
+      loadMainImage();
       Log.d(Config.TAG, "Playing audio only (no video)");
-      mAudioPlayer = MediaPlayer.create(getActivity(),
-          Uri.parse("file://" + Config.DEFAULT_OUTPUT_DIRECTORY + "/" + fileName));
+      mAudioPlayer = MediaPlayer.create(getActivity(), Uri.parse("file://" + filePath));
+      if (mAudioPlayer == null) {
+        Log.e(Config.TAG, "Couldn't play audio file" + filePath);
+        return false;
+      }
       mAudioPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mp) {
-          mp.start();
+          if (playNow) {
+            mp.start();
+          }
+        }
+      });
+      return true;
+    }
+
+    mVideoView.setVideoPath(filePath);
+    int sdk = android.os.Build.VERSION.SDK_INT;
+    if (sdk >= 16) {
+      mVideoView.setBackground(null);
+    } else {
+      Log.e(Config.TAG, "Couldnt set the video background. (this might be a kindle)");
+      mImageView.setImageBitmap(null);
+      mImageView.setVisibility(View.VISIBLE);
+      mVideoView.setVisibility(View.GONE);
+    }
+
+    if (playNow) {
+      this.recordUserEvent("loadMainVideo", fileName);
+
+      mVideoView.start();
+      mMediaController.setPrevNextListeners(new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+          String nextFile = mItem.getPrevNextMediaFile("audio", mItem.getAudioVideoFiles(), "next");
+          if (nextFile != null) {
+            mVideoView.stopPlayback();
+            mVideoView.setVideoPath(Config.DEFAULT_OUTPUT_DIRECTORY + "/" + nextFile);
+            mVideoView.start();
+          }
+        }
+      }, new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+          String previousFile = mItem.getPrevNextMediaFile("audio", mItem.getAudioVideoFiles(), "prev");
+          if (previousFile != null) {
+            mVideoView.stopPlayback();
+            mVideoView.setVideoPath(Config.DEFAULT_OUTPUT_DIRECTORY + "/" + previousFile);
+            mVideoView.start();
+          }
         }
       });
     }
+
     return true;
   }
 
-  protected void loadMainImage() {
+  protected boolean loadMainImage() {
     File image = new File(Config.DEFAULT_OUTPUT_DIRECTORY + "/" + mItem.getMainImageFile());
     if (!image.exists()) {
-      if (mVideoView != null) {
-        mVideoView.setVisibility(View.GONE);
-      }
-      if (mImageView != null) {
-        mImageView.setVisibility(View.VISIBLE);
-      }
-      return;
+      mVideoView.setVisibility(View.GONE);
+      mImageView.setVisibility(View.VISIBLE);
+      return false;
     }
     Bitmap d = new BitmapDrawable(this.getResources(), image.getAbsolutePath()).getBitmap();
     if (d == null) {
-      return;
+      return false;
     }
     int nh = (int) (d.getHeight() * (512.0 / d.getWidth()));
     Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
@@ -621,7 +638,7 @@ public class DatumDetailFragment extends Fragment {
     mImageView.setVisibility(View.VISIBLE);
     mVideoView.setVisibility(View.GONE);
     // }
-
+    return true;
   }
 
   @Override
@@ -765,5 +782,13 @@ public class DatumDetailFragment extends Fragment {
       return false;
     }
     return true;
+  }
+
+  public Datum getItem() {
+    return mItem;
+  }
+
+  public void setItem(Datum mItem) {
+    this.mItem = mItem;
   }
 }

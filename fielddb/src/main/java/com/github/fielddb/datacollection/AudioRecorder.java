@@ -77,7 +77,7 @@ public class AudioRecorder extends Service {
       Notification.Builder builder = new Notification.Builder(this.getApplicationContext());
 
       builder.setContentIntent(this.mContentIntent).setSmallIcon(this.mAudioIconId)
-          .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.ic_launcher))
+          .setLargeIcon(BitmapFactory.decodeResource(res, R.mipmap.ic_launcher))
           .setTicker(res.getString(R.string.app_name)).setWhen(System.currentTimeMillis()).setAutoCancel(true)
           .setContentTitle(res.getString(R.string.app_name)).setContentText(res.getString(R.string.app_name));
       if (sdk >= 16) {

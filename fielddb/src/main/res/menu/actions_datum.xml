@@ -1,64 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
 
+    <!--
     <item
         android:id="@+id/action_search"
         android:icon="@android:drawable/ic_menu_search"
-        android:title="Search for similar"/>
+        android:title="@string/action_search"/>
+    -->
     <item
         android:id="@+id/action_speak"
         android:icon="@drawable/ic_action_mic"
-        android:showAsAction="ifRoom"
-        android:title="Record Audio"/>
+        app:showAsAction="always"
+        android:title="@string/action_record_audio"/>
     <item
         android:id="@+id/action_play"
         android:icon="@drawable/ic_action_play"
-        android:showAsAction="ifRoom"
-        android:title="Play"/>
+        app:showAsAction="ifRoom"
+        android:title="@string/action_play_media"/>
     <item
         android:id="@+id/action_videos"
         android:icon="@drawable/ic_action_video"
-        android:showAsAction="ifRoom"
-        android:title="Record Video"/>
+        app:showAsAction="ifRoom"
+        android:title="@string/action_record_video"/>
     <item
         android:id="@+id/action_images"
         android:icon="@android:drawable/ic_menu_slideshow"
-        android:showAsAction="ifRoom"
-        android:title="Take Picture"/>
+        app:showAsAction="ifRoom"
+        android:title="@string/action_take_picture"/>
+    <!--
     <item
         android:id="@+id/action_reminders"
         android:icon="@android:drawable/ic_popup_reminder"
-        android:showAsAction="ifRoom"
-        android:title="Reminder(s)"/>
+        app:showAsAction="ifRoom"
+        android:title="@string/action_reminder"/>
     <item
         android:id="@+id/action_locations"
         android:icon="@android:drawable/ic_menu_mylocation"
-        android:showAsAction="ifRoom"
-        android:title="GPS Location(s)"/>
+        app:showAsAction="ifRoom"
+        android:title="@string/action_gps_locations"/>
     <item
         android:id="@+id/action_similar"
         android:icon="@android:drawable/ic_menu_search"
-        android:showAsAction="ifRoom"
-        android:title="Similar"/>
+        app:showAsAction="ifRoom"
+        android:title="@string/action_similar"/>
     <item
         android:id="@+id/action_tags"
         android:icon="@android:drawable/ic_input_get"
-        android:showAsAction="ifRoom"
-        android:title="Tag(s)"/>
+        app:showAsAction="ifRoom"
+        android:title="@string/action_tag"/>
     <item
         android:id="@+id/action_share"
         android:icon="@android:drawable/ic_menu_share"
-        android:showAsAction="ifRoom"
-        android:title="Share"/>
+        app:showAsAction="ifRoom"
+        android:title="@string/action_share"/>
     <item
         android:id="@+id/action_comments"
         android:icon="@android:drawable/ic_menu_info_details"
-        android:showAsAction="ifRoom"
-        android:title="Comment(s)"/>
+        app:showAsAction="ifRoom"
+        android:title="@string/action_comments"/>
+    -->
     <item
         android:id="@+id/action_delete"
         android:icon="@android:drawable/ic_delete"
-        android:showAsAction="ifRoom"
-        android:title="Delete"/>
+        app:showAsAction="ifRoom"
+        android:title="@string/delete"/>
 
 </menu>

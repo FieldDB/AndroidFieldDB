@@ -36,9 +36,10 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View rootView = inflater.inflate(R.layout.fragment_production_stimulus, container, false);
 
+    this.prepareVideoAndImageViews(rootView);
     if (mItem != null) {
+      this.loadVisuals(false);
       this.prepareSpeechRecognitionButton(rootView);
-      this.prepareVideoAndImages(rootView);
 
       final TextView orthographyTextView = ((TextView) rootView.findViewById(R.id.orthography));
       orthographyTextView.setText(mItem.getOrthography());
