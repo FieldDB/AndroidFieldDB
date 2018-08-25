@@ -1,7 +1,9 @@
 package com.github.fielddb.database;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
@@ -136,6 +138,9 @@ public class DatumContentProvider extends ContentProvider {
     int uriType = sURIMatcher.match(uri);
     SQLiteDatabase sqlDB = database.getWritableDatabase();
     int rowsUpdated = 0;
+
+    Log.d(Config.TAG, "doing an update with selection " + selection);
+
     switch (uriType) {
     case ITEMS:
       rowsUpdated = sqlDB.update(DatumTable.TABLE_NAME, values, selection, selectionArgs);
@@ -143,10 +148,15 @@ public class DatumContentProvider extends ContentProvider {
     case ITEM_ID:
       String id = uri.getLastPathSegment();
       if (TextUtils.isEmpty(selection)) {
-        rowsUpdated = sqlDB.update(DatumTable.TABLE_NAME, values, DatumTable.COLUMN_ID + "='" + id + "'", null);
+        String[] whereArgs = {id.toString()};
+        rowsUpdated = sqlDB.update(DatumTable.TABLE_NAME, values, DatumTable.COLUMN_ID + "=?", whereArgs);
       } else {
-        rowsUpdated = sqlDB.update(DatumTable.TABLE_NAME, values, DatumTable.COLUMN_ID + "='" + id + "' and "
-            + selection, selectionArgs);
+        List<String> whereList = Arrays.asList(selectionArgs);
+        whereList.add(id.toString());
+        String[] whereArgs = new String[whereList.size()];
+        whereArgs = whereList.toArray(whereArgs);
+        Log.d(Config.TAG, "doing a selection with " + whereArgs.toString());
+        rowsUpdated = sqlDB.update(DatumTable.TABLE_NAME, values, selection +" AND " + DatumTable.COLUMN_ID + "=?", whereArgs);
       }
       break;
     default:
