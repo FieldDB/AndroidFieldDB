@@ -139,11 +139,9 @@ public class DatumContentProvider extends ContentProvider {
     SQLiteDatabase sqlDB = database.getWritableDatabase();
     int rowsUpdated = 0;
 
-    Log.d(Config.TAG, "doing an update with selection " + selection);
-
     switch (uriType) {
     case ITEMS:
-      rowsUpdated = sqlDB.update(DatumTable.TABLE_NAME, values, selection, selectionArgs);
+      Log.d(Config.TAG, "selecting items is unsupported " + selection);
       break;
     case ITEM_ID:
       String id = uri.getLastPathSegment();
@@ -151,12 +149,7 @@ public class DatumContentProvider extends ContentProvider {
         String[] whereArgs = {id.toString()};
         rowsUpdated = sqlDB.update(DatumTable.TABLE_NAME, values, DatumTable.COLUMN_ID + "=?", whereArgs);
       } else {
-        List<String> whereList = Arrays.asList(selectionArgs);
-        whereList.add(id.toString());
-        String[] whereArgs = new String[whereList.size()];
-        whereArgs = whereList.toArray(whereArgs);
-        Log.d(Config.TAG, "doing a selection with " + whereArgs.toString());
-        rowsUpdated = sqlDB.update(DatumTable.TABLE_NAME, values, selection +" AND " + DatumTable.COLUMN_ID + "=?", whereArgs);
+        Log.d(Config.TAG, "ignoring an unsupported selection " + selection);
       }
       break;
     default:

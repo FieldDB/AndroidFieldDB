@@ -114,16 +114,15 @@ public class AudioVideoContentProvider extends ContentProvider {
     int rowsUpdated = 0;
     switch (uriType) {
     case ITEMS:
-      rowsUpdated = sqlDB.update(AudioVideoTable.TABLE_NAME, values, selection, selectionArgs);
+      Log.d(Config.TAG, "selecting items is unsupported " + selection);
       break;
     case ITEM_ID:
       String id = uri.getLastPathSegment();
       if (TextUtils.isEmpty(selection)) {
-        rowsUpdated = sqlDB.update(AudioVideoTable.TABLE_NAME, values, AudioVideoTable.COLUMN_ID + "='" + id + "'",
-            null);
+        String[] whereArgs = {id.toString()};
+        rowsUpdated = sqlDB.update(AudioVideoTable.TABLE_NAME, values, AudioVideoTable.COLUMN_ID + "=?", whereArgs);
       } else {
-        rowsUpdated = sqlDB.update(AudioVideoTable.TABLE_NAME, values, AudioVideoTable.COLUMN_ID + "='" + id + "' and "
-            + selection, selectionArgs);
+        Log.d(Config.TAG, "ignoring an unsupported selection " + selection);
       }
       break;
     default:

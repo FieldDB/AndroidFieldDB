@@ -121,15 +121,15 @@ public class UserContentProvider extends ContentProvider {
     int rowsUpdated = 0;
     switch (uriType) {
     case ITEMS:
-      rowsUpdated = sqlDB.update(UserTable.TABLE_NAME, values, selection, selectionArgs);
+      Log.d(Config.TAG, "selecting items is unsupported " + selection);
       break;
     case ITEM_ID:
       String id = uri.getLastPathSegment();
       if (TextUtils.isEmpty(selection)) {
-        rowsUpdated = sqlDB.update(UserTable.TABLE_NAME, values, UserTable.COLUMN_USERNAME + "='" + id + "'", null);
+        String[] whereArgs = {id.toString()};
+        rowsUpdated = sqlDB.update(UserTable.TABLE_NAME, values, UserTable.COLUMN_ID + "=?", whereArgs);
       } else {
-        rowsUpdated = sqlDB.update(UserTable.TABLE_NAME, values, UserTable.COLUMN_USERNAME + "='" + id + "' and "
-            + selection, selectionArgs);
+        Log.d(Config.TAG, "ignoring an unsupported selection " + selection);
       }
       break;
     default:
