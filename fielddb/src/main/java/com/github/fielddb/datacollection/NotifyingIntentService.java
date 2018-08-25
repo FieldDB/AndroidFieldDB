@@ -72,7 +72,7 @@ public class NotifyingIntentService extends IntentService {
     notificationView.setTextViewText(R.id.notification_text, this.statusMessage);
     notificationView.setTextViewText(R.id.notification_title, this.statusMessage);
     this.noti = new NotificationCompat.Builder(this).setTicker(statusMessage).setContent(notificationView)
-        .setSmallIcon(R.drawable.ic_launcher).setContentIntent(pIntent).build();
+        .setSmallIcon(R.mipmap.ic_launcher).setContentIntent(pIntent).build();
     this.noti.flags = Notification.FLAG_AUTO_CANCEL;
     this.notifyUser(statusMessage, this.noti, notificationId, false);
     this.userFriendlyErrorMessage = "";
