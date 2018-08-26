@@ -1,7 +1,9 @@
 package com.github.fielddb.database;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 import com.github.fielddb.Config;
@@ -94,9 +96,7 @@ public class DatumContentProvider extends ContentProvider {
 
     // Using SQLiteQueryBuilder instead of query() method
     SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-
-    // Check if the caller has requested a column which does not exists
-    // checkColumns(projection);
+    queryBuilder.setStrict(true);
 
     // Set the table
     queryBuilder.setTables(DatumTable.TABLE_NAME);
@@ -117,6 +117,12 @@ public class DatumContentProvider extends ContentProvider {
     }
 
     SQLiteDatabase db = database.getWritableDatabase();
+
+    // Enforce the caller has not requested a column which does not exists
+    Map<String, String> restrictColumns = DatumTable.getProjectionMap();
+    Log.d(Config.TAG, "restrictColumns " + restrictColumns.toString());
+    queryBuilder.setProjectionMap(restrictColumns);
+
     Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
     // Make sure that potential listeners are getting notified
     cursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -130,17 +136,18 @@ public class DatumContentProvider extends ContentProvider {
     int uriType = sURIMatcher.match(uri);
     SQLiteDatabase sqlDB = database.getWritableDatabase();
     int rowsUpdated = 0;
+
     switch (uriType) {
     case ITEMS:
-      rowsUpdated = sqlDB.update(DatumTable.TABLE_NAME, values, selection, selectionArgs);
+      Log.d(Config.TAG, "selecting items is unsupported " + selection);
       break;
     case ITEM_ID:
       String id = uri.getLastPathSegment();
       if (TextUtils.isEmpty(selection)) {
-        rowsUpdated = sqlDB.update(DatumTable.TABLE_NAME, values, DatumTable.COLUMN_ID + "='" + id + "'", null);
+        String[] whereArgs = {id.toString()};
+        rowsUpdated = sqlDB.update(DatumTable.TABLE_NAME, values, DatumTable.COLUMN_ID + "=?", whereArgs);
       } else {
-        rowsUpdated = sqlDB.update(DatumTable.TABLE_NAME, values, DatumTable.COLUMN_ID + "='" + id + "' and "
-            + selection, selectionArgs);
+        Log.d(Config.TAG, "ignoring an unsupported selection " + selection);
       }
       break;
     default:
@@ -250,6 +257,39 @@ public class DatumContentProvider extends ContentProvider {
       for (String column : currentColumns) {
         DatumTable.columns.add(column);
       }
+    }
+
+    public static Map<String, String> getProjectionMap() {
+      Map<String, String> projection = new HashMap<>();
+      if (null == DatumTable.columns || DatumTable.columns.isEmpty()) {
+        DatumTable.setColumns();
+      }
+      projection.put(COLUMN_ANDROID_ID, COLUMN_ANDROID_ID);
+      projection.put(COLUMN_ID, COLUMN_ID);
+      projection.put(COLUMN_REV, COLUMN_REV);
+      projection.put(COLUMN_TRASHED, COLUMN_TRASHED);
+      projection.put(COLUMN_CREATED_AT, COLUMN_CREATED_AT);
+      projection.put(COLUMN_UPDATED_AT, COLUMN_UPDATED_AT);
+      projection.put(COLUMN_APP_VERSIONS_WHEN_MODIFIED, COLUMN_APP_VERSIONS_WHEN_MODIFIED);
+      projection.put(COLUMN_RELATED, COLUMN_RELATED);
+      projection.put(COLUMN_ACTUAL_JSON, COLUMN_ACTUAL_JSON);
+
+      projection.put(COLUMN_UTTERANCE, COLUMN_UTTERANCE);
+      projection.put(COLUMN_MORPHEMES, COLUMN_MORPHEMES);
+      projection.put(COLUMN_GLOSS, COLUMN_GLOSS);
+      projection.put(COLUMN_TRANSLATION, COLUMN_TRANSLATION);
+      projection.put(COLUMN_ORTHOGRAPHY, COLUMN_ORTHOGRAPHY);
+      projection.put(COLUMN_CONTEXT, COLUMN_CONTEXT);
+      projection.put(COLUMN_IMAGE_FILES, COLUMN_IMAGE_FILES);
+      projection.put(COLUMN_AUDIO_VIDEO_FILES, COLUMN_AUDIO_VIDEO_FILES);
+      projection.put(COLUMN_LOCATIONS, COLUMN_LOCATIONS);
+      projection.put(COLUMN_REMINDERS, COLUMN_REMINDERS);
+      projection.put(COLUMN_TAGS, COLUMN_TAGS);
+      projection.put(COLUMN_COMMENTS, COLUMN_COMMENTS);
+      projection.put(COLUMN_VALIDATION_STATUS, COLUMN_VALIDATION_STATUS);
+      projection.put(COLUMN_ENTERED_BY_USER, COLUMN_ENTERED_BY_USER);
+      projection.put(COLUMN_MODIFIED_BY_USER, COLUMN_MODIFIED_BY_USER);
+      return projection;
     }
   }
 

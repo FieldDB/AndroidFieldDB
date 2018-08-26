@@ -130,7 +130,7 @@ public class DatumDetailFragment extends Fragment {
 
     String[] datumProjection = { DatumTable.COLUMN_ID, DatumTable.COLUMN_ORTHOGRAPHY, DatumTable.COLUMN_UTTERANCE,
         DatumTable.COLUMN_MORPHEMES, DatumTable.COLUMN_GLOSS, DatumTable.COLUMN_TRANSLATION,
-        DatumTable.COLUMN_CONTEXT, DatumTable.COLUMN_IMAGE_FILES, DatumTable.COLUMN_AUDIO_VIDEO_FILES,
+        DatumTable.COLUMN_CONTEXT, DatumTable.COLUMN_IMAGE_FILES, DatumTable.COLUMN_AUDIO_VIDEO_FILES, DatumTable.COLUMN_VALIDATION_STATUS,
         DatumTable.COLUMN_TAGS };
     mUri = Uri.withAppendedPath(DatumContentProvider.CONTENT_URI, id);
     CursorLoader cursorLoader = new CursorLoader(getActivity(), mUri, datumProjection, selection, selectionArgs,
@@ -443,7 +443,7 @@ public class DatumDetailFragment extends Fragment {
       }
 
       if (mSpeechRecognizerInstructions != null) {
-        mSpeechRecognizerInstructions.setText("Tap to end");
+        mSpeechRecognizerInstructions.setText(R.string.tap_to_end);
       }
 
     } else {
@@ -487,7 +487,7 @@ public class DatumDetailFragment extends Fragment {
     }
 
     if (mSpeechRecognizerInstructions != null) {
-      mSpeechRecognizerInstructions.setText("Tap to speak again");
+      mSpeechRecognizerInstructions.setText(R.string.tap_to_end);
     }
     if (Config.APP_TYPE.equals("speechrecognition")) {
       autoAdvanceAfterRecordingAudio();
@@ -546,13 +546,18 @@ public class DatumDetailFragment extends Fragment {
     }
 
     String fileName = mItem.getMainAudioVideoFile();
+    if (fileName == null) {
+      Log.e(Config.TAG, "This item doesnt have an audio video file.");
+      return loadMainImage();
+    }
+
     String filePath = Config.DEFAULT_OUTPUT_DIRECTORY + "/" + fileName;
     File audioVideoFile = new File(filePath);
     if (!audioVideoFile.exists()) {
       return loadMainImage();
     }
 
-    if (fileName.endsWith(Config.DEFAULT_AUDIO_EXTENSION)) {
+    if (fileName.endsWith(Config.DEFAULT_AUDIO_EXTENSION) || fileName.endsWith(Config.DEFAULT_RECOGNIZER_AUDIO_EXTENSION)) {
       loadMainImage();
       Log.d(Config.TAG, "Playing audio only (no video)");
       mAudioPlayer = MediaPlayer.create(getActivity(), Uri.parse("file://" + filePath));

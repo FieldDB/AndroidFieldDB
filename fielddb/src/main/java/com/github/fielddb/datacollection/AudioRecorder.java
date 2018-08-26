@@ -206,7 +206,7 @@ public class AudioRecorder extends Service {
         try {
           this.mRecorder.stop();
           this.mRecorder.release();
-          Toast.makeText(this.getApplicationContext(), "Saving.", Toast.LENGTH_LONG).show();
+          Toast.makeText(this.getApplicationContext(), R.string.saving, Toast.LENGTH_LONG).show();
           Log.d(Config.TAG, "Turned off the audio recorder.");
         } catch (Exception e) {
           // Do nothing

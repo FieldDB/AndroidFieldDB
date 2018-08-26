@@ -79,6 +79,7 @@ To publish a new release of this library, edit the `version` in `fielddb/build.g
 ./gradlew clean
 ./gradlew build
 ./gradlew assembleRelease
+ls -alt fielddb/build/outputs/aar/
 ./gradlew generateSourcesJar
 ./gradlew generateJavadocs
 ./gradlew generateJavadocsJar

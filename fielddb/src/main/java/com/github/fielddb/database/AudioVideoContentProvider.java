@@ -1,7 +1,9 @@
 package com.github.fielddb.database;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import com.github.fielddb.Config;
 
@@ -73,9 +75,7 @@ public class AudioVideoContentProvider extends ContentProvider {
 
     // Using SQLiteQueryBuilder instead of query() method
     SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-
-    // Check if the caller has requested a column which does not exists
-    // checkColumns(projection);
+    queryBuilder.setStrict(true);
 
     // Set the table
     queryBuilder.setTables(AudioVideoTable.TABLE_NAME);
@@ -93,6 +93,12 @@ public class AudioVideoContentProvider extends ContentProvider {
     }
 
     SQLiteDatabase db = database.getWritableDatabase();
+
+    // Enforce the caller has not requested a column which does not exists
+    Map<String, String> restrictColumns = AudioVideoTable.getProjectionMap();
+    Log.d(Config.TAG, "restrictColumns " + restrictColumns.toString());
+    queryBuilder.setProjectionMap(restrictColumns);
+
     Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
     // Make sure that potential listeners are getting notified
     cursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -108,16 +114,15 @@ public class AudioVideoContentProvider extends ContentProvider {
     int rowsUpdated = 0;
     switch (uriType) {
     case ITEMS:
-      rowsUpdated = sqlDB.update(AudioVideoTable.TABLE_NAME, values, selection, selectionArgs);
+      Log.d(Config.TAG, "selecting items is unsupported " + selection);
       break;
     case ITEM_ID:
       String id = uri.getLastPathSegment();
       if (TextUtils.isEmpty(selection)) {
-        rowsUpdated = sqlDB.update(AudioVideoTable.TABLE_NAME, values, AudioVideoTable.COLUMN_ID + "='" + id + "'",
-            null);
+        String[] whereArgs = {id.toString()};
+        rowsUpdated = sqlDB.update(AudioVideoTable.TABLE_NAME, values, AudioVideoTable.COLUMN_ID + "=?", whereArgs);
       } else {
-        rowsUpdated = sqlDB.update(AudioVideoTable.TABLE_NAME, values, AudioVideoTable.COLUMN_ID + "='" + id + "' and "
-            + selection, selectionArgs);
+        Log.d(Config.TAG, "ignoring an unsupported selection " + selection);
       }
       break;
     default:
@@ -211,6 +216,27 @@ public class AudioVideoContentProvider extends ContentProvider {
       for (String column : currentColumns) {
         AudioVideoTable.columns.add(column);
       }
+    }
+
+    public static Map<String, String> getProjectionMap() {
+      Map<String, String> projection = new HashMap<>();
+      if (null == AudioVideoTable.columns || AudioVideoTable.columns.isEmpty()) {
+        AudioVideoTable.setColumns();
+      }
+      projection.put(COLUMN_ANDROID_ID, COLUMN_ANDROID_ID);
+      projection.put(COLUMN_ID, COLUMN_ID);
+      projection.put(COLUMN_REV, COLUMN_REV);
+      projection.put(COLUMN_TRASHED, COLUMN_TRASHED);
+      projection.put(COLUMN_CREATED_AT, COLUMN_CREATED_AT);
+      projection.put(COLUMN_UPDATED_AT, COLUMN_UPDATED_AT);
+      projection.put(COLUMN_APP_VERSIONS_WHEN_MODIFIED, COLUMN_APP_VERSIONS_WHEN_MODIFIED);
+      projection.put(COLUMN_RELATED, COLUMN_RELATED);
+      projection.put(COLUMN_ACTUAL_JSON, COLUMN_ACTUAL_JSON);
+
+      projection.put(COLUMN_FILENAME, COLUMN_FILENAME);
+      projection.put(COLUMN_URL, COLUMN_URL);
+      projection.put(COLUMN_DESCRIPTION, COLUMN_DESCRIPTION);
+      return projection;
     }
   }
 

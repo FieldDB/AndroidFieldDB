@@ -5,21 +5,124 @@
     <string name="speech_app_name">LRL Speech Recognition</string>
     <string name="title_datum_detail">Datum</string>
     <string name="title_datum_list_activity">Recognition Trainer Advanced</string>
-    <string name="app_explanation">
-      Field linguists and open source developers have gotten together to create a
-      speech recognizer for low resource language speakers. You can use this
-      application to prepare your Android to guess your speech. You need to read some
-      suggestions and then contact WiFi in order to prepare your voice model. We
-      expect that after reading some training sentences you will have a better result.
-      Because low resource languages are different from other languages ​​so we do
-      not know how useful this application will be. You can try it, it is mostly
-      experimental and used for research, so we can not guarantee that it will be
-      useful. If you use the app to train your recognizer, you agree that we can
-      use the anonymous training recordings to improve the recognizer and for linguistics research.
-      Here's our resulting research: http://batumi.github.io
-      We don't use or share your private data with anyone. Here is our privacy policy:
-      https://www.lingsync.org/privacy.html
+    <string name="i_agree">I Agree</string>
+    <string name="exit">Exit</string>
+    <string name="app_explanation">A free open source application for collecting data in the field.</string>
+    <string name="privacy_policy">
+      Privacy\n
+I. Privacy Policy \n
+Effective date: \n
+This Privacy Policy is effective and was last updated as of Nov 12, 2012.\n
+\n
+II. Our commitment to your privacy \n
+A. Thank you for visiting the LINGSYNC.ORG website, located at LingSync.org (the “Website”) and operated by LINGSYNC.ORG (“we” or “us”or “our”). The privacy of our visitors and users (collectively “you” or “your”) is very important to us. This Privacy Policy describes:\n
+\n
+How and why we collect certain information from you via the Website;\n
+How we use and with whom we share such information;\n
+How you can access and update such information; and\n
+The choices you can make about how we collect, use and share your information.\n
+B. If you have any questions regarding this Privacy Policy or our information collection and use practices, please contact us using the information in the “Contact Us” section below.\n
+\n
+III. Information we collect \n
+A. Registration Information \n
+– In order to register for a Website Account, you must provide the following information:\n
+\n
+A password\n
+A username\n
+Of these categories of information, only your username is discoverable via your LingSyncPage if someone searches for you: e.g., http://LingSync.org/LingLlama\n
+\n
+B. Additional Information \n
+– You may also provide us with additional information to make public, such as:\n
+\n
+A short biography\n
+A photograph that will appear as your profile picture\n
+Your affiliation (the institution where you work or do research)\n
+Your first name\n
+Your last name\n
+Providing any or all of this information is entirely optional.\n
+\n
+C. Non-Personal Information \n
+– We also collect aggregate, non-personally identifiable information about you and your use of the Website, as described in more detail below, including by using “cookies,” web beacons, local shared objects, or other types of tracking technology.\n
+\n
+IV. How we collect information about you \n
+We may collect Personal Information and Non-Personal Information about you in any one or more of the following ways:\n
+\n
+A. Registering Your Account &amp; Creating Your LingSyncPage\n
+\n
+In order for us to provide you with the ability to collect and post data to a personalized profile page (your “LingSyncPage” ) on the Website, you must first create a user account our Website ( “Account” ). During registration, you are required to provide an email address and to create a password, a Username and a display name (your “Registration Information”\n
+\n
+After you create an account, we give you the opportunity to provide additional information, such as a short biography, a photograph that will serve as a public profile picture, the city and country in which you live and a link to a website (your “Optional Profile Information” , and together with your Registration Information, your “Personal Information”\n
+\n
+Your LingSyncPage is visible to any site visitor and to other users of the site, and will show your display name and any Optional Profile Information you have provided. Your email address will never be displayed.\n
+\n
+B. Public display and site communications features\n
+\n
+The Website runs a “parade” of randomly selected clickable corpora posted by users on its home page. If a site visitor clicks on one of the corpora in the Parade, he or she will be able to view that user’s LingSyncPage, including their display name and any Optional Profile Information the user has chosen to provide. A visitor to LINGSYNC.ORG will be able to view your LingSyncPage.\n
+\n
+C. Website interactions\n
+\n
+You may be able to take part in certain activities on our website that give you the opportunity to communicate or share information not just with us, but also with other users of our Service. These include:\n
+\n
+Creating your LingSyncPage\n
+Logging in and out of the Website\n
+Posting data\n
+DataSharing data posted by other users\n
+Choosing to follow another user’s LingSyncPage\n
+Adding tags to data\n
+Sharing LINGSYNC.ORG’s pages on other social networks\n
+D. Cookies and automated non personal information collection\n
+\n
+We use a technology referred to as “cookies” (or other similar technology), which are pieces of data on your computer tied to information about you which recognize you as a return user of the Website and help to provide a more personalized experience.\n
+\n
+Like most standard website servers, we collect certain types of technical “Non Personal Information”, including internet protocol (IP) addresses, browser types, the referring domain, pages visited, search terms internet service providers (ISPs), and the number of clicks.\n
+\n
+V. How we use information collected from you \n
+We may use Personal Information and Non-Personal Information collected from you in any one or more of the following ways:\n
+\n
+A. How We Use Your Personal Information – the Personal Information we collect may be used as follows:\n
+\n
+To register and service your Account;\n
+For our internal records, tracking and project management purposes;\n
+In order to contact you to respond to your questions or requests or to provide you with technical support;\n
+To provide you with information regarding changes to the Website which may affect your Account, your use of the Website, and/or the products and services available through the Website;\n
+B. How We Use Your Non-Personal Information – Non-Personal Information collected from you is used for various purposes, such as:\n
+\n
+To improve our products and services;\n
+To customize the user experience of the Website;\n
+To administer the Website;\n
+To analyze trends, track user movement and gather statistical information for aggregate use; and\n
+To ensure that server load and resource requirements of the project remains sustainable for the indeterminate future.\n
+VI. Sharing your information \n
+A. The information included on your LingSyncPage will be visible to all users and all visitors to the Website. In addition, your information may also be shared as follows:\n
+\n
+Safety, Security and Compliance with Law: We may disclose any information, including Personal Information, we deem necessary to comply with any applicable law, regulation, legal process or governmental request, or to enforce our rights or to protect the safety and security of our Website or other users.\n
+Business Transfers: In the event LINGSYNC.ORG undergoes a project management transition, such as a merger, acquisition by another organization, or transfer of all or a portion of its assets, we may transfer your Personal Information to the successor organization in such transaction. If material changes to LINGSYNC.ORG’s privacy practices will occur as a result of the project management transition, LINGSYNC.ORG will attempt to notify you via email and will post a notice on the Website alerting you to the project management transition prior to transferring your Personal Information so that you can elect whether to delete your account.\n
+To Service Providers Performing Services on Our Behalf: We may contract with third party companies to perform services on our behalf, including marketing assistance, e-mail delivery, hosting services, customer service, and data analysis. We require any third party service providers to maintain the confidentiality of the information disclosed to them and are not permitted to use your Personal Information for any purpose other than to provide services to LINGSYNC.ORG.\n
+VII. How to access and update your information \n
+A. You can access and update the information that you have provided to LINGSYNC.ORG as follows:\n
+\n
+You may review and make changes to certain of your Personal Information and Non-Personal Information by logging into your Account and updating your Account profile.\n
+You may contact us at support@LingSync.org and request to review, amend or delete your Personal Information collected by us, and/or request us to cease collecting Personal Information from you in the future.\n
+VIII. Links to third party web sites \n
+A. We are not responsible for the practices employed by websites linked to or from the Website nor the information or content contained therein. Often links to other websites are provided solely as pointers to information on topics that may be useful or interesting to our users, or provided by other users to give you more information about themselves. Please remember that when you navigate away from the Website to another website, our Privacy Policy is no longer in effect. By your browsing and interaction on any other website, including websites which have a link on our Website, is subject to that website’s own rules and policies. Please read over those rules and policies before proceeding.\n
+\n
+IX. Our policy towards children \n
+A. Children under the age of 13 are not permitted to register for LINGSYNC.ORG. However, some users use LingSync to run human subjects experiments including minors. Your LINGSYNC.ORG account may contain sensitive private information of children under the age of 13 which are used in the of creation of their experimental result reports and participation certificates. By default, if you use the Psycholinguistics dashboard, Participant information (first name, last name, date of birth) are stored encrypted in your database using the AES encryption algorithm. Advanced Encryption Standard (AES) is a specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology (NIST) in 2001. AES has been approved for secure encryption of confidential and classified information by the Canadian and U.S. governments.\n
+\n
+X. Security of your information \n
+A. We implement reasonable administrative, technical and physical security measures to protect the security of your information both online and offline, and we are committed to the protection of your information. In general, our project management practices limit access to confidential information to only those team members who provide you with technical support.\n
+\n
+B. Your User Account information is protected by the password you use to access your online account. It is important that you protect and maintain the security of your User Account and that you immediately notify us of any unauthorized use of your User Account. If you forget your password, you may request a new password here\n
+\n
+C. While we take reasonable precautions against possible security breaches of the Website, no website or Internet transmission is completely secure, and we cannot guarantee that unauthorized access, hacking, data loss, or other breaches will never occur. We urge you to take steps to keep your Personal Information safe (including your User Account password), and log out of your User Account after use on shared computers such as school computers and tablets.\n
+\n
+XI. Changes to this policy \n
+A. If we decide to make material changes to our Privacy Policy, we will attempt to notify you and other users of the Website by sending a notice to the email address provided to us and/or by placing a notice on our Website. You should periodically check the Website for such notices.\n
+\n
+Contact us \n
+If you have any questions, comments or concerns regarding our Privacy Policy and/or practices, please send an email to: support@LingSync.org
     </string>
+
     <string name="delete">Delete</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="are_you_sure_put_in_trash">Are you sure you want to put this datum in the trash?</string>
@@ -45,11 +148,15 @@
     <string name="i_might_have_heard">I might have heard: </string>
     <string name="or_maybe">Or maybe this: </string>
     <string name="there_were_others">. I\'m pretty funny, ey? There were some other options, but I think I\'ll stop there. </string>
+    <string name="copied_result_to_your_clipboard">Copied %s to your clipboard.</string>
     <string name="train">Train</string>
     <string name="recognize">Recognize</string>
+    <string name="saving">Saving</string>
+    <string name="swipe_to_begin">Swipe to begin</string>
     <string name="tap_to_speak">Tap to speak again</string>
     <string name="tap_to_end">Tap to end</string>
     <string name="speak_now">Speak now</string>
+    <string name="speak_after_prompt">Speak after beep</string>
     <string name="dialog_continue_to_advanced_training">Add your own words?</string>
     <string name="continue_word">Continue</string>
     <string name="finished">Enough</string>

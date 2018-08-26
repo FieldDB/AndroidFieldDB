@@ -5,4 +5,9 @@
     <string name="speech_app_name">ქართული speech</string>
     <string name="title_datum_detail">ფრაზა</string>
 
+    <string name="i_agree">ვეთანხმები</string>
+    <string name="exit">გასვლა</string>
+    <string name="dialog_continue_to_advanced_training">დაამატებდი საკუთარ სიტყვებს?</string>
+    <string name="finished">საკმარისია</string>
+    <string name="context">კონტექსტში</string>
 </resources>

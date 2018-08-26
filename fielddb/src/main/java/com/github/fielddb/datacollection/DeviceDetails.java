@@ -155,7 +155,7 @@ public class DeviceDetails implements LocationListener {
           Log.d(Config.TAG, "Using gps for location provider.");
 
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-//          ActivityCompat.requestPermissions(mContext, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_READ_PHONE_STATE);
+//          ActivityCompat.requestPermissions(mContext, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION);
         } else {
           locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         }

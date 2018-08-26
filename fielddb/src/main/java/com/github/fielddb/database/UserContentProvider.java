@@ -1,6 +1,8 @@
 package com.github.fielddb.database;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.github.fielddb.Config;
 
@@ -80,9 +82,7 @@ public class UserContentProvider extends ContentProvider {
 
     // Using SQLiteQueryBuilder instead of query() method
     SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-
-    // Check if the caller has requested a column which does not exists
-    // checkColumns(projection);
+    queryBuilder.setStrict(true);
 
     // Set the table
     queryBuilder.setTables(UserTable.TABLE_NAME);
@@ -100,6 +100,12 @@ public class UserContentProvider extends ContentProvider {
     }
 
     SQLiteDatabase db = database.getWritableDatabase();
+
+    // Enforce the caller has not requested a column which does not exists
+    Map<String, String> restrictColumns = UserTable.getProjectionMap();
+    Log.d(Config.TAG, "restrictColumns " + restrictColumns.toString());
+    queryBuilder.setProjectionMap(restrictColumns);
+
     Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
     // Make sure that potential listeners are getting notified
     cursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -115,15 +121,15 @@ public class UserContentProvider extends ContentProvider {
     int rowsUpdated = 0;
     switch (uriType) {
     case ITEMS:
-      rowsUpdated = sqlDB.update(UserTable.TABLE_NAME, values, selection, selectionArgs);
+      Log.d(Config.TAG, "selecting items is unsupported " + selection);
       break;
     case ITEM_ID:
       String id = uri.getLastPathSegment();
       if (TextUtils.isEmpty(selection)) {
-        rowsUpdated = sqlDB.update(UserTable.TABLE_NAME, values, UserTable.COLUMN_USERNAME + "='" + id + "'", null);
+        String[] whereArgs = {id.toString()};
+        rowsUpdated = sqlDB.update(UserTable.TABLE_NAME, values, UserTable.COLUMN_ID + "=?", whereArgs);
       } else {
-        rowsUpdated = sqlDB.update(UserTable.TABLE_NAME, values, UserTable.COLUMN_USERNAME + "='" + id + "' and "
-            + selection, selectionArgs);
+        Log.d(Config.TAG, "ignoring an unsupported selection " + selection);
       }
       break;
     default:
@@ -248,6 +254,34 @@ public class UserContentProvider extends ContentProvider {
       for (String column : currentColumns) {
         UserTable.columns.add(column);
       }
+    }
+
+    public static Map<String, String> getProjectionMap() {
+      Map<String, String> projection = new HashMap<>();
+      if (null == UserTable.columns || UserTable.columns.isEmpty()) {
+        UserTable.setColumns();
+      }
+      projection.put(COLUMN_ANDROID_ID, COLUMN_ANDROID_ID);
+      projection.put(COLUMN_ID, COLUMN_ID);
+      projection.put(COLUMN_REV, COLUMN_REV);
+      projection.put(COLUMN_TRASHED, COLUMN_TRASHED);
+      projection.put(COLUMN_CREATED_AT, COLUMN_CREATED_AT);
+      projection.put(COLUMN_UPDATED_AT, COLUMN_UPDATED_AT);
+      projection.put(COLUMN_APP_VERSIONS_WHEN_MODIFIED, COLUMN_APP_VERSIONS_WHEN_MODIFIED);
+      projection.put(COLUMN_RELATED, COLUMN_RELATED);
+      projection.put(COLUMN_ACTUAL_JSON, COLUMN_ACTUAL_JSON);
+
+      projection.put(COLUMN_USERNAME, COLUMN_USERNAME);
+      projection.put(COLUMN_FIRSTNAME, COLUMN_FIRSTNAME);
+      projection.put(COLUMN_LASTNAME, COLUMN_LASTNAME);
+      projection.put(COLUMN_EMAIL, COLUMN_EMAIL);
+      projection.put(COLUMN_GRAVATAR, COLUMN_GRAVATAR);
+      projection.put(COLUMN_AFFILIATION, COLUMN_AFFILIATION);
+      projection.put(COLUMN_RESEARCH_INTEREST, COLUMN_RESEARCH_INTEREST);
+      projection.put(COLUMN_DESCRIPTION, COLUMN_DESCRIPTION);
+      projection.put(COLUMN_SUBTITLE, COLUMN_SUBTITLE);
+      projection.put(COLUMN_GENERATED_PASSWORD, COLUMN_GENERATED_PASSWORD);
+      return projection;
     }
   }
 }

@@ -188,11 +188,30 @@ public class Datum {
       this.setAudioVideoFiles(cursor.getString(currentColumnIndex));
     }
 
+    currentColumnIndex = cursor.getColumnIndex(DatumTable.COLUMN_VALIDATION_STATUS);
+    if (currentColumnIndex > -1) {
+      this.setValidationStatiFromSting(cursor.getString(currentColumnIndex));
+    } else {
+      this.tags = new ArrayList<String>();
+    }
+
+    currentColumnIndex = cursor.getColumnIndex(DatumTable.COLUMN_TAGS);
+    if (currentColumnIndex > -1) {
+      this.setTagsFromSting(cursor.getString(currentColumnIndex));
+    } else {
+      this.validationStati = new ArrayList<String>();
+    }
+
+    currentColumnIndex = cursor.getColumnIndex(DatumTable.COLUMN_TAGS);
+    if (currentColumnIndex > -1) {
+      this.setTagsFromSting(cursor.getString(currentColumnIndex));
+    } else {
+      this.validationStati = new ArrayList<String>();
+    }
+
     this.locations = new ArrayList<String>();
     this.related = new ArrayList<String>();
     this.reminders = new ArrayList<String>();
-    this.tags = new ArrayList<String>();
-    this.validationStati = new ArrayList<String>();
     this.coments = new ArrayList<String>();
     this.actualJSON = "";
   }
