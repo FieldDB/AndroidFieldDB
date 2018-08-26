@@ -223,9 +223,19 @@ public class AudioVideoContentProvider extends ContentProvider {
       if (null == AudioVideoTable.columns || AudioVideoTable.columns.isEmpty()) {
         AudioVideoTable.setColumns();
       }
-      for (String column : AudioVideoTable.columns) {
-        projection.put(column, column);
-      }
+      projection.put(COLUMN_ANDROID_ID, COLUMN_ANDROID_ID);
+      projection.put(COLUMN_ID, COLUMN_ID);
+      projection.put(COLUMN_REV, COLUMN_REV);
+      projection.put(COLUMN_TRASHED, COLUMN_TRASHED);
+      projection.put(COLUMN_CREATED_AT, COLUMN_CREATED_AT);
+      projection.put(COLUMN_UPDATED_AT, COLUMN_UPDATED_AT);
+      projection.put(COLUMN_APP_VERSIONS_WHEN_MODIFIED, COLUMN_APP_VERSIONS_WHEN_MODIFIED);
+      projection.put(COLUMN_RELATED, COLUMN_RELATED);
+      projection.put(COLUMN_ACTUAL_JSON, COLUMN_ACTUAL_JSON);
+
+      projection.put(COLUMN_FILENAME, COLUMN_FILENAME);
+      projection.put(COLUMN_URL, COLUMN_URL);
+      projection.put(COLUMN_DESCRIPTION, COLUMN_DESCRIPTION);
       return projection;
     }
   }

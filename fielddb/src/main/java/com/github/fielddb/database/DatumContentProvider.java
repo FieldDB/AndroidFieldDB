@@ -273,6 +273,7 @@ public class DatumContentProvider extends ContentProvider {
       projection.put(COLUMN_APP_VERSIONS_WHEN_MODIFIED, COLUMN_APP_VERSIONS_WHEN_MODIFIED);
       projection.put(COLUMN_RELATED, COLUMN_RELATED);
       projection.put(COLUMN_ACTUAL_JSON, COLUMN_ACTUAL_JSON);
+
       projection.put(COLUMN_UTTERANCE, COLUMN_UTTERANCE);
       projection.put(COLUMN_MORPHEMES, COLUMN_MORPHEMES);
       projection.put(COLUMN_GLOSS, COLUMN_GLOSS);

@@ -261,9 +261,26 @@ public class UserContentProvider extends ContentProvider {
       if (null == UserTable.columns || UserTable.columns.isEmpty()) {
         UserTable.setColumns();
       }
-      for (String column : UserTable.columns) {
-        projection.put(column, column);
-      }
+      projection.put(COLUMN_ANDROID_ID, COLUMN_ANDROID_ID);
+      projection.put(COLUMN_ID, COLUMN_ID);
+      projection.put(COLUMN_REV, COLUMN_REV);
+      projection.put(COLUMN_TRASHED, COLUMN_TRASHED);
+      projection.put(COLUMN_CREATED_AT, COLUMN_CREATED_AT);
+      projection.put(COLUMN_UPDATED_AT, COLUMN_UPDATED_AT);
+      projection.put(COLUMN_APP_VERSIONS_WHEN_MODIFIED, COLUMN_APP_VERSIONS_WHEN_MODIFIED);
+      projection.put(COLUMN_RELATED, COLUMN_RELATED);
+      projection.put(COLUMN_ACTUAL_JSON, COLUMN_ACTUAL_JSON);
+
+      projection.put(COLUMN_USERNAME, COLUMN_USERNAME);
+      projection.put(COLUMN_FIRSTNAME, COLUMN_FIRSTNAME);
+      projection.put(COLUMN_LASTNAME, COLUMN_LASTNAME);
+      projection.put(COLUMN_EMAIL, COLUMN_EMAIL);
+      projection.put(COLUMN_GRAVATAR, COLUMN_GRAVATAR);
+      projection.put(COLUMN_AFFILIATION, COLUMN_AFFILIATION);
+      projection.put(COLUMN_RESEARCH_INTEREST, COLUMN_RESEARCH_INTEREST);
+      projection.put(COLUMN_DESCRIPTION, COLUMN_DESCRIPTION);
+      projection.put(COLUMN_SUBTITLE, COLUMN_SUBTITLE);
+      projection.put(COLUMN_GENERATED_PASSWORD, COLUMN_GENERATED_PASSWORD);
       return projection;
     }
   }
