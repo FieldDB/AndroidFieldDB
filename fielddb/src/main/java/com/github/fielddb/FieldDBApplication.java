@@ -32,10 +32,10 @@ import com.github.fielddb.service.RegisterUserService;
  * If you want the app to automatically update sample data if the user has wifi,
  * you can provide a mUpdateSampleData; If you want the app to always work
  * offline (no online sample data) you can provide mOfflineSampleData;
- * 
+ *
  * - mUpdateSampleData to be an intent which knows how to download/update sample
  * data from a server - mOfflineSampleData to have 1 sample datum
- * 
+ *
  */
 @ReportsCrashes(formKey = "", formUri = "", reportType = org.acra.sender.HttpSender.Type.JSON, httpMethod = org.acra.sender.HttpSender.Method.PUT, formUriBasicAuthLogin = "see_private_constants", formUriBasicAuthPassword = "see_private_constants")
 public class FieldDBApplication extends Application {
@@ -59,7 +59,7 @@ public class FieldDBApplication extends Application {
 
   protected boolean initBugReporter() {
     ACRAConfiguration config = ACRA.getNewDefaultConfig(this);
-    config.setFormUri(Config.ACRA_SERVER_URL);
+    config.setFormUri(PrivateConstants.ACRA_SERVER_URL);
     config.setFormUriBasicAuthLogin(Config.ACRA_USER);
     config.setFormUriBasicAuthPassword(Config.ACRA_PASS);
 
@@ -185,7 +185,7 @@ public class FieldDBApplication extends Application {
    * that version of the Experiment. It accepts a variable in the form en or
    * en-US containing just the language code, or the language code followed by a
    * - and the co
-   * 
+   *
    * @param lang
    * @return
    */
