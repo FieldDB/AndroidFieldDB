@@ -166,8 +166,7 @@
                 </TableRow>
 
                 <TableRow
-                    android:layout_width="match_parent"
-                    android:background="#ffffa300" >
+                    android:layout_width="match_parent">
 
                     <EditText
                         android:id="@+id/hypothesis4"
@@ -189,8 +188,7 @@
                 </TableRow>
 
                 <TableRow
-                    android:layout_width="match_parent"
-                    android:background="#fff9b032" >
+                    android:layout_width="match_parent" >
 
                     <EditText
                         android:id="@+id/hypothesis5"
