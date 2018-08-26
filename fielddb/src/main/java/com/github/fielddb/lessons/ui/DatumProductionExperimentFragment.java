@@ -58,7 +58,7 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
         mAudioPromptResource = R.raw.instructions;
         mImageView.setImageResource(R.drawable.instructions);
         mSpeechRecognizerFeedback.setVisibility(View.GONE);
-        mSpeechRecognizerInstructions.setText("Swipe to begin...");
+        mSpeechRecognizerInstructions.setText(R.string.swipe_to_begin);
         playPromptContext();
       } else {
         mAudioPromptResource = R.raw.im_listening;
@@ -116,7 +116,7 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
       });
 
       if (mSpeechRecognizerInstructions != null && !mIsInstructions) {
-        mSpeechRecognizerInstructions.setText("Speak after beep");
+        mSpeechRecognizerInstructions.setText(R.string.speak_after_prompt);
       }
     }
     /*
@@ -158,7 +158,7 @@ public class DatumProductionExperimentFragment extends DatumDetailFragment {
         Log.e(Config.TAG, "Unable to continue to advanced training, the activity is gone.");
         return null;
       }
-      
+
       AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
       builder.setMessage(R.string.dialog_continue_to_advanced_training)
           .setPositiveButton(R.string.continue_word, new DialogInterface.OnClickListener() {

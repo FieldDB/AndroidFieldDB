@@ -443,7 +443,7 @@ public class DatumDetailFragment extends Fragment {
       }
 
       if (mSpeechRecognizerInstructions != null) {
-        mSpeechRecognizerInstructions.setText("Tap to end");
+        mSpeechRecognizerInstructions.setText(R.string.tap_to_end);
       }
 
     } else {
@@ -487,7 +487,7 @@ public class DatumDetailFragment extends Fragment {
     }
 
     if (mSpeechRecognizerInstructions != null) {
-      mSpeechRecognizerInstructions.setText("Tap to speak again");
+      mSpeechRecognizerInstructions.setText(R.string.tap_to_end);
     }
     if (Config.APP_TYPE.equals("speechrecognition")) {
       autoAdvanceAfterRecordingAudio();

@@ -171,7 +171,7 @@ public class TakePicture extends Activity {
         editor.putString(Config.PREFERENCE_LAST_PICTURE_TAKEN, "");
         editor.commit();
 
-        Toast.makeText(this.getApplicationContext(), "Saving as " + this.mImageFilename, Toast.LENGTH_LONG).show();
+        Toast.makeText(this.getApplicationContext(), R.string.saving + " " + this.mImageFilename, Toast.LENGTH_LONG).show();
         if (this.mAppearSeamless) {
           this.finish();
         }

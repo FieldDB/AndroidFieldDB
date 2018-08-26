@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.github.fielddb.Config;
+import com.github.fielddb.R;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -308,7 +309,7 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
       this.mVideoRecorder.stop();
       this.mVideoRecorder.release();
       this.mVideoRecorder = null;
-      Toast.makeText(this.mContext, "Saving.", Toast.LENGTH_LONG).show();
+      Toast.makeText(this.mContext, R.string.saving, Toast.LENGTH_LONG).show();
     }
     if (this.mCamera != null) {
       this.mCamera.reconnect();
