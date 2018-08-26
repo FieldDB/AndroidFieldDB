@@ -29,7 +29,7 @@ before_install:
   - android list target
   - echo "TRAVIS is $TRAVIS"
   - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
-  - emulator -writable-system -avd test -no-audio -no-window &
+  - emulator -writable-system -avd test -no-audio -no-window -use-system-libs -gpu host &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
   - adb root
