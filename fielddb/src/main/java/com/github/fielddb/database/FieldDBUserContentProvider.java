@@ -1,5 +1,6 @@
 package com.github.fielddb.database;
 
+import com.github.fielddb.BuildConfig;
 import com.github.fielddb.Config;
 
 import android.content.UriMatcher;
@@ -10,7 +11,7 @@ public class FieldDBUserContentProvider extends UserContentProvider {
   @Override
   public boolean onCreate() {
     UserTable.ANONYMOUS_PREFIX = Config.ANONYMOUS_USER_PREFIX;
-    if (Config.D) {
+    if (BuildConfig.DEBUG) {
       UserTable.ANONYMOUS_PREFIX = "testing" + UserTable.ANONYMOUS_PREFIX;
     }
     AUTHORITY = "com.github.fielddb." + Config.APP_TYPE.toLowerCase() + "."

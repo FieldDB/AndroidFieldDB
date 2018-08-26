@@ -1,5 +1,6 @@
 package com.github.fielddb.lessons.ui;
 
+import com.github.fielddb.BuildConfig;
 import com.github.fielddb.Config;
 import com.github.fielddb.javascript.HTML5GameActivity;
 
@@ -21,14 +22,14 @@ public class ParticipantDetails extends Activity {
       } else {
         Intent i = new Intent(this.getBaseContext(), HTML5GameActivity.class);
         i.putExtra(Config.EXTRA_PLEASE_PREPARE_EXPERIMENT, true);
-        i.putExtra(Config.EXTRA_DEBUG_MODE, Config.D);
+        i.putExtra(Config.EXTRA_DEBUG_MODE, BuildConfig.DEBUG);
         i.putExtra(Config.EXTRA_TAG, Config.TAG);
         this.startActivity(i);
       }
     } catch (Exception e) {
       Intent i = new Intent(this.getBaseContext(), HTML5GameActivity.class);
       i.putExtra(Config.EXTRA_PLEASE_PREPARE_EXPERIMENT, true);
-      i.putExtra(Config.EXTRA_DEBUG_MODE, Config.D);
+      i.putExtra(Config.EXTRA_DEBUG_MODE, BuildConfig.DEBUG);
       i.putExtra(Config.EXTRA_TAG, Config.TAG);
       this.startActivity(i);
     }

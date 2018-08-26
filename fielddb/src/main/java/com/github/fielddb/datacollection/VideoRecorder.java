@@ -1,6 +1,7 @@
 package com.github.fielddb.datacollection;
 
 import com.github.fielddb.Config;
+import com.github.fielddb.BuildConfig;
 
 import com.github.fielddb.R;
 import android.app.Activity;
@@ -69,7 +70,7 @@ public class VideoRecorder extends AppCompatActivity implements SurfaceHolder.Ca
       Log.d(Config.TAG, "Surface was created but we are already running.");
       return;
     }
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "Preparing to record. ");
     this.mRecordVideoTask = new VideoRecorderAsyncTask();
     this.mRecordVideoTask.setContext(this);
@@ -78,7 +79,7 @@ public class VideoRecorder extends AppCompatActivity implements SurfaceHolder.Ca
 
     setResult(Activity.RESULT_OK, getIntent());
 
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "Telling recorder asyc to execute. ");
     this.mRecordVideoTask.execute();
     this.mRecording = true;
@@ -92,7 +93,7 @@ public class VideoRecorder extends AppCompatActivity implements SurfaceHolder.Ca
 
   public boolean finishSubExperiment(boolean fromExternalRequest) {
     try {
-      if (Config.D)
+      if (BuildConfig.DEBUG)
         Log.d(Config.TAG, "Telling recorder async to stop. ");
       if (this.mRecordVideoTask != null) {
         this.mRecordVideoTask.stopRecording();
@@ -104,7 +105,7 @@ public class VideoRecorder extends AppCompatActivity implements SurfaceHolder.Ca
         return true;
       }
     } catch (Exception e) {
-      if (Config.D)
+      if (BuildConfig.DEBUG)
         Log.d(Config.TAG, "Error Telling recorder async to stop. ");
       e.printStackTrace();
     }
@@ -152,7 +153,7 @@ public class VideoRecorder extends AppCompatActivity implements SurfaceHolder.Ca
   @Override
   public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "Configuration has changed (rotation). Not redrawing the screen.");
     /*
      * Doing nothing makes the current redraw properly
@@ -161,7 +162,7 @@ public class VideoRecorder extends AppCompatActivity implements SurfaceHolder.Ca
 
   @Override
   public void onLowMemory() {
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.w(Config.TAG, "Low memory...closing");
     super.onLowMemory();
   }

@@ -1,5 +1,6 @@
 package com.github.fielddb.javascript;
 
+import com.github.fielddb.BuildConfig;
 import com.github.fielddb.Config;
 
 import android.content.Intent;
@@ -59,7 +60,7 @@ public class HTML5GameActivity extends HTML5Activity {
   @Override
   protected void setUpVariables() {
     this.setJavaScriptInterface(new ExperimentJavaScriptInterface(Config.DEFAULT_OUTPUT_DIRECTORY, this.getApplicationContext(), this, ""));
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "Using the experiment javascript interface.");
   }
 }

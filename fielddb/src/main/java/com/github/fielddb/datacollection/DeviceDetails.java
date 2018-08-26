@@ -1,6 +1,7 @@
 package com.github.fielddb.datacollection;
 
 import com.github.fielddb.Config;
+import com.github.fielddb.BuildConfig;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -123,24 +124,24 @@ public class DeviceDetails implements LocationListener {
 
     String provider = locationManager.getBestProvider(crta, true);
     if ("network".equals(provider)) {
-      if (Config.D)
+      if (BuildConfig.DEBUG)
         Log.d(Config.TAG, "Using network for location provider.");
       if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, this.min_time, this.min_dis, this);
       }
     } else if ("gps".equals(provider)) {
-      if (Config.D)
+      if (BuildConfig.DEBUG)
         Log.d(Config.TAG, "Using network for location provider.");
       if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
       }
     } else {
-      if (Config.D)
+      if (BuildConfig.DEBUG)
         Log.d(Config.TAG, "Best location provider was not specified, using both network and gps.");
 
       permissionCheck = ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION);
       if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-        if (Config.D) {
+        if (BuildConfig.DEBUG) {
           Log.d(Config.TAG, "Using network for location provider.");
         }
 
@@ -151,7 +152,7 @@ public class DeviceDetails implements LocationListener {
         }
       }
       if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-        if (Config.D)
+        if (BuildConfig.DEBUG)
           Log.d(Config.TAG, "Using gps for location provider.");
 
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
@@ -173,7 +174,7 @@ public class DeviceDetails implements LocationListener {
     this.longitude = location.getLongitude();
     this.latitude = location.getLatitude();
     this.locationAccuracy = location.getAccuracy();
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "Location changed; " + this.longitude + ":" + this.latitude + " accuracy: "
           + this.locationAccuracy);
   }

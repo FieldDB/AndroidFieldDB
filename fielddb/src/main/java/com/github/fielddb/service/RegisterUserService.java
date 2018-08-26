@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
+import com.github.fielddb.BuildConfig;
 import com.github.fielddb.Config;
 import com.github.fielddb.database.FieldDBUserContentProvider;
 import com.github.fielddb.database.UserContentProvider.UserTable;
@@ -40,7 +41,7 @@ public class RegisterUserService extends NotifyingIntentService {
     this.statusMessage = "Registering user";
     this.tryAgain = intent;
     this.keystoreResourceId = R.raw.sslkeystore;
-    if (Config.D) {
+    if (BuildConfig.DEBUG) {
       Log.d(Config.TAG, "Inside RegisterUserService intent, not registering on server because we are in debug mode");
       return;
     }

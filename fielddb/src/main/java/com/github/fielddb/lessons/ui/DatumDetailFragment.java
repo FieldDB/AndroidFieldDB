@@ -45,6 +45,7 @@ import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import com.github.fielddb.BuildConfig;
 import com.github.fielddb.Config;
 import com.github.fielddb.database.DatumContentProvider;
 import com.github.fielddb.database.DatumContentProvider.DatumTable;
@@ -738,7 +739,7 @@ public class DatumDetailFragment extends Fragment {
         it.remove(); // avoids a ConcurrentModificationException
       }
       edits = "[" + edits + "]";
-      if (Config.D) {
+      if (BuildConfig.DEBUG) {
         Log.d(Config.TAG, "edits: " + edits);
       }
       recordUserEvent("totalDatumEditsOnPause", edits);

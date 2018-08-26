@@ -21,6 +21,7 @@ package com.github.fielddb.experimentation.ui;
 
 import java.util.ArrayList;
 
+import com.github.fielddb.BuildConfig;
 import com.github.fielddb.Config;
 import com.github.fielddb.datacollection.AudioRecorder;
 import com.github.fielddb.datacollection.VideoRecorderAsyncTask;
@@ -103,13 +104,13 @@ public class StopWatchSubExperiment extends Activity implements SurfaceHolder.Ca
     this.setResult(Config.CODE_EXPERIMENT_COMPLETED, intent);
 
     try {
-      if (Config.D)
+      if (BuildConfig.DEBUG)
         Log.d(Config.TAG, "Telling recorder asyc to stop. ");
       if (this.recordVideoTask != null) {
         this.recordVideoTask.stopRecording();
       }
     } catch (Exception e) {
-      if (Config.D)
+      if (BuildConfig.DEBUG)
         Log.d(Config.TAG, "Error Telling recorder asyc to stop. ");
       e.printStackTrace();
     }
@@ -123,7 +124,7 @@ public class StopWatchSubExperiment extends Activity implements SurfaceHolder.Ca
   @Override
   public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "Configuration has changed (rotation). Not redrawing the screen.");
     /*
      * Doing nothing makes the current redraw properly
@@ -204,7 +205,7 @@ public class StopWatchSubExperiment extends Activity implements SurfaceHolder.Ca
 
   @Override
   public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.v(Config.TAG, "Width x Height = " + width + "x" + height);
   }
 
@@ -213,13 +214,13 @@ public class StopWatchSubExperiment extends Activity implements SurfaceHolder.Ca
     if (this.mRecording) {
       return;
     }
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "Preparing to record. ");
     this.recordVideoTask = new VideoRecorderAsyncTask();
     this.recordVideoTask.setContext(this);
     this.recordVideoTask.setParentUI(this);
     this.recordVideoTask.setHolder(holder);
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "Telling recorder asyc to execute. ");
     this.recordVideoTask.execute();
 

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import com.github.fielddb.BuildConfig;
 import com.github.fielddb.Config;
 import com.github.fielddb.lessons.ui.ParticipantDetails;
 
@@ -57,7 +58,7 @@ public abstract class HTML5Activity extends Activity {
   @Override
   public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "Configuration has changed (rotation). Not redrawing the screen.");
     /*
      * Doing nothing makes the current redraw properly
@@ -171,7 +172,7 @@ public abstract class HTML5Activity extends Activity {
     webSettings.setAppCacheEnabled(true);
     webSettings.setDomStorageEnabled(true);
     webSettings.setDatabasePath(this.getFilesDir().getAbsolutePath() + "webdb/");
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "Turning on dom storage enabled webSettings.setDomStorageEnabled "
           + this.getFilesDir().getAbsolutePath() + "/databases/");
 
@@ -182,7 +183,7 @@ public abstract class HTML5Activity extends Activity {
      * (#) or parameters (?) if they are in the assets files(?). Many
      * workarounds are discussed here:
      * http://code.google.com/p/android/issues/detail?id=17535#c100
-     * 
+     *
      * The code below handles 3 cases:
      */
 

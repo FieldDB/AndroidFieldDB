@@ -3,6 +3,7 @@ package com.github.fielddb.javascript;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.github.fielddb.BuildConfig;
 import com.github.fielddb.Config;
 
 import android.annotation.SuppressLint;
@@ -54,19 +55,19 @@ public class AssetIncludeWorkaroundWebViewClient extends WebViewClient {
       try {
         AssetManager assets = this.mContext.getAssets();
         Uri uri = Uri.parse(url);
-        if (Config.D)
+        if (BuildConfig.DEBUG)
           Log.d(Config.TAG,
               "The URL was in the assets. (removed the assets and sending the contents of the file)? to the browser. "
                   + url);
 
         return assets.open(uri.getPath(), AssetManager.ACCESS_STREAMING);
       } catch (IOException e) {
-        if (Config.D)
+        if (BuildConfig.DEBUG)
           Log.d(Config.TAG, "The URL was in the assets. But there was an IOException when opening it. " + url);
 
       }
     } else {
-      if (Config.D)
+      if (BuildConfig.DEBUG)
         Log.d(Config.TAG,
             "The URL was not the assets. Not performing any action, letting the WebView handle it normally. " + url);
 
@@ -77,7 +78,7 @@ public class AssetIncludeWorkaroundWebViewClient extends WebViewClient {
   @SuppressLint("NewApi")
   @Override
   public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "Intercepting an URL requestin the webview " + url);
     InputStream stream = this.inputStreamForAndroidResource(url);
     if (stream != null) {

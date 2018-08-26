@@ -1,5 +1,6 @@
 package com.github.fielddb.javascript;
 
+import com.github.fielddb.BuildConfig;
 import com.github.fielddb.Config;
 import com.github.fielddb.model.Experiment;
 import com.github.fielddb.model.NonObfuscateable;
@@ -47,7 +48,7 @@ public class ExperimentJavaScriptInterface extends JavaScriptInterface implement
   @JavascriptInterface
   @Deprecated
   public void launchSubExperimentJS(String subex) {
-    if (Config.D) {
+    if (BuildConfig.DEBUG) {
       Log.d(Config.TAG, "Launching sub experiment:" + subex);
     }
     Log.w(Config.TAG, "TODO Update Launching sub experiment:" + subex);
@@ -80,7 +81,7 @@ public class ExperimentJavaScriptInterface extends JavaScriptInterface implement
     //
     // app.getSubExperiments().get(currentSubExperiment).setResultsFileWithoutSuffix(this.mOutputDir
     // + "video/" + resultsFile);
-    // if (Config.D)
+    // if (BuildConfig.DEBUG)
     // Log.d(Config.TAG, "setResultsFileWithoutSuffix sub experiment:" +
     // resultsFile);
 
@@ -115,7 +116,7 @@ public class ExperimentJavaScriptInterface extends JavaScriptInterface implement
         + currentSubExperiment + "_"
         + mExperiment.getSubExperiments().get(currentSubExperiment).getTitle().replaceAll(" ", "_") + "-" + mDateString;
 
-    if (Config.D) {
+    if (BuildConfig.DEBUG) {
       Log.d(Config.TAG, "Starting video/audio recording to:" + resultsFile);
     }
     this.startVideoRecorder(resultsFile);
