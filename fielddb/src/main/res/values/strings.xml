@@ -148,6 +148,7 @@ If you have any questions, comments or concerns regarding our Privacy Policy and
     <string name="i_might_have_heard">I might have heard: </string>
     <string name="or_maybe">Or maybe this: </string>
     <string name="there_were_others">. I\'m pretty funny, ey? There were some other options, but I think I\'ll stop there. </string>
+    <string name="copied_result_to_your_clipboard">Copied %s to your clipboard.</string>
     <string name="train">Train</string>
     <string name="recognize">Recognize</string>
     <string name="saving">Saving</string>
