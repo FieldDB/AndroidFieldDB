@@ -546,13 +546,18 @@ public class DatumDetailFragment extends Fragment {
     }
 
     String fileName = mItem.getMainAudioVideoFile();
+    if (fileName == null) {
+      Log.e(Config.TAG, "This item doesnt have an audio video file.");
+      return loadMainImage();
+    }
+
     String filePath = Config.DEFAULT_OUTPUT_DIRECTORY + "/" + fileName;
     File audioVideoFile = new File(filePath);
     if (!audioVideoFile.exists()) {
       return loadMainImage();
     }
 
-    if (fileName.endsWith(Config.DEFAULT_AUDIO_EXTENSION)) {
+    if (fileName.endsWith(Config.DEFAULT_AUDIO_EXTENSION) || fileName.endsWith(Config.DEFAULT_RECOGNIZER_AUDIO_EXTENSION)) {
       loadMainImage();
       Log.d(Config.TAG, "Playing audio only (no video)");
       mAudioPlayer = MediaPlayer.create(getActivity(), Uri.parse("file://" + filePath));
