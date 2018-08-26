@@ -52,7 +52,9 @@ public abstract class OPrimeApp extends Application {
 
   // protected boolean mAutoAdvanceStimuliOnTouch = false;
   protected String mOutputDir = Config.DEFAULT_OUTPUT_DIRECTORY;
-  protected String mRemoteCouchUrl = "https://oprimesampleadmin:none@cesine.iriscouch.com/oprimesample";
+  // Authenticated example:
+  // protected String mRemoteCouchUrl = "https://oprimesampleadmin:none@cesine.iriscouch.com/oprimesample";
+  protected String mRemoteCouchUrl = "https://cesine.iriscouch.com/oprimesample";
 
   protected void addStimuli() {
 
@@ -124,7 +126,7 @@ public abstract class OPrimeApp extends Application {
    * that version of the Experiment. It accepts a variable in the form en or
    * en-US containing just the language code, or the language code followed by a
    * - and the co
-   * 
+   *
    * @param lang
    * @return
    */
@@ -199,7 +201,7 @@ public abstract class OPrimeApp extends Application {
    * then determined if the experiment was complete. It is a flexible notion as
    * we expect users to complete an experiment in one or two sittings where the
    * android app has closed and reopened.
-   * 
+   *
    * @return
    */
   public boolean isExperimentCompleted() {
