@@ -130,7 +130,7 @@ public class DatumDetailFragment extends Fragment {
 
     String[] datumProjection = { DatumTable.COLUMN_ID, DatumTable.COLUMN_ORTHOGRAPHY, DatumTable.COLUMN_UTTERANCE,
         DatumTable.COLUMN_MORPHEMES, DatumTable.COLUMN_GLOSS, DatumTable.COLUMN_TRANSLATION,
-        DatumTable.COLUMN_CONTEXT, DatumTable.COLUMN_IMAGE_FILES, DatumTable.COLUMN_AUDIO_VIDEO_FILES,
+        DatumTable.COLUMN_CONTEXT, DatumTable.COLUMN_IMAGE_FILES, DatumTable.COLUMN_AUDIO_VIDEO_FILES, DatumTable.COLUMN_VALIDATION_STATUS,
         DatumTable.COLUMN_TAGS };
     mUri = Uri.withAppendedPath(DatumContentProvider.CONTENT_URI, id);
     CursorLoader cursorLoader = new CursorLoader(getActivity(), mUri, datumProjection, selection, selectionArgs,
