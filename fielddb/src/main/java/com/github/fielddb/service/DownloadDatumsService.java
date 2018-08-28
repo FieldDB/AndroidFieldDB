@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import com.github.fielddb.BuildConfig;
 import com.github.fielddb.Config;
 import com.github.fielddb.database.AudioVideoContentProvider;
 import com.github.fielddb.database.DatumContentProvider;
@@ -35,10 +36,10 @@ import android.util.Log;
 
 /**
  * Downloads updates to sample data over wifi.
- * 
+ *
  * IF you want to download even when not on wifi you must pass -
  * Config.EXTRA_CONNECTIVITY set to "all"
- * 
+ *
  */
 public class DownloadDatumsService extends NotifyingIntentService {
   String datumTagToDownload;
@@ -74,7 +75,7 @@ public class DownloadDatumsService extends NotifyingIntentService {
     this.statusMessage = "Downloading samples " + Config.USER_FRIENDLY_DATA_NAME;
     this.tryAgain = intent;
     this.keystoreResourceId = R.raw.sslkeystore;
-    if (Config.D) {
+    if (BuildConfig.DEBUG) {
       Log.d(Config.TAG, "Inside DownloadDatumsService intent");
     }
 
@@ -84,7 +85,7 @@ public class DownloadDatumsService extends NotifyingIntentService {
       this.urlStringSampleDataDownload = Config.DEFAULT_SAMPLE_DATA_URL + "?key=%22" + datumTagToDownload + "%22";
     }
 
-    if (Config.D) {
+    if (BuildConfig.DEBUG) {
       Log.d(Config.TAG, this.urlStringSampleDataDownload);
     }
 
@@ -282,7 +283,7 @@ public class DownloadDatumsService extends NotifyingIntentService {
       this.userFriendlyErrorMessage = "Problem getting server resonse code for media file.";
       return;
     }
-    if (Config.D) {
+    if (BuildConfig.DEBUG) {
       Log.d(Config.TAG, "Server status code " + status);
     }
     this.statusMessage = "Downloading...";
@@ -354,7 +355,7 @@ public class DownloadDatumsService extends NotifyingIntentService {
   /**
    * Looks to see if there is any data in the database. If there is no data, it
    * inserts the sample data.
-   * 
+   *
    * @return count of data which is already in the database
    */
   @SuppressLint("NewApi")

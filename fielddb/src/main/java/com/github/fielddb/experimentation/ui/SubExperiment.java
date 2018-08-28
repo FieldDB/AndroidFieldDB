@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import com.github.fielddb.BuildConfig;
 import com.github.fielddb.Config;
 import com.github.fielddb.datacollection.AudioRecorder;
 import com.github.fielddb.datacollection.VideoRecorderAsyncTask;
@@ -87,13 +88,13 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
     this.setResult(Config.CODE_EXPERIMENT_COMPLETED, intent);
 
     try {
-      if (Config.D)
+      if (BuildConfig.DEBUG)
         Log.d(Config.TAG, "Telling recorder asyc to stop. ");
       if (this.recordVideoTask != null) {
         this.recordVideoTask.stopRecording();
       }
     } catch (Exception e) {
-      if (Config.D)
+      if (BuildConfig.DEBUG)
         Log.d(Config.TAG, "Error Telling recorder asyc to stop. ");
       e.printStackTrace();
     }
@@ -106,7 +107,7 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
    * that version of the Bilingual Aphasia Test. It accepts a variable in the
    * form en or en-US containing just the language code, or the language code
    * followed by a - and the country code.
-   * 
+   *
    * @param lang
    * @return
    */
@@ -209,7 +210,7 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
   @Override
   public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "Configuration has changed (rotation). Not redrawing the screen.");
     /*
      * Doing nothing makes the current redraw properly
@@ -398,7 +399,7 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
 
   @Override
   public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.v(Config.TAG, "Width x Height = " + width + "x" + height);
   }
 
@@ -407,13 +408,13 @@ public class SubExperiment extends Activity implements SurfaceHolder.Callback {
     if (this.mRecording) {
       return;
     }
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "Preparing to record. ");
     this.recordVideoTask = new VideoRecorderAsyncTask();
     this.recordVideoTask.setContext(this);
     this.recordVideoTask.setParentUI(this);
     this.recordVideoTask.setHolder(holder);
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "Telling recorder asyc to execute. ");
     this.recordVideoTask.execute();
 

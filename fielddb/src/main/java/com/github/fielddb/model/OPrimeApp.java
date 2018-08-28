@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import com.github.fielddb.BuildConfig;
 import com.github.fielddb.Config;
 
 import android.app.Application;
@@ -116,7 +117,7 @@ public abstract class OPrimeApp extends Application {
     }
     this.addStimuli();
     this.mCurrentSubExperiment = 0;
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "Created an experiment " + this.mExperiments.get(this.mCurrentExperiment).getTitle());
 
   }
@@ -250,20 +251,20 @@ public abstract class OPrimeApp extends Application {
     if (this.mExperiments == null) {
       this.mExperiments = new ArrayList<Experiment>();
     }
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "Oncreate of the OPrimeApp ");
   }
 
   @Override
   public void onLowMemory() {
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "The application is facing low memory, closing...");
     super.onLowMemory();
   }
 
   @Override
   public void onTerminate() {
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "The application has been terminated, closing...");
     super.onTerminate();
   }

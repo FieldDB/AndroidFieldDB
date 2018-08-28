@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.github.fielddb.BugReporter;
+import com.github.fielddb.BuildConfig;
 import com.github.fielddb.Config;
 import com.github.fielddb.datacollection.NotifyingIntentService;
 import com.github.fielddb.datacollection.MultipartPostRequest;
@@ -35,7 +36,7 @@ public class UploadAudioVideoService extends NotifyingIntentService {
 
   @Override
   protected void onHandleIntent(Intent intent) {
-    if (Config.D) {
+    if (BuildConfig.DEBUG) {
       Log.d(Config.TAG, " we are in debug mode, not uploading audio/video file");
       return;
     }
@@ -68,7 +69,7 @@ public class UploadAudioVideoService extends NotifyingIntentService {
     this.statusMessage = "Uploading audio video";
     this.tryAgain = intent;
     this.keystoreResourceId = R.raw.sslkeystore;
-    if (Config.D) {
+    if (BuildConfig.DEBUG) {
       Log.d(Config.TAG, "Inside UploadAudioVideoService intent");
     }
     BugReporter.putCustomData("action", "uploadAudioVideo:::");
@@ -141,7 +142,7 @@ public class UploadAudioVideoService extends NotifyingIntentService {
   }
 
   public JsonObject processUploadResponse(String jsonResponse) {
-    if (jsonResponse != null && Config.D) {
+    if (jsonResponse != null && BuildConfig.DEBUG) {
       Log.d(Config.TAG, jsonResponse);
     }
     JsonObject json = (JsonObject) NotifyingIntentService.jsonParser.parse(jsonResponse);

@@ -2,6 +2,7 @@ package com.github.fielddb.javascript;
 
 import java.io.File;
 
+import com.github.fielddb.BuildConfig;
 import com.github.fielddb.Config;
 
 import android.app.Application;
@@ -11,19 +12,19 @@ import android.os.Bundle;
 import android.util.Log;
 
 /**
- * 
+ *
  * This extends the HTML5Activity, adding the ability to have an offline couchdb
  * which syncs with an online couchdb
- * 
+ *
  * This is the secure one that accesses the ektorp directly, not allowing other
  * processes to get into the db, unfortunatly it doesnt seem to work on android.
  * this.mInitialAppServerUrl =
  * "touchdb:///usersdatabasename/_design/pages/index.html";
- * 
+ *
  * Mobile futon interface to Debug this.mInitialAppServerUrl =
  * "http://localhost:8138/mobilefuton/_design/mobilefuton/index.html";
- * 
- * 
+ *
+ *
  */
 public abstract class HTML5ReplicatingActivity extends HTML5Activity {
   /* must be specified by child classes */
@@ -111,7 +112,7 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
    * If details are provided, save them to the preferences. Otherwise find out
    * the previous user, and go to their db, or go to the public db if there was
    * no previous user
-   * 
+   *
    * @param userdb
    * @param username
    * @param password
@@ -165,7 +166,7 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
 
     mRemoteCouchDBURL = protocol + username + ":" + password + "@" + completeURLtoCouchDBServer + "/" + userdb;
 
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "This is the remote couch db url " + protocol + "---:---" + "@" + completeURLtoCouchDBServer
           + "/" + userdb);
 
@@ -199,13 +200,13 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
   // }
 
   protected void onPause() {
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.v(Config.TAG, "HTML5 Replicating onPause");
     super.onPause();
   }
 
   protected void onDestroy() {
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.v(Config.TAG, "HTML5 Replicating onDestroy");
     super.onDestroy();
   }
@@ -281,7 +282,7 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
    * be used. If they are too slow could consider using ektorp?
    */
   // protected void setupTouchDBViews() {
-  // if (Config.D)
+  // if (BuildConfig.DEBUG)
   // Log.d(Config.TAG, "Setting TDView with a Javascript map reduce compiler,"
   // + " this allows compiling of any views downloaded from couchapp.");
   // CBLView.setCompiler(new CBLJavaScriptViewCompiler());
@@ -315,7 +316,7 @@ public abstract class HTML5ReplicatingActivity extends HTML5Activity {
   //
   // // mLocalCouchDBListener = new CBLListener(server, mTouchDBListenerPort);
   // // mLocalCouchDBListener.start();
-  // if (Config.D) {
+  // if (BuildConfig.DEBUG) {
   // Log.i(Config.TAG, "Started the local offline couchdb database listener.");
   // }
   //

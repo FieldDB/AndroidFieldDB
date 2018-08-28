@@ -28,6 +28,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import com.github.fielddb.R;
+import com.github.fielddb.BuildConfig;
+
 import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.app.Notification;
@@ -181,7 +183,7 @@ public class NotifyingIntentService extends IntentService {
       this.userFriendlyErrorMessage = "Problem getting server resonse code.";
       return null;
     }
-    if (Config.D) {
+    if (BuildConfig.DEBUG) {
       Log.d(Config.TAG, "Server status code " + status);
     }
     this.statusMessage = "Downloading.";
@@ -214,7 +216,7 @@ public class NotifyingIntentService extends IntentService {
   }
 
   public void notifyUser(String message, Notification notification, int id, boolean showTryAgain) {
-    if (Config.D) {
+    if (BuildConfig.DEBUG) {
       Log.d(Config.TAG, message);
     }
     notification.tickerText = message;

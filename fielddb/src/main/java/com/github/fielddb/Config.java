@@ -21,8 +21,6 @@ public class Config {
 
   public static String CURRENT_USERNAME = "default";
 
-  public static boolean D = true;
-
   public static final String DATA_IS_ABOUT_LANGUAGE_ISO = PrivateConstants.DATA_IS_ABOUT_LANGUAGE_ISO;
   public static final String DATA_IS_ABOUT_LANGUAGE_NAME_ASCII = PrivateConstants.DATA_IS_ABOUT_LANGUAGE_NAME_ASCII;
   public static final String DATA_IS_ABOUT_LANGUAGE_NAME = PrivateConstants.DATA_IS_ABOUT_LANGUAGE_NAME;

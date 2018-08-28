@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
+import com.github.fielddb.BuildConfig;
 import com.github.fielddb.Config;
 import com.github.fielddb.datacollection.AudioRecorder;
 import com.github.fielddb.datacollection.DeviceDetails;
@@ -48,7 +49,7 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
         return;
       }
 
-      if (Config.D) {
+      if (BuildConfig.DEBUG) {
         Log.d(Config.TAG, "current audio position... " + mediaPlayer.getCurrentPosition());
       }
       if (!mediaPlayer.isPlaying()) {
@@ -87,7 +88,7 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
     @Override
     protected void onPostExecute(String result) {
       if (mWebView != null) {
-        if (Config.D) {
+        if (BuildConfig.DEBUG) {
           Log.d(Config.TAG, "\tPost execute LoadUrlToWebView task. Now trying to send a pubsub message to the webview."
               + this.mMessage);
         }
@@ -128,7 +129,7 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
 
     @Override
     protected void onPostExecute(String result) {
-      if (Config.D) {
+      if (BuildConfig.DEBUG) {
         Log.d(Config.TAG, "\t" + result + ": Wrote string to file");
       }
     }
@@ -171,7 +172,7 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
    * Can pass in all or none of the parameters. Expects the caller to set the
    * context after initialization. This allows this class to be serialized and
    * sent as an Extra for maximum modularity.
-   * 
+   *
    * @param outputDir
    *          usually on the sdcard where users can see the files, not in the
    *          data dirs (problems opening the files in a webview if you choose
@@ -189,7 +190,7 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
   public JavaScriptInterface(String outputDir, Context context, HTML5Activity UIParent, String assetsPrefix) {
     this.mOutputDir = outputDir;
     this.mContext = context;
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "Initializing the Javascript Interface (JSI).");
     this.mAudioPlaybackFileUrl = "";
     this.setUIParent(UIParent);
@@ -202,7 +203,7 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
     this.mContext = context;
     this.mOutputDir = Config.DEFAULT_OUTPUT_DIRECTORY;
     this.mAudioPlaybackFileUrl = "";
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "Initializing the Javascript Interface (JSI).");
     this.mHandler = new Handler();
 
@@ -314,7 +315,7 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
 
   @JavascriptInterface
   public boolean isD() {
-    return Config.D;
+    return BuildConfig.DEBUG;
   }
 
   @JavascriptInterface
@@ -329,7 +330,7 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
 
   /**
    * FIXME why is this is creating a file.
-   * 
+   *
    * @param url
    * @param filename
    */
@@ -405,13 +406,13 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
     if (urlstring == null || "".equals(urlstring.trim())) {
       return;
     }
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "In the play Audio JSI :" + urlstring + ": playing:" + this.mAudioPlaybackFileUrl + ":");
     if (this.mAudioPlaybackFileUrl.contains(urlstring)) {
       /*
        * Same audio file
        */
-      if (Config.D)
+      if (BuildConfig.DEBUG)
         Log.d(Config.TAG, "Resuming play of the same file :" + this.mAudioPlaybackFileUrl + ":");
       if (this.mMediaPlayer != null) {
         if (this.mMediaPlayer.isPlaying()) {
@@ -428,7 +429,7 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
       /*
        * New audio file
        */
-      if (Config.D)
+      if (BuildConfig.DEBUG)
         Log.d(Config.TAG, "Playing new file from the beginning :" + this.mAudioPlaybackFileUrl + ":");
       if (this.mMediaPlayer != null) {
         if (this.mMediaPlayer.isPlaying()) {
@@ -448,7 +449,7 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
       return;
     }
     Log.w(Config.TAG, "TODO playIntervalOfAudio needs to be re-verified to avoid memory leaks");
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "In milliseconds from " + startTimeMS + " to " + endTimeMS);
     if (this.mMediaPlayer != null) {
       this.mRequestedMediaPlayer = 0;
@@ -501,10 +502,10 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
    * This is a private method which is used by this class to attach a file to
    * the media player. It is called by either playAudio or playIntervalOfAudio
    * (if its a new audio file or the media player is null).
-   * 
+   *
    * Preconditions: the mediaplayer is null. IF both cueTo and endAt are 0 then
    * it will play the entire audio
-   * 
+   *
    * @param urlstring
    *          The file name either on the sdcard, on the web, or in the assets
    *          folder.
@@ -531,11 +532,11 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
         this.mAudioPlaybackFileUrl = urlstring;
         this.mMediaPlayer.setDataSource(this.mAudioPlaybackFileUrl);
       } else {
-        if (Config.D)
+        if (BuildConfig.DEBUG)
           Log.d(Config.TAG, "This is what the audiofile looked like:" + urlstring);
         String tempurlstring = urlstring.replaceFirst("/", this.mAssetsPrefix);
         this.mAudioPlaybackFileUrl = tempurlstring;
-        if (Config.D)
+        if (BuildConfig.DEBUG)
           Log.d(Config.TAG, "This is what the audiofile looks like:" + this.mAudioPlaybackFileUrl);
 
         AssetFileDescriptor afd = this.mContext.getAssets().openFd(this.mAudioPlaybackFileUrl);
@@ -575,7 +576,7 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
   protected static class OnPreparedPlay implements MediaPlayer.OnPreparedListener {
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
-      if (Config.D) {
+      if (BuildConfig.DEBUG) {
         Log.d(Config.TAG, "Starting to play the audio.");
       }
       mediaPlayer.start();
@@ -588,7 +589,7 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
 
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
-      if (Config.D) {
+      if (BuildConfig.DEBUG) {
         Log.d(Config.TAG, "Audio playback is complete, releasing the audio.");
       }
 
@@ -611,7 +612,7 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
 
   @JavascriptInterface
   public void setD(boolean newvalue) {
-    Config.D = newvalue;
+    Log.d(Config.TAG, "cannot override debug value");
   }
 
   public abstract void setUIParent(HTML5Activity UIParent);
@@ -633,7 +634,7 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
       return;
     }
     Toast.makeText(this.mContext, toast, Toast.LENGTH_LONG).show();
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "Showing toast " + toast);
   }
 
@@ -643,7 +644,7 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
       return;
     }
     if ("".equals(resultfilename.trim())) {
-      if (Config.D)
+      if (BuildConfig.DEBUG)
         Log.d(Config.TAG, "The resultfilename in startAudioRecordingService was empty.");
       return;
     }
@@ -651,12 +652,12 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
     if (this.mAudioRecordFileUrl != null) {
       return;
     }
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "This is what the audiofile looked like:" + resultfilename);
     String tempurlstring = "";
     tempurlstring = resultfilename.replaceFirst("/", "").replaceFirst("file:", "");
     this.mAudioRecordFileUrl = this.mOutputDir + tempurlstring;
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "This is what the audiofile looks like:" + this.mAudioRecordFileUrl);
 
     Intent intent;
@@ -737,12 +738,12 @@ public abstract class JavaScriptInterface implements Serializable, NonObfuscatea
     }
     new File(this.mOutputDir).mkdirs();
 
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "This is what the image file looked like:" + resultfilename);
     String tempurlstring = "";
     tempurlstring = resultfilename.replaceFirst("/", "").replaceFirst("file:", "");
     this.mTakeAPictureFileUrl = this.mOutputDir + tempurlstring;
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "This is what the image file looks like:" + this.mTakeAPictureFileUrl);
 
     // Publish picture taking started

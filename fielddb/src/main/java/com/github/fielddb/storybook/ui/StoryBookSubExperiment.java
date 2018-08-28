@@ -44,7 +44,7 @@ public class StoryBookSubExperiment extends VideoRecorder {
   /**
    * Forces the locale for the duration of the app to the language needed for
    * that version of the Test
-   * 
+   *
    * @param lang
    * @return
    */

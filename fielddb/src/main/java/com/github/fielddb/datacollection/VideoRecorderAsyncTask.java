@@ -3,6 +3,7 @@ package com.github.fielddb.datacollection;
 import java.io.File;
 import java.io.IOException;
 
+import com.github.fielddb.BuildConfig;
 import com.github.fielddb.Config;
 import com.github.fielddb.R;
 
@@ -148,10 +149,10 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
   @SuppressLint("NewApi")
   protected void beginRecording(SurfaceHolder holder) throws IOException {
     if (this.mVideoRecorder != null) {
-      if (Config.D)
+      if (BuildConfig.DEBUG)
         Log.d(Config.TAG, "mVideoRecorder was not null. ");
       if (this.mRecording) {
-        if (Config.D)
+        if (BuildConfig.DEBUG)
           Log.d(Config.TAG, "Telling mVideoRecorder to stop before we start. ");
         this.mVideoRecorder.stop();
       }
@@ -167,7 +168,7 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
     try {
       this.mCamera = getCameraInstance();
       if (this.mCamera == null) {
-        if (Config.D)
+        if (BuildConfig.DEBUG)
           Log.e(Config.TAG, "There was a problem opening the camera. ");
         // TODO email devs?
         this.beginRecordingAudio();
@@ -185,14 +186,14 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
       int sdk = android.os.Build.VERSION.SDK_INT;
       if (sdk > 7) {
         if (cameraNumberUsed == -1) {
-          if (Config.D)
+          if (BuildConfig.DEBUG)
             Log.e(Config.TAG, "This appears to have no camera set, trying another resolution.");
           this.mVideoRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
         } else {
           this.mVideoRecorder.setProfile(CamcorderProfile.get(cameraNumberUsed, CamcorderProfile.QUALITY_HIGH));
         }
       } else {
-        if (Config.D)
+        if (BuildConfig.DEBUG)
           Log.e(Config.TAG, "This appears to be android 2.1, trying to set the audio and video manually.");
         this.mVideoRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         this.mVideoRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
@@ -211,7 +212,7 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
       this.mVideoRecorder.start();
       this.mRecording = true;
     } catch (Exception e) {
-      if (Config.D)
+      if (BuildConfig.DEBUG)
         Log.e(Config.TAG, "There was a problem with the camera " + e.toString());
       this.mRecording = false;
       this.beginRecordingAudio();
@@ -233,12 +234,12 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
 
   @Override
   protected String doInBackground(Void... params) {
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.v(Config.TAG, " doInBackground");
     try {
       this.beginRecording(this.holder);
     } catch (Exception e) {
-      if (Config.D)
+      if (BuildConfig.DEBUG)
         Log.e(Config.TAG, "Error calling begin recording " + e.toString());
       return "error recording video.";
     }
@@ -259,7 +260,7 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
 
   @Override
   protected void onPostExecute(String result) {
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.v(Config.TAG, " onPostExecute " + result);
     if (result.startsWith("error")) {
       this.beginRecordingAudio();
@@ -268,7 +269,7 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
 
   @Override
   protected void onPreExecute() {
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.v(Config.TAG, " onPreExecute");
 
     /*
@@ -284,7 +285,7 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
     }
     (new File(this.mVideoResultsFile).getParentFile()).mkdirs();
 
-    if (Config.D)
+    if (BuildConfig.DEBUG)
       Log.d(Config.TAG, "mVideoResultsFile " + this.mVideoResultsFile);
   }
 
@@ -303,7 +304,7 @@ public class VideoRecorderAsyncTask extends AsyncTask<Void, Void, String> {
   public void stopRecording() throws Exception {
     if (this.mVideoRecorder != null) {
       if (this.mRecording) {
-        if (Config.D)
+        if (BuildConfig.DEBUG)
           Log.d(Config.TAG, "We are recording. Telling mVideoRecorder to stop. ");
       }
       this.mVideoRecorder.stop();

@@ -3,6 +3,7 @@ package com.github.fielddb.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.github.fielddb.BuildConfig;
 import com.github.fielddb.Config;
 import com.github.fielddb.database.DatumContentProvider.DatumTable;
 
@@ -497,7 +498,7 @@ public class Datum {
       this.currentAudioVideoIndex = index;
     }
     String fileWillBe = mediaFiles.get(index).getFilename();
-    if (Config.D) {
+    if (BuildConfig.DEBUG) {
       Log.d(Config.TAG, fileWillBe);
     }
     return fileWillBe;
