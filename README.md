@@ -31,7 +31,9 @@ As an Android developer, you can reuse this library in your app.
 
 ### Install
 
-To include this library, add the maven repository to your Android build.gradle:
+You can manually download the `.aar` and include it in your project from this url: https://bintray.com/fielddb/maven/com.github.fielddb
+
+To install it in your project via maven, add the maven repository to your Android build.gradle:
 
 ```groovy
 repositories {
