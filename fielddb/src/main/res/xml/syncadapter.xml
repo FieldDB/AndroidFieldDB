@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sync-adapter
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:contentAuthority="com.github.fielddb.default.datum"
+  android:accountType="com.github.fielddb"
+  android:isAlwaysSyncable="true"/>

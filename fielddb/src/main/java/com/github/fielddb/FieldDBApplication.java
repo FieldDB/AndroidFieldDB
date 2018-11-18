@@ -14,13 +14,18 @@ import org.acra.ACRA;
 import org.acra.ACRAConfiguration;
 import org.acra.annotation.ReportsCrashes;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.github.fielddb.database.FieldDBUserContentProvider;
@@ -126,7 +131,7 @@ public class FieldDBApplication extends Application {
     String[] userProjection = { UserTable.COLUMN_ID, UserTable.COLUMN_REV, UserTable.COLUMN_USERNAME,
         UserTable.COLUMN_FIRSTNAME, UserTable.COLUMN_LASTNAME, UserTable.COLUMN_EMAIL, UserTable.COLUMN_GRAVATAR,
         UserTable.COLUMN_AFFILIATION, UserTable.COLUMN_RESEARCH_INTEREST, UserTable.COLUMN_DESCRIPTION,
-        UserTable.COLUMN_SUBTITLE };
+        UserTable.COLUMN_SUBTITLE, UserTable.COLUMN_GENERATED_PASSWORD };
     CursorLoader cursorLoader = new CursorLoader(getApplicationContext(), FieldDBUserContentProvider.CONTENT_URI,
         userProjection, null, null, null);
     Cursor cursor = cursorLoader.loadInBackground();
@@ -150,7 +155,19 @@ public class FieldDBApplication extends Application {
       String researchInterest = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_RESEARCH_INTEREST));
       String description = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_DESCRIPTION));
       String subtitle = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_SUBTITLE));
+      String generatedPassword = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_GENERATED_PASSWORD));
       String actualJSON = "";
+
+      try {
+        Account account = createSyncAccount(getApplicationContext(), username, generatedPassword);
+        Bundle settingsBundle = new Bundle();
+        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        ContentResolver.requestSync(account, PrivateConstants.DATUM_AUTHORITY, settingsBundle);
+      } catch (Exception e) {
+        Log.d(Config.TAG, e.toString());
+      }
+
       mUser = new User(_id, _rev, username, firstname, lastname, email, gravatar, affiliation, researchInterest,
           description, subtitle, null, actualJSON);
       BugReporter.putCustomData("username", username);
@@ -207,6 +224,24 @@ public class FieldDBApplication extends Application {
         .updateConfiguration(config, this.getBaseContext().getResources().getDisplayMetrics());
 
     return Locale.getDefault().getDisplayLanguage();
+  }
+
+  /**
+   * Create a new dummy account for the sync adapter
+   *
+   * @param context The application context
+   */
+  public static Account createSyncAccount(Context context, String username, String password) {
+    // Create the account type and default account
+    Account newAccount = new Account(username, "com.github.fielddb");
+    // Get an instance of the Android account manager
+    AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
+    /*
+     * Add the account and account type, no password or user data
+     */
+    accountManager.addAccountExplicitly(newAccount, password, null);
+
+    return newAccount;
   }
 
   public User getUser() {
