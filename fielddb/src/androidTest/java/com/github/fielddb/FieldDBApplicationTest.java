@@ -70,7 +70,12 @@ public class FieldDBApplicationTest extends ApplicationTestCase<FieldDBApplicati
     }
     // Expect to be co-installed with a consuming app
     assertThat(mContext.mUser, notNullValue());
-    assertThat(mContext.mUser.getUsername(), containsString("testinganonymous"));
+
+    if (BuildConfig.DEBUG) {
+      assertThat(mContext.mUser.getUsername(), containsString("anonymous"));
+    } else {
+      assertThat(mContext.mUser.getUsername(), containsString("testinganonymous"));
+    }
   }
 
 }

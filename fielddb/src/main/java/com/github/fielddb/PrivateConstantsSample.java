@@ -24,6 +24,8 @@ public class PrivateConstantsSample {
   public static String DEFAULT_UPLOAD_TOKEN = "yourapitoken";
 
   public static String DATA_IS_ABOUT_LANGUAGE_ISO = "ka";
+  public static String DATUM_AUTHORITY = "com.github.fielddb.default.datum";
+
   /*
    * Make sure this is part of your ContentProvider <provider
    * android:name="com.github.fielddb.database.DatumContentProvider"
