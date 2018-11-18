@@ -54,6 +54,10 @@ public class Datum {
     this.validationStati = validationStati;
     this.coments = coments;
     this.actualJSON = actualJSON;
+
+    if (this.tags == null) {
+      this.tags = new ArrayList<String>();
+    }
   }
 
   public Datum(String orthography) {
@@ -193,21 +197,14 @@ public class Datum {
     if (currentColumnIndex > -1) {
       this.setValidationStatiFromSting(cursor.getString(currentColumnIndex));
     } else {
+      this.validationStati = new ArrayList<String>();
+    }
+
+    currentColumnIndex = cursor.getColumnIndex(DatumTable.COLUMN_TAGS);
+    if (currentColumnIndex > -1) {
+      this.setTagsFromSting(cursor.getString(currentColumnIndex));
+    } else {
       this.tags = new ArrayList<String>();
-    }
-
-    currentColumnIndex = cursor.getColumnIndex(DatumTable.COLUMN_TAGS);
-    if (currentColumnIndex > -1) {
-      this.setTagsFromSting(cursor.getString(currentColumnIndex));
-    } else {
-      this.validationStati = new ArrayList<String>();
-    }
-
-    currentColumnIndex = cursor.getColumnIndex(DatumTable.COLUMN_TAGS);
-    if (currentColumnIndex > -1) {
-      this.setTagsFromSting(cursor.getString(currentColumnIndex));
-    } else {
-      this.validationStati = new ArrayList<String>();
     }
 
     this.locations = new ArrayList<String>();
@@ -365,6 +362,10 @@ public class Datum {
 
   public String getTagsString() {
     String result = "";
+    if (this.tags == null) {
+      Log.d(Config.TAG, "The tags were null in getTagsString, this is not normal");
+      return result;
+    }
     for (String tag : this.tags) {
       if (!"".equals(result)) {
         result += ",";
@@ -377,6 +378,8 @@ public class Datum {
   public void setTagsFromSting(String tags) {
     if (tags != null && !"".equals(tags)) {
       this.tags = new ArrayList<String>(Arrays.asList(tags.split(",")));
+    } else {
+      this.tags = new ArrayList<String>();
     }
   }
 
