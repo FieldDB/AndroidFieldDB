@@ -231,8 +231,9 @@ public class UserContentProvider extends ContentProvider {
 
     // Create a user
     protected static ContentValues createAnonymousUser() {
+      String generatedPassword = System.currentTimeMillis() + "";
       ContentValues values = new ContentValues();
-      String username = ANONYMOUS_PREFIX + System.currentTimeMillis();
+      String username = ANONYMOUS_PREFIX + generatedPassword;
       values.put(COLUMN_USERNAME, username);
       values.put(COLUMN_ID, username);
       values.put(COLUMN_FIRSTNAME, "Anony");
@@ -245,7 +246,7 @@ public class UserContentProvider extends ContentProvider {
       values.put(COLUMN_DESCRIPTION, "");
       values.put(COLUMN_SUBTITLE, "");
       values.put(COLUMN_APP_VERSIONS_WHEN_MODIFIED, UserContentProvider.appVersion);
-      values.put(COLUMN_GENERATED_PASSWORD, System.currentTimeMillis() + "");
+      values.put(COLUMN_GENERATED_PASSWORD, generatedPassword);
       return values;
     }
 
