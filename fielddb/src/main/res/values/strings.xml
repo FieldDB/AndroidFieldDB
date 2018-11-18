@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">FieldDBLib</string>
+    <string name="app_name">FieldDB</string>
     <string name="speech_app_name">LRL Speech Recognition</string>
     <string name="title_datum_detail">Datum</string>
     <string name="title_datum_list_activity">Recognition Trainer Advanced</string>

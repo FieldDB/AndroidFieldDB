@@ -3,7 +3,4 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:contentAuthority="com.github.fielddb.default.datum"
   android:accountType="com.github.fielddb"
-  android:userVisible="false"
-  android:supportsUploading="false"
-  android:allowParallelSyncs="false"
   android:isAlwaysSyncable="true"/>
